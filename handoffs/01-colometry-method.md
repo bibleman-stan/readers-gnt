@@ -2,7 +2,7 @@
 
 ## Foundation
 
-This project applies sense-line (colometric) formatting to the Greek New Testament. The method is adapted from the BOM Reader project's editorial methodology, grounded in the scholarly tradition of Lee & Scott (sound mapping), Marschall (colometric analysis), and ancient manuscript practice (Codex Bezae, Codex Claromontanus).
+This project applies sense-line (colometric) formatting to the Greek New Testament. The method is grounded in the scholarly tradition of Lee & Scott (sound mapping), Marschall (colometric analysis), and ancient manuscript practice (Codex Bezae, Codex Claromontanus).
 
 ## Core Premise
 

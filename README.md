@@ -16,6 +16,3 @@ Early development. Test chapters: Mark 4, Acts 17.
 
 SBL Greek New Testament (SBLGNT), freely available for research use.
 
-## Related
-
-Sister project to [readers-bofm](https://github.com/bibleman-stan/readers-bofm) (Book of Mormon Reading Edition at bomreader.com).

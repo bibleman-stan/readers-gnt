@@ -8,7 +8,7 @@ Read this file completely before doing anything in this repo. It is your orienta
 
 A colometric reading edition of the Greek New Testament. The text is reformatted from standard prose paragraphs into **sense-lines (cola)** — each line is a natural breath unit based on Greek grammatical structure, designed for oral delivery and comprehension.
 
-This is a sister project to the **BOM Reader** (`C:\Users\bibleman\repos\readers-bofm`), applying the same colometric philosophy to the GNT. The BOM Reader is the methodological precedent — its handoffs (especially `10-colometry.md`) contain the editorial theory.
+The colometric methodology draws on the scholarly tradition of Lee & Scott (sound mapping), Marschall (colometric analysis of Paul), and ancient manuscript practice.
 
 - **Repo:** github.com/bibleman-stan/readers-nt (public)
 - **Base text:** SBL Greek New Testament (SBLGNT) — freely available for research
@@ -149,7 +149,6 @@ SBLGNT base text, sense-line formatting by grammatical cola
 
 ## Connected Resources
 
-- **BOM Reader repo:** `C:\Users\bibleman\repos\readers-bofm` — methodological precedent
 - **Academic vault:** `C:\vaults-nano\my_brain\` — Greek grammar notes, Bible book files, scholar notes
 - **Gospel vault:** `C:\vaults-nano\gospel\` — devotional scripture notes
 - **Key scholarly references:**
