@@ -2024,6 +2024,62 @@ def parse_v2_file(filepath):
 _sentence_split_count = 0
 
 
+def apply_stranded_function_word_merge(verse_lines):
+    """Merge stranded single-word function words forward into the next line.
+
+    After sentence boundary splits, conjunctions (καί, ἀλλά, δέ, etc.),
+    articles (ὁ, ἡ, τό, etc.), and particles can end up alone on a line.
+    These are grammatically bound to what follows — a conjunction introduces
+    the next clause, an article introduces the next noun phrase. They can
+    never be standalone cola.
+
+    This is NOT a length guard — it's the grammatical principle that function
+    words are proclitic/bound to their host.
+    """
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    # Function words that should never be alone on a line
+    FUNCTION_WORDS = {
+        # Conjunctions
+        'καὶ', 'καί', 'Καὶ', 'Καί', 'δὲ', 'δέ', 'ἀλλὰ', 'ἀλλά', 'Ἀλλὰ',
+        'γὰρ', 'γάρ', 'οὖν', 'ὅτι', 'ἵνα', 'εἰ', 'ἐάν', 'ἐὰν',
+        'ὥστε', 'ὅταν', 'ὅτε', 'ἕως', 'μηδὲ', 'οὐδὲ', 'τε',
+        'ἤ', 'ἢ', 'μήτε', 'οὔτε', 'εἴτε', 'καθὼς', 'ὡς',
+        'ἐπεὶ', 'διότι', 'πλὴν', 'ἄρα', 'διό', 'μέν', 'μὲν',
+        'εἴπερ', 'ἐάνπερ',
+        # Articles
+        'ὁ', 'ἡ', 'τό', 'τὸ', 'τοῦ', 'τῆς', 'τῷ', 'τῇ', 'τόν', 'τὸν',
+        'τήν', 'τὴν', 'οἱ', 'αἱ', 'τά', 'τὰ', 'τῶν', 'τοῖς', 'ταῖς',
+        'τούς', 'τοὺς', 'τάς', 'τὰς',
+        # Prepositions (short, should never be alone)
+        'ἐν', 'εἰς', 'ἐκ', 'ἐξ', 'ἀπό', 'ἀπὸ', 'πρός', 'πρὸς',
+        'ἐπί', 'ἐπὶ', 'κατά', 'κατὰ', 'μετά', 'μετὰ', 'διά', 'διὰ',
+        'ὑπό', 'ὑπὸ', 'παρά', 'παρὰ', 'περί', 'περὶ', 'πρό', 'πρὸ',
+        'σύν', 'σὺν', 'ὑπέρ', 'ὑπὲρ',
+        # Negative particles
+        'οὐ', 'οὐκ', 'οὐχ', 'μή', 'μὴ',
+    }
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        line = verse_lines[i]
+        stripped = line.strip().rstrip('.,;·')
+
+        if (i + 1 < len(verse_lines)
+                and stripped in FUNCTION_WORDS):
+            # Single function word — merge forward
+            next_line = verse_lines[i + 1]
+            merged = line.strip() + ' ' + next_line.strip()
+            result.append(merged)
+            i += 2
+        else:
+            result.append(line)
+            i += 1
+    return result
+
+
 def apply_sentence_boundary_splits(verse_lines, book_slug=None, verse_ref=None):
     """Split any line that crosses a Macula sentence boundary.
 
@@ -2172,6 +2228,11 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     # FINAL GUARD: Sentence boundary splits — split any line that crosses a
     # Macula sentence boundary. This runs LAST so it overrides all merge rules.
     lines = apply_sentence_boundary_splits(lines, book_slug=book_slug, verse_ref=verse_ref)
+
+    # POST-SPLIT CLEANUP: Merge stranded function words forward.
+    # Sentence boundary splits can strand conjunctions, articles, and particles
+    # on their own line. These are bound to what FOLLOWS, never standalone.
+    lines = apply_stranded_function_word_merge(lines)
 
     return lines
 
