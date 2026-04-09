@@ -266,3 +266,41 @@ Stan's hand editing. Makes final decisions on:
 - **Hand-crafted test chapters** — Mark 4 and Acts 17, hand-formatted by Stan in the initial design session. Preserved in `C:\tmp\gnt-colometry-test\`. v3 output matches the gold standard on nearly all verses of Mark 4.
 - Additional validation benchmarks tracked privately.
 
+---
+
+### Update — 2026-04-09 (session 2, continued)
+
+#### New Principled Rules in v3
+
+Two new rules were added to the v3 tier, each with independent grammatical warrant:
+
+1. **Infinitive merge-back:** Dependent infinitives cannot begin a colon. When a line starts with an infinitive that is syntactically governed by a verb on the preceding line, it merges back into the governing line. Warrant: Wallace ch. 22 (complementary, purpose, and result infinitives are verbal complements, not independent clauses); Marschall's semantico-syntactic completeness criterion (an infinitive without its governing verb fails the "atomic thought" test because the thought is incomplete without the matrix verb).
+
+2. **Verbless line merge:** Lines without any verbal element — checked via MorphGNT morphological tagging (no finite verb, participle, or infinitive present) — cannot constitute valid cola. They fail the foundational "atomic thought" test because the thought is suspended awaiting verbal resolution. Such lines are merged into their nearest verbal neighbor.
+
+#### The Criteria Chain
+
+The project's methodological integrity rests on a traceable chain of warrant:
+
+- **Ancient rhetoricians** (Pseudo-Demetrius, the colometric manuscript tradition) establish that prose has internal structure at the colon/period level
+- **Modern formalization** (Lee & Scott, Marschall, Nasselqvist) refines the criteria for identifying cola: breath units, semantic completeness, syllable ranges
+- **Syntactic operationalization** (Macula syntax trees + Wallace's clause/conjunction taxonomy) provides the computational mechanism for applying those criteria at scale
+- **Principled refinement rules** (infinitive merge-back, verbless line merge) handle edge cases that the tree structure alone does not resolve, each grounded in explicit grammatical warrant
+- **Consistent application** across 137,554 words of the SBLGNT ensures that downstream quantitative analysis (authorship, genre, stylometry) is valid — the same rules applied everywhere
+
+#### Bezae Caveat
+
+Codex Bezae's line breaks reflect a mixture of sense-line decisions and physical layout constraints. The column width of Bezae is approximately 25-30 characters, meaning many line breaks are forced by the available writing space rather than by colometric judgment. Agreement metrics between our automated output and Bezae are meaningful — they reveal which breaks are structurally motivated — but Bezae cannot be treated as a colometric gold standard without this caveat. Some breaks are sense-line decisions; others are where the scribe ran out of room.
+
+#### Multi-Tier Comparison Results
+
+| Tier | Agreement with Bezae |
+|------|---------------------|
+| v1 (pattern-matching) | 59.7% |
+| v2 (syntax-tree) | 60.6% |
+| v3 (rhetorical + refinement) | 60.7% |
+
+Each tier monotonically improves agreement with the ancient manuscript. The gains are modest because Bezae's physical layout constraints introduce noise — many Bezae breaks are layout-driven rather than sense-driven.
+
+Notable per-book finding: Matthew shows v1 closer to Bezae than v2/v3. Simpler pattern-matching breaking approximates scribal practice for Matthew's Gospel, likely because Matthew's predominantly paratactic narrative style produces line breaks at the same conjunction-triggered points where a scribe would naturally break for column width.
+

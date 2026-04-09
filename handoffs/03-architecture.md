@@ -247,3 +247,29 @@ Single-page app, all CSS and JS inline. No external dependencies except Google F
 - build_books.py now reads from v2-colometric (was v1-colometric)
 - Web app now serves v2 syntax-tree-driven output
 - Repo renamed from readers-nt to readers-gnt; all branding updated to "GNT Reader"
+
+---
+
+### Update — 2026-04-09 (session 2, continued)
+
+#### New and Updated Scripts
+
+- **morphgnt_lookup.py** (new): MorphGNT word-level morphological lookup utility. Provides verbal element detection (finite verbs, participles, infinitives) for any word in the SBLGNT. Used by v3_colometry.py to identify verbless lines that need merging.
+- **bezae_compare.py** (updated): Now supports `--tier` flag (v1/v2/v3) to compare a specific tier's output against Codex Bezae line breaks, and `--all-tiers` flag to run all three comparisons in a single invocation and produce a summary table.
+- **v3_colometry.py** (updated): Now uses MorphGNT data via morphgnt_lookup.py for verbless line detection. Lines without any verbal element (finite verb, participle, or infinitive) are merged into their nearest verbal neighbor.
+
+#### Updated Build Pipeline
+
+The active pipeline is now three stages:
+
+```
+v2_colometry.py  (syntax-tree clause boundaries)
+       |
+       v
+v3_colometry.py  (rhetorical patterns + infinitive merge-back + verbless line merge via MorphGNT)
+       |
+       v
+build_books.py   (reads v3-colometric/ -> books/*.html)
+```
+
+build_books.py now reads from `data/text-files/v3-colometric/` (was v2-colometric).

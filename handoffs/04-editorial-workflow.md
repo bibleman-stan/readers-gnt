@@ -131,3 +131,26 @@ No priorities have been set yet. Some natural starting points:
 - v2 output now active — web app serves syntax-tree-driven colometry
 - v1 output preserved for comparison
 - Comparison: v2 resolves the major v1 limitation (long unbroken lines with participial phrases, genitive absolutes, infinitival clauses). Acts 1:2, which was one line in v1, now breaks into four clauses. Mark 4:8 triadic yield stacks automatically from the tree structure.
+
+---
+
+### Update — 2026-04-09 (session 2, continued)
+
+#### v3 Validation Against Gold Standard
+
+v3 output was validated against the hand-crafted Mark 4 gold standard (preserved in `C:\tmp\gnt-colometry-test\`). The match is near-complete — the automated pipeline now produces output that closely approximates editorial judgment on the test chapter that originally defined the project's vision.
+
+#### Key v4 Editorial Decisions Identified
+
+During review of v3 output, several cases were identified where automated rules cannot resolve the breaking decision — these are genuine editorial judgments for v4:
+
+- **Participial phrase attachment:** Whether a circumstantial participle merges with its main verb or stands alone as its own colon is often an editorial judgment. The grammar permits both readings; the choice depends on whether the participle frames the action (own line) or is tightly integrated with it (merged). Example: a genitive absolute that is short and closely tied to the main clause vs. one that sets an independent temporal scene.
+
+#### The Automated/Editorial Boundary
+
+The distinction between automated rules (v1-v3) and editorial judgment (v4) is now clearer:
+
+- **Automated rules (v1-v3)** enforce consistent, defensible grammatical criteria. Every rule has independent warrant (Wallace, Marschall, Macula tree structure). The same rule applied to the same text always produces the same output. This consistency is what makes downstream quantitative analysis valid.
+- **Editorial judgment (v4)** handles cases where multiple valid breakings exist. The grammar permits more than one analysis; the editor chooses based on rhetorical effect, performative feel, theological sensitivity, or contextual flow. These decisions are legitimate and necessary but inherently non-algorithmic.
+
+This distinction matters for the publishable research: the automated tiers produce replicable data suitable for quantitative analysis; the editorial tier produces a reading edition optimized for human use.
