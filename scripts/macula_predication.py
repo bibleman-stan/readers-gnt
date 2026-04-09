@@ -393,9 +393,11 @@ def check_line_completeness(
     if finite_verbs_on_line:
         return PredicationResult(complete=True)
 
-    # Case 3: Only infinitives, no finite verb, no participle
-    # → handled by existing infinitive rules; we consider it complete here
-    if infinitives_on_line and not participles_on_line:
+    # Case 3: Infinitive present (with or without participle)
+    # An infinitive provides a local verbal governor for any participles on the
+    # same line (e.g., ὥστε + accusative + participle + infinitive is one result
+    # clause). The line has its own verbal structure.
+    if infinitives_on_line:
         return PredicationResult(complete=True)
 
     # Case 4: No verbal element at all
