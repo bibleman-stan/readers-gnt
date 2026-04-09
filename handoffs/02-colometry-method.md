@@ -304,3 +304,24 @@ Each tier monotonically improves agreement with the ancient manuscript. The gain
 
 Notable per-book finding: Matthew shows v1 closer to Bezae than v2/v3. Simpler pattern-matching breaking approximates scribal practice for Matthew's Gospel, likely because Matthew's predominantly paratactic narrative style produces line breaks at the same conjunction-triggered points where a scribe would naturally break for column width.
 
+## Verb Valency and the "Atomic Thought" Test
+
+A key refinement of the foundational "atomic thought" criterion is **verb valency satisfaction**: a line is a complete thought only if the verbal element's required arguments are present within the line. This is standard linguistic valency theory applied to colometric analysis.
+
+| Verb type | Required arguments | Line complete? |
+|---|---|---|
+| **Intransitive** (no object required) | Subject (often implicit in Greek) | Yes — e.g., `Μετανοήσατε` ("Repent!") |
+| **Transitive without object** | Subject + Object, but object absent | No — e.g., `ἀκούσας δέ` ("having heard" — heard WHAT?) |
+| **Transitive with object present** | Subject + Object, both on line | Yes — e.g., `καὶ ταῦτα εἰπὼν` ("having said these things") |
+| **Passive** (patient = subject) | Subject (as patient) | Yes — e.g., `φυλασσόμενος` ("being guarded") |
+
+### Data source: Macula syntactic role annotations
+
+The Macula Greek Lowfat XML encodes syntactic roles on individual words (`role=s` for subject, `role=o` for object, `role=v` for verb, etc.). This provides **usage-level transitivity** for every verb in every verse — not a lexicon-based guess, but actual syntactic analysis of how the verb is used in context. ἀκούω (hear) can be transitive or intransitive; the Macula annotation tells us which it is in each specific occurrence.
+
+This enables a principled, testable colometric rule: a line containing a participle whose Macula clause has an object (`role=o`) not present on the line has unsatisfied valency and should merge with its neighbor. This is not an arbitrary length heuristic — it is a grammatically grounded test derived from the text's own syntactic structure.
+
+### Note on editorial punctuation
+
+Modern editorial punctuation (commas, periods, ano teleia) in the SBLGNT is not original to the text. Colometric rules must never be based on punctuation placement. The original texts were written in scriptio continua with no punctuation — the colometric line breaks themselves do the structural work that later editorial punctuation attempts to do. The web reader hides punctuation by default for this reason.
+
