@@ -182,6 +182,51 @@ These examples from the hand-crafted test chapters show what the project reveals
 
 ---
 
+## Four-Tier Pipeline
+
+The colometric formatting pipeline has four tiers, each building on the previous:
+
+### Tier 1 — Pattern-Matching (v1-colometric)
+
+Script: `auto_colometry.py`. Rule-based surface-text pattern matching. Breaks at known subordinating conjunctions (ἵνα, ὥστε, ὅτι, ὅταν, ὅτε, ἐάν, μήποτε, etc.), discourse markers (ἀλλά, πλήν, ἄρα), postpositive conjunctions (γάρ, οὖν), μέν/δέ correlative pairs, speech introductions, vocative phrases, and comma+καί heuristic. Conjunction inventory informed by Wallace, *Greek Grammar Beyond the Basics* (1996), chapters 24–25. Known limitation: cannot detect participial phrases, genitive absolutes, or clause boundaries not marked by a surface-level conjunction.
+
+### Tier 2 — Syntax-Tree-Driven (v2-colometric)
+
+Script: `v2_colometry.py` using `macula_clauses.py`. Uses clause boundaries extracted from the **Macula Greek** Lowfat XML syntax trees (Clear Bible, CC-BY 4.0), which provide hierarchical phrase-structure annotation of the SBLGNT text. Clause boundaries are determined by scholars, not heuristics. The Macula trees are derived from the Global Bible Initiative syntax markup, auto-generated then hand-corrected.
+
+**What this tier adds:**
+- Participial phrases isolated as their own lines (detected by `mood="participle"` in the tree)
+- Genitive absolutes identified (genitive participle + genitive noun/pronoun within the same clause node)
+- Clause boundaries in long prose passages that have no surface conjunction trigger
+- Infinitival clauses, relative clauses, and complement clauses properly segmented
+
+**Data sources:**
+- **Macula Greek** (github.com/Clear-Bible/macula-greek) — SBLGNT syntax trees, CC-BY 4.0
+- **MorphGNT** (github.com/morphgnt/sblgnt) — SBLGNT morphological tagging, CC-BY-SA
+
+The SBLGNT source text remains canonical for all output — the Macula data determines WHERE to break, but WHAT text appears comes from the SBLGNT.
+
+### Tier 3 — Rhetorical Pattern Layer (future)
+
+Applied on top of v2 clause boundaries. Detects and formats rhetorical structures:
+- Tricolon/bicolon stacking (parallel lists displayed vertically)
+- μέν/δέ contrast display
+- Climactic parallelism
+- Chiastic structure display
+- Geographic/catalog list stacking
+
+This tier answers *how should the clauses display* rather than *where do clauses break*.
+
+### Tier 4 — Editorial Hand (future)
+
+Stan's hand editing. Makes final decisions on:
+- Cases where automated breaking is suboptimal
+- Dramatic emphasis (standalone short lines for rhetorical effect)
+- Theological sensitivity (break placement that affects doctrinal reading)
+- Resolving open questions (genitive absolute attachment, ὅτι recitativum, etc.)
+
+---
+
 ### Established — 2026-04-09
 - Initial methodology document created
 - Two test chapters hand-formatted (Mark 4, Acts 17)
@@ -189,3 +234,13 @@ These examples from the hand-crafted test chapters show what the project reveals
 - Auto-formatter built and run on all 27 books (260 chapters)
 - Known limitations of auto-formatter documented
 - Hand-crafted test chapters overwritten by auto-formatter (preserved in git history and /tmp)
+
+---
+
+### Update — 2026-04-09 (session 2)
+- Four-tier pipeline designed and documented
+- Tier 1 expanded with Wallace-informed conjunction inventory (γάρ, οὖν, δέ, εἰ, ἐπεί, ὅπως, ἄχρι, etc.)
+- Tier 2 built using Macula Greek syntax trees for clause-boundary extraction
+- MorphGNT and Macula Greek datasets integrated (stored in research/ directory, gitignored)
+- v2-colometric output generated for all 260 chapters
+- Web app now serving v2 output

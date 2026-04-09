@@ -12,15 +12,21 @@ readers-gnt/
     text-files/
       sblgnt-source/                     # 27 raw SBLGNT files (canonical, NEVER edit)
         Matt.txt, Mark.txt, ... Rev.txt
-      v1-colometric/                     # 260 auto-formatted chapter files (working text)
+      v1-colometric/                     # 260 pattern-matched chapter files (tier 1)
         matt-01.txt ... rev-22.txt
-  books/                                 # 27 generated HTML fragment files (one per book)
+      v2-colometric/                     # 260 syntax-tree-driven chapter files (tier 2, active)
+        matt-01.txt ... rev-22.txt
+  books/                                 # 27 generated HTML fragment files (from v2)
     matt.html, mark.html, ... rev.html
   scripts/
-    auto_colometry.py                    # Rule-based sense-line formatter (~490 lines)
-    build_books.py                       # Text→HTML fragment builder
+    auto_colometry.py                    # Tier 1: rule-based sense-line formatter
+    v2_colometry.py                      # Tier 2: Macula syntax-tree-driven formatter
+    macula_clauses.py                    # Clause boundary extractor from Macula XML
+    build_books.py                       # Text→HTML fragment builder (reads v2-colometric)
   handoffs/                              # Project documentation (this folder)
-  research/                              # Gitignored, for vault symlink (future)
+  research/                              # Gitignored — external datasets
+    morphgnt-sblgnt/                     # MorphGNT SBLGNT morphological tagging
+    macula-greek/                        # Macula Greek syntax trees (Clear Bible)
 ```
 
 ## Base Text: SBLGNT
@@ -64,9 +70,40 @@ PYTHONIOENCODING=utf-8 py -3 scripts/auto_colometry.py --book Mark --chapter 4  
 
 **IMPORTANT:** Running auto_colometry.py will **overwrite** all files in v1-colometric. If hand edits have been made, they will be lost. Once hand editing begins on specific chapters, those chapters should be protected from re-runs (a mechanism for this doesn't exist yet — it's a future need).
 
+### v2_colometry.py (Tier 2 — syntax-tree-driven)
+
+Uses Macula Greek syntax trees to determine clause boundaries, then maps those boundaries onto the canonical SBLGNT text to produce colometric output. This is the primary formatter as of 2026-04-09.
+
+**Usage:**
+```bash
+PYTHONIOENCODING=utf-8 py -3 scripts/v2_colometry.py                    # all 27 books
+PYTHONIOENCODING=utf-8 py -3 scripts/v2_colometry.py --book Acts         # one book
+PYTHONIOENCODING=utf-8 py -3 scripts/v2_colometry.py --book Acts --chapter 1  # one chapter
+```
+
+**What it does:**
+1. Reads SBLGNT source text (canonical words with punctuation)
+2. Reads Macula clause boundaries via `macula_clauses.py`
+3. Aligns Macula clause labels to SBLGNT word positions
+4. Breaks lines at clause boundaries
+5. Cleanup: merges isolated particles/articles, fixes dangling function words
+
+**Input:** `data/text-files/sblgnt-source/*.txt` + `research/macula-greek/SBLGNT/lowfat/*.xml`
+**Output:** `data/text-files/v2-colometric/*.txt`
+
+**Requires:** Macula Greek dataset in `research/macula-greek/` (gitignored, cloned separately).
+
+### macula_clauses.py
+
+Library module that extracts clause boundaries from Macula Greek Lowfat XML syntax trees. Used by `v2_colometry.py`.
+
+**Key functions:**
+- `get_chapter_clauses(book, chapter)` → `{verse: [clause_text, ...]}`
+- `get_chapter_clauses_detailed(book, chapter)` → `{verse: [ClauseInfo, ...]}` with metadata (participle flags, genitive absolute detection)
+
 ### build_books.py
 
-Converts v1-colometric text files to HTML fragment files.
+Converts v2-colometric text files to HTML fragment files.
 
 **Usage:**
 ```bash
@@ -75,7 +112,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark    # one book
 ```
 
 **What it does:**
-1. Globs all `.txt` files in `data/text-files/v1-colometric/`
+1. Globs all `.txt` files in `data/text-files/v2-colometric/`
 2. Groups by book prefix (everything before last dash in filename)
 3. Parses each chapter file into verse blocks (verse ref line, then sense-lines, separated by blank lines)
 4. Skips header lines before first verse reference
@@ -199,3 +236,14 @@ Single-page app, all CSS and JS inline. No external dependencies except Google F
 - Web app built with BOM Reader design language
 - All 27 books formatted, built, and committed
 - GitHub Pages deployment instructions documented
+
+---
+
+### Update — 2026-04-09 (session 2)
+- Tier 1 auto-formatter expanded: added γάρ, οὖν (postpositive handling), δέ, εἰ, ἐπεί, ὅπως, ἄχρι, μέχρι, διό, ἄρα, ὥσπερ, ὅπου; μέν/δέ stacking; vocative detection
+- Tier 2 formatter built: v2_colometry.py + macula_clauses.py
+- MorphGNT and Macula Greek datasets cloned to research/ (gitignored)
+- v2-colometric directory created with all 260 chapters
+- build_books.py now reads from v2-colometric (was v1-colometric)
+- Web app now serves v2 syntax-tree-driven output
+- Repo renamed from readers-nt to readers-gnt; all branding updated to "GNT Reader"

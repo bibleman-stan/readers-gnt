@@ -5,25 +5,27 @@
 ```
 SBLGNT source (canonical, never edit)
         │
-        ▼
-  auto_colometry.py  (automated v1 pass)
-        │
-        ▼
-  v1-colometric/*.txt  (working text — Stan hand-edits here)
-        │
-        ▼
-  build_books.py  (text → HTML)
-        │
-        ▼
-  books/*.html  (served by web app)
-        │
-        ▼
-  index.html loads fragments via fetch()
+        ├──────────────────────────────────┐
+        ▼                                  ▼
+  auto_colometry.py (tier 1)    v2_colometry.py + macula_clauses.py (tier 2)
+        │                                  │
+        ▼                                  ▼
+  v1-colometric/*.txt            v2-colometric/*.txt  ← active
+        │                                  │
+        └──────────────┬───────────────────┘
+                       ▼
+              build_books.py  (text → HTML, currently reads v2)
+                       │
+                       ▼
+              books/*.html  (served by web app)
+                       │
+                       ▼
+              index.html loads fragments via fetch()
 ```
 
 ## Current State (2026-04-09)
 
-**All 260 chapters have v1 auto-formatted text.** None have been hand-edited yet. The entire GNT is readable in the web app but at "v1 quality" — decent automated breaking but lacking the editorial refinement that makes the colometry truly powerful.
+**All 260 chapters have v2 syntax-tree-driven text.** The web app serves v2 output. v1 pattern-matched output is preserved in v1-colometric/ for comparison. No hand editing has begun yet. The v2 output uses scholar-annotated clause boundaries from the Macula Greek syntax trees, representing a significant improvement over v1 in participial phrase detection, genitive absolute isolation, and prose segmentation.
 
 ## Hand-Editing Process
 
@@ -121,3 +123,11 @@ No priorities have been set yet. Some natural starting points:
 - Auto-formatter vs. hand-crafted quality comparison demonstrated
 - Protection mechanism for hand-edited chapters flagged as future need
 - No hand editing has begun yet — all 260 chapters are at v1 quality
+
+---
+
+### Update — 2026-04-09 (session 2)
+- Pipeline updated to four-tier model (v1 pattern → v2 syntax trees → v3 rhetorical patterns → v4 editorial hand)
+- v2 output now active — web app serves syntax-tree-driven colometry
+- v1 output preserved for comparison
+- Comparison: v2 resolves the major v1 limitation (long unbroken lines with participial phrases, genitive absolutes, infinitival clauses). Acts 1:2, which was one line in v1, now breaks into four clauses. Mark 4:8 triadic yield stacks automatically from the tree structure.

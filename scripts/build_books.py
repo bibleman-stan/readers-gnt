@@ -20,7 +20,7 @@ from collections import defaultdict
 # Paths relative to this script's location
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPT_DIR)
-INPUT_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v1-colometric")
+INPUT_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v2-colometric")
 OUTPUT_DIR = os.path.join(REPO_ROOT, "books")
 
 # Verse reference pattern: digits, colon, digits (e.g. "4:1", "17:33")
