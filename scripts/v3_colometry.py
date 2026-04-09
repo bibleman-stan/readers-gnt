@@ -54,6 +54,13 @@ try:
 except ImportError:
     _HAS_SENTENCES = False
 
+# Macula word-group boundary detection — sub-clause split points for long lines
+try:
+    from macula_wordgroups import find_wg_split_points_in_line
+    _HAS_WORDGROUPS = True
+except ImportError:
+    _HAS_WORDGROUPS = False
+
 # ---------- configuration ----------
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -2413,6 +2420,142 @@ def apply_stranded_function_word_merge(verse_lines):
 _stranded_participle_merge_count = 0
 _stranded_noun_merge_count = 0
 _two_word_function_merge_count = 0
+_dangling_word_fix_count = 0
+
+
+# ---------- Dangling function word fix ----------
+
+# Comprehensive set of function words that must never dangle at line end.
+# A "dangling" word is one that ends a multi-word line but grammatically
+# belongs with the content on the NEXT line (proclitic / bound forward).
+DANGLING_FUNCTION_WORDS = {
+    # Conjunctions
+    'καὶ', 'καί', 'Καὶ', 'Καί', 'δὲ', 'δέ', 'ἀλλὰ', 'ἀλλά', 'Ἀλλὰ',
+    'γὰρ', 'γάρ', 'οὖν', 'ὅτι', 'ἵνα', 'εἰ', 'ἐάν', 'ἐὰν',
+    'ὥστε', 'ὅταν', 'ὅτε', 'ἕως', 'μηδὲ', 'οὐδὲ', 'τε',
+    'ἤ', 'ἢ', 'μήτε', 'οὔτε', 'εἴτε', 'καθὼς', 'καθώς', 'ὡς',
+    'ἐπεὶ', 'ἐπειδὴ', 'διότι', 'πλὴν', 'ἄρα', 'διό', 'μέν', 'μὲν',
+    'εἴπερ', 'ἐάνπερ', 'εἴγε', 'ὥσπερ', 'μήποτε',
+    'ἄχρι', 'μέχρι', 'ὅπως', 'ὅπου', 'πρὶν',
+    # Elided conjunction forms
+    'ἀλλʼ', 'Ἀλλʼ', "ἀλλ'", "Ἀλλ'",
+    # Articles
+    'ὁ', 'ἡ', 'τό', 'τὸ', 'τοῦ', 'τῆς', 'τῷ', 'τῇ', 'τόν', 'τὸν',
+    'τήν', 'τὴν', 'οἱ', 'αἱ', 'τά', 'τὰ', 'τῶν', 'τοῖς', 'ταῖς',
+    'τούς', 'τοὺς', 'τάς', 'τὰς',
+    # Prepositions
+    'ἐν', 'εἰς', 'ἐκ', 'ἐξ', 'ἀπό', 'ἀπὸ', 'πρός', 'πρὸς',
+    'ἐπί', 'ἐπὶ', 'κατά', 'κατὰ', 'μετά', 'μετὰ', 'διά', 'διὰ',
+    'ὑπό', 'ὑπὸ', 'παρά', 'παρὰ', 'περί', 'περὶ', 'πρό', 'πρὸ',
+    'σύν', 'σὺν', 'ὑπέρ', 'ὑπὲρ',
+    # Relative pronouns (acute and grave accent forms)
+    'ὅς', 'ὃς', 'ἥ', 'ἣ', 'ὅ', 'ὃ', 'ὅν', 'ὃν', 'ἥν', 'ἣν',
+    'ᾧ', 'ᾗ', 'οὗ', 'ἧς', 'ὧν', 'οἷς', 'αἷς', 'οὕς', 'οὓς', 'ἅς', 'ἃς',
+    # Particles
+    'ἄν', 'ἂν', 'μή', 'μὴ', 'οὐ', 'οὐκ', 'οὐχ', 'μέν', 'μὲν', 'τε',
+    # Presentative particles
+    'ἰδού', 'ἰδοὺ', 'Ἰδού', 'Ἰδοὺ', 'ἴδε', 'Ἴδε',
+}
+
+
+def apply_dangling_word_fix(verse_lines):
+    """Fix function words dangling at the END of a multi-word line.
+
+    The colometric rule is: "Never dangle a conjunction at line end."
+    This extends to ALL function words — conjunctions, prepositions,
+    articles, relative pronouns, and particles. These are grammatically
+    bound forward to the content on the next line.
+
+    Unlike apply_stranded_function_word_merge (which handles single-word
+    lines), this handles multi-word lines where the LAST word(s) are
+    function words that belong with the next line's content.
+
+    Also handles multi-word dangles: if a line ends with two function
+    words (e.g., "διὰ τοὺς"), both are moved to the next line.
+
+    Examples:
+      "τοῦ νόμου, ἐν"  /  "ᾧ ἠσθένει"
+      → "τοῦ νόμου,"  /  "ἐν ᾧ ἠσθένει"
+
+      "χαρᾷ χαίρει διὰ"  /  "τὴν φωνὴν"
+      → "χαρᾷ χαίρει"  /  "διὰ τὴν φωνὴν"
+
+      "διὰ τοὺς"  /  "μέλλοντας"
+      → (handled by stranded function word merge — this catches the
+         case where "content... διὰ τοὺς" dangles at end)
+    """
+    global _dangling_word_fix_count
+
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    result = list(verse_lines)
+
+    for i in range(len(result) - 1):
+        line = result[i].rstrip()
+        words = line.split()
+        if len(words) < 2:
+            # Single-word lines are handled by apply_stranded_function_word_merge
+            continue
+
+        # Check how many trailing words are function words (up to 3)
+        dangling_count = 0
+        for k in range(1, min(4, len(words))):
+            # Check the k-th word from the end
+            candidate = words[-k].rstrip('.,;·:')
+            if candidate in DANGLING_FUNCTION_WORDS:
+                dangling_count = k
+            else:
+                break
+
+        if dangling_count == 0:
+            continue
+
+        # Don't move ALL words — that would leave an empty line
+        if dangling_count >= len(words):
+            continue
+
+        # Extract the dangling words (preserve their original forms)
+        dangling_words = words[-dangling_count:]
+        remaining_words = words[:-dangling_count]
+
+        # Rebuild the current line without the dangling words
+        # Preserve any punctuation that was between the remaining content
+        # and the dangling word
+        new_current = ' '.join(remaining_words)
+        # Clean trailing comma/space that was before the dangling word
+        new_current = new_current.rstrip(' ,')
+
+        # Check if there was punctuation before the dangling word that
+        # should be preserved on this line (e.g., comma after a clause)
+        # Look at the last remaining word — if the original line had
+        # punctuation between remaining and dangling, keep it
+        orig_remaining_end = remaining_words[-1]
+        # Find position in original line right after remaining words
+        # to check for intervening punctuation
+        remaining_text = ' '.join(remaining_words)
+        pos_after_remaining = line.find(remaining_text) + len(remaining_text)
+        between_text = line[pos_after_remaining:line.rfind(dangling_words[0])]
+        # If there's a comma between, keep it on the current line
+        if ',' in between_text:
+            if not new_current.endswith(','):
+                new_current = new_current + ','
+
+        # Build the dangling portion — strip punctuation from the words
+        # being moved (they'll join the next line's beginning)
+        dangling_clean = []
+        for w in dangling_words:
+            dangling_clean.append(w.rstrip('.,;·:'))
+
+        # Prepend dangling words to next line
+        next_line = result[i + 1].lstrip()
+        new_next = ' '.join(dangling_clean) + ' ' + next_line
+
+        result[i] = new_current
+        result[i + 1] = new_next
+        _dangling_word_fix_count += 1
+
+    return result
 
 
 def apply_stranded_participle_merge(verse_lines, book_slug=None):
@@ -2653,6 +2796,249 @@ def apply_sentence_boundary_splits(verse_lines, book_slug=None, verse_ref=None):
     return result
 
 
+# ---------- Long-line sub-clause splitting ----------
+
+# Threshold: ~30 syllables at reading pace (Nässelqvist) ≈ 80 chars of Greek
+_LONG_LINE_THRESHOLD = 80
+_MIN_HALF_LENGTH = 20   # don't create fragments shorter than this
+
+_long_line_split_count = 0
+
+# Articles — never split between article and its noun
+_ARTICLES = frozenset([
+    'ὁ', 'ἡ', 'τό', 'τοῦ', 'τῆς', 'τῷ', 'τῇ',
+    'τόν', 'τήν', 'οἱ', 'αἱ', 'τά', 'τῶν', 'τοῖς', 'ταῖς',
+    'τούς', 'τάς',
+])
+
+# Prepositions — never split between prep and its object
+_PREPOSITIONS_SET = frozenset([
+    'ἐν', 'εἰς', 'ἐκ', 'ἐξ', 'ἀπό', 'ἀπ', 'ἀφ', 'πρός', 'ἐπί', 'ἐπ', 'ἐφ',
+    'κατά', 'κατ', 'καθ', 'μετά', 'μετ', 'μεθ', 'διά', 'δι', 'ὑπό', 'ὑπ', 'ὑφ',
+    'παρά', 'παρ', 'περί', 'πρό', 'σύν', 'ἀντί', 'ὑπέρ',
+])
+
+# Heuristic split-point prepositions (for fallback when Macula unavailable)
+_HEURISTIC_SPLIT_PREPS = frozenset([
+    'ἐν', 'εἰς', 'ἐκ', 'ἐξ', 'ἀπό', 'ἀπ', 'πρός', 'ἐπί', 'ἐπ',
+    'κατά', 'κατ', 'μετά', 'μετ', 'διά', 'δι', 'ὑπό', 'ὑπ',
+    'παρά', 'παρ', 'περί', 'πρό', 'σύν', 'ἀντί', 'ὑπέρ',
+])
+
+
+def _is_safe_split_point(words, idx):
+    """Check if splitting BEFORE word at idx is safe (won't break tight pairs).
+
+    Guards:
+    - Don't split after an article (article must stay with its noun)
+    - Don't split after a preposition (preposition must stay with its object)
+    - Don't split at index 0 (would create empty first half)
+    """
+    if idx <= 0 or idx >= len(words):
+        return False
+
+    prev_word = re.sub(r'[,.\;·⸀⸁⸂⸃⸄⸅]', '', words[idx - 1])
+    if prev_word in _ARTICLES:
+        return False
+    if prev_word in _PREPOSITIONS_SET:
+        return False
+
+    return True
+
+
+def _find_best_macula_split(line, words, book_slug, chapter, verse):
+    """Use Macula word-group boundaries to find the best split point.
+
+    Returns the word index to split before, or None if no good point found.
+    Prefers the split closest to the midpoint among the shallowest-depth boundaries.
+    """
+    if not _HAS_WORDGROUPS or not book_slug:
+        return None
+
+    split_points = find_wg_split_points_in_line(line, book_slug, chapter, verse)
+    if not split_points:
+        return None
+
+    midpoint = len(words) // 2
+
+    # Filter to safe split points
+    safe_points = [(idx, depth) for idx, depth in split_points
+                   if _is_safe_split_point(words, idx)]
+    if not safe_points:
+        return None
+
+    # Filter to points where both halves >= _MIN_HALF_LENGTH chars
+    valid_points = []
+    for idx, depth in safe_points:
+        left = ' '.join(words[:idx])
+        right = ' '.join(words[idx:])
+        if len(left) >= _MIN_HALF_LENGTH and len(right) >= _MIN_HALF_LENGTH:
+            valid_points.append((idx, depth))
+
+    if not valid_points:
+        return None
+
+    # Find the minimum (shallowest) depth among valid points
+    min_depth = min(d for _, d in valid_points)
+
+    # Among points at or near the shallowest depth (within 2 levels),
+    # pick the one closest to the midpoint
+    candidates = [(idx, depth) for idx, depth in valid_points
+                  if depth <= min_depth + 2]
+
+    best = min(candidates, key=lambda x: abs(x[0] - midpoint))
+    return best[0]
+
+
+def _find_heuristic_split(words, line_len):
+    """Fallback heuristic split when Macula is unavailable.
+
+    Split before:
+    - Prepositional phrases (preposition preceded by >30 chars of content)
+    - καί + new verb pattern (paratactic break)
+    - Participial forms preceded by >30 chars
+
+    Returns the best word index to split before, or None.
+    """
+    midpoint = len(words) // 2
+    candidates = []
+
+    for i in range(1, len(words)):
+        if not _is_safe_split_point(words, i):
+            continue
+
+        left = ' '.join(words[:i])
+        right = ' '.join(words[i:])
+        if len(left) < _MIN_HALF_LENGTH or len(right) < _MIN_HALF_LENGTH:
+            continue
+
+        clean_word = re.sub(r'[,.\;·⸀⸁⸂⸃⸄⸅]', '', words[i])
+
+        # Preposition with sufficient preceding content
+        if clean_word in _HEURISTIC_SPLIT_PREPS and len(left) >= 30:
+            candidates.append((i, 1))  # priority 1 (high)
+            continue
+
+        # καί followed by content (paratactic break)
+        if clean_word == 'καί' or clean_word == 'καὶ':
+            if len(left) >= 30:
+                candidates.append((i, 2))  # priority 2
+                continue
+
+        # Participle forms (common endings) with sufficient preceding content
+        ptcp_endings = ('μενος', 'μένος', 'μένη', 'μένον', 'μένου', 'μένῳ',
+                        'μενοι', 'μένοι', 'μένων', 'μένοις', 'μένους',
+                        'σας', 'σαν', 'ων', 'ών', 'ῶν', 'οῦσα', 'οῦσαν')
+        if clean_word.endswith(ptcp_endings) and len(left) >= 30:
+            candidates.append((i, 3))  # priority 3
+            continue
+
+    if not candidates:
+        return None
+
+    # Group by priority, pick closest to midpoint within best priority
+    best_priority = min(p for _, p in candidates)
+    best_candidates = [idx for idx, p in candidates if p == best_priority]
+    return min(best_candidates, key=lambda x: abs(x - midpoint))
+
+
+def _split_line_once(line, book_slug, chapter, verse):
+    """Try to split a long line at the best sub-clause boundary.
+
+    Returns (left, right) if a split was found, or None.
+    """
+    stripped = line.strip()
+    if len(stripped) <= _LONG_LINE_THRESHOLD:
+        return None
+
+    words = stripped.split()
+    if len(words) < 3:
+        return None
+
+    # Try Macula word-group boundaries first
+    split_idx = _find_best_macula_split(stripped, words, book_slug, chapter, verse)
+
+    # Fallback to heuristic
+    if split_idx is None:
+        split_idx = _find_heuristic_split(words, len(stripped))
+
+    if split_idx is None:
+        return None
+
+    left = ' '.join(words[:split_idx])
+    right = ' '.join(words[split_idx:])
+
+    # Final safety check
+    if len(left) < _MIN_HALF_LENGTH or len(right) < _MIN_HALF_LENGTH:
+        return None
+
+    return (left, right)
+
+
+def apply_long_line_subclause_splits(verse_lines, book_slug=None, verse_ref=None):
+    """Split lines >80 chars at Macula word-group boundaries.
+
+    This is a FINAL DISPLAY OPTIMIZATION pass that runs after all merge rules.
+    It only splits lines that exceed the breath-unit threshold (~30 syllables
+    ≈ 80 chars of Greek). It uses Macula <wg> boundaries to find natural
+    sub-clause split points, with a heuristic fallback.
+
+    Guards:
+    - Don't split between article and noun
+    - Don't split between preposition and object
+    - Don't create fragments under 20 chars
+    - Applies recursively (a 300-char line may need multiple splits)
+    """
+    global _long_line_split_count
+
+    chapter, verse = None, None
+    if verse_ref:
+        parts = verse_ref.split(':')
+        if len(parts) == 2:
+            try:
+                chapter, verse = int(parts[0]), int(parts[1])
+            except ValueError:
+                pass
+
+    result = []
+    for line in verse_lines:
+        stripped = line.strip()
+        if len(stripped) <= _LONG_LINE_THRESHOLD:
+            result.append(line)
+            continue
+
+        # Recursively split until all pieces are under threshold or unsplittable
+        pending = [stripped]
+        final_pieces = []
+        max_iterations = 10  # safety limit
+
+        for _ in range(max_iterations):
+            next_pending = []
+            made_progress = False
+            for piece in pending:
+                if len(piece) <= _LONG_LINE_THRESHOLD:
+                    final_pieces.append(piece)
+                    continue
+                split_result = _split_line_once(piece, book_slug, chapter, verse)
+                if split_result:
+                    left, right = split_result
+                    next_pending.append(left)
+                    next_pending.append(right)
+                    _long_line_split_count += 1
+                    made_progress = True
+                else:
+                    final_pieces.append(piece)
+            pending = next_pending
+            if not made_progress:
+                break
+
+        # Add any remaining pending pieces
+        final_pieces.extend(pending)
+        result.extend(final_pieces)
+
+    return result
+
+
 def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     """Apply all rhetorical patterns to a verse's lines."""
     lines = list(verse_lines)
@@ -2800,6 +3186,12 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     # split created a two-word fragment of function words (1 Cor 12:29-30).
     lines = apply_two_word_function_merge(lines)
 
+    # POST-SPLIT CLEANUP: Fix dangling function words at line endings.
+    # Conjunctions, prepositions, articles, relative pronouns, and particles
+    # must never dangle at the end of a line — they are bound forward to the
+    # content on the next line. This is a pervasive v2 artifact.
+    lines = apply_dangling_word_fix(lines)
+
     # SAFETY NET: Merge stranded single-word participle lines.
     # Catches attributive/circumstantial participles that earlier rules missed
     # (typically due to Macula word matching failures for accent variants).
@@ -2808,6 +3200,17 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     # SAFETY NET: Merge stranded single-word noun/pronoun lines.
     # Catches subjects/objects split from their governing verb.
     lines = apply_stranded_noun_merge(lines, book_slug=book_slug)
+
+    # FINAL GUARD: Dangling function word fix — run again after all safety nets.
+    # Earlier passes (stranded participle/noun merges) can re-introduce dangles.
+    lines = apply_dangling_word_fix(lines)
+
+    # FINAL PASS: Long-line sub-clause splits — break lines >80 chars at
+    # Macula word-group boundaries. Runs LAST because it is a display
+    # optimization pass, not a structural rule. All merge/split decisions
+    # have been finalized; this only subdivides lines that are too long
+    # for a single breath unit.
+    lines = apply_long_line_subclause_splits(lines, book_slug=book_slug, verse_ref=verse_ref)
 
     return lines
 
@@ -2865,6 +3268,8 @@ def main():
     global _periphrastic_merge_count, _predication_merge_count, _sentence_split_count, _multi_image_split_count, _stranded_verb_merge_count
     global _stranded_participle_merge_count, _stranded_noun_merge_count, _two_word_function_merge_count
     global _relative_clause_split_count, _complement_participle_merge_count
+    global _dangling_word_fix_count
+    global _long_line_split_count
     _periphrastic_merge_count = 0
     _predication_merge_count = 0
     _sentence_split_count = 0
@@ -2875,6 +3280,8 @@ def main():
     _two_word_function_merge_count = 0
     _relative_clause_split_count = 0
     _complement_participle_merge_count = 0
+    _dangling_word_fix_count = 0
+    _long_line_split_count = 0
 
     if args.book:
         if args.book not in BOOKS:
@@ -2906,8 +3313,12 @@ def main():
         print(f'Relative clause splits (rel. pronoun → new colon): {_relative_clause_split_count}')
     if _complement_participle_merge_count > 0:
         print(f'Complement participle merges (ptcp merged back into verb): {_complement_participle_merge_count}')
+    if _dangling_word_fix_count > 0:
+        print(f'Dangling function word fixes (moved from line end to next line): {_dangling_word_fix_count}')
     if _sentence_split_count > 0:
         print(f'Sentence boundary splits (cross-sentence lines split): {_sentence_split_count}')
+    if _long_line_split_count > 0:
+        print(f'Long-line sub-clause splits (>80 chars broken at wg boundaries): {_long_line_split_count}')
 
 
 if __name__ == '__main__':
