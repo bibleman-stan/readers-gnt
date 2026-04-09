@@ -35,6 +35,9 @@ _word_pos_cache = {}
 # Cache: {book_slug: {(chapter, verse): [(word, pos, parsing), ...]}}
 _verse_cache = {}
 
+# Cache: {book_slug: {cleaned_word: set(lemmas)}}
+_word_lemma_cache = {}
+
 
 def _find_morphgnt_file(book_slug):
     """Find the MorphGNT file for a given book slug."""
@@ -60,6 +63,7 @@ def _load_book(book_slug):
 
     verses = defaultdict(list)
     word_pos = defaultdict(set)
+    word_lemmas = defaultdict(set)
 
     with open(filepath, 'r', encoding='utf-8') as f:
         for line in f:
@@ -75,9 +79,11 @@ def _load_book(book_slug):
             clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', word)
             if clean:
                 word_pos[clean].add(pos.strip())
+                word_lemmas[clean].add(lemma)
 
     _verse_cache[book_slug] = dict(verses)
     _word_pos_cache[book_slug] = dict(word_pos)
+    _word_lemma_cache[book_slug] = dict(word_lemmas)
     return dict(verses)
 
 
@@ -192,7 +198,125 @@ def get_comparative_words(book_slug):
     return comparatives
 
 
+def word_is_participle(word, book_slug):
+    """Check if a word is tagged as a participle in MorphGNT.
+
+    MorphGNT parsing field position 3 (0-indexed) encodes mood:
+    P = participle. We check V- POS words with parsing[3]='P'.
+
+    Args:
+        word: A Greek word (may include punctuation)
+        book_slug: Book identifier (e.g., 'mark', 'acts')
+
+    Returns:
+        True if the word is tagged as a participle in any verse.
+    """
+    clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', word)
+    if not clean:
+        return False
+    if book_slug not in _verse_cache:
+        _load_book(book_slug)
+    verses = _verse_cache.get(book_slug, {})
+    for (ch, vs), word_list in verses.items():
+        for w, pos, parsing in word_list:
+            if not pos.startswith('V'):
+                continue
+            w_clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', w)
+            if w_clean == clean and len(parsing) >= 4 and parsing[3] == 'P':
+                return True
+    return False
+
+
+def word_has_lemma(word, book_slug, target_lemma):
+    """Check if a word has a specific lemma in MorphGNT.
+
+    Args:
+        word: A Greek word (may include punctuation)
+        book_slug: Book identifier (e.g., 'mark', 'acts')
+        target_lemma: The lemma to check for (e.g., 'εἰμί')
+
+    Returns:
+        True if any MorphGNT entry for this word has the target lemma.
+    """
+    clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', word)
+    if not clean:
+        return False
+    if book_slug not in _word_lemma_cache:
+        _load_book(book_slug)
+    lemma_map = _word_lemma_cache.get(book_slug, {})
+    return target_lemma in lemma_map.get(clean, set())
+
+
+def word_is_imperative(word, book_slug):
+    """Check if a word is tagged as an imperative verb in MorphGNT.
+
+    MorphGNT parsing field position 3 (0-indexed) encodes mood:
+    D = imperative.
+
+    Args:
+        word: A Greek word (may include punctuation)
+        book_slug: Book identifier (e.g., 'mark', 'acts')
+
+    Returns:
+        True if the word is tagged as an imperative in any verse.
+    """
+    clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', word)
+    if not clean:
+        return False
+    if book_slug not in _verse_cache:
+        _load_book(book_slug)
+    verses = _verse_cache.get(book_slug, {})
+    for (ch, vs), word_list in verses.items():
+        for w, pos, parsing in word_list:
+            if not pos.startswith('V'):
+                continue
+            w_clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', w)
+            if w_clean == clean and len(parsing) >= 4 and parsing[3] == 'D':
+                return True
+    return False
+
+
+def get_imperative_words_on_line(line_text, book_slug):
+    """Return a list of (word, position_in_line) for imperative verbs on a line.
+
+    Args:
+        line_text: A line of Greek text
+        book_slug: Book identifier
+
+    Returns:
+        List of (cleaned_word, char_index) tuples for each imperative found.
+    """
+    results = []
+    words = line_text.strip().split()
+    if not words:
+        return results
+
+    if book_slug not in _verse_cache:
+        _load_book(book_slug)
+    verses = _verse_cache.get(book_slug, {})
+
+    # Build set of imperative words in this book
+    imperative_words = set()
+    for (ch, vs), word_list in verses.items():
+        for w, pos, parsing in word_list:
+            if pos.startswith('V') and len(parsing) >= 4 and parsing[3] == 'D':
+                w_clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', w)
+                if w_clean:
+                    imperative_words.add(w_clean)
+
+    # Find imperative words on this line, tracking character position
+    pos = 0
+    for w in words:
+        clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', w)
+        if clean in imperative_words:
+            results.append((clean, pos))
+        pos += len(w) + 1  # +1 for the space
+
+    return results
+
+
 def clear_cache():
     """Clear all cached data."""
     _word_pos_cache.clear()
     _verse_cache.clear()
+    _word_lemma_cache.clear()

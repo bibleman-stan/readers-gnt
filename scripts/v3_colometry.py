@@ -23,7 +23,9 @@ import argparse
 # MorphGNT lookup for verbal element detection
 try:
     from morphgnt_lookup import (line_has_verbal_element, line_has_finite_verb,
-                                  get_comparative_words)
+                                  get_comparative_words, word_is_participle,
+                                  word_has_lemma, word_is_imperative,
+                                  get_imperative_words_on_line)
     _HAS_MORPHGNT = True
 except ImportError:
     _HAS_MORPHGNT = False
@@ -315,6 +317,176 @@ def apply_complementary_verb_without_infinitive_merge(verse_lines):
     return result
 
 
+# ---------- Pattern 0a: Periphrastic construction merge ----------
+
+# Forms of εἰμί for fast lookup (surface forms as they appear in the text)
+EIMI_FORMS = {
+    # Present indicative
+    'εἰμί', 'εἰμὶ', 'εἶ', 'ἐστίν', 'ἐστὶν', 'ἐστιν',
+    'ἐσμέν', 'ἐσμὲν', 'ἐστέ', 'ἐστὲ', 'εἰσίν', 'εἰσὶν', 'εἰσιν',
+    # Imperfect indicative
+    'ἦν', 'ἦς', 'ἦμεν', 'ἦτε', 'ἦσαν', 'ἤμην', 'ἤμεθα',
+    # Future indicative
+    'ἔσομαι', 'ἔσῃ', 'ἔσται', 'ἐσόμεθα', 'ἔσεσθε', 'ἔσονται',
+    # Present subjunctive
+    'ὦ', 'ᾖς', 'ᾖ', 'ὦμεν', 'ὦσιν', 'ὦσὶν',
+    # Imperative
+    'ἴσθι', 'ἔστω', 'ἔστε', 'ἔστωσαν',
+    # NOTE: εἶναι (infinitive) deliberately excluded — infinitives don't
+    # form periphrastic constructions with participles.
+}
+
+# Global counter for reporting
+_periphrastic_merge_count = 0
+
+
+def _clean_word(w):
+    """Strip punctuation from a Greek word for lookup."""
+    return re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', w)
+
+
+def _line_ends_with_eimi(line, book_slug):
+    """Check if a line ends with a finite form of εἰμί.
+
+    Uses the surface form set only (no lemma fallback) to avoid matching
+    εἶναι (infinitive) or ὤν/οὖσα/ὄν (participles of εἰμί), which don't
+    form periphrastic constructions.
+    """
+    stripped = line.rstrip()
+    words = stripped.split()
+    if not words:
+        return False
+    last_word = _clean_word(words[-1])
+    return last_word in EIMI_FORMS
+
+
+def _line_starts_with_eimi(line, book_slug):
+    """Check if a line starts with a finite form of εἰμί."""
+    stripped = line.strip()
+    if not stripped:
+        return False
+    first_word = _clean_word(stripped.split()[0])
+    return first_word in EIMI_FORMS
+
+
+def _line_starts_with_participle(line, book_slug):
+    """Check if a line's first word is a participle (via MorphGNT)."""
+    if not _HAS_MORPHGNT or not book_slug:
+        return False
+    stripped = line.strip()
+    if not stripped:
+        return False
+    first_word = stripped.split()[0]
+    return word_is_participle(first_word, book_slug)
+
+
+def _line_ends_with_participle(line, book_slug):
+    """Check if a line's last word is a participle (via MorphGNT)."""
+    if not _HAS_MORPHGNT or not book_slug:
+        return False
+    stripped = line.rstrip()
+    words = stripped.split()
+    if not words:
+        return False
+    return word_is_participle(words[-1], book_slug)
+
+
+def _line_ends_with_clause_punctuation(line):
+    """Check if a line ends with punctuation suggesting a clause boundary.
+
+    Greek clause-ending punctuation: . (period), · (ano teleia/semicolon),
+    ; (question mark).
+    """
+    stripped = line.rstrip()
+    if not stripped:
+        return False
+    return stripped[-1] in '.·;'
+
+
+def _next_line_has_participle_after_optional_postpositive(line, book_slug):
+    """Check if a line starts with a participle, possibly after a postpositive particle.
+
+    Greek postpositive particles (γάρ, δέ, μέν, οὖν, τε) can intervene between
+    εἰμί and its participle in a periphrastic construction:
+      ἦν γὰρ ἔχων = "for he was having"
+
+    Returns True if:
+      - First word is a participle, OR
+      - First word is a postpositive particle and second word is a participle
+    """
+    if not _HAS_MORPHGNT or not book_slug:
+        return False
+    stripped = line.strip()
+    if not stripped:
+        return False
+    words = stripped.split()
+    first_word = words[0]
+    if word_is_participle(first_word, book_slug):
+        return True
+    # Check for postpositive + participle
+    POSTPOSITIVES = {'γάρ', 'γὰρ', 'δέ', 'δὲ', 'μέν', 'μὲν', 'οὖν', 'τε'}
+    if (_clean_word(first_word) in POSTPOSITIVES
+            and len(words) >= 2
+            and word_is_participle(words[1], book_slug)):
+        return True
+    return False
+
+
+def apply_periphrastic_merge(verse_lines, book_slug=None):
+    """Merge periphrastic constructions (εἰμί + participle) split across lines.
+
+    Grammatical basis (Wallace ch. 23): a periphrastic construction consists
+    of a form of εἰμί plus a participle functioning together as a single
+    compound verb form. Example: ἦν ... διδάσκων = "was teaching."
+
+    The Macula tree may split the εἰμί from its participle onto separate
+    lines, creating two incomplete cola where there should be one.
+
+    Pattern: line ends with εἰμί form, next line starts with a participle
+    (possibly after a postpositive particle like γάρ, δέ).
+
+    Guards:
+      - Skip if line ends with clause-terminal punctuation (. · ;) — the
+        εἰμί belongs to a completed clause, not a periphrastic split.
+      - The εἰμί must be the last word on the line (suggesting it was split
+        from what follows).
+    """
+    global _periphrastic_merge_count
+
+    if not _HAS_MORPHGNT or not book_slug:
+        return verse_lines
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        if i + 1 < len(verse_lines):
+            line = verse_lines[i]
+            next_line = verse_lines[i + 1]
+
+            # Line ends with εἰμί, next starts with participle
+            # (or postpositive + participle, e.g. γὰρ ἔχων)
+            # Guard: εἰμί line must be short (<=3 words) — a long line
+            # ending with εἰμί is likely a complete copulative clause,
+            # not a split periphrastic.
+            eimi_line_words = line.strip().split()
+            if (len(eimi_line_words) <= 3
+                    and _line_ends_with_eimi(line, book_slug)
+                    and not _line_ends_with_clause_punctuation(line)
+                    and _next_line_has_participle_after_optional_postpositive(
+                        next_line, book_slug)):
+                merged = line.rstrip() + ' ' + next_line.lstrip()
+                result.append(merged)
+                _periphrastic_merge_count += 1
+                i += 2
+                continue
+
+        result.append(verse_lines[i])
+        i += 1
+    return result
+
+
 # ---------- Pattern 0b: Verbless line merge ----------
 
 def apply_verbless_line_merge(verse_lines, book_slug=None, verse_ref=None):
@@ -362,10 +534,25 @@ def apply_verbless_line_merge(verse_lines, book_slug=None, verse_ref=None):
                 except ValueError:
                     pass
 
+        # Check if the next line starts with a subordinating/conditional conjunction —
+        # merging forward into a subordinate clause creates a worse cross-clause colon
+        next_starts_subordinate = False
+        if i + 1 < len(verse_lines):
+            next_stripped = verse_lines[i + 1].strip()
+            if line_starts_with_conditional(next_stripped):
+                next_starts_subordinate = True
+            else:
+                for conj in SUBORDINATING_CONJUNCTIONS:
+                    if next_stripped.startswith(conj + ' ') or next_stripped.startswith(conj + '\xa0'):
+                        next_starts_subordinate = True
+                        break
+
         if (i + 1 < len(verse_lines)
                 and not is_standalone_unit(stripped)
                 and not ends_with_speech_marker
                 and not has_predicate
+                and not line_is_conditional_protasis(stripped)
+                and not next_starts_subordinate
                 and not line_has_verbal_element(stripped, book_slug)):
             # This line has no verbal element and no predicate — merge forward
             next_line = verse_lines[i + 1]
@@ -698,6 +885,11 @@ def is_standalone_unit(text):
         r'^ἓν\s',        # Bare number stacking
         r'^εἶτα\s',      # Sequence marker (part of εἶτα stacking)
         r'^πρῶτον\s',    # Sequence marker
+        r'^κἀγώ[.\s;·!]?$',   # Staccato emphatic response (2 Cor 11:22)
+        r'^κἀμοί[.\s;·!]?$',  # Emphatic dative response
+        r'^ναί[.\s;·!]?$',    # Emphatic affirmation
+        r'^οὐχί[.\s;·!]?$',   # Emphatic negation
+        r'^οὐ[.\s;·!]?$',     # Emphatic negation (bare)
     ]
     for pat in standalone_pats:
         if re.search(pat, text.strip()):
@@ -715,6 +907,7 @@ def apply_dangling_fragment_merge(verse_lines):
     last = result[-1]
     if (len(last) < 15
             and not is_standalone_unit(last)
+            and not line_is_conditional_protasis(result[-2])
             and len(result) >= 2):
         # Merge with previous line
         result[-2] = result[-2].rstrip() + ' ' + last.lstrip()
@@ -813,6 +1006,9 @@ SUBORDINATING_CONJUNCTIONS = [
     'ὅταν',     # temporal (whenever)
     'ὅτε',      # temporal (when)
     'ἐάν',      # conditional
+    'εἴπερ',    # conditional (if indeed)
+    'ἐάνπερ',   # conditional (if indeed, subjunctive)
+    'εἴγε',     # conditional (if indeed)
     'μήποτε',   # lest
     'καθὼς', 'καθώς',  # comparative
     'ὥσπερ',    # comparative
@@ -824,6 +1020,123 @@ SUBORDINATING_CONJUNCTIONS = [
     'ὅπου',     # local
     'πρὶν',     # before
 ]
+
+# Conditional conjunctions — used to protect protasis/apodosis from merging
+CONDITIONAL_CONJUNCTIONS = [
+    'εἰ', 'ἐάν', 'ἐὰν', 'εἴπερ', 'ἐάνπερ', 'εἴγε',
+]
+
+
+def line_starts_with_conditional(text):
+    """Check if a line starts with a conditional conjunction (possibly followed by particles).
+
+    Matches patterns like:
+      εἰ δὲ Χριστὸς...
+      εἰ γὰρ διὰ νόμου...
+      ἐάν τις...
+      εἴπερ πνεῦμα...
+
+    The conjunction may be followed by postpositive particles (δέ, γάρ, μέν, etc.).
+    """
+    stripped = text.strip()
+    for conj in CONDITIONAL_CONJUNCTIONS:
+        if stripped.startswith(conj + ' ') or stripped.startswith(conj + '\xa0'):
+            return True
+    return False
+
+
+def line_is_conditional_protasis(text):
+    """Check if a line is a conditional protasis (εἰ/ἐάν clause ending with comma).
+
+    A protasis is a conditional clause that sets up the condition. It typically
+    starts with a conditional conjunction and ends with a comma (before the apodosis).
+    """
+    stripped = text.strip()
+    return line_starts_with_conditional(stripped) and stripped.rstrip().endswith(',')
+
+
+def apply_dangling_conjunction_fix(verse_lines):
+    """Fix subordinating conjunctions stranded at the end of a line.
+
+    The colometric rule is: never dangle a conjunction at line end. If a
+    subordinating conjunction (εἴπερ, ἵνα, ὅταν, etc.) appears as the last
+    word of a line, move it to the beginning of the next line.
+
+    Example:
+      "ἀλλὰ ἐν πνεύματι, εἴπερ"  /  "πνεῦμα θεοῦ οἰκεῖ ἐν ὑμῖν."
+      → "ἀλλὰ ἐν πνεύματι,"  /  "εἴπερ πνεῦμα θεοῦ οἰκεῖ ἐν ὑμῖν."
+    """
+    all_conjunctions = SUBORDINATING_CONJUNCTIONS + CONDITIONAL_CONJUNCTIONS + ['ὅτι']
+    conj_set = set(all_conjunctions)
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    result = list(verse_lines)
+    for i in range(len(result) - 1):
+        line = result[i].rstrip()
+        words = line.split()
+        if not words:
+            continue
+        last_word = words[-1].rstrip('.,;·')
+        if last_word in conj_set and len(words) > 1:
+            # Move the conjunction to the next line
+            # Strip trailing punctuation/space from the conjunction on this line
+            # Find where the last word starts
+            trailing = words[-1]
+            line_without = line[:line.rfind(trailing)].rstrip()
+            # Clean trailing comma/space from the previous content
+            line_without = line_without.rstrip(' ,')
+            if line_without:
+                # If the conjunction had punctuation before it (like comma), keep it
+                char_before_conj = line[line.rfind(trailing) - 1] if line.rfind(trailing) > 0 else ''
+                if char_before_conj == ',':
+                    result[i] = line_without + ','
+                else:
+                    result[i] = line_without
+                result[i + 1] = trailing.rstrip('.,;·') + ' ' + result[i + 1].lstrip()
+    return result
+
+
+def apply_conditional_protasis_apodosis_split(verse_lines):
+    """Split conditional protasis + apodosis that ended up on the same line.
+
+    Per Wallace ch. 26, protasis (εἰ/ἐάν clause) and apodosis (result clause)
+    are distinct grammatical units and should always be separate cola.
+
+    Detection: a line starts with a conditional conjunction and contains a comma
+    followed by non-conditional content. The comma marks the protasis/apodosis
+    boundary.
+
+    Examples that should be split:
+      "εἰ δὲ Χριστὸς ἐν ὑμῖν, τὸ μὲν σῶμα νεκρὸν διὰ ἁμαρτίαν,"
+      → "εἰ δὲ Χριστὸς ἐν ὑμῖν,"  /  "τὸ μὲν σῶμα νεκρὸν διὰ ἁμαρτίαν,"
+      "εἰ γὰρ διὰ νόμου δικαιοσύνη, ἄρα Χριστὸς δωρεὰν ἀπέθανεν."
+      → "εἰ γὰρ διὰ νόμου δικαιοσύνη,"  /  "ἄρα Χριστὸς δωρεὰν ἀπέθανεν."
+    """
+    result = []
+    for line in verse_lines:
+        stripped = line.strip()
+        if not line_starts_with_conditional(stripped):
+            result.append(line)
+            continue
+        # Find the first comma that could mark the protasis/apodosis boundary.
+        # Skip commas that appear too early (less than 10 chars into the line)
+        # since those are likely part of the protasis itself.
+        comma_pos = stripped.find(', ', 10)
+        if comma_pos == -1:
+            result.append(line)
+            continue
+        protasis = stripped[:comma_pos + 1].strip()  # include comma
+        apodosis = stripped[comma_pos + 2:].strip()
+        # Only split if the apodosis is substantial (not just a trailing word)
+        # and doesn't itself start with a conditional (that would be a nested conditional)
+        if (apodosis and len(apodosis) > 5
+                and not line_starts_with_conditional(apodosis)):
+            result.append(protasis)
+            result.append(apodosis)
+        else:
+            result.append(line)
+    return result
 
 
 def apply_subordinating_conjunction_splits(verse_lines):
@@ -1086,6 +1399,12 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     """Apply all rhetorical patterns to a verse's lines."""
     lines = list(verse_lines)
 
+    # Fix dangling conjunctions at line end (v2 tree artifact) — must run first
+    lines = apply_dangling_conjunction_fix(lines)
+
+    # Pattern 0a: Periphrastic construction merge (εἰμί + participle = one verb form)
+    lines = apply_periphrastic_merge(lines, book_slug=book_slug)
+
     # Pattern 0: Infinitive merge-back (dependent infinitives can't begin a colon)
     lines = apply_infinitive_merge_back(lines)
 
@@ -1138,6 +1457,14 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
 
     # Pattern 6: Merge dangling short fragments (apply last)
     lines = apply_dangling_fragment_merge(lines)
+
+    # Conditional protasis/apodosis split — ensure εἰ/ἐάν protasis and apodosis
+    # are always separate cola (Wallace ch. 26). Run after merges to re-split
+    # anything that was incorrectly collapsed.
+    lines = apply_conditional_protasis_apodosis_split(lines)
+
+    # Pattern 0a again — catch periphrastic splits created by earlier passes
+    lines = apply_periphrastic_merge(lines, book_slug=book_slug)
 
     # Pattern 0 again — catch fragments created by speech intro split
     lines = apply_infinitive_merge_back(lines)
@@ -1201,6 +1528,9 @@ def main():
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+    global _periphrastic_merge_count
+    _periphrastic_merge_count = 0
+
     if args.book:
         if args.book not in BOOKS:
             print(f'Unknown book: {args.book}')
@@ -1212,6 +1542,9 @@ def main():
         for book_key in BOOKS:
             process_book(book_key)
         print('Done.')
+
+    if _periphrastic_merge_count > 0:
+        print(f'Periphrastic merges (εἰμί + participle): {_periphrastic_merge_count}')
 
 
 if __name__ == '__main__':

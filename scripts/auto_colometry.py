@@ -83,6 +83,9 @@ BREAK_BEFORE = [
     r'ὥσπερ\b',        # comparative (just as)
     r'ἐὰν\b',          # conditional
     r'(?<!\S)εἰ(?!τε\b|δ[εέ]|σ)\s',  # conditional "if" — not εἴτε, εἰδέ, εἰς
+    r'εἴπερ\b',        # conditional (if indeed)
+    r'ἐάνπερ\b',       # conditional (if indeed, subjunctive)
+    r'εἴγε\b',         # conditional (if indeed)
     r'μήποτε\b',       # lest
     r'ἕως\b',          # until (when followed by clause)
     r'ἄχρι\b',         # until
