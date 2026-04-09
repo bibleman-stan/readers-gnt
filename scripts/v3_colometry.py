@@ -44,6 +44,13 @@ try:
 except ImportError:
     _HAS_PREDICATION = False
 
+# Macula sentence boundary detection — prevents cross-sentence merges
+try:
+    from macula_sentences import find_sentence_boundary_in_line
+    _HAS_SENTENCES = True
+except ImportError:
+    _HAS_SENTENCES = False
+
 # ---------- configuration ----------
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -103,7 +110,9 @@ COMPLEMENTARY_VERBS = [
     'ἐτόλμησεν', 'τολμᾷ', 'ἐπεχείρησαν',
     # Verbs of ceasing/neglecting
     'παύομαι', 'ἐπαύσατο', 'παύσονται',
-    # Verbs of obligation (δεῖ takes infinitive directly, usually not split)
+    # Verbs of obligation
+    'δεῖ', 'δεήσει',         # impersonal "it is necessary"
+    'χρή',                    # impersonal "it is necessary" (rare)
     'ὀφείλει', 'ὀφείλομεν',
     # Verbs of seeming/deciding (take infinitive complement)
     'ἔδοξε', 'ἔδοξεν', 'δοκεῖ', 'δόξῃ', 'δοκοῦσιν', 'εὐδόκησεν', 'εὐδόκησα',
@@ -343,8 +352,9 @@ EIMI_FORMS = {
     # form periphrastic constructions with participles.
 }
 
-# Global counter for reporting
+# Global counters for reporting
 _periphrastic_merge_count = 0
+_multi_image_split_count = 0
 
 
 def _clean_word(w):
@@ -562,7 +572,17 @@ def apply_verbless_line_merge(verse_lines, book_slug=None, verse_ref=None):
                 and not line_is_conditional_protasis(stripped)
                 and not next_starts_subordinate
                 and not line_has_verbal_element(stripped, book_slug)):
-            # This line has no verbal element and no predicate — merge forward
+            # This line has no verbal element and no predicate.
+            # If the line starts with ἢ/ἤ (alternative connector), merge BACKWARD
+            # into the preceding line — ἢ connects alternatives to what came before,
+            # not to what follows.
+            first_word = stripped.split()[0] if stripped.split() else ''
+            clean_first = re.sub(r'[,.\;·]', '', first_word)
+            if clean_first in ('ἢ', 'ἤ') and result:
+                result[-1] = result[-1].rstrip() + ' ' + stripped
+                i += 1
+                continue
+            # Otherwise merge forward
             next_line = verse_lines[i + 1]
             merged = stripped + ' ' + next_line.strip()
             result.append(merged)
@@ -787,7 +807,7 @@ def apply_predication_merge(verse_lines, book_slug=None, verse_ref=None):
 STANDALONE_PATTERNS = [
     # Single-word commands followed by punctuation
     re.compile(r'^(Ἀκούετε[.·;!])\s+(.+)$'),
-    re.compile(r'^(ἰδο[ὺύ][.·;!,]?)\s+(.+)$', re.IGNORECASE),
+    # ἰδού removed — it's a presentative particle bound to its clause, not a standalone exclamation
     # Two-word commands (Σιώπα, πεφίμωσο. is already handled well in v2)
     # Exclamatory particles
     re.compile(r'^(οὐαὶ\s+\S+(?:\s+\S+)?[.·;!,]?)\s+(.+)$'),
@@ -1034,6 +1054,11 @@ def is_list_line(line):
     if number_pattern >= 2:
         return True
 
+    # Also check for repeated "καὶ εἰς" patterns (destination lists, esp. Revelation)
+    eis_pattern = len(re.findall(r'\bκαὶ\s+εἰς\b', line))
+    if eis_pattern >= 2:
+        return True
+
     return False
 
 
@@ -1055,6 +1080,27 @@ def split_kai_list(line):
         for idx, pos in enumerate(hen_positions):
             if idx + 1 < len(hen_positions):
                 part = line[pos:hen_positions[idx + 1]].strip().rstrip(',')
+            else:
+                part = line[pos:].strip()
+            if part:
+                parts.append(part)
+        if len(parts) >= 2:
+            return parts
+
+    # Special case: "καὶ εἰς" destination list pattern (esp. Revelation)
+    # e.g. "εἰς Ἔφεσον καὶ εἰς Σμύρναν καὶ εἰς Πέργαμον..."
+    eis_positions = [m.start() for m in re.finditer(r'\bκαὶ\s+εἰς\b', line)]
+    if len(eis_positions) >= 2:
+        # Check if there's a leading "εἰς X" before the first "καὶ εἰς"
+        first_kai_eis = eis_positions[0]
+        parts = []
+        prefix = line[:first_kai_eis].strip()
+        if prefix:
+            parts.append(prefix.rstrip(','))
+        # Split at each "καὶ εἰς"
+        for idx, pos in enumerate(eis_positions):
+            if idx + 1 < len(eis_positions):
+                part = line[pos:eis_positions[idx + 1]].strip().rstrip(',')
             else:
                 part = line[pos:].strip()
             if part:
@@ -1153,13 +1199,23 @@ def apply_parallel_hina_hoti_stacking(verse_lines):
     result = []
     for line in verse_lines:
         # Check for ἵνα...ἤ pattern (parallel purpose clauses with alternative)
+        # Guard: don't split at ἤ when it's INSIDE a ἵνα clause connecting
+        # parallel alternatives (e.g., "ἵνα ὑπὸ τὸν μόδιον τεθῇ ἢ ὑπὸ τὴν κλίνην")
         if 'ἵνα' in line and ' ἢ ' in line and len(line) > 50:
-            # Split at ἤ when it connects parallel purpose elements
-            parts = re.split(r'\s+(?=ἢ\s)', line)
-            if len(parts) == 2 and all(len(p.strip()) > 10 for p in parts):
-                for part in parts:
-                    result.append(part.strip())
-                continue
+            # Find positions: if ἤ appears AFTER ἵνα on the same line,
+            # it connects alternatives within the purpose clause — don't split
+            hina_pos = line.find('ἵνα')
+            h_pos = line.find(' ἢ ')
+            if hina_pos >= 0 and h_pos > hina_pos:
+                # ἤ is inside the ἵνα clause — skip splitting
+                pass
+            else:
+                # Split at ἤ when it connects parallel purpose elements
+                parts = re.split(r'\s+(?=ἢ\s)', line)
+                if len(parts) == 2 and all(len(p.strip()) > 10 for p in parts):
+                    for part in parts:
+                        result.append(part.strip())
+                    continue
 
         # Check for multiple ἵνα in one line
         hina_count = len(re.findall(r'\bἵνα\b', line))
@@ -1203,8 +1259,7 @@ def is_standalone_unit(text):
         r'^Σιώπα',
         r'^σιώπα',
         r'^πεφίμωσο',
-        r'^ἰδο[ὺύ]',
-        r'^Ἰδο[ὺύ]',
+        # ἰδού removed — presentative particle bound to its clause, not standalone
         r'^Ἀμ[ήὴ]ν',
         r'^ἀμ[ήὴ]ν',
         r'^Διέλθωμεν',
@@ -1489,6 +1544,10 @@ def apply_subordinating_conjunction_splits(verse_lines):
         for conj in SUBORDINATING_CONJUNCTIONS:
             if conj not in line:
                 continue
+            # Guard: don't split before ἵνα when preceded by ἐὰν μή / εἰ μή / εἰ μὴ
+            # In these constructions ἵνα is epexegetical ("except that / unless to")
+            if conj == 'ἵνα' and re.search(r'(?:ἐὰν|εἰ)\s+μ[ήὴ]\s+ἵνα\b', line):
+                continue
             # Find the conjunction preceded by space (or comma+space)
             pattern = re.compile(r'[,]?\s+(?=' + re.escape(conj) + r'\b)')
             m = pattern.search(line)
@@ -1727,6 +1786,50 @@ def parse_v2_file(filepath):
         verses.append((current_ref, current_lines))
 
     return verses
+
+
+# ---------- Sentence boundary post-processing ----------
+
+_sentence_split_count = 0
+
+
+def apply_sentence_boundary_splits(verse_lines, book_slug=None, verse_ref=None):
+    """Split any line that crosses a Macula sentence boundary.
+
+    This is a post-processing guard: after all merge/split patterns have run,
+    check each line and split it if its words span two different Macula
+    <sentence> elements. This prevents cross-sentence merges regardless of
+    which earlier rule created them.
+    """
+    global _sentence_split_count
+
+    if not _HAS_SENTENCES:
+        return verse_lines
+    if not book_slug or not verse_ref:
+        return verse_lines
+
+    parts = verse_ref.split(':')
+    if len(parts) != 2:
+        return verse_lines
+    try:
+        ch, vs = int(parts[0]), int(parts[1])
+    except ValueError:
+        return verse_lines
+
+    result = []
+    for line in verse_lines:
+        boundary_idx = find_sentence_boundary_in_line(line, book_slug, ch, vs)
+        if boundary_idx is not None and boundary_idx > 0:
+            words = line.split()
+            line1 = ' '.join(words[:boundary_idx])
+            line2 = ' '.join(words[boundary_idx:])
+            result.append(line1)
+            result.append(line2)
+            _sentence_split_count += 1
+        else:
+            result.append(line)
+
+    return result
 
 
 def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
