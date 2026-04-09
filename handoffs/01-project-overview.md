@@ -45,7 +45,12 @@ Colometric formatting reveals compositional structure that standard prose format
 
 2. **Revealing structure/consistency** — Once the text is in cola, you can count patterns: How does Mark's parable speech differ structurally from his narrative? The colometry becomes quantifiable data.
 
-Additional research advantages tracked privately.
+Additional research directions tracked privately. At a high level, consistent colometric formatting across the entire GNT enables several categories of inquiry:
+
+- **Structural revelation** — compositional structures (tricolon, chiasm, parallel cola) become physically visible in the line layout without interpretive overlay. Structures hiding in prose formatting are exposed by the sense-lines.
+- **Exegetical architecture** — authors' rhetorical strategies (Paul's argumentation structure, Mark's oral patterning, Luke's periodic restructuring) are laid bare in the colon structure. The line breaks show where an author shifts from assertion to evidence, from narrative to speech, from parallel to climactic.
+- **Synoptic analysis** — when the same material appears in different Gospels, the colometric structure reveals how redactors transformed the compositional units. Mark's short paratactic cola vs. Luke's longer periodic reworking of the same content is measurable at the thought-unit level, not just the word level.
+- **Quantitative stylometry** — colon-length distributions, break-point classifications, and rhetorical pattern frequencies become author-discriminating data points. This operates at the oral-compositional level rather than the vocabulary level where traditional stylometry works.
 
 ## Project Siloing
 
