@@ -196,6 +196,60 @@ def apply_infinitive_construction_merge(verse_lines):
     return result
 
 
+# ---------- Pattern 0: Infinitive merge-back ----------
+
+# Common infinitive endings in Greek
+_INF_ENDINGS = ('ειν', 'αι', 'εῖν', 'οῦν', 'ᾶν', 'σθαι', 'ναι',
+                'εῖσθαι', 'ᾶσθαι', 'οῦσθαι')
+
+
+def _line_starts_with_infinitive(line):
+    """Check if a line's first word is an infinitive form."""
+    stripped = line.strip()
+    if not stripped:
+        return False
+    first_word = stripped.split()[0].rstrip('.,;·')
+    return first_word.endswith(_INF_ENDINGS)
+
+
+def apply_infinitive_merge_back(verse_lines):
+    """Merge lines that start with an infinitive back into the preceding line.
+
+    Grammatical basis: an infinitive is a dependent verbal form that requires a
+    governing element (a verb, noun, adjective, or preposition). A line beginning
+    with an infinitive almost never constitutes a valid colon on its own — it
+    lacks the semantico-syntactic completeness that Marschall (2023), following
+    Pseudo-Demetrius, identifies as the criterion for a colon.
+
+    Examples this catches:
+      "Ὃς ἔχει ὦτα" / "ἀκούειν ἀκουέτω."  →  merged (epexegetical infinitive)
+      "ὥστε αὐτὸν ... ἐμβάντα" / "καθῆσθαι ..."  →  merged (result infinitive)
+      "μετὰ τὸ" / "παθεῖν αὐτόν"  →  merged (articular infinitive)
+
+    Guard: skip if the merged result would be excessively long (>85 chars),
+    since some infinitive clauses are genuinely their own colon when they carry
+    substantial content (e.g., a full purpose clause with ἵνα).
+    """
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        if (i > 0
+                and _line_starts_with_infinitive(verse_lines[i])
+                and result):  # have a previous line to merge into
+            prev = result[-1]
+            merged = prev.rstrip() + ' ' + verse_lines[i].lstrip()
+            if len(merged) < 85:
+                result[-1] = merged
+                i += 1
+                continue
+        result.append(verse_lines[i])
+        i += 1
+    return result
+
+
 # ---------- Pattern 2: Standalone imperatives/exclamations ----------
 
 # Patterns for short imperatives/exclamations that should be their own line
@@ -680,6 +734,11 @@ def apply_all_patterns(verse_lines):
     """Apply all rhetorical patterns to a verse's lines."""
     lines = list(verse_lines)
 
+    # Pattern 0: Merge short non-standalone lines forward when the combined
+    # result is a reasonable colon (under ~55 chars). Catches formulaic
+    # expressions like "Ὃς ἔχει ὦτα / ἀκούειν ἀκουέτω." that the tree over-splits.
+    lines = apply_infinitive_merge_back(lines)
+
     # Pattern 1: Merge complementary verb + infinitive splits
     lines = apply_complementary_verb_merge(lines)
 
@@ -716,6 +775,9 @@ def apply_all_patterns(verse_lines):
 
     # Pattern 6: Merge dangling short fragments (apply last)
     lines = apply_dangling_fragment_merge(lines)
+
+    # Pattern 0 again — catch short fragments created by speech intro split
+    lines = apply_infinitive_merge_back(lines)
 
     return lines
 
