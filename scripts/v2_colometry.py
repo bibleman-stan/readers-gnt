@@ -38,6 +38,12 @@ from macula_clauses import (
     _SLUG_TO_MACULA,
 )
 
+try:
+    from morphgnt_lookup import line_has_verbal_element
+    _HAS_MORPHGNT = True
+except ImportError:
+    _HAS_MORPHGNT = False
+
 # ---------- configuration ----------
 
 SOURCE_DIR = os.path.join(REPO_DIR, 'data', 'text-files', 'sblgnt-source')
@@ -282,12 +288,13 @@ def _ends_with_dangler(line):
             or last in _CONJUNCTIONS_NO_DANGLE or last_lc in _CONJUNCTIONS_NO_DANGLE)
 
 
-def merge_fragments(lines):
+def merge_fragments(lines, book_slug=None):
     """Merge very short fragments and fix dangling articles/prepositions.
 
     Applied in multiple passes:
     1. Merge isolated particle lines into next clause
-    2. Merge very short lines (<=2 words, <15 chars)
+    2. Merge very short lines (<=2 words, <15 chars) — but protect lines
+       containing a finite verb (they are complete clauses)
     3. Fix lines ending with a dangling article or preposition
     """
     if len(lines) <= 1:
@@ -326,7 +333,10 @@ def merge_fragments(lines):
         while i < len(lines):
             line = lines[i]
             words = line.split()
-            if len(words) <= 2 and len(line) < 15 and not _is_standalone(line):
+            # Protect lines with a verbal element — a finite verb is a complete clause
+            has_verb = (_HAS_MORPHGNT and book_slug
+                        and line_has_verbal_element(line, book_slug))
+            if len(words) <= 2 and len(line) < 15 and not _is_standalone(line) and not has_verb:
                 if i + 1 < len(lines):
                     lines[i + 1] = line + ' ' + lines[i + 1]
                 elif merged:
@@ -353,13 +363,16 @@ def merge_fragments(lines):
         lines = merged
 
     # --- Pass 4: one more pass to catch any remaining very short lines ---
+    # Protect single-word lines that contain a finite verb (complete clauses)
     if len(lines) > 1:
         merged = []
         i = 0
         while i < len(lines):
             line = lines[i]
             words = line.split()
-            if len(words) == 1 and not _is_standalone(line):
+            has_verb = (_HAS_MORPHGNT and book_slug
+                        and line_has_verbal_element(line, book_slug))
+            if len(words) == 1 and not _is_standalone(line) and not has_verb:
                 if i + 1 < len(lines):
                     lines[i + 1] = line + ' ' + lines[i + 1]
                 elif merged:
@@ -417,7 +430,7 @@ def format_chapter(book_slug, chapter_num, verses):
         clause_infos = macula_data.get(verse_num, [])
 
         cola = build_verse_cola(sblgnt_words, clause_infos, chapter_num, verse_num)
-        cola = merge_fragments(cola)
+        cola = merge_fragments(cola, book_slug=book_slug)
 
         # Safety: if merging collapsed everything, output whole verse
         if not cola:

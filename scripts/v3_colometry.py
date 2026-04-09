@@ -290,9 +290,13 @@ def apply_verbless_line_merge(verse_lines, book_slug=None):
         line = verse_lines[i]
         stripped = line.strip()
 
+        # Protect speech introductions (end with · ano teleia) from merging —
+        # these are elliptical clauses where the verb of saying is implied
+        ends_with_speech_marker = stripped.rstrip().endswith('·')
         if (i + 1 < len(verse_lines)
                 and len(stripped) < 25
                 and not is_standalone_unit(stripped)
+                and not ends_with_speech_marker
                 and not line_has_verbal_element(stripped, book_slug)):
             # This line has no verbal element — merge forward
             next_line = verse_lines[i + 1]
