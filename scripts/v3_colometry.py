@@ -20,6 +20,13 @@ import os
 import sys
 import argparse
 
+# MorphGNT lookup for verbal element detection
+try:
+    from morphgnt_lookup import line_has_verbal_element
+    _HAS_MORPHGNT = True
+except ImportError:
+    _HAS_MORPHGNT = False
+
 # ---------- configuration ----------
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -246,6 +253,56 @@ def apply_infinitive_merge_back(verse_lines):
                 i += 1
                 continue
         result.append(verse_lines[i])
+        i += 1
+    return result
+
+
+# ---------- Pattern 0b: Verbless line merge ----------
+
+def apply_verbless_line_merge(verse_lines, book_slug=None):
+    """Merge short verbless lines forward into the following line.
+
+    Grammatical basis: a line consisting only of a preposition, conjunction,
+    article, relative pronoun, and/or noun — with NO verbal element (finite
+    verb, participle, or infinitive) — cannot constitute a valid colon. It
+    fails the foundational test: it is not an atomic thought because the
+    thought is suspended, awaiting verbal resolution.
+
+    Examples:
+      "ἄχρι ἧς ἡμέρας" (until the day — until WHAT about the day?)
+      "διὰ πνεύματος ἁγίου" (through the Holy Spirit — doing WHAT?)
+      "ἐάν τε γὰρ" (for if indeed — WHAT?)
+
+    Protected from merging:
+      - Vocatives (ὦ Θεόφιλε) — standalone by convention
+      - Parallel list items (πρῶτον, εἶτα, καὶ ἓν patterns) — stacking
+      - Lines over 25 chars (likely substantial enough to be a colon)
+      - Lines where MorphGNT data is unavailable (conservative fallback)
+    """
+    if not _HAS_MORPHGNT or not book_slug:
+        return verse_lines
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        line = verse_lines[i]
+        stripped = line.strip()
+
+        if (i + 1 < len(verse_lines)
+                and len(stripped) < 25
+                and not is_standalone_unit(stripped)
+                and not line_has_verbal_element(stripped, book_slug)):
+            # This line has no verbal element — merge forward
+            next_line = verse_lines[i + 1]
+            merged = stripped + ' ' + next_line.strip()
+            # Only merge if result is reasonable length
+            if len(merged) < 85:
+                result.append(merged)
+                i += 2
+                continue
+        result.append(line)
         i += 1
     return result
 
@@ -730,14 +787,15 @@ def parse_v2_file(filepath):
     return verses
 
 
-def apply_all_patterns(verse_lines):
+def apply_all_patterns(verse_lines, book_slug=None):
     """Apply all rhetorical patterns to a verse's lines."""
     lines = list(verse_lines)
 
-    # Pattern 0: Merge short non-standalone lines forward when the combined
-    # result is a reasonable colon (under ~55 chars). Catches formulaic
-    # expressions like "Ὃς ἔχει ὦτα / ἀκούειν ἀκουέτω." that the tree over-splits.
+    # Pattern 0: Infinitive merge-back (dependent infinitives can't begin a colon)
     lines = apply_infinitive_merge_back(lines)
+
+    # Pattern 0b: Verbless line merge (lines with no verbal element can't be cola)
+    lines = apply_verbless_line_merge(lines, book_slug=book_slug)
 
     # Pattern 1: Merge complementary verb + infinitive splits
     lines = apply_complementary_verb_merge(lines)
@@ -776,19 +834,22 @@ def apply_all_patterns(verse_lines):
     # Pattern 6: Merge dangling short fragments (apply last)
     lines = apply_dangling_fragment_merge(lines)
 
-    # Pattern 0 again — catch short fragments created by speech intro split
+    # Pattern 0 again — catch fragments created by speech intro split
     lines = apply_infinitive_merge_back(lines)
+
+    # Pattern 0b again — catch verbless fragments created by earlier passes
+    lines = apply_verbless_line_merge(lines, book_slug=book_slug)
 
     return lines
 
 
-def process_chapter_file(input_path, output_path):
+def process_chapter_file(input_path, output_path, book_slug=None):
     """Process a single chapter file from v2 to v3."""
     verses = parse_v2_file(input_path)
 
     output_lines = []
     for verse_ref, verse_content in verses:
-        refined = apply_all_patterns(verse_content)
+        refined = apply_all_patterns(verse_content, book_slug=book_slug)
         output_lines.append(verse_ref)
         for line in refined:
             output_lines.append(line)
@@ -816,7 +877,7 @@ def process_book(book_key, chapter_filter=None):
             print(f'  WARNING: Input file not found: {input_path}')
             continue
 
-        process_chapter_file(input_path, output_path)
+        process_chapter_file(input_path, output_path, book_slug=abbrev)
         chapters_processed += 1
 
     print(f'  {display_name}: {chapters_processed} chapter(s) refined')
