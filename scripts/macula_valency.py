@@ -452,8 +452,9 @@ def check_stranded_finite_verb(
 
     A finite verb is 'stranded' when:
       1. The line contains only the verb (single-word) or the verb + a particle/conjunction
-      2. The verb's Macula clause has arguments (role=o, role=s) on other lines
-      3. Those arguments appear on an adjacent line
+      2. The verb's Macula clause has arguments (role=o, role=s) on other lines, OR
+         the verb's clause is tiny (just the verb) and adjacent lines have content
+         words from the same sentence — indicating the verb was split from its context
 
     Returns StrandedVerbResult with merge direction if stranded.
     """
@@ -486,67 +487,203 @@ def check_stranded_finite_verb(
     for verb in finite_verbs:
         cl_id = verb.clause_id
         cr = clause_roles.get(cl_id)
-        if cr is None:
-            continue
 
-        missing_roles = []
+        # --- Strategy 1: Direct clause argument check ---
+        # The verb's own clause has annotated arguments not on this line
+        if cr is not None:
+            missing_roles = []
 
-        # Check if clause has object not on this line
-        if cr.has_object:
-            obj_on_line = line_refs.intersection(cr.object_word_refs)
-            if not obj_on_line:
-                missing_roles.append('o')
+            if cr.has_object:
+                obj_on_line = line_refs.intersection(cr.object_word_refs)
+                if not obj_on_line:
+                    missing_roles.append('o')
 
-        # Check if clause has subject not on this line
-        if cr.has_subject:
-            subj_on_line = line_refs.intersection(cr.subject_word_refs)
-            if not subj_on_line:
-                missing_roles.append('s')
+            if cr.has_subject:
+                subj_on_line = line_refs.intersection(cr.subject_word_refs)
+                if not subj_on_line:
+                    missing_roles.append('s')
 
-        if not missing_roles:
-            continue
+            if missing_roles:
+                direction = _find_merge_direction_by_clause(
+                    cr, missing_roles, line_refs, prev_line, next_line, verse_words
+                )
+                if direction:
+                    return StrandedVerbResult(
+                        stranded=True,
+                        reason=f"finite verb '{verb.normalized}' missing {missing_roles} on adjacent line ({direction})",
+                        verb_text=verb.normalized,
+                        merge_direction=direction,
+                        missing_roles=missing_roles,
+                    )
 
-        # Determine merge direction: check which adjacent line has the missing arguments
-        # Match prev and next lines to the same verse
-        forward_has_args = False
-        backward_has_args = False
+        # --- Strategy 2: Tiny clause heuristic ---
+        # The verb's clause has NO annotated arguments (Macula nests them in
+        # subordinate clauses), but the verb is alone on the line with at most
+        # a conjunction/particle. Check if it's a tiny clause that should merge
+        # with adjacent content from the same sentence.
+        #
+        # Count how many content words (non-conjunction, non-particle) from this
+        # clause appear in the verse.
+        clause_content_count = 0
+        for vw in verse_words:
+            if vw.clause_id == cl_id and vw.word_class not in ('conj', 'ptcl', ''):
+                clause_content_count += 1
+
+        # If the clause has only 1 content word (the verb itself), it's likely
+        # stranded — the arguments are in sibling/parent clauses.
+        # But protect verbs that are genuinely complete:
+        #   - Passive voice verbs (patient is implied subject)
+        #   - Verbs followed by sentence-ending punctuation (complete thought)
+        if clause_content_count <= 1:
+            # Guard: passive voice verbs are often complete (intransitive passive)
+            if verb.voice == 'passive':
+                continue
+
+            # Guard: if the line text ends with sentence-ending punctuation,
+            # the verb likely concludes a thought
+            stripped_line = line_text.rstrip()
+            if stripped_line and stripped_line[-1] in '.;':
+                continue
+
+            # Guard: if the verb is in a different sentence than both adjacent
+            # lines, don't merge (it's a standalone sentence verb)
+            # We check this via word position adjacency — if the verb's word
+            # position is NOT adjacent to words on the prev/next line, skip
+            verb_pos = verb.word_pos
+            is_adjacent_to_prev = False
+            is_adjacent_to_next = False
+
+            if prev_line:
+                prev_matched = _match_line_words_to_macula(prev_line, verse_words)
+                prev_positions = [mw.word_pos for mw in prev_matched if mw is not None]
+                if prev_positions and verb_pos - max(prev_positions) <= 2:
+                    is_adjacent_to_prev = True
+
+            if next_line:
+                next_matched = _match_line_words_to_macula(next_line, verse_words)
+                next_positions = [mw.word_pos for mw in next_matched if mw is not None]
+                if next_positions and min(next_positions) - verb_pos <= 2:
+                    is_adjacent_to_next = True
+
+            if not is_adjacent_to_prev and not is_adjacent_to_next:
+                continue
+
+            # Determine merge direction by proximity
+            direction = _find_merge_direction_by_proximity(
+                verb, prev_line, next_line, verse_words
+            )
+            if direction:
+                return StrandedVerbResult(
+                    stranded=True,
+                    reason=f"finite verb '{verb.normalized}' in tiny clause, merging {direction} toward context",
+                    verb_text=verb.normalized,
+                    merge_direction=direction,
+                    missing_roles=['context'],
+                )
+
+    return StrandedVerbResult()
+
+
+def _find_merge_direction_by_clause(
+    cr: ClauseRoles,
+    missing_roles: list,
+    line_refs: set,
+    prev_line: str,
+    next_line: str,
+    verse_words: list,
+) -> str:
+    """Determine merge direction based on where clause arguments are on adjacent lines."""
+    forward_has_args = False
+    backward_has_args = False
+
+    if next_line:
+        next_matched = _match_line_words_to_macula(next_line, verse_words)
+        next_refs = set(mw.ref for mw in next_matched if mw is not None)
+        if 'o' in missing_roles and next_refs.intersection(cr.object_word_refs):
+            forward_has_args = True
+        if 's' in missing_roles and next_refs.intersection(cr.subject_word_refs):
+            forward_has_args = True
+
+    if prev_line:
+        prev_matched = _match_line_words_to_macula(prev_line, verse_words)
+        prev_refs = set(mw.ref for mw in prev_matched if mw is not None)
+        if 'o' in missing_roles and prev_refs.intersection(cr.object_word_refs):
+            backward_has_args = True
+        if 's' in missing_roles and prev_refs.intersection(cr.subject_word_refs):
+            backward_has_args = True
+
+    if backward_has_args and not forward_has_args:
+        return 'backward'
+    elif forward_has_args and not backward_has_args:
+        return 'forward'
+    elif forward_has_args and backward_has_args:
+        return 'forward'  # prefer forward (Greek VSO order)
+    return ''
+
+
+def _find_merge_direction_by_proximity(
+    verb,
+    prev_line: str,
+    next_line: str,
+    verse_words: list,
+) -> str:
+    """Determine merge direction by checking which adjacent line has more verse content.
+
+    For a tiny-clause verb, we merge toward the adjacent line that has words from
+    the same verse (indicating continuity of thought). Prefer backward if the verb
+    follows its arguments (common in Greek when participial phrases precede the
+    main verb), forward otherwise.
+    """
+    # Count content words on each adjacent line from this verse
+    prev_content = 0
+    next_content = 0
+
+    if prev_line:
+        prev_matched = _match_line_words_to_macula(prev_line, verse_words)
+        prev_content = sum(1 for mw in prev_matched if mw is not None
+                          and mw.word_class not in ('conj', 'ptcl', ''))
+
+    if next_line:
+        next_matched = _match_line_words_to_macula(next_line, verse_words)
+        next_content = sum(1 for mw in next_matched if mw is not None
+                          and mw.word_class not in ('conj', 'ptcl', ''))
+
+    # Check the verb's word position: if it follows content words in the verse,
+    # merge backward; if it precedes them, merge forward
+    verb_pos = verb.word_pos
+
+    if prev_content > 0 and next_content > 0:
+        # Both sides have content — check which side's words are closer to the verb
+        # in the verse word order
+        if prev_line:
+            prev_matched = _match_line_words_to_macula(prev_line, verse_words)
+            prev_positions = [mw.word_pos for mw in prev_matched if mw is not None]
+            max_prev_pos = max(prev_positions) if prev_positions else 0
+        else:
+            max_prev_pos = 0
 
         if next_line:
             next_matched = _match_line_words_to_macula(next_line, verse_words)
-            next_refs = set(mw.ref for mw in next_matched if mw is not None)
-            if 'o' in missing_roles and next_refs.intersection(cr.object_word_refs):
-                forward_has_args = True
-            if 's' in missing_roles and next_refs.intersection(cr.subject_word_refs):
-                forward_has_args = True
+            next_positions = [mw.word_pos for mw in next_matched if mw is not None]
+            min_next_pos = min(next_positions) if next_positions else 999
+        else:
+            min_next_pos = 999
 
-        if prev_line:
-            prev_matched = _match_line_words_to_macula(prev_line, verse_words)
-            prev_refs = set(mw.ref for mw in prev_matched if mw is not None)
-            if 'o' in missing_roles and prev_refs.intersection(cr.object_word_refs):
-                backward_has_args = True
-            if 's' in missing_roles and prev_refs.intersection(cr.subject_word_refs):
-                backward_has_args = True
+        # If verb directly follows prev content (adjacent word positions), merge backward
+        if verb_pos - max_prev_pos <= 2:
+            return 'backward'
+        # If verb directly precedes next content, merge forward
+        if min_next_pos - verb_pos <= 2:
+            return 'forward'
+        # Default: forward
+        return 'forward'
 
-        if forward_has_args or backward_has_args:
-            # Prefer backward merge if arguments precede the verb (e.g., object before verb)
-            # Prefer forward merge if arguments follow the verb
-            if backward_has_args and not forward_has_args:
-                direction = 'backward'
-            elif forward_has_args and not backward_has_args:
-                direction = 'forward'
-            else:
-                # Both directions have args — prefer forward (more common in Greek VSO order)
-                direction = 'forward'
+    elif prev_content > 0:
+        return 'backward'
+    elif next_content > 0:
+        return 'forward'
 
-            return StrandedVerbResult(
-                stranded=True,
-                reason=f"finite verb '{verb.normalized}' missing {missing_roles} on adjacent line ({direction})",
-                verb_text=verb.normalized,
-                merge_direction=direction,
-                missing_roles=missing_roles,
-            )
-
-    return StrandedVerbResult()
+    return ''
 
 
 def line_has_predicate_role(line_text: str, book_slug: str,
