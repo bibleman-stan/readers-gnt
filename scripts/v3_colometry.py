@@ -25,14 +25,15 @@ try:
     from morphgnt_lookup import (line_has_verbal_element, line_has_finite_verb,
                                   get_comparative_words, word_is_participle,
                                   word_has_lemma, word_is_imperative,
-                                  get_imperative_words_on_line)
+                                  get_imperative_words_on_line,
+                                  word_is_noun_or_pronoun, word_is_vocative)
     _HAS_MORPHGNT = True
 except ImportError:
     _HAS_MORPHGNT = False
 
 # Macula valency check for participle completeness
 try:
-    from macula_valency import check_line_valency, line_has_predicate_role
+    from macula_valency import check_line_valency, line_has_predicate_role, check_stranded_finite_verb
     _HAS_VALENCY = True
 except ImportError:
     _HAS_VALENCY = False
@@ -46,7 +47,7 @@ except ImportError:
 
 # Macula sentence boundary detection — prevents cross-sentence merges
 try:
-    from macula_sentences import find_sentence_boundary_in_line
+    from macula_sentences import find_sentence_boundary_in_line, words_cross_sentence_boundary
     _HAS_SENTENCES = True
 except ImportError:
     _HAS_SENTENCES = False
@@ -648,6 +649,143 @@ def apply_valency_merge(verse_lines, book_slug=None, verse_ref=None):
                 continue
         result.append(line)
         i += 1
+    return result
+
+
+# ---------- Pattern 0f: Stranded finite verb merge ----------
+
+# Global counter for reporting
+_stranded_verb_merge_count = 0
+
+
+def apply_stranded_verb_merge(verse_lines, book_slug=None, verse_ref=None):
+    """Merge lines where a finite verb is stranded from its required arguments.
+
+    Grammatical basis: a finite verb alone (or with only a particle/conjunction)
+    is an incomplete thought when its clause has arguments (subject, object) on
+    an adjacent line. "ἐβάπτισα" alone means "I baptized" — baptized WHOM?
+    The object is on the adjacent line.
+
+    This complements the participle-focused valency merge (Pattern 0c) and the
+    predication merge (Pattern 0d) by handling the specific case of finite verbs
+    stranded on their own line.
+
+    Protected from merging:
+      - Standalone imperatives (Μετανοήσατε, Ἀκούετε, etc.)
+      - Speech introductions (ending with · ano teleia)
+      - Genuinely intransitive/complete verbs (no arguments in Macula clause)
+      - Merges that would cross a Macula sentence boundary
+    """
+    global _stranded_verb_merge_count
+
+    if not _HAS_VALENCY or not _HAS_MORPHGNT or not book_slug or not verse_ref:
+        return verse_lines
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    # Parse verse reference
+    parts = verse_ref.split(':')
+    if len(parts) != 2:
+        return verse_lines
+    try:
+        chapter = int(parts[0])
+        verse = int(parts[1])
+    except ValueError:
+        return verse_lines
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        line = verse_lines[i]
+        stripped = line.strip()
+        words = stripped.split()
+        word_count = len(words)
+
+        # Only check single-word lines, or short lines (<15 chars) with verb + particle
+        is_candidate = False
+        if word_count == 1:
+            is_candidate = True
+        elif word_count <= 3 and len(stripped) < 15:
+            # Short line: check if it contains a finite verb
+            if line_has_finite_verb(stripped, book_slug):
+                is_candidate = True
+
+        if not is_candidate:
+            result.append(line)
+            i += 1
+            continue
+
+        # Check if line has a finite verb
+        if not line_has_finite_verb(stripped, book_slug):
+            result.append(line)
+            i += 1
+            continue
+
+        # Protection: standalone units (imperatives like Μετανοήσατε, vocatives, etc.)
+        if is_standalone_unit(stripped):
+            result.append(line)
+            i += 1
+            continue
+
+        # Protection: speech introductions (end with · ano teleia)
+        if stripped.rstrip().endswith('·'):
+            result.append(line)
+            i += 1
+            continue
+
+        # Protection: standalone imperatives (single-word imperatives that are complete)
+        # Check each word — if the ONLY verb on the line is an imperative, skip it
+        if word_count == 1:
+            clean_word = _clean_word(words[0])
+            if word_is_imperative(clean_word, book_slug):
+                result.append(line)
+                i += 1
+                continue
+
+        # Get adjacent lines
+        prev_line = result[-1].strip() if result else ''
+        next_line = verse_lines[i + 1].strip() if i + 1 < len(verse_lines) else ''
+
+        # Check stranded verb via Macula valency
+        svr = check_stranded_finite_verb(
+            stripped, prev_line, next_line, book_slug, chapter, verse
+        )
+
+        if not svr.stranded:
+            result.append(line)
+            i += 1
+            continue
+
+        # Guard: never merge across sentence boundary
+        if _HAS_SENTENCES:
+            if svr.merge_direction == 'forward' and next_line:
+                if words_cross_sentence_boundary(stripped, next_line, book_slug, chapter, verse):
+                    result.append(line)
+                    i += 1
+                    continue
+            elif svr.merge_direction == 'backward' and prev_line:
+                if words_cross_sentence_boundary(prev_line, stripped, book_slug, chapter, verse):
+                    result.append(line)
+                    i += 1
+                    continue
+
+        # Perform the merge
+        if svr.merge_direction == 'forward' and i + 1 < len(verse_lines):
+            next_l = verse_lines[i + 1]
+            merged = stripped + ' ' + next_l.strip()
+            result.append(merged)
+            _stranded_verb_merge_count += 1
+            i += 2
+        elif svr.merge_direction == 'backward' and result:
+            prev = result[-1]
+            merged = prev.rstrip() + ' ' + stripped
+            result[-1] = merged
+            _stranded_verb_merge_count += 1
+            i += 1
+        else:
+            result.append(line)
+            i += 1
+
     return result
 
 
@@ -2084,6 +2222,211 @@ def apply_stranded_function_word_merge(verse_lines):
     return result
 
 
+# Global counters for new cleanup passes
+_stranded_participle_merge_count = 0
+_stranded_noun_merge_count = 0
+_two_word_function_merge_count = 0
+
+
+def apply_stranded_participle_merge(verse_lines, book_slug=None):
+    """Safety-net merge for single-word participle lines.
+
+    After all other rules have run, scan for single-word lines where the word
+    is a participle (MorphGNT POS=V-, parsing[3]=P). These are attributive or
+    circumstantial participles that got split from their head noun or object.
+
+    Exceptions (do NOT merge):
+      - Speech introductions (line ends with ·)
+      - Lines that are standalone units (vocatives, imperatives, etc.)
+
+    Heuristic: merge BACKWARD if previous line exists and is at least as long
+    as the next line; otherwise merge FORWARD.
+    """
+    global _stranded_participle_merge_count
+
+    if not _HAS_MORPHGNT or not book_slug:
+        return verse_lines
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        line = verse_lines[i]
+        stripped = line.strip()
+        words = stripped.split()
+
+        # Only target single-word lines
+        if len(words) == 1:
+            clean_word = _clean_word(words[0])
+            if (clean_word
+                    and word_is_participle(words[0], book_slug)
+                    and not stripped.endswith('·')
+                    and not is_standalone_unit(stripped)):
+                # Determine merge direction
+                prev_len = len(result[-1].strip()) if result else 0
+                next_len = len(verse_lines[i + 1].strip()) if i + 1 < len(verse_lines) else 0
+
+                if result and (prev_len >= next_len or next_len == 0):
+                    # Merge backward
+                    result[-1] = result[-1].rstrip() + ' ' + stripped
+                    _stranded_participle_merge_count += 1
+                    i += 1
+                    continue
+                elif i + 1 < len(verse_lines):
+                    # Merge forward
+                    merged = stripped + ' ' + verse_lines[i + 1].lstrip()
+                    result.append(merged)
+                    _stranded_participle_merge_count += 1
+                    i += 2
+                    continue
+
+        result.append(line)
+        i += 1
+    return result
+
+
+def apply_stranded_noun_merge(verse_lines, book_slug=None):
+    """Safety-net merge for single-word noun/pronoun lines.
+
+    After all other rules have run, scan for single-word lines where the word
+    is a noun (N-) or pronoun (R*) that is NOT vocative case. These are
+    subjects or objects split from their governing verb.
+
+    Heuristic: merge toward the adjacent line that contains a verb.
+    If both or neither contain a verb, merge backward (object is more common
+    than subject in stranded cases).
+    """
+    global _stranded_noun_merge_count
+
+    if not _HAS_MORPHGNT or not book_slug:
+        return verse_lines
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        line = verse_lines[i]
+        stripped = line.strip()
+        words = stripped.split()
+
+        # Only target single-word lines
+        if len(words) == 1:
+            clean_word = _clean_word(words[0])
+            if (clean_word
+                    and word_is_noun_or_pronoun(words[0], book_slug)
+                    and not word_is_vocative(words[0], book_slug)
+                    and not is_standalone_unit(stripped)):
+                # Check adjacent lines for verbs
+                prev_has_verb = (line_has_verbal_element(result[-1], book_slug)
+                                 if result else False)
+                next_has_verb = (line_has_verbal_element(verse_lines[i + 1], book_slug)
+                                 if i + 1 < len(verse_lines) else False)
+
+                if prev_has_verb and not next_has_verb and result:
+                    # Object — merge backward toward verb
+                    result[-1] = result[-1].rstrip() + ' ' + stripped
+                    _stranded_noun_merge_count += 1
+                    i += 1
+                    continue
+                elif next_has_verb and not prev_has_verb and i + 1 < len(verse_lines):
+                    # Subject — merge forward toward verb
+                    merged = stripped + ' ' + verse_lines[i + 1].lstrip()
+                    result.append(merged)
+                    _stranded_noun_merge_count += 1
+                    i += 2
+                    continue
+                elif result:
+                    # Both or neither have verb — merge backward (default)
+                    result[-1] = result[-1].rstrip() + ' ' + stripped
+                    _stranded_noun_merge_count += 1
+                    i += 1
+                    continue
+                elif i + 1 < len(verse_lines):
+                    # No previous line — merge forward
+                    merged = stripped + ' ' + verse_lines[i + 1].lstrip()
+                    result.append(merged)
+                    _stranded_noun_merge_count += 1
+                    i += 2
+                    continue
+
+        result.append(line)
+        i += 1
+    return result
+
+
+def apply_two_word_function_merge(verse_lines):
+    """Merge two-word fragments where BOTH words are function words/particles.
+
+    The single-word function word merge catches e.g. bare 'μή' on a line,
+    but misses two-word fragments like 'μὴ πάντες' where both words are
+    function words/particles. These should be merged forward into the next
+    line (e.g., 'μὴ πάντες' + 'προφῆται;' → 'μὴ πάντες προφῆται;').
+
+    This specifically fixes 1 Cor 12:29-30 split rhetorical questions
+    with verbless predication (implied copula).
+    """
+    global _two_word_function_merge_count
+
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    # Extended function word set including quantifiers/adjectives that
+    # act as function-like modifiers (πάντες, πᾶς, etc.)
+    FUNCTION_WORDS_EXTENDED = {
+        # Conjunctions
+        'καὶ', 'καί', 'Καὶ', 'Καί', 'δὲ', 'δέ', 'ἀλλὰ', 'ἀλλά', 'Ἀλλὰ',
+        'γὰρ', 'γάρ', 'οὖν', 'ὅτι', 'ἵνα', 'εἰ', 'ἐάν', 'ἐὰν',
+        'ὥστε', 'ὅταν', 'ὅτε', 'ἕως', 'μηδὲ', 'οὐδὲ', 'τε',
+        'ἤ', 'ἢ', 'μήτε', 'οὔτε', 'εἴτε', 'καθὼς', 'ὡς',
+        'ἐπεὶ', 'διότι', 'πλὴν', 'ἄρα', 'διό', 'μέν', 'μὲν',
+        # Articles
+        'ὁ', 'ἡ', 'τό', 'τὸ', 'τοῦ', 'τῆς', 'τῷ', 'τῇ', 'τόν', 'τὸν',
+        'τήν', 'τὴν', 'οἱ', 'αἱ', 'τά', 'τὰ', 'τῶν', 'τοῖς', 'ταῖς',
+        'τούς', 'τοὺς', 'τάς', 'τὰς',
+        # Prepositions
+        'ἐν', 'εἰς', 'ἐκ', 'ἐξ', 'ἀπό', 'ἀπὸ', 'πρός', 'πρὸς',
+        'ἐπί', 'ἐπὶ', 'κατά', 'κατὰ', 'μετά', 'μετὰ', 'διά', 'διὰ',
+        'ὑπό', 'ὑπὸ', 'παρά', 'παρὰ', 'περί', 'περὶ', 'πρό', 'πρὸ',
+        'σύν', 'σὺν', 'ὑπέρ', 'ὑπὲρ',
+        # Negative particles
+        'οὐ', 'οὐκ', 'οὐχ', 'μή', 'μὴ',
+        # Presentative particles
+        'ἰδού', 'ἰδοὺ', 'Ἰδού', 'Ἰδοὺ', 'ἴδε', 'Ἴδε',
+        # Quantifiers / universal adjectives (function-like)
+        'πάντες', 'πᾶς', 'πᾶσα', 'πᾶν', 'πάντα', 'πάντων',
+        'πᾶσιν', 'πάσαις', 'πᾶσαι', 'πάσας',
+        # Elided forms
+        'ἀλλʼ', 'Ἀλλʼ', "ἀλλ'", "Ἀλλ'",
+        # Interrogative particles
+        'μήτι', 'Μήτι',
+    }
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        line = verse_lines[i]
+        stripped = line.strip().rstrip('.,;·')
+        words = stripped.split()
+
+        if (len(words) == 2
+                and i + 1 < len(verse_lines)
+                and all(_clean_word(w) in FUNCTION_WORDS_EXTENDED
+                        or w in FUNCTION_WORDS_EXTENDED
+                        for w in words)):
+            # Two function words alone — merge forward
+            next_line = verse_lines[i + 1]
+            merged = line.strip() + ' ' + next_line.strip()
+            result.append(merged)
+            _two_word_function_merge_count += 1
+            i += 2
+        else:
+            result.append(line)
+            i += 1
+    return result
+
+
 def apply_sentence_boundary_splits(verse_lines, book_slug=None, verse_ref=None):
     """Split any line that crosses a Macula sentence boundary.
 
@@ -2156,6 +2499,9 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     # (fallback for edge cases the tree-based test doesn't cover)
     lines = apply_valency_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
 
+    # Pattern 0f: Stranded finite verb merge (single-word finite verbs separated from arguments)
+    lines = apply_stranded_verb_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
+
     # Pattern 1: Merge complementary verb + infinitive splits
     lines = apply_complementary_verb_merge(lines)
 
@@ -2223,6 +2569,9 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     # Pattern 0c again — catch valency issues from fragments created by earlier passes
     lines = apply_valency_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
 
+    # Pattern 0f again — catch stranded finite verbs from fragments created by earlier passes
+    lines = apply_stranded_verb_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
+
     # Pattern 0d again — final predication cleanup after all splits/merges
     lines = apply_predication_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
 
@@ -2237,6 +2586,20 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     # Sentence boundary splits can strand conjunctions, articles, and particles
     # on their own line. These are bound to what FOLLOWS, never standalone.
     lines = apply_stranded_function_word_merge(lines)
+
+    # POST-SPLIT CLEANUP: Merge two-word function word fragments forward.
+    # Catches cases like "μὴ πάντες" / "προφῆται;" where the sentence boundary
+    # split created a two-word fragment of function words (1 Cor 12:29-30).
+    lines = apply_two_word_function_merge(lines)
+
+    # SAFETY NET: Merge stranded single-word participle lines.
+    # Catches attributive/circumstantial participles that earlier rules missed
+    # (typically due to Macula word matching failures for accent variants).
+    lines = apply_stranded_participle_merge(lines, book_slug=book_slug)
+
+    # SAFETY NET: Merge stranded single-word noun/pronoun lines.
+    # Catches subjects/objects split from their governing verb.
+    lines = apply_stranded_noun_merge(lines, book_slug=book_slug)
 
     return lines
 
@@ -2291,11 +2654,16 @@ def main():
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    global _periphrastic_merge_count, _predication_merge_count, _sentence_split_count, _multi_image_split_count
+    global _periphrastic_merge_count, _predication_merge_count, _sentence_split_count, _multi_image_split_count, _stranded_verb_merge_count
+    global _stranded_participle_merge_count, _stranded_noun_merge_count, _two_word_function_merge_count
     _periphrastic_merge_count = 0
     _predication_merge_count = 0
     _sentence_split_count = 0
     _multi_image_split_count = 0
+    _stranded_verb_merge_count = 0
+    _stranded_participle_merge_count = 0
+    _stranded_noun_merge_count = 0
+    _two_word_function_merge_count = 0
 
     if args.book:
         if args.book not in BOOKS:
@@ -2315,6 +2683,14 @@ def main():
         print(f'Periphrastic merges (εἰμί + participle): {_periphrastic_merge_count}')
     if _multi_image_split_count > 0:
         print(f'Multi-image participial splits (2+ images per line): {_multi_image_split_count}')
+    if _stranded_verb_merge_count > 0:
+        print(f'Stranded finite verb merges (verb reunited with arguments): {_stranded_verb_merge_count}')
+    if _stranded_participle_merge_count > 0:
+        print(f'Stranded participle merges (single-word ptcp reunited): {_stranded_participle_merge_count}')
+    if _stranded_noun_merge_count > 0:
+        print(f'Stranded noun/pronoun merges (single-word N/R reunited): {_stranded_noun_merge_count}')
+    if _two_word_function_merge_count > 0:
+        print(f'Two-word function fragment merges (e.g. μὴ πάντες): {_two_word_function_merge_count}')
     if _sentence_split_count > 0:
         print(f'Sentence boundary splits (cross-sentence lines split): {_sentence_split_count}')
 

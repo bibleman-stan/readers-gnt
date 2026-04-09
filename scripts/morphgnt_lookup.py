@@ -315,6 +315,79 @@ def get_imperative_words_on_line(line_text, book_slug):
     return results
 
 
+def word_is_noun(word, book_slug):
+    """Check if a word is tagged as a noun (N-) in MorphGNT.
+
+    Args:
+        word: A Greek word (may include punctuation)
+        book_slug: Book identifier (e.g., 'mark', 'acts')
+
+    Returns:
+        True if the word is tagged as a noun in any verse.
+    """
+    clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', word)
+    if not clean:
+        return False
+    pos_map = _load_word_pos(book_slug)
+    pos_tags = pos_map.get(clean, set())
+    return any(p.startswith('N') for p in pos_tags)
+
+
+def word_is_pronoun(word, book_slug):
+    """Check if a word is tagged as a pronoun (R*) in MorphGNT.
+
+    MorphGNT POS tags for pronouns: RP (personal), RD (demonstrative),
+    RR (relative), RI (interrogative), RX (indefinite), RC (reciprocal).
+
+    Args:
+        word: A Greek word (may include punctuation)
+        book_slug: Book identifier (e.g., 'mark', 'acts')
+
+    Returns:
+        True if the word is tagged as a pronoun in any verse.
+    """
+    clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', word)
+    if not clean:
+        return False
+    pos_map = _load_word_pos(book_slug)
+    pos_tags = pos_map.get(clean, set())
+    return any(p.startswith('R') for p in pos_tags)
+
+
+def word_is_noun_or_pronoun(word, book_slug):
+    """Check if a word is a noun (N-) or pronoun (R*) in MorphGNT."""
+    return word_is_noun(word, book_slug) or word_is_pronoun(word, book_slug)
+
+
+def word_is_vocative(word, book_slug):
+    """Check if a word can be vocative case in MorphGNT.
+
+    MorphGNT parsing for nouns/pronouns: position 4 (0-indexed) is case.
+    V = vocative.
+
+    Args:
+        word: A Greek word (may include punctuation)
+        book_slug: Book identifier (e.g., 'mark', 'acts')
+
+    Returns:
+        True if the word is tagged as vocative case in any verse.
+    """
+    clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', word)
+    if not clean:
+        return False
+    if book_slug not in _verse_cache:
+        _load_book(book_slug)
+    verses = _verse_cache.get(book_slug, {})
+    for (ch, vs), word_list in verses.items():
+        for w, pos, parsing in word_list:
+            if not (pos.startswith('N') or pos.startswith('R')):
+                continue
+            w_clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', w)
+            if w_clean == clean and len(parsing) >= 5 and parsing[4] == 'V':
+                return True
+    return False
+
+
 def clear_cache():
     """Clear all cached data."""
     _word_pos_cache.clear()

@@ -430,6 +430,125 @@ def line_has_unsatisfied_valency(line_text: str, book_slug: str,
     return check_line_valency(line_text, book_slug, chapter, verse).unsatisfied
 
 
+@dataclass
+class StrandedVerbResult:
+    """Result of a stranded finite verb check."""
+    stranded: bool = False
+    reason: str = ""
+    verb_text: str = ""
+    merge_direction: str = ""  # 'forward', 'backward', or ''
+    missing_roles: list = field(default_factory=list)  # list of missing role types
+
+
+def check_stranded_finite_verb(
+    line_text: str,
+    prev_line: str,
+    next_line: str,
+    book_slug: str,
+    chapter: int,
+    verse: int,
+) -> StrandedVerbResult:
+    """Check if a line contains a stranded finite verb separated from its arguments.
+
+    A finite verb is 'stranded' when:
+      1. The line contains only the verb (single-word) or the verb + a particle/conjunction
+      2. The verb's Macula clause has arguments (role=o, role=s) on other lines
+      3. Those arguments appear on an adjacent line
+
+    Returns StrandedVerbResult with merge direction if stranded.
+    """
+    macula_id = _SLUG_TO_MACULA.get(book_slug.lower())
+    if not macula_id:
+        return StrandedVerbResult()
+
+    _parse_book_valency(macula_id)
+
+    verse_words = _book_cache.get(macula_id, {}).get((chapter, verse), [])
+    clause_roles = _clause_roles_cache.get(macula_id, {})
+
+    if not verse_words:
+        return StrandedVerbResult()
+
+    # Match line words to Macula words
+    matched = _match_line_words_to_macula(line_text, verse_words)
+    line_refs = set(mw.ref for mw in matched if mw is not None)
+
+    # Find finite verbs on this line
+    finite_verbs = []
+    for mw in matched:
+        if mw is not None and mw.mood in ('indicative', 'subjunctive', 'optative'):
+            finite_verbs.append(mw)
+
+    if not finite_verbs:
+        return StrandedVerbResult()
+
+    # Check each finite verb's clause for missing arguments
+    for verb in finite_verbs:
+        cl_id = verb.clause_id
+        cr = clause_roles.get(cl_id)
+        if cr is None:
+            continue
+
+        missing_roles = []
+
+        # Check if clause has object not on this line
+        if cr.has_object:
+            obj_on_line = line_refs.intersection(cr.object_word_refs)
+            if not obj_on_line:
+                missing_roles.append('o')
+
+        # Check if clause has subject not on this line
+        if cr.has_subject:
+            subj_on_line = line_refs.intersection(cr.subject_word_refs)
+            if not subj_on_line:
+                missing_roles.append('s')
+
+        if not missing_roles:
+            continue
+
+        # Determine merge direction: check which adjacent line has the missing arguments
+        # Match prev and next lines to the same verse
+        forward_has_args = False
+        backward_has_args = False
+
+        if next_line:
+            next_matched = _match_line_words_to_macula(next_line, verse_words)
+            next_refs = set(mw.ref for mw in next_matched if mw is not None)
+            if 'o' in missing_roles and next_refs.intersection(cr.object_word_refs):
+                forward_has_args = True
+            if 's' in missing_roles and next_refs.intersection(cr.subject_word_refs):
+                forward_has_args = True
+
+        if prev_line:
+            prev_matched = _match_line_words_to_macula(prev_line, verse_words)
+            prev_refs = set(mw.ref for mw in prev_matched if mw is not None)
+            if 'o' in missing_roles and prev_refs.intersection(cr.object_word_refs):
+                backward_has_args = True
+            if 's' in missing_roles and prev_refs.intersection(cr.subject_word_refs):
+                backward_has_args = True
+
+        if forward_has_args or backward_has_args:
+            # Prefer backward merge if arguments precede the verb (e.g., object before verb)
+            # Prefer forward merge if arguments follow the verb
+            if backward_has_args and not forward_has_args:
+                direction = 'backward'
+            elif forward_has_args and not backward_has_args:
+                direction = 'forward'
+            else:
+                # Both directions have args — prefer forward (more common in Greek VSO order)
+                direction = 'forward'
+
+            return StrandedVerbResult(
+                stranded=True,
+                reason=f"finite verb '{verb.normalized}' missing {missing_roles} on adjacent line ({direction})",
+                verb_text=verb.normalized,
+                merge_direction=direction,
+                missing_roles=missing_roles,
+            )
+
+    return StrandedVerbResult()
+
+
 def line_has_predicate_role(line_text: str, book_slug: str,
                             chapter: int, verse: int) -> bool:
     """Check if a line contains a word with Macula role=p (predicate).
