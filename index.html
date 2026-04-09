@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NT Reader</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Gentium Plus', 'Gentium', 'Noto Serif', 'Georgia', serif;
+    font-size: 1.2rem;
+    line-height: 2.35;
+  }
+
+  /* --- Topbar --- */
+  #topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 44px;
+    background: #16162a;
+    border-bottom: 1px solid #2a2a4a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 100;
+    font-size: 0.95rem;
+  }
+  #topbar .brand { color: #888; letter-spacing: 0.05em; }
+  #topbar .location {
+    cursor: pointer;
+    color: #c0c0e0;
+    padding: 4px 12px;
+    border-radius: 4px;
+    transition: background 0.15s;
+  }
+  #topbar .location:hover { background: #2a2a4a; }
+
+  /* --- Main content --- */
+  #content {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 64px 20px 60px;
+  }
+
+  /* --- Chapter / verse / line styling --- */
+  .chapter { margin-bottom: 2.5em; }
+
+  .verse {
+    margin-bottom: 0.3em;
+  }
+
+  .verse-num {
+    display: block;
+    font-size: 0.7rem;
+    color: #666;
+    line-height: 1.4;
+    margin-top: 0.6em;
+    user-select: none;
+  }
+
+  .line {
+    display: block;
+    text-indent: -0.75em;
+    padding-left: 0.75em;
+  }
+
+  /* --- Chapter nav buttons --- */
+  #chapter-nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 0 40px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  #chapter-nav button {
+    background: #2a2a4a;
+    color: #c0c0e0;
+    border: 1px solid #3a3a5a;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  #chapter-nav button:hover { background: #3a3a5a; }
+  #chapter-nav button:disabled {
+    opacity: 0.3;
+    cursor: default;
+    background: #2a2a4a;
+  }
+
+  /* --- Picker overlay --- */
+  #picker {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #1a1a2e;
+    z-index: 200;
+    overflow-y: auto;
+    padding: 20px;
+  }
+  #picker.open { display: block; }
+
+  #picker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  #picker-header h2 {
+    font-size: 1.1rem;
+    color: #c0c0e0;
+    font-weight: normal;
+  }
+  #picker-close {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 1.6rem;
+    cursor: pointer;
+    padding: 4px 10px;
+    line-height: 1;
+  }
+  #picker-close:hover { color: #e0e0e0; }
+  #picker-back {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 4px 10px;
+    display: none;
+  }
+  #picker-back:hover { color: #e0e0e0; }
+
+  /* Book grid */
+  #book-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .book-btn {
+    background: #22223a;
+    border: 1px solid #2a2a4a;
+    color: #c0c0e0;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+  }
+  .book-btn:hover { background: #2e2e50; }
+
+  /* Chapter grid */
+  #chapter-list {
+    display: none;
+    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    gap: 8px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .ch-btn {
+    background: #22223a;
+    border: 1px solid #2a2a4a;
+    color: #c0c0e0;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+  .ch-btn:hover { background: #2e2e50; }
+
+  /* --- Loading indicator --- */
+  #loading {
+    text-align: center;
+    color: #555;
+    padding: 80px 0;
+    font-size: 0.95rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div id="topbar">
+  <span class="brand">NT Reader</span>
+  <span class="location" id="nav-location" onclick="openPicker()">Mark 1</span>
+</div>
+
+<!-- Main text area -->
+<div id="content">
+  <div id="loading">Loading...</div>
+  <div id="text-container"></div>
+  <div id="chapter-nav">
+    <button id="btn-prev" onclick="goChapter(-1)">&#8592; Previous</button>
+    <button id="btn-next" onclick="goChapter(1)">Next &#8594;</button>
+  </div>
+</div>
+
+<!-- Picker overlay -->
+<div id="picker">
+  <div id="picker-header">
+    <button id="picker-back" onclick="pickerShowBooks()">&#8592; Books</button>
+    <h2 id="picker-title">Select a Book</h2>
+    <button id="picker-close" onclick="closePicker()">&#215;</button>
+  </div>
+  <div id="book-list"></div>
+  <div id="chapter-list"></div>
+</div>
+
+<script>
+const BOOKS = {
+  'matt': { name: 'Matthew', chapters: 28 },
+  'mark': { name: 'Mark', chapters: 16 },
+  'luke': { name: 'Luke', chapters: 24 },
+  'john': { name: 'John', chapters: 21 },
+  'acts': { name: 'Acts', chapters: 28 },
+  'rom': { name: 'Romans', chapters: 16 },
+  '1cor': { name: '1 Corinthians', chapters: 16 },
+  '2cor': { name: '2 Corinthians', chapters: 13 },
+  'gal': { name: 'Galatians', chapters: 6 },
+  'eph': { name: 'Ephesians', chapters: 6 },
+  'phil': { name: 'Philippians', chapters: 4 },
+  'col': { name: 'Colossians', chapters: 4 },
+  '1thess': { name: '1 Thessalonians', chapters: 5 },
+  '2thess': { name: '2 Thessalonians', chapters: 3 },
+  '1tim': { name: '1 Timothy', chapters: 6 },
+  '2tim': { name: '2 Timothy', chapters: 4 },
+  'titus': { name: 'Titus', chapters: 3 },
+  'phlm': { name: 'Philemon', chapters: 1 },
+  'heb': { name: 'Hebrews', chapters: 13 },
+  'jas': { name: 'James', chapters: 5 },
+  '1pet': { name: '1 Peter', chapters: 5 },
+  '2pet': { name: '2 Peter', chapters: 3 },
+  '1john': { name: '1 John', chapters: 5 },
+  '2john': { name: '2 John', chapters: 1 },
+  '3john': { name: '3 John', chapters: 1 },
+  'jude': { name: 'Jude', chapters: 1 },
+  'rev': { name: 'Revelation', chapters: 22 },
+};
+
+const BOOK_KEYS = Object.keys(BOOKS);
+
+let currentBook = 'mark';
+let currentChapter = 1;
+let bookCache = {};  // cached HTML per book slug
+let pickerSelectedBook = null;
+
+// --- Navigation ---
+
+function parseHash() {
+  const hash = location.hash.replace('#', '');
+  if (!hash) return { book: 'mark', chapter: 1 };
+  const parts = hash.split('-');
+  const ch = parseInt(parts.pop(), 10);
+  const book = parts.join('-');
+  if (BOOKS[book] && ch >= 1 && ch <= BOOKS[book].chapters) {
+    return { book, chapter: ch };
+  }
+  return { book: 'mark', chapter: 1 };
+}
+
+function setHash(book, chapter) {
+  location.hash = book + '-' + chapter;
+}
+
+function updateLocationLabel() {
+  const name = BOOKS[currentBook].name;
+  document.getElementById('nav-location').textContent = name + ' ' + currentChapter;
+  document.title = name + ' ' + currentChapter + ' — NT Reader';
+}
+
+async function navigate(book, chapter) {
+  currentBook = book;
+  currentChapter = chapter;
+  setHash(book, chapter);
+  updateLocationLabel();
+  updateNavButtons();
+  await loadBook(book);
+  scrollToChapter(chapter);
+}
+
+async function loadBook(slug) {
+  const container = document.getElementById('text-container');
+  const loading = document.getElementById('loading');
+
+  if (bookCache[slug]) {
+    container.innerHTML = bookCache[slug];
+    return;
+  }
+
+  loading.style.display = 'block';
+  container.innerHTML = '';
+
+  try {
+    const resp = await fetch('books/' + slug + '.html');
+    if (!resp.ok) throw new Error('Not found');
+    const html = await resp.text();
+    bookCache[slug] = html;
+    container.innerHTML = html;
+  } catch (e) {
+    container.innerHTML = '<p style="color:#666;text-align:center;padding:60px 0;">Could not load ' + BOOKS[slug].name + '.</p>';
+  } finally {
+    loading.style.display = 'none';
+  }
+}
+
+function scrollToChapter(ch) {
+  const el = document.getElementById('ch-' + ch);
+  if (el) {
+    const topbarHeight = 44;
+    const y = el.getBoundingClientRect().top + window.scrollY - topbarHeight - 12;
+    window.scrollTo({ top: y, behavior: 'auto' });
+  } else {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+}
+
+function goChapter(delta) {
+  let newCh = currentChapter + delta;
+  let newBook = currentBook;
+
+  if (newCh < 1) {
+    // Go to previous book's last chapter
+    const idx = BOOK_KEYS.indexOf(currentBook);
+    if (idx <= 0) return;
+    newBook = BOOK_KEYS[idx - 1];
+    newCh = BOOKS[newBook].chapters;
+  } else if (newCh > BOOKS[currentBook].chapters) {
+    // Go to next book's first chapter
+    const idx = BOOK_KEYS.indexOf(currentBook);
+    if (idx >= BOOK_KEYS.length - 1) return;
+    newBook = BOOK_KEYS[idx + 1];
+    newCh = 1;
+  }
+
+  navigate(newBook, newCh);
+}
+
+function updateNavButtons() {
+  const idx = BOOK_KEYS.indexOf(currentBook);
+  document.getElementById('btn-prev').disabled =
+    (idx === 0 && currentChapter === 1);
+  document.getElementById('btn-next').disabled =
+    (idx === BOOK_KEYS.length - 1 && currentChapter === BOOKS[currentBook].chapters);
+}
+
+// --- Picker ---
+
+function openPicker() {
+  pickerShowBooks();
+  document.getElementById('picker').classList.add('open');
+}
+
+function closePicker() {
+  document.getElementById('picker').classList.remove('open');
+}
+
+function pickerShowBooks() {
+  pickerSelectedBook = null;
+  document.getElementById('picker-title').textContent = 'Select a Book';
+  document.getElementById('picker-back').style.display = 'none';
+  document.getElementById('book-list').style.display = 'grid';
+  document.getElementById('chapter-list').style.display = 'none';
+}
+
+function pickerShowChapters(slug) {
+  pickerSelectedBook = slug;
+  const book = BOOKS[slug];
+  document.getElementById('picker-title').textContent = book.name;
+  document.getElementById('picker-back').style.display = 'inline-block';
+  document.getElementById('book-list').style.display = 'none';
+
+  const list = document.getElementById('chapter-list');
+  list.innerHTML = '';
+  for (let i = 1; i <= book.chapters; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'ch-btn';
+    btn.textContent = i;
+    btn.onclick = () => pickChapter(slug, i);
+    list.appendChild(btn);
+  }
+  list.style.display = 'grid';
+}
+
+function pickChapter(slug, ch) {
+  closePicker();
+  navigate(slug, ch);
+}
+
+// --- Build book list ---
+
+function buildBookList() {
+  const list = document.getElementById('book-list');
+  for (const slug of BOOK_KEYS) {
+    const btn = document.createElement('button');
+    btn.className = 'book-btn';
+    btn.textContent = BOOKS[slug].name;
+    btn.onclick = () => {
+      if (BOOKS[slug].chapters === 1) {
+        pickChapter(slug, 1);
+      } else {
+        pickerShowChapters(slug);
+      }
+    };
+    list.appendChild(btn);
+  }
+}
+
+// --- Init ---
+
+window.addEventListener('hashchange', () => {
+  const { book, chapter } = parseHash();
+  if (book !== currentBook || chapter !== currentChapter) {
+    navigate(book, chapter);
+  }
+});
+
+(function init() {
+  buildBookList();
+  const { book, chapter } = parseHash();
+  navigate(book, chapter);
+})();
+</script>
+
+</body>
+</html>
