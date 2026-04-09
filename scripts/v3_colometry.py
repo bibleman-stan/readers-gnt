@@ -188,13 +188,11 @@ def apply_infinitive_construction_merge(verse_lines):
                 # typical of ὥστε + acc + inf, or ends with a preposition governing inf
                 stripped = line.rstrip(' .,;·')
                 # ὥστε + accusative + participle, with infinitive on next line
-                if re.search(r'\bὥστε\b', line) and len(line) < 55:
+                if re.search(r'\bὥστε\b', line):
                     merged = line.rstrip() + ' ' + next_line.lstrip()
-                    # Only merge if combined length is reasonable
-                    if len(merged) < 90:
-                        result.append(merged)
-                        i += 2
-                        continue
+                    result.append(merged)
+                    i += 2
+                    continue
                 # πρίν + infinitive
                 if stripped.endswith(('πρὶν', 'πρίν')):
                     result.append(line.rstrip() + ' ' + next_line.lstrip())
@@ -255,10 +253,9 @@ def apply_infinitive_merge_back(verse_lines):
                 and result):  # have a previous line to merge into
             prev = result[-1]
             merged = prev.rstrip() + ' ' + verse_lines[i].lstrip()
-            if len(merged) < 85:
-                result[-1] = merged
-                i += 1
-                continue
+            result[-1] = merged
+            i += 1
+            continue
         result.append(verse_lines[i])
         i += 1
     return result
@@ -301,18 +298,15 @@ def apply_verbless_line_merge(verse_lines, book_slug=None):
         # these are elliptical clauses where the verb of saying is implied
         ends_with_speech_marker = stripped.rstrip().endswith('·')
         if (i + 1 < len(verse_lines)
-                and len(stripped) < 25
                 and not is_standalone_unit(stripped)
                 and not ends_with_speech_marker
                 and not line_has_verbal_element(stripped, book_slug)):
             # This line has no verbal element — merge forward
             next_line = verse_lines[i + 1]
             merged = stripped + ' ' + next_line.strip()
-            # Only merge if result is reasonable length
-            if len(merged) < 85:
-                result.append(merged)
-                i += 2
-                continue
+            result.append(merged)
+            i += 2
+            continue
         result.append(line)
         i += 1
     return result
@@ -361,21 +355,16 @@ def apply_valency_merge(verse_lines, book_slug=None, verse_ref=None):
         # Protection: standalone units
         standalone = is_standalone_unit(stripped)
 
-        # Protection: not too long already
-        too_long = len(stripped) >= 35
-
         if (i + 1 < len(verse_lines)
                 and not ends_with_speech_marker
-                and not standalone
-                and not too_long):
+                and not standalone):
             vr = check_line_valency(stripped, book_slug, chapter, verse)
             if vr.unsatisfied:
                 next_line = verse_lines[i + 1]
                 merged = stripped + ' ' + next_line.strip()
-                if len(merged) < 85:
-                    result.append(merged)
-                    i += 2
-                    continue
+                result.append(merged)
+                i += 2
+                continue
         result.append(line)
         i += 1
     return result
