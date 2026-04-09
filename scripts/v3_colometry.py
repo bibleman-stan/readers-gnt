@@ -3212,6 +3212,11 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     # for a single breath unit.
     lines = apply_long_line_subclause_splits(lines, book_slug=book_slug, verse_ref=verse_ref)
 
+    # ABSOLUTE FINAL: Dangling word fix after long-line splits.
+    # The long-line sub-clause splitter can create new dangles by breaking
+    # at word-group boundaries that leave function words at line end.
+    lines = apply_dangling_word_fix(lines)
+
     return lines
 
 
