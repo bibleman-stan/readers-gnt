@@ -292,10 +292,172 @@
     font-size: 0.88em;
   }
 
+  /* === TOPBAR ICONS === */
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .topbar-icon {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    cursor: pointer;
+    font-size: 16px;
+    font-family: inherit;
+    transition: color 0.15s;
+  }
+  .topbar-icon:hover { color: var(--text-dim); background: rgba(255,255,255,0.04); }
+
+  /* === SETTINGS PANEL === */
+  .settings-panel {
+    position: fixed;
+    top: 45px;
+    right: max(calc((100% - 42em) / 2), 14px);
+    width: 220px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    z-index: 150;
+    display: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .settings-panel.open { display: block; }
+
+  .settings-panel label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78em;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 6px 0;
+  }
+  .settings-panel label:hover { color: var(--text); }
+
+  .settings-panel input[type="checkbox"] {
+    accent-color: var(--accent);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+  }
+
+  /* === SEARCH OVERLAY === */
+  .search-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 250;
+    display: none;
+    flex-direction: column;
+    max-width: 42em;
+    margin: 0 auto;
+    background: var(--bg-overlay);
+    border-bottom: 1px solid var(--border);
+    max-height: 70vh;
+  }
+  .search-overlay.open { display: flex; }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    height: 44px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .search-bar input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.88em;
+    letter-spacing: 0.01em;
+  }
+  .search-bar input::placeholder { color: var(--text-faint); }
+
+  .search-bar .search-icon-label {
+    color: var(--text-faint);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .search-close {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    cursor: pointer;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .search-close:hover { color: var(--text-dim); }
+
+  .search-status {
+    font-size: 0.72em;
+    color: var(--text-faint);
+    padding: 6px 14px;
+  }
+
+  .search-results {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(70vh - 44px - 28px);
+  }
+
+  .search-result {
+    display: block;
+    padding: 8px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: inherit;
+  }
+  .search-result:hover { background: rgba(255,255,255,0.03); }
+
+  .search-result-ref {
+    font-size: 0.72em;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .search-result-text {
+    font-size: 0.82em;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .search-result-text mark {
+    background: rgba(124, 175, 194, 0.25);
+    color: var(--text);
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  /* === VERSE NUMBER VISIBILITY === */
+  body.hide-verse-nums .verse-num { display: none; }
+
   @media (max-width: 480px) {
     body { padding: 0.5em; padding-top: 50px; }
     #content { padding: 16px; padding-top: 8px; }
     .nav-book-row { padding: 10px 8px; font-size: 0.82em; }
+    .settings-panel { right: 8px; }
   }
 </style>
 </head>
@@ -310,7 +472,28 @@
     <span class="topbar-book" id="topbar-book">Mark</span>
     <span class="topbar-chap" id="topbar-chap">1</span>
   </div>
-  <span class="topbar-brand">GNT Reader</span>
+  <div class="topbar-actions">
+    <span class="topbar-brand">GNT Reader</span>
+    <button class="topbar-icon" id="btn-search" onclick="toggleSearch()" title="Search (Ctrl+F)">&#x1F50D;</button>
+    <button class="topbar-icon" id="btn-settings" onclick="toggleSettings()" title="Settings">&#x2699;</button>
+  </div>
+</div>
+
+<!-- Settings panel -->
+<div class="settings-panel" id="settings-panel">
+  <label><input type="checkbox" id="setting-punct" onchange="togglePunct(this.checked)"> Show punctuation</label>
+  <label><input type="checkbox" id="setting-verses" checked onchange="toggleVerseNums(this.checked)"> Show verse numbers</label>
+</div>
+
+<!-- Search overlay -->
+<div class="search-overlay" id="search-overlay">
+  <div class="search-bar">
+    <span class="search-icon-label">&#x1F50D;</span>
+    <input type="text" id="search-input" placeholder="Search Greek text..." autocomplete="off" spellcheck="false">
+    <button class="search-close" onclick="closeSearch()">&times;</button>
+  </div>
+  <div class="search-status" id="search-status"></div>
+  <div class="search-results" id="search-results"></div>
 </div>
 
 <!-- Nav panel -->
@@ -583,6 +766,227 @@ function toggleBookChapters(slug) {
   expandedBook = grid.classList.contains('visible') ? slug : null;
 }
 
+// --- Settings ---
+
+function toggleSettings() {
+  const panel = document.getElementById('settings-panel');
+  panel.classList.toggle('open');
+  // Close search if open
+  if (panel.classList.contains('open')) closeSearch();
+}
+
+function closeSettings() {
+  document.getElementById('settings-panel').classList.remove('open');
+}
+
+function togglePunct(on) {
+  document.body.classList.toggle('show-punct', on);
+  localStorage.setItem('gnt-show-punct', on ? '1' : '0');
+}
+
+function toggleVerseNums(on) {
+  document.body.classList.toggle('hide-verse-nums', !on);
+  localStorage.setItem('gnt-show-verses', on ? '1' : '0');
+}
+
+function loadSettings() {
+  const punct = localStorage.getItem('gnt-show-punct') === '1';
+  const verses = localStorage.getItem('gnt-show-verses') !== '0'; // default ON
+  document.getElementById('setting-punct').checked = punct;
+  document.getElementById('setting-verses').checked = verses;
+  document.body.classList.toggle('show-punct', punct);
+  document.body.classList.toggle('hide-verse-nums', !verses);
+}
+
+// --- Search ---
+
+let searchTimeout = null;
+
+function stripDiacritics(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
+function toggleSearch() {
+  const overlay = document.getElementById('search-overlay');
+  if (overlay.classList.contains('open')) {
+    closeSearch();
+  } else {
+    openSearch();
+  }
+}
+
+function openSearch() {
+  closeSettings();
+  const overlay = document.getElementById('search-overlay');
+  overlay.classList.add('open');
+  const input = document.getElementById('search-input');
+  input.value = '';
+  input.focus();
+  document.getElementById('search-status').textContent = '';
+  document.getElementById('search-results').innerHTML = '';
+}
+
+function closeSearch() {
+  document.getElementById('search-overlay').classList.remove('open');
+  document.getElementById('search-input').blur();
+}
+
+function performSearch(query) {
+  const statusEl = document.getElementById('search-status');
+  const resultsEl = document.getElementById('search-results');
+
+  if (!query || query.trim().length < 2) {
+    statusEl.textContent = '';
+    resultsEl.innerHTML = '';
+    return;
+  }
+
+  statusEl.textContent = 'Searching...';
+  resultsEl.innerHTML = '';
+
+  const strippedQuery = stripDiacritics(query.trim());
+
+  // Search within currently loaded book's HTML in the text container
+  const container = document.getElementById('text-container');
+  const verses = container.querySelectorAll('.verse');
+  const results = [];
+
+  for (const verse of verses) {
+    // Get verse reference from the id attribute (v-ch-verse)
+    const id = verse.id || '';
+    const match = id.match(/^v-(\d+)-(\d+)$/);
+    if (!match) continue;
+
+    const ch = match[1];
+    const vNum = match[2];
+
+    // Get all lines in this verse
+    const lines = verse.querySelectorAll('.line');
+    for (const line of lines) {
+      const text = line.textContent || '';
+      const strippedText = stripDiacritics(text);
+
+      const idx = strippedText.indexOf(strippedQuery);
+      if (idx === -1) continue;
+
+      // Build highlighted text
+      // Map back to original text positions
+      const origText = text;
+      // Find the matching portion in original text by matching character positions
+      // Since NFD decomposition can change string length, we need to map carefully
+      const highlighted = highlightMatch(origText, strippedQuery);
+
+      results.push({
+        book: currentBook,
+        chapter: parseInt(ch),
+        verse: parseInt(vNum),
+        ref: BOOKS[currentBook].name + ' ' + ch + ':' + vNum,
+        html: highlighted
+      });
+
+      if (results.length >= 50) break;
+    }
+    if (results.length >= 50) break;
+  }
+
+  if (results.length === 0) {
+    statusEl.textContent = 'No results found.';
+    return;
+  }
+
+  statusEl.textContent = results.length + (results.length >= 50 ? '+' : '') + ' match' + (results.length === 1 ? '' : 'es');
+
+  for (const r of results) {
+    const div = document.createElement('div');
+    div.className = 'search-result';
+    div.innerHTML = '<div class="search-result-ref">' + escapeHtml(r.ref) + '</div>' +
+                    '<div class="search-result-text">' + r.html + '</div>';
+    div.onclick = () => {
+      closeSearch();
+      navigate(r.book, r.chapter, r.verse);
+    };
+    resultsEl.appendChild(div);
+  }
+}
+
+function highlightMatch(originalText, strippedQuery) {
+  // Build a mapping from stripped index to original index
+  const nfd = originalText.normalize('NFD');
+  const stripped = [];
+  const origIndices = [];
+
+  for (let i = 0; i < nfd.length; i++) {
+    const code = nfd.charCodeAt(i);
+    // Skip combining diacritical marks (U+0300-U+036F)
+    if (code >= 0x0300 && code <= 0x036f) continue;
+    stripped.push(nfd[i].toLowerCase());
+    origIndices.push(i);
+  }
+
+  const strippedStr = stripped.join('');
+  const idx = strippedStr.indexOf(strippedQuery);
+  if (idx === -1) return escapeHtml(originalText);
+
+  // Map stripped indices back to NFD indices
+  const nfdStart = origIndices[idx];
+  const nfdEnd = (idx + strippedQuery.length < origIndices.length)
+    ? origIndices[idx + strippedQuery.length]
+    : nfd.length;
+
+  // Convert NFD positions back to NFC by slicing NFD and re-composing
+  const before = nfd.slice(0, nfdStart).normalize('NFC');
+  const matched = nfd.slice(nfdStart, nfdEnd).normalize('NFC');
+  const after = nfd.slice(nfdEnd).normalize('NFC');
+
+  return escapeHtml(before) + '<mark>' + escapeHtml(matched) + '</mark>' + escapeHtml(after);
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// --- Keyboard Shortcuts ---
+
+document.addEventListener('keydown', function(e) {
+  // Ctrl+F or / opens search
+  if ((e.ctrlKey && e.key === 'f') || (e.key === '/' && !e.ctrlKey && !e.altKey && !e.metaKey)) {
+    // Don't intercept / if already typing in an input
+    if (e.key === '/' && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+    e.preventDefault();
+    openSearch();
+    return;
+  }
+
+  // Escape closes search or settings
+  if (e.key === 'Escape') {
+    const searchOverlay = document.getElementById('search-overlay');
+    if (searchOverlay.classList.contains('open')) {
+      closeSearch();
+      return;
+    }
+    const settingsPanel = document.getElementById('settings-panel');
+    if (settingsPanel.classList.contains('open')) {
+      closeSettings();
+      return;
+    }
+  }
+});
+
+// Search input handler with debounce
+document.getElementById('search-input').addEventListener('input', function(e) {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => performSearch(e.target.value), 200);
+});
+
+// Close settings when clicking outside
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('settings-panel');
+  const btn = document.getElementById('btn-settings');
+  if (panel.classList.contains('open') && !panel.contains(e.target) && !btn.contains(e.target)) {
+    closeSettings();
+  }
+});
+
 // --- Init ---
 
 window.addEventListener('scroll', updateProgress, { passive: true });
@@ -595,6 +999,7 @@ window.addEventListener('hashchange', () => {
 });
 
 (function init() {
+  loadSettings();
   const { book, chapter, verse } = parseHash();
   navigate(book, chapter, verse);
 })();
