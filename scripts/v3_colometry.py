@@ -2059,6 +2059,10 @@ def apply_stranded_function_word_merge(verse_lines):
         'σύν', 'σὺν', 'ὑπέρ', 'ὑπὲρ',
         # Negative particles
         'οὐ', 'οὐκ', 'οὐχ', 'μή', 'μὴ',
+        # Presentative particles (bound to what follows, not standalone)
+        'ἰδού', 'ἰδοὺ', 'Ἰδού', 'Ἰδοὺ', 'ἴδε', 'Ἴδε',
+        # Elided conjunction forms
+        'ἀλλʼ', 'Ἀλλʼ', "ἀλλ'", "Ἀλλ'",
     }
 
     result = []
