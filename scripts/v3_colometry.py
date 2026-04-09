@@ -1,0 +1,729 @@
+#!/usr/bin/env python3
+"""
+V3 Rhetorical Pattern Refinement for colometric formatting.
+
+Takes v2-colometric output (syntax-tree-driven clause breaks) and applies
+rhetorical pattern detection to improve the display. The v2 output has correct
+clause boundaries from Macula syntax trees, but needs rhetorical refinement.
+
+Usage:
+    py -3 scripts/v3_colometry.py                              # all books
+    py -3 scripts/v3_colometry.py --book Mark                  # one book
+    py -3 scripts/v3_colometry.py --book Mark --chapter 4      # one chapter
+
+Input:  data/text-files/v2-colometric/*.txt
+Output: data/text-files/v3-colometric/*.txt
+"""
+
+import re
+import os
+import sys
+import argparse
+
+# ---------- configuration ----------
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_DIR = os.path.dirname(SCRIPT_DIR)
+INPUT_DIR = os.path.join(REPO_DIR, 'data', 'text-files', 'v2-colometric')
+OUTPUT_DIR = os.path.join(REPO_DIR, 'data', 'text-files', 'v3-colometric')
+
+# Book metadata: filename -> (display name, abbreviation, chapter count)
+# Copied from auto_colometry.py for consistency
+BOOKS = {
+    'Matt':    ('Matthew',        'matt',     28),
+    'Mark':    ('Mark',           'mark',     16),
+    'Luke':    ('Luke',           'luke',     24),
+    'John':    ('John',           'john',     21),
+    'Acts':    ('Acts',           'acts',     28),
+    'Rom':     ('Romans',         'rom',      16),
+    '1Cor':    ('1 Corinthians',  '1cor',     16),
+    '2Cor':    ('2 Corinthians',  '2cor',     13),
+    'Gal':     ('Galatians',      'gal',       6),
+    'Eph':     ('Ephesians',      'eph',       6),
+    'Phil':    ('Philippians',    'phil',      4),
+    'Col':     ('Colossians',     'col',       4),
+    '1Thess':  ('1 Thessalonians','1thess',    5),
+    '2Thess':  ('2 Thessalonians','2thess',    3),
+    '1Tim':    ('1 Timothy',      '1tim',      6),
+    '2Tim':    ('2 Timothy',      '2tim',      4),
+    'Titus':   ('Titus',          'titus',     3),
+    'Phlm':    ('Philemon',       'phlm',      1),
+    'Heb':     ('Hebrews',        'heb',      13),
+    'Jas':     ('James',          'jas',       5),
+    '1Pet':    ('1 Peter',        '1pet',      5),
+    '2Pet':    ('2 Peter',        '2pet',      3),
+    '1John':   ('1 John',         '1john',     5),
+    '2John':   ('2 John',         '2john',     1),
+    '3John':   ('3 John',         '3john',     1),
+    'Jude':    ('Jude',           'jude',      1),
+    'Rev':     ('Revelation',     'rev',      22),
+}
+
+# ---------- Pattern 1: Complementary verb + infinitive merging ----------
+
+# Verbs that take complementary infinitives (Wallace ch. 23)
+# These are the finite forms most commonly split from their infinitive complement
+COMPLEMENTARY_VERBS = [
+    # Verbs of beginning
+    'ἤρξατο', 'ἤρξαντο', 'ἄρξηται', 'ἀρξάμενος', 'ἀρξάμενοι',
+    'ἄρχομαι', 'ἄρχεται', 'ἄρχονται',
+    # Verbs of ability/power
+    'ἐδύνατο', 'δύναται', 'δύνανται', 'δυνήσεται', 'δυνήσονται',
+    'ἠδύνατο', 'ἠδύναντο', 'δύνασαι', 'δυνάμεθα',
+    # Verbs of wishing/wanting
+    'ἤθελεν', 'ἤθελον', 'θέλει', 'θέλω', 'θέλεις', 'θέλουσιν',
+    'θέλομεν', 'θέλετε', 'ἠθέλησεν',
+    # Verbs of being about to
+    'μέλλει', 'μέλλουσιν', 'ἔμελλεν', 'ἔμελλον', 'μέλλω',
+    # Verbs of attempting/daring
+    'ἐτόλμησεν', 'τολμᾷ', 'ἐπεχείρησαν',
+    # Verbs of ceasing/neglecting
+    'παύομαι', 'ἐπαύσατο', 'παύσονται',
+    # Verbs of obligation (δεῖ takes infinitive directly, usually not split)
+    'ὀφείλει', 'ὀφείλομεν',
+]
+
+# Build a set for fast lookup
+COMPLEMENTARY_VERB_SET = set(COMPLEMENTARY_VERBS)
+
+# Also match forms ending with common complementary verb stems
+COMPLEMENTARY_VERB_PATTERNS = [
+    re.compile(r'\b[ἤἠ]ρξ(?:ατο|αντο)\b'),     # ἄρχομαι forms
+    re.compile(r'\bδ[υύ]ν(?:αται|ανται|ατο|ασαι|άμεθα|ήσεται)\b'),  # δύναμαι forms
+    re.compile(r'\b[ἤἠ]θ[εέ]λ(?:εν|ον|ησεν)\b'),  # θέλω forms
+    re.compile(r'\bμ[εέ]λλ(?:ει|ουσιν|εν|ον|ω)\b'),  # μέλλω forms
+]
+
+
+def ends_with_complementary_verb(line):
+    """Check if a line ends with a complementary verb form."""
+    stripped = line.rstrip(' .,;·')
+    # Get the last word
+    words = stripped.split()
+    if not words:
+        return False
+    last_word = words[-1]
+    if last_word in COMPLEMENTARY_VERB_SET:
+        return True
+    for pat in COMPLEMENTARY_VERB_PATTERNS:
+        if pat.search(last_word):
+            return True
+    return False
+
+
+def line_starts_with_infinitive_or_complement(line):
+    """Check if a line starts with an infinitive or content completing a complementary verb."""
+    stripped = line.strip()
+    if not stripped:
+        return False
+    first_word = stripped.split()[0]
+    # Common infinitive endings
+    inf_endings = ('ειν', 'αι', 'εῖν', 'οῦν', 'ᾶν', 'σθαι', 'ναι',
+                   'εῖσθαι', 'ᾶσθαι', 'οῦσθαι')
+    if first_word.endswith(inf_endings):
+        return True
+    # Also check for τε + infinitive patterns
+    if stripped.startswith('τε ') or stripped.startswith('τε\xa0'):
+        return True
+    return False
+
+
+def apply_complementary_verb_merge(verse_lines):
+    """Pattern 1: Merge over-split verb + complement lines."""
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        line = verse_lines[i]
+        if (i + 1 < len(verse_lines)
+                and len(line) < 25
+                and ends_with_complementary_verb(line)
+                and line_starts_with_infinitive_or_complement(verse_lines[i + 1])):
+            # Merge this line with the next
+            merged = line.rstrip() + ' ' + verse_lines[i + 1].lstrip()
+            result.append(merged)
+            i += 2
+        else:
+            result.append(line)
+            i += 1
+    return result
+
+
+# ---------- Pattern 2: Standalone imperatives/exclamations ----------
+
+# Patterns for short imperatives/exclamations that should be their own line
+STANDALONE_PATTERNS = [
+    # Single-word commands followed by punctuation
+    re.compile(r'^(Ἀκούετε[.·;!])\s+(.+)$'),
+    re.compile(r'^(ἰδο[ὺύ][.·;!,]?)\s+(.+)$', re.IGNORECASE),
+    # Two-word commands (Σιώπα, πεφίμωσο. is already handled well in v2)
+    # Exclamatory particles
+    re.compile(r'^(οὐαὶ\s+\S+(?:\s+\S+)?[.·;!,]?)\s+(.+)$'),
+]
+
+# More specific: detect "Word. restOfLine" where Word is a known standalone imperative
+IMPERATIVE_WORDS = {
+    'Ἀκούετε', 'ἀκούετε', 'Βλέπετε', 'βλέπετε',
+}
+
+
+def apply_standalone_imperative_split(verse_lines):
+    """Pattern 2: Split standalone imperatives/exclamations onto their own line."""
+    result = []
+    for line in verse_lines:
+        split_done = False
+        # Check for "Imperative. rest" pattern
+        for pat in STANDALONE_PATTERNS:
+            m = pat.match(line)
+            if m:
+                result.append(m.group(1))
+                result.append(m.group(2))
+                split_done = True
+                break
+
+        if not split_done:
+            # Check for known imperative words followed by period then more text
+            for imp_word in IMPERATIVE_WORDS:
+                pat = re.compile(r'^(' + re.escape(imp_word) + r'[.·;!])\s+(.+)$')
+                m = pat.match(line)
+                if m:
+                    result.append(m.group(1))
+                    result.append(m.group(2))
+                    split_done = True
+                    break
+
+        if not split_done:
+            result.append(line)
+    return result
+
+
+# ---------- Pattern 3: Parallel list stacking (καί + noun phrase triplets) ----------
+
+def count_kai_phrases(line):
+    """Count occurrences of καί in a line."""
+    return len(re.findall(r'\bκαὶ\b', line))
+
+
+def is_list_line(line):
+    """Detect if a line contains a parallel list with 3+ καί phrases.
+
+    Specifically looks for: καὶ [article] [noun phrase] repeated pattern.
+    """
+    # Must have 3+ καί occurrences
+    kai_count = count_kai_phrases(line)
+    if kai_count < 3:
+        return False
+
+    # Check for article + noun pattern after καί
+    # Pattern: καὶ + (article or noun) repeated
+    article_noun_after_kai = len(re.findall(
+        r'\bκαὶ\s+(?:[ὁἡτὸοἱαἰτ][ὁἡὸὶὰᾶῆῖ]?\s+|[ἡαἱ][ἱἰ]?\s+)', line))
+    if article_noun_after_kai >= 2:
+        return True
+
+    # Also check for repeated "καὶ ἕν/ἓν" number patterns (Mark 4:8, 4:20)
+    number_pattern = len(re.findall(r'\bκαὶ\s+ἓν\b', line))
+    if number_pattern >= 2:
+        return True
+
+    return False
+
+
+def split_kai_list(line):
+    """Split a parallel καί list into stacked lines."""
+    # Special case: "καὶ ἓν" number stacking pattern
+    # e.g. "καὶ ἔφερεν ἓν τριάκοντα καὶ ἓν ἑξήκοντα καὶ ἓν ἑκατόν."
+    hen_positions = [m.start() for m in re.finditer(r'\bκαὶ\s+ἓν\b', line)]
+    if len(hen_positions) >= 2:
+        # Find the first "καὶ ἓν" — check if there's leading content before it
+        # that also has "ἓν" (like "ἔφερεν ἓν τριάκοντα")
+        first_hen = hen_positions[0]
+        parts = []
+        # Check for leading content with ἓν before the first "καὶ ἓν"
+        prefix = line[:first_hen].strip()
+        if prefix:
+            parts.append(prefix.rstrip(','))
+        # Now split at each "καὶ ἓν"
+        for idx, pos in enumerate(hen_positions):
+            if idx + 1 < len(hen_positions):
+                part = line[pos:hen_positions[idx + 1]].strip().rstrip(',')
+            else:
+                part = line[pos:].strip()
+            if part:
+                parts.append(part)
+        if len(parts) >= 2:
+            return parts
+
+    # General case: find positions of each καί
+    kai_positions = [m.start() for m in re.finditer(r'\bκαὶ\b', line)]
+    if len(kai_positions) < 3:
+        return [line]
+
+    # Split at each καί position, keeping καί with what follows
+    split_positions = []
+    for i, pos in enumerate(kai_positions):
+        if i >= 1:  # Start splitting from 2nd or later καί
+            split_positions.append(pos)
+
+    if not split_positions:
+        return [line]
+
+    # If the first part (before first split) still has 2+ καί, split from first
+    first_part = line[:split_positions[0]].strip()
+    if count_kai_phrases(first_part) >= 2:
+        split_positions = kai_positions[1:]
+
+    parts = []
+    prev = 0
+    for pos in split_positions:
+        part = line[prev:pos].strip().rstrip(',')
+        if part:
+            parts.append(part)
+        prev = pos
+    # Last part
+    last = line[prev:].strip()
+    if last:
+        parts.append(last)
+
+    # Only return split if we got meaningful parts
+    if len(parts) >= 3:
+        return parts
+    return [line]
+
+
+def apply_parallel_list_stacking(verse_lines):
+    """Pattern 3: Stack parallel καί + noun phrase lists."""
+    result = []
+    for line in verse_lines:
+        if is_list_line(line):
+            # For number patterns (καὶ ἓν...) use lower threshold
+            has_number_pattern = len(re.findall(r'\bκαὶ\s+ἓν\b', line)) >= 2
+            min_len = 30 if has_number_pattern else 50
+            if len(line) > min_len:
+                stacked = split_kai_list(line)
+                result.extend(stacked)
+            else:
+                result.append(line)
+        else:
+            result.append(line)
+    return result
+
+
+# ---------- Pattern 4: Sequential/growth stacking ----------
+
+def apply_sequence_stacking(verse_lines):
+    """Pattern 4: Split before εἶτα, πρῶτον...εἶτα sequence markers."""
+    result = []
+    for line in verse_lines:
+        # Look for εἶτα within a line (not at start — already its own line)
+        if 'εἶτα' in line and not line.strip().startswith('εἶτα'):
+            # Split before each εἶτα
+            parts = re.split(r'\s+(?=εἶτα\b)', line)
+            if len(parts) >= 2:
+                for part in parts:
+                    part = part.strip()
+                    if part:
+                        result.append(part)
+                continue
+        # Also handle εἶτεν
+        if 'εἶτεν' in line and not line.strip().startswith('εἶτεν'):
+            parts = re.split(r'\s+(?=εἶτεν\b)', line)
+            if len(parts) >= 2:
+                for part in parts:
+                    part = part.strip()
+                    if part:
+                        result.append(part)
+                continue
+        result.append(line)
+    return result
+
+
+# ---------- Pattern 5: Parallel ἵνα / ὅτι stacking ----------
+
+def apply_parallel_hina_hoti_stacking(verse_lines):
+    """Pattern 5: Stack parallel ἵνα or ὅτι clauses; split at ἤ for parallel display."""
+    result = []
+    for line in verse_lines:
+        # Check for ἵνα...ἤ pattern (parallel purpose clauses with alternative)
+        if 'ἵνα' in line and ' ἢ ' in line and len(line) > 50:
+            # Split at ἤ when it connects parallel purpose elements
+            parts = re.split(r'\s+(?=ἢ\s)', line)
+            if len(parts) == 2 and all(len(p.strip()) > 10 for p in parts):
+                for part in parts:
+                    result.append(part.strip())
+                continue
+
+        # Check for multiple ἵνα in one line
+        hina_count = len(re.findall(r'\bἵνα\b', line))
+        if hina_count >= 2 and len(line) > 50:
+            # Split before 2nd+ ἵνα
+            parts = re.split(r'\s+(?=ἵνα\b)', line, maxsplit=1)
+            if len(parts) == 2:
+                # The first part already contains the first ἵνα
+                first = parts[0].strip()
+                # Now check if second part has another ἵνα to split
+                remaining = parts[1].strip()
+                result.append(first)
+                # Recursively handle remaining
+                if len(re.findall(r'\bἵνα\b', remaining)) >= 2:
+                    sub_parts = re.split(r'\s+(?=ἵνα\b)', remaining, maxsplit=1)
+                    result.extend([p.strip() for p in sub_parts if p.strip()])
+                else:
+                    result.append(remaining)
+                continue
+
+        # Check for multiple ὅτι in one line
+        hoti_count = len(re.findall(r'\bὅτι\b', line))
+        if hoti_count >= 2 and len(line) > 50:
+            parts = re.split(r'\s+(?=ὅτι\b)', line, maxsplit=1)
+            if len(parts) == 2:
+                result.append(parts[0].strip())
+                result.append(parts[1].strip())
+                continue
+
+        result.append(line)
+    return result
+
+
+# ---------- Pattern 6: Merge dangling short fragments ----------
+
+def is_standalone_unit(text):
+    """Check if a short line is a valid standalone unit (imperative, dramatic, etc.)."""
+    standalone_pats = [
+        r'^Ἀκούετε',
+        r'^ἀκούετε',
+        r'^Σιώπα',
+        r'^σιώπα',
+        r'^πεφίμωσο',
+        r'^ἰδο[ὺύ]',
+        r'^Ἰδο[ὺύ]',
+        r'^Ἀμ[ήὴ]ν',
+        r'^ἀμ[ήὴ]ν',
+        r'^Διέλθωμεν',
+        r'^Βλέπετε',
+        r'^βλέπετε',
+        r'^Ἄνδρες',
+        r'^ὦ\s',
+        r'^Οὐαὶ',
+        r'^οὐαὶ',
+        r'^Τί\s',        # Rhetorical question start
+        r'^καὶ\s+ἓν\s',  # Number stacking pattern (καὶ ἓν τριάκοντα, etc.)
+        r'^ἓν\s',        # Bare number stacking
+        r'^εἶτα\s',      # Sequence marker (part of εἶτα stacking)
+        r'^πρῶτον\s',    # Sequence marker
+    ]
+    for pat in standalone_pats:
+        if re.search(pat, text.strip()):
+            return True
+    return False
+
+
+def apply_dangling_fragment_merge(verse_lines):
+    """Pattern 6: Merge dangling short fragments at verse end."""
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    result = list(verse_lines)
+    # Check last line
+    last = result[-1]
+    if (len(last) < 15
+            and not is_standalone_unit(last)
+            and len(result) >= 2):
+        # Merge with previous line
+        result[-2] = result[-2].rstrip() + ' ' + last.lstrip()
+        result.pop()
+
+    return result
+
+
+# ---------- Additional pattern: Speech intro on long merged lines ----------
+
+SPEECH_INTRO_RE = re.compile(
+    r'^((?:Κ|κ)αὶ\s+)?'
+    r'((?:ἔλεγεν|λέγει|εἶπεν|εἶπαν|ἔφη|λέγων|λέγοντες|λέγουσιν|ἀπεκρίθη'
+    r'|ἀποκριθεὶς\s+εἶπεν|ἀποκριθεὶς\s+λέγει)'
+    r'(?:\s+αὐτοῖς|\s+αὐτῷ|\s+πρὸς\s+αὐτ[οό][νύ]ς?)?'
+    r'\s*[·:]?\s*)'
+)
+
+
+def apply_speech_intro_fix(verse_lines):
+    """Fix speech introductions that are merged with the speech content on long lines.
+
+    E.g. "Καὶ ἔλεγεν· Οὕτως ἐστὶν..." should become two lines:
+      "Καὶ ἔλεγεν·"
+      "Οὕτως ἐστὶν..."
+    """
+    result = []
+    for line in verse_lines:
+        # Look for speech intro pattern followed by content
+        # The pattern: [καὶ] speech_verb [indirect object] · rest_of_line
+        m = re.match(
+            r'((?:[Κκ]αὶ\s+)?'
+            r'(?:ἔλεγεν|λέγει|εἶπεν|εἶπαν|ἔφη|λέγουσιν|ἀπεκρίθη)'
+            r'(?:\s+αὐτοῖς|\s+αὐτῷ|\s+πρὸς\s+αὐτ[οό][νύ]ς?)?'
+            r'(?:\s+ἐν\s+\S+\s+\S+\s+\S+)?'  # optional context phrase
+            r'\s*[·:]\s*)'
+            r'(.+)$',
+            line
+        )
+        if m:
+            intro = m.group(1).strip()
+            speech = m.group(2).strip()
+            if intro and speech and len(speech) > 5:
+                result.append(intro)
+                result.append(speech)
+                continue
+
+        result.append(line)
+    return result
+
+
+# ---------- Additional pattern: Fix Μήτι split from its clause ----------
+
+def apply_meti_fix(verse_lines):
+    """Fix cases where Μήτι is dangling on a line or awkwardly split.
+
+    Μήτι is a question particle that belongs with the clause it introduces.
+    If it's at the end of a line by itself or a very short fragment, merge forward.
+    """
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        line = verse_lines[i]
+        stripped = line.strip()
+        # Check if line ends with Μήτι or is just "Μήτι" (possibly with speech intro)
+        if (i + 1 < len(verse_lines)
+                and re.search(r'\bΜήτι\s*$', stripped)
+                and len(stripped.split()[-1:]) == 1):
+            # Μήτι is dangling at end — merge with next line
+            next_line = verse_lines[i + 1]
+            # Reconstruct: put Μήτι at start of next line
+            # Remove Μήτι from current line
+            current_without = re.sub(r'\s*Μήτι\s*$', '', stripped).strip()
+            if current_without:
+                result.append(current_without)
+            result.append('Μήτι ' + next_line.strip())
+            i += 2
+        else:
+            result.append(line)
+            i += 1
+    return result
+
+
+# ---------- Additional pattern: Long lines with ὥστε ----------
+
+def apply_hoste_split(verse_lines):
+    """Split long lines before ὥστε (result clause) when they're too long."""
+    result = []
+    for line in verse_lines:
+        if len(line) > 60 and 'ὥστε' in line:
+            # Split before ὥστε
+            parts = re.split(r',?\s+(?=ὥστε\b)', line)
+            if len(parts) == 2:
+                first = parts[0].strip()
+                if not first.endswith(','):
+                    first = first + ','
+                result.append(first)
+                result.append(parts[1].strip())
+                continue
+        result.append(line)
+    return result
+
+
+# ---------- Additional pattern: Long lines with subordinate clause markers ----------
+
+def apply_long_line_clause_split(verse_lines):
+    """Split long lines before subordinate clause markers like καθώς, ὥσπερ, etc."""
+    markers = ['καθὼς', 'καθώς', 'ὥσπερ', 'ἐπειδὴ', 'ἐπεὶ', 'διότι']
+    result = []
+    for line in verse_lines:
+        if len(line) < 55:
+            result.append(line)
+            continue
+        split_done = False
+        for marker in markers:
+            if marker in line:
+                # Split before marker, but not if it's at start
+                idx = line.find(marker)
+                if idx > 15:
+                    # Check for comma before marker
+                    before = line[:idx].strip()
+                    after = line[idx:].strip()
+                    if before and after:
+                        if before.endswith(','):
+                            result.append(before)
+                        else:
+                            result.append(before + ',')
+                        result.append(after)
+                        split_done = True
+                        break
+        if not split_done:
+            result.append(line)
+    return result
+
+
+# ---------- Additional pattern: Long lines with ὅτι ----------
+
+def apply_hoti_split(verse_lines):
+    """Split long lines before ὅτι when the line is very long."""
+    result = []
+    for line in verse_lines:
+        if len(line) > 55 and 'ὅτι' in line:
+            # Find ὅτι not at start
+            m = re.search(r'\s(ὅτι\s)', line)
+            if m and m.start() > 15:
+                before = line[:m.start()].strip()
+                after = line[m.start():].strip()
+                if before and after and len(after) > 15:
+                    result.append(before)
+                    result.append(after)
+                    continue
+        result.append(line)
+    return result
+
+
+# ---------- Verse parsing and processing ----------
+
+def parse_v2_file(filepath):
+    """Parse a v2-colometric file into a list of (verse_ref, [lines]) tuples."""
+    verses = []
+    current_ref = None
+    current_lines = []
+
+    with open(filepath, 'r', encoding='utf-8') as f:
+        for raw_line in f:
+            raw_line = raw_line.rstrip('\n')
+
+            # Check if this is a verse reference
+            if re.match(r'^\d+:\d+$', raw_line.strip()):
+                # Save previous verse
+                if current_ref is not None:
+                    verses.append((current_ref, current_lines))
+                current_ref = raw_line.strip()
+                current_lines = []
+            elif raw_line.strip() == '':
+                # Blank line — separator between verses
+                continue
+            else:
+                # Content line
+                if current_ref is not None:
+                    current_lines.append(raw_line)
+
+    # Save last verse
+    if current_ref is not None:
+        verses.append((current_ref, current_lines))
+
+    return verses
+
+
+def apply_all_patterns(verse_lines):
+    """Apply all rhetorical patterns to a verse's lines."""
+    lines = list(verse_lines)
+
+    # Pattern 1: Merge complementary verb + infinitive splits
+    lines = apply_complementary_verb_merge(lines)
+
+    # Speech intro fix (before standalone split, since it may create opportunities)
+    lines = apply_speech_intro_fix(lines)
+
+    # Pattern 2: Split standalone imperatives/exclamations
+    lines = apply_standalone_imperative_split(lines)
+
+    # Μήτι fix
+    lines = apply_meti_fix(lines)
+
+    # ὥστε split for long lines
+    lines = apply_hoste_split(lines)
+
+    # ὅτι split for long lines
+    lines = apply_hoti_split(lines)
+
+    # Long line subordinate clause splits
+    lines = apply_long_line_clause_split(lines)
+
+    # Pattern 3: Parallel list stacking
+    lines = apply_parallel_list_stacking(lines)
+
+    # Pattern 4: Sequence stacking (εἶτα, πρῶτον...εἶτα)
+    lines = apply_sequence_stacking(lines)
+
+    # Pattern 5: Parallel ἵνα/ὅτι stacking
+    lines = apply_parallel_hina_hoti_stacking(lines)
+
+    # Pattern 6: Merge dangling short fragments (apply last)
+    lines = apply_dangling_fragment_merge(lines)
+
+    return lines
+
+
+def process_chapter_file(input_path, output_path):
+    """Process a single chapter file from v2 to v3."""
+    verses = parse_v2_file(input_path)
+
+    output_lines = []
+    for verse_ref, verse_content in verses:
+        refined = apply_all_patterns(verse_content)
+        output_lines.append(verse_ref)
+        for line in refined:
+            output_lines.append(line)
+        output_lines.append('')  # blank separator
+
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(output_lines))
+
+
+def process_book(book_key, chapter_filter=None):
+    """Process a single book from v2-colometric to v3-colometric."""
+    display_name, abbrev, chapter_count = BOOKS[book_key]
+
+    chapters_processed = 0
+    for ch in range(1, chapter_count + 1):
+        if chapter_filter is not None and ch != chapter_filter:
+            continue
+
+        ch_str = str(ch).zfill(2)
+        filename = f'{abbrev}-{ch_str}.txt'
+        input_path = os.path.join(INPUT_DIR, filename)
+        output_path = os.path.join(OUTPUT_DIR, filename)
+
+        if not os.path.exists(input_path):
+            print(f'  WARNING: Input file not found: {input_path}')
+            continue
+
+        process_chapter_file(input_path, output_path)
+        chapters_processed += 1
+
+    print(f'  {display_name}: {chapters_processed} chapter(s) refined')
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='V3 rhetorical pattern refinement for colometric formatting')
+    parser.add_argument('--book', help='Process a single book (e.g., Mark, Acts)')
+    parser.add_argument('--chapter', type=int,
+                        help='Process a single chapter (requires --book)')
+    args = parser.parse_args()
+
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    if args.book:
+        if args.book not in BOOKS:
+            print(f'Unknown book: {args.book}')
+            print(f'Valid books: {", ".join(sorted(BOOKS.keys()))}')
+            sys.exit(1)
+        process_book(args.book, args.chapter)
+    else:
+        print('V3 rhetorical refinement: processing all 27 books...')
+        for book_key in BOOKS:
+            process_book(book_key)
+        print('Done.')
+
+
+if __name__ == '__main__':
+    main()
