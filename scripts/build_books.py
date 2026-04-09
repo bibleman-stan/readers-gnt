@@ -88,7 +88,9 @@ def build_chapter_html(chapter_num, verses):
 
     for verse in verses:
         ref = html.escape(verse["ref"])
-        parts.append(f'  <div class="verse"><span class="verse-num">{ref}</span>')
+        # Parse verse number for ID: "2:38" -> "v-2-38"
+        verse_id = 'v-' + ref.replace(':', '-')
+        parts.append(f'  <div class="verse" id="{verse_id}"><span class="verse-num">{ref}</span>')
         for line in verse["lines"]:
             escaped = html.escape(line)
             parts.append(f'    <span class="line">{escaped}</span>')

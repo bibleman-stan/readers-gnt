@@ -364,18 +364,43 @@ let expandedBook = null;
 
 function parseHash() {
   const hash = location.hash.replace('#', '');
-  if (!hash) return { book: 'mark', chapter: 1 };
+  if (!hash) return { book: 'mark', chapter: 1, verse: null };
   const parts = hash.split('-');
-  const ch = parseInt(parts.pop(), 10);
-  const book = parts.join('-');
-  if (BOOKS[book] && ch >= 1 && ch <= BOOKS[book].chapters) {
-    return { book, chapter: ch };
+  // Try 3-part: book-chapter-verse (e.g., acts-2-38)
+  // Or 2-part: book-chapter (e.g., acts-2)
+  // Books with numeric prefixes: 1cor-3, 2tim-4-1
+  if (parts.length >= 3) {
+    // Could be book-ch-verse OR numbook-ch (like 1cor-3)
+    const lastNum = parseInt(parts[parts.length - 1], 10);
+    const secondLastNum = parseInt(parts[parts.length - 2], 10);
+    const bookCandidate2 = parts.slice(0, -2).join('-');
+    const bookCandidate1 = parts.slice(0, -1).join('-');
+
+    // Try book-ch-verse first
+    if (BOOKS[bookCandidate2] && secondLastNum >= 1 && secondLastNum <= BOOKS[bookCandidate2].chapters) {
+      return { book: bookCandidate2, chapter: secondLastNum, verse: lastNum };
+    }
+    // Fall back to book-ch (e.g., 1cor-3)
+    if (BOOKS[bookCandidate1] && lastNum >= 1 && lastNum <= BOOKS[bookCandidate1].chapters) {
+      return { book: bookCandidate1, chapter: lastNum, verse: null };
+    }
   }
-  return { book: 'mark', chapter: 1 };
+  if (parts.length >= 2) {
+    const ch = parseInt(parts[parts.length - 1], 10);
+    const book = parts.slice(0, -1).join('-');
+    if (BOOKS[book] && ch >= 1 && ch <= BOOKS[book].chapters) {
+      return { book, chapter: ch, verse: null };
+    }
+  }
+  return { book: 'mark', chapter: 1, verse: null };
 }
 
-function setHash(book, chapter) {
-  location.hash = book + '-' + chapter;
+function setHash(book, chapter, verse) {
+  if (verse) {
+    location.hash = book + '-' + chapter + '-' + verse;
+  } else {
+    location.hash = book + '-' + chapter;
+  }
 }
 
 // --- Topbar ---
@@ -397,14 +422,18 @@ function updateProgress() {
 
 // --- Navigation ---
 
-async function navigate(book, chapter) {
+async function navigate(book, chapter, verse) {
   currentBook = book;
   currentChapter = chapter;
-  setHash(book, chapter);
+  setHash(book, chapter, verse);
   updateTopbar();
   updateNavButtons();
   await loadBook(book);
-  scrollToChapter(chapter);
+  if (verse) {
+    scrollToVerse(chapter, verse);
+  } else {
+    scrollToChapter(chapter);
+  }
 }
 
 async function loadBook(slug) {
@@ -439,6 +468,16 @@ function scrollToChapter(ch) {
     window.scrollTo({ top: y, behavior: 'auto' });
   } else {
     window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+}
+
+function scrollToVerse(ch, verse) {
+  const el = document.getElementById('v-' + ch + '-' + verse);
+  if (el) {
+    const y = el.getBoundingClientRect().top + window.scrollY - 56;
+    window.scrollTo({ top: y, behavior: 'auto' });
+  } else {
+    scrollToChapter(ch);
   }
 }
 
@@ -540,15 +579,15 @@ function toggleBookChapters(slug) {
 window.addEventListener('scroll', updateProgress, { passive: true });
 
 window.addEventListener('hashchange', () => {
-  const { book, chapter } = parseHash();
-  if (book !== currentBook || chapter !== currentChapter) {
-    navigate(book, chapter);
+  const { book, chapter, verse } = parseHash();
+  if (book !== currentBook || chapter !== currentChapter || verse) {
+    navigate(book, chapter, verse);
   }
 });
 
 (function init() {
-  const { book, chapter } = parseHash();
-  navigate(book, chapter);
+  const { book, chapter, verse } = parseHash();
+  navigate(book, chapter, verse);
 })();
 </script>
 
