@@ -11,83 +11,41 @@ A colometric reading edition of the Greek New Testament. The text is reformatted
 The colometric methodology draws on the scholarly tradition of Lee & Scott (sound mapping), Marschall (colometric analysis of Paul), and ancient manuscript practice.
 
 - **Repo:** github.com/bibleman-stan/readers-nt (public)
-- **Base text:** SBL Greek New Testament (SBLGNT) — freely available for research
+- **Live site:** bibleman-stan.github.io/readers-nt/ (GitHub Pages, no custom domain yet)
+- **Base text:** SBL Greek New Testament (SBLGNT) — CC-BY-4.0
 - **User:** Stan (thebibleman77@gmail.com)
-- **Stage:** Early development — colometric formatting of source text
+- **Stage:** v1 complete — all 27 books auto-formatted, web app functional, hand editing not yet begun
 
 ---
 
-## Project Vision
+## Read the Handoff Docs First
 
-No one has produced a complete, publicly accessible reading edition of the GNT reformatted into grammatically-motivated sense-lines. Scholarly work exists (Lee & Scott's sound mapping, Marschall's colometric analysis of Paul, Runge's discourse segmentation), but it's all analytical — monographs and datasets, not a reading format.
+Before any substantive work, read the handoffs directory in order:
 
-This project fills that gap: take the Greek text, set aside the punctuation, versification, and pericope divisions that accumulated over centuries, and rebuild the line-breaking from the grammar up.
-
-### Four Research Advantages
-1. **Authorial intent** — reveals compositional patterns obscured by prose formatting
-2. **Structure/consistency** — makes patterns countable and comparable across books
-3. **Text-critical implications** — variant readings that break or preserve colometric patterns become evidence
-4. **Stylometry-plus** — colon length, participial density, clause-type frequency become quantifiable per author
-
----
-
-## Repo Structure
-
-```
-readers-nt/
-  CLAUDE.md              # This file
-  README.md              # Public-facing description
-  data/
-    text-files/
-      sblgnt-source/     # Raw SBLGNT by book (canonical, never edit)
-      v1-colometric/     # Sense-line formatted versions (working text)
-  books/                 # Generated HTML (future)
-  scripts/               # Build tools (future)
-  research/              # Symlink to vault (gitignored, future)
-  handoffs/              # Documentation
-```
+| File | Covers |
+|------|--------|
+| `handoffs/00-index.md` | Index and update protocol |
+| `handoffs/01-project-overview.md` | Vision, origin, scholarly landscape, research advantages, siloing decision |
+| `handoffs/02-colometry-method.md` | Greek colometric methodology, rules, open questions, auto vs. hand quality |
+| `handoffs/03-architecture.md` | Repo structure, scripts, web app, build pipeline, deployment |
+| `handoffs/04-editorial-workflow.md` | How text goes from raw source to finished reading edition |
 
 ---
 
-## Colometric Principles (Greek-Adapted)
+## Key Files
 
-These are adapted from the BOM Reader's settled rules (`readers-bofm/handoffs/10-colometry.md`), applied to Koine Greek grammar.
-
-### The Foundational Test (unchanged)
-**Each line must be an atomic thought, an atomic breath unit, or ideally both.**
-
-### The Image Test (unchanged)
-Each line should paint a single image. Two images = candidate for splitting.
-
-### Grammar Reveals Structure (Greek-specific applications)
-
-Greek grammatical break points — these are where the author's own structuring becomes visible:
-
-| Greek Structure | Rule | Example |
-|----------------|------|---------|
-| καί introducing new main clause | Break before καί | καὶ γίνεται λαῖλαψ μεγάλη ἀνέμου, |
-| Participial phrases | Each major participle is a frame | διερχόμενος γὰρ καὶ ἀναθεωρῶν τὰ σεβάσματα ὑμῶν |
-| Genitive absolute | Gets its own line (temporal/circumstantial) | ὀψίας γενομένης |
-| ἵνα clause (purpose) | Break before ἵνα | ἵνα βλέποντες βλέπωσι καὶ μὴ ἴδωσιν |
-| ὥστε clause (result) | Break before ὥστε | ὥστε αὐτὸν εἰς πλοῖον ἐμβάντα καθῆσθαι |
-| ὅτι clause (content/causal) | Break before ὅτι | ὅτι τὸν χριστὸν ἔδει παθεῖν |
-| ὅταν / ὅτε (temporal) | Break before temporal | καὶ ὅταν ἀκούσωσιν |
-| Relative clause (ὅς, ὅστις) | Break if substantial | οἵτινες ἐδέξαντο τὸν λόγον μετὰ πάσης προθυμίας |
-| μέν / δέ contrast | Stack as parallel lines | οἱ μὲν ἐχλεύαζον / οἱ δὲ εἶπαν |
-| Direct speech introduction | Speech intro on its own line | καὶ ἔλεγεν αὐτοῖς· |
-| Tricolon / parallel lists | Stack vertically | ζῶμεν / κινούμεθα / ἐσμέν |
-| γάρ clause (explanatory) | Often starts a new line | ἐν αὐτῷ γὰρ ζῶμεν |
-
-### Carry-Over Rules from BOM Reader
-- **Never dangle a conjunction** at line end — καί, δέ, ἀλλά lead their line
-- **Never split verb from direct object** on short phrases
-- **Framing devices attach** — discourse markers lead their content
-- **Parallel structures stack vertically** to show rhetorical pattern
-- **Line length is a signal, not a rule** — short = emphasis, long = flow
+| File | Purpose |
+|------|---------|
+| `index.html` | Main web app — all CSS/JS inline (~340 lines) |
+| `scripts/auto_colometry.py` | Rule-based sense-line formatter (~490 lines) |
+| `scripts/build_books.py` | Converts text files → HTML fragments |
+| `data/text-files/sblgnt-source/` | 27 raw SBLGNT source files — **NEVER EDIT** |
+| `data/text-files/v1-colometric/` | 260 chapter files — working text, Stan edits here |
+| `books/` | 27 generated HTML fragment files (rebuilt from v1-colometric) |
 
 ---
 
-## Source Text Rules
+## CRITICAL: Source Text Rules
 
 The SBLGNT source files in `data/text-files/sblgnt-source/` are canonical reference.
 
@@ -95,36 +53,50 @@ The SBLGNT source files in `data/text-files/sblgnt-source/` are canonical refere
 - Modify a canonical SBLGNT source file
 - Alter the Greek text itself (words, accents, breathing marks)
 - Add or remove words
+- Run auto_colometry.py without checking if hand-edited chapters will be overwritten
 
 **ALWAYS:**
 - Work in `v1-colometric/` — the only editorial tool is where lines break
 - Present proposed changes for review before finalizing
 - Preserve verse references for alignment with standard editions
+- Use `PYTHONIOENCODING=utf-8` when running Python scripts on Windows
 
 ---
 
-## Source Text Format
+## Build Pipeline
 
-Each file in `v1-colometric/` follows this format:
-
-```
-[Book] [Chapter] — Colometric [Version]
-SBLGNT base text, sense-line formatting by grammatical cola
-
-[verse ref]
-[sense-line 1]
-[sense-line 2]
-[sense-line 3]
-
-[verse ref]
-[sense-line 1]
-[sense-line 2]
+After text edits:
+```bash
+PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py           # rebuild all
+PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark  # rebuild one
 ```
 
-- Verse reference on its own line (e.g., `4:1`)
-- Sense-lines below, one per line
-- Blank line between verses
-- No indentation (flat structure for now)
+No service worker to bump (unlike BOM Reader). Just rebuild HTML and commit.
+
+---
+
+## Colometric Principles (Summary)
+
+Full methodology in `handoffs/02-colometry-method.md`. Key points:
+
+### Three Tests
+1. **Foundational:** each line = atomic thought + atomic breath unit
+2. **Image:** each line paints one image
+3. **Grammar reveals structure** — breaks are descriptive, not interpretive
+
+### Greek Break Points
+- Subordinate clauses: ἵνα, ὥστε, ὅτι, ὅταν, ὅτε, ἐάν, μήποτε
+- Discourse markers: ἀλλά, δέ (with contrast), γάρ
+- Speech introductions: ἔλεγεν αὐτοῖς· gets its own line
+- Parallel structures: stack vertically
+- μέν/δέ contrasts: stack as parallel lines
+- Participial phrases / genitive absolutes: frame their own line
+
+### Rules
+- Never dangle conjunctions at line end
+- Never split verb from direct object on short phrases
+- Vocative units are indivisible
+- Line length is a signal, not a rule
 
 ---
 
@@ -140,10 +112,11 @@ SBLGNT base text, sense-line formatting by grammatical cola
 **Claude Code:**
 - Formats raw SBLGNT text into initial colometric draft
 - Proposes line-break revisions with rationale
-- Builds and maintains tooling (scripts, build pipeline)
+- Builds and maintains tooling (scripts, build pipeline, web app)
 - Maintains documentation and handoffs
 - Quantitative analysis (colon counts, pattern detection)
 - Never touches source text without explicit approval
+- Commits when finished; Stan pushes
 
 ---
 
@@ -156,11 +129,25 @@ SBLGNT base text, sense-line formatting by grammatical cola
   - Marschall, *Colometric Analysis of Paul's Letters* (2024, WUNT II)
   - Runge, *Discourse Grammar of the Greek New Testament* (2010)
   - Levinsohn, *Discourse Features of New Testament Greek* (2000)
+- **Domain registrar:** Cloudflare (same account as other domains)
 
 ---
 
 ## Git Workflow
 
 - All work on `main` branch
-- Stan pushes from his local machine
-- Claude Code prepares commits but cannot push (same 403 proxy as BOM Reader)
+- Stan pushes from his local machine via GitHub Desktop
+- Claude Code prepares commits but cannot push (403 proxy error)
+- Stan's standing instruction: "whenever you finish, do a commit and I'll push"
+
+---
+
+## Project Siloing
+
+This project is **publicly independent** — no cross-references to any other projects in README, CLAUDE.md, handoffs, or any public-facing files. Respect this decision.
+
+---
+
+## Update Protocol
+
+When updating handoff docs, append a dated block at the bottom — never overwrite history. After any session where decisions are made, principles are refined, or new patterns identified, update the relevant handoff file.
