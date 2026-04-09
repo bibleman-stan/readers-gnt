@@ -27,6 +27,13 @@ try:
 except ImportError:
     _HAS_MORPHGNT = False
 
+# Macula valency check for participle completeness
+try:
+    from macula_valency import check_line_valency
+    _HAS_VALENCY = True
+except ImportError:
+    _HAS_VALENCY = False
+
 # ---------- configuration ----------
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -306,6 +313,69 @@ def apply_verbless_line_merge(verse_lines, book_slug=None):
                 result.append(merged)
                 i += 2
                 continue
+        result.append(line)
+        i += 1
+    return result
+
+
+# ---------- Pattern 0c: Valency satisfaction merge ----------
+
+def apply_valency_merge(verse_lines, book_slug=None, verse_ref=None):
+    """Merge short lines where a participle's valency is unsatisfied.
+
+    Grammatical basis: a transitive participle whose object (as annotated by
+    Macula role=o) is NOT on the same colometric line represents an incomplete
+    thought — the verbal idea is suspended. Such lines should merge forward
+    into the line that carries the object or completes the clause.
+
+    Protected from merging:
+      - Lines ending with · (speech introductions — deliberately standalone)
+      - Lines that are standalone units (vocatives, imperatives, etc.)
+      - Lines where the merged result would exceed 85 chars
+      - Lines where Macula data is unavailable
+    """
+    if not _HAS_VALENCY or not book_slug or not verse_ref:
+        return verse_lines
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    # Parse verse reference
+    parts = verse_ref.split(':')
+    if len(parts) != 2:
+        return verse_lines
+    try:
+        chapter = int(parts[0])
+        verse = int(parts[1])
+    except ValueError:
+        return verse_lines
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        line = verse_lines[i]
+        stripped = line.strip()
+
+        # Protection: speech introductions (end with · ano teleia)
+        ends_with_speech_marker = stripped.rstrip().endswith('·')
+
+        # Protection: standalone units
+        standalone = is_standalone_unit(stripped)
+
+        # Protection: not too long already
+        too_long = len(stripped) >= 35
+
+        if (i + 1 < len(verse_lines)
+                and not ends_with_speech_marker
+                and not standalone
+                and not too_long):
+            vr = check_line_valency(stripped, book_slug, chapter, verse)
+            if vr.unsatisfied:
+                next_line = verse_lines[i + 1]
+                merged = stripped + ' ' + next_line.strip()
+                if len(merged) < 85:
+                    result.append(merged)
+                    i += 2
+                    continue
         result.append(line)
         i += 1
     return result
@@ -791,7 +861,7 @@ def parse_v2_file(filepath):
     return verses
 
 
-def apply_all_patterns(verse_lines, book_slug=None):
+def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     """Apply all rhetorical patterns to a verse's lines."""
     lines = list(verse_lines)
 
@@ -800,6 +870,9 @@ def apply_all_patterns(verse_lines, book_slug=None):
 
     # Pattern 0b: Verbless line merge (lines with no verbal element can't be cola)
     lines = apply_verbless_line_merge(lines, book_slug=book_slug)
+
+    # Pattern 0c: Valency satisfaction merge (participles with unsatisfied transitivity)
+    lines = apply_valency_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
 
     # Pattern 1: Merge complementary verb + infinitive splits
     lines = apply_complementary_verb_merge(lines)
@@ -844,6 +917,9 @@ def apply_all_patterns(verse_lines, book_slug=None):
     # Pattern 0b again — catch verbless fragments created by earlier passes
     lines = apply_verbless_line_merge(lines, book_slug=book_slug)
 
+    # Pattern 0c again — catch valency issues from fragments created by earlier passes
+    lines = apply_valency_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
+
     return lines
 
 
@@ -853,7 +929,7 @@ def process_chapter_file(input_path, output_path, book_slug=None):
 
     output_lines = []
     for verse_ref, verse_content in verses:
-        refined = apply_all_patterns(verse_content, book_slug=book_slug)
+        refined = apply_all_patterns(verse_content, book_slug=book_slug, verse_ref=verse_ref)
         output_lines.append(verse_ref)
         for line in refined:
             output_lines.append(line)
