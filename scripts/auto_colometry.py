@@ -76,13 +76,27 @@ BREAK_BEFORE = [
     r'ὅταν\b',         # temporal (whenever)
     r'ὅτε\b',          # temporal (when)
     r'ἐπειδὴ\b',       # causal (since)
+    r'ἐπεὶ\b',         # causal (since)
     r'διότι\b',        # causal (because)
     r'καθότι\b',       # causal (inasmuch as)
     r'καθὼς\b',        # comparative (just as)
+    r'ὥσπερ\b',        # comparative (just as)
     r'ἐὰν\b',          # conditional
+    r'(?<!\S)εἰ(?!τε\b|δ[εέ]|σ)\s',  # conditional "if" — not εἴτε, εἰδέ, εἰς
     r'μήποτε\b',       # lest
     r'ἕως\b',          # until (when followed by clause)
+    r'ἄχρι\b',         # until
+    r'μέχρι\b',        # until
     r'πρὶν\b',         # before
+    r'διό\b',          # inferential (therefore/wherefore)
+    r'ὅπως\b',         # purpose (in order that)
+    r'ὅπου\b',         # local (where)
+]
+
+# Postpositive conjunctions — break goes before the PRECEDING word, not before these
+POSTPOSITIVE_CONJUNCTIONS = [
+    'γάρ', 'γὰρ',      # explanatory (for)
+    'οὖν',              # inferential/transitional (therefore/then)
 ]
 
 # Discourse markers that introduce a new line
@@ -91,6 +105,7 @@ DISCOURSE_MARKERS = [
     r'πλὴν\b',         # nevertheless
     r'οὐδὲ\b',         # nor / not even
     r'μηδὲ\b',         # nor
+    r'ἄρα\b',          # inferential (therefore)
 ]
 
 # Patterns for speech introductions
@@ -166,11 +181,20 @@ def break_segment(text):
     # Pass 1: Break before subordinating conjunctions
     lines = apply_break_patterns(lines, BREAK_BEFORE)
 
-    # Pass 2: Break before discourse markers (ἀλλά, πλήν, etc.)
+    # Pass 2: Break before discourse markers (ἀλλά, πλήν, ἄρα, etc.)
     lines = apply_break_patterns(lines, DISCOURSE_MARKERS)
+
+    # Pass 2b: Break before postpositive conjunctions (γάρ, οὖν)
+    lines = apply_postpositive_breaks(lines, POSTPOSITIVE_CONJUNCTIONS)
+
+    # Pass 2c: Stack μέν…δέ correlative pairs
+    lines = apply_men_de_stacking(lines)
 
     # Pass 3: Break at speech introductions
     lines = apply_speech_breaks(lines)
+
+    # Pass 3b: Break at vocative phrases
+    lines = apply_vocative_breaks(lines)
 
     # Pass 4: Break before coordinating καί when it introduces a new clause
     # (heuristic: καί at start or after comma, followed within ~4 words by a verb)
@@ -178,6 +202,9 @@ def break_segment(text):
 
     # Pass 5: Break before ὅτι (content/causal) — careful, can be recitativum
     lines = apply_hoti_breaks(lines)
+
+    # Pass 5b: Break before δέ clause boundaries (long lines only)
+    lines = apply_de_breaks(lines)
 
     # Pass 6: Break before relative pronouns introducing substantial clauses
     lines = apply_relative_breaks(lines)
@@ -319,6 +346,128 @@ def apply_parallel_stacking(lines):
     return result
 
 
+def apply_postpositive_breaks(lines, postpositive_words):
+    """Break before the word PRECEDING a postpositive conjunction (γάρ, οὖν).
+
+    Postpositives appear as the 2nd word in their clause, so the real clause
+    boundary is before the word that precedes them.  E.g. in
+    "πολλοὶ γὰρ ἦλθον" the break goes before "πολλοὶ".
+
+    If the postpositive is already the first word of a line, break before it
+    normally (rare but possible).
+    """
+    pat = re.compile(
+        r'(?<=\s)(\S+\s+(?:' + '|'.join(re.escape(w) for w in postpositive_words) + r'))\b'
+    )
+    result = []
+    for line in lines:
+        if len(line) < 35:
+            result.append(line)
+            continue
+        m = pat.search(line)
+        if m and m.start() > 8:
+            before = line[:m.start()].strip()
+            after = line[m.start():].strip()
+            if before and after:
+                result.append(before)
+                result.append(after)
+                continue
+        result.append(line)
+    return result
+
+
+def apply_men_de_stacking(lines):
+    """Split μέν…δέ correlative pairs so each half gets its own line.
+
+    Looks for μέν followed later by δέ within the same line.  The split
+    point is the comma-space boundary between the two halves.
+    """
+    men_pat = re.compile(r'\bμ[ὲέ]ν\b')
+    de_pat = re.compile(r'\bδ[ὲέ]\b')
+    result = []
+    for line in lines:
+        if not men_pat.search(line) or not de_pat.search(line):
+            result.append(line)
+            continue
+        # Try to split at ", " before the δέ clause
+        # Find the δέ position and look for the nearest preceding comma
+        de_match = de_pat.search(line)
+        if de_match:
+            # Walk backward from δέ to find ", "
+            prefix = line[:de_match.start()]
+            comma_pos = prefix.rfind(', ')
+            if comma_pos > 5:
+                before = line[:comma_pos + 1].strip()
+                after = line[comma_pos + 2:].strip()
+                if before and after:
+                    result.append(before)
+                    result.append(after)
+                    continue
+        result.append(line)
+    return result
+
+
+def apply_vocative_breaks(lines):
+    """Detect vocative phrases and give them their own line.
+
+    Patterns: ὦ + word (+ optional second word before comma), Ἄνδρες + noun.
+    """
+    # ὦ + one word, optionally a second non-comma word, then optional comma
+    # e.g. "ὦ Θεόφιλε," or "ὦ γενεὰ ἄπιστος,"
+    vocative_pat = re.compile(r'(ὦ\s+[^,\s]+(?:\s+[^,\s]+)?),?')
+    result = []
+    for line in lines:
+        m = vocative_pat.search(line)
+        if m and len(line) > 30:
+            # Determine the full vocative span including trailing comma
+            voc_start = m.start()
+            voc_end = m.end()
+            # If the match ends with comma, include it; if next char is comma, grab it
+            if voc_end < len(line) and line[voc_end] == ',':
+                voc_end += 1
+            voc_text = line[voc_start:voc_end].strip()
+            # Skip trailing whitespace after the vocative
+            rest_start = voc_end
+            while rest_start < len(line) and line[rest_start] == ' ':
+                rest_start += 1
+
+            before = line[:voc_start].strip()
+            after = line[rest_start:].strip()
+
+            if before:
+                result.append(before)
+            result.append(voc_text)
+            if after:
+                result.append(after)
+        else:
+            result.append(line)
+    return result
+
+
+def apply_de_breaks(lines):
+    """Break before δέ clause boundaries on long lines.
+
+    δέ is postpositive, so the break goes before the word preceding δέ.
+    Only applied when line > 50 chars to avoid over-splitting connective δέ.
+    """
+    de_pat = re.compile(r'(?<=\s)(\S+\s+δ[ὲέ]\b)')
+    result = []
+    for line in lines:
+        if len(line) < 50:
+            result.append(line)
+            continue
+        m = de_pat.search(line)
+        if m and m.start() > 10:
+            before = line[:m.start()].strip()
+            after = line[m.start():].strip()
+            if before and after:
+                result.append(before)
+                result.append(after)
+                continue
+        result.append(line)
+    return result
+
+
 def merge_short_lines(lines):
     """Merge very short lines (< 15 chars) with their neighbor."""
     if len(lines) <= 1:
@@ -351,6 +500,8 @@ def is_standalone(text):
         r'^[Δδ]ιέλθωμεν',   # "Let us cross!"
         r'^ἰδοὺ',           # "Behold!"
         r'^Ἀμὴν',           # "Amen"
+        r'^ὦ\s+\S+',        # Vocative with ὦ
+        r'^ἀδελφοί',        # "Brothers"
     ]
     for pat in standalone_patterns:
         if re.search(pat, text):
