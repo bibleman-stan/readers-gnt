@@ -1,226 +1,326 @@
 <!DOCTYPE html>
 <html lang="el">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NT Reader</title>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>NT Reader — Greek New Testament</title>
+<meta name="description" content="A colometric reading edition of the Greek New Testament with sense-line formatting for oral delivery.">
+<meta name="theme-color" content="#1c1f24">
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,700;1,7..72,400&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --line-height: 2.35;
+    --wrap-indent: 0.75em;
+    --verse-gap: 6px;
+    --font-size: 17px;
+    --letter-spacing: 0.02em;
+    --word-spacing: 0.06em;
+    --content-padding: 26px;
+    --bg: #1c1f24;
+    --bg-raised: #22262d;
+    --bg-overlay: rgba(14, 16, 20, 0.97);
+    --text: #d4d0c8;
+    --text-dim: #8899aa;
+    --text-faint: #556;
+    --accent: #7cafc2;
+    --accent-dim: rgba(124, 175, 194, 0.12);
+    --border: rgba(255,255,255,0.06);
+    --border-accent: rgba(124, 175, 194, 0.25);
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: #1a1a2e;
-    color: #e0e0e0;
-    font-family: 'Gentium Plus', 'Gentium', 'Noto Serif', 'Georgia', serif;
-    font-size: 1.2rem;
-    line-height: 2.35;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Literata, Georgia, serif;
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+    max-width: 42em;
+    margin: 0 auto;
+    padding: 1em;
+    padding-top: 50px;
+    letter-spacing: var(--letter-spacing);
+    word-spacing: var(--word-spacing);
   }
 
-  /* --- Topbar --- */
-  #topbar {
+  /* === PROGRESS LINE === */
+  .progress-line {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--accent);
+    opacity: 0.25;
+    z-index: 200;
+    width: 0%;
+    transition: width 0.15s;
+  }
+
+  /* === TOP BAR === */
+  .topbar {
     position: fixed;
     top: 0; left: 0; right: 0;
+    max-width: 42em;
+    margin: 0 auto;
     height: 44px;
-    background: #16162a;
-    border-bottom: 1px solid #2a2a4a;
+    background: rgba(28, 31, 36, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 16px;
+    padding: 0 14px;
     z-index: 100;
-    font-size: 0.95rem;
   }
-  #topbar .brand { color: #888; letter-spacing: 0.05em; }
-  #topbar .location {
+
+  .topbar-loc {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
     cursor: pointer;
-    color: #c0c0e0;
-    padding: 4px 12px;
-    border-radius: 4px;
-    transition: background 0.15s;
+    padding: 6px 2px;
+    border-radius: 6px;
+    min-width: 0;
   }
-  #topbar .location:hover { background: #2a2a4a; }
+  .topbar-loc:hover { background: rgba(255,255,255,0.04); }
 
-  /* --- Main content --- */
-  #content {
-    max-width: 700px;
+  .topbar-book {
+    font-size: 0.84em;
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .topbar-chap {
+    font-size: 0.84em;
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .topbar-brand {
+    font-size: 0.62em;
+    color: var(--text-faint);
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0.03em;
+  }
+
+  /* === NAV PANEL === */
+  .nav-panel {
+    position: fixed;
+    inset: 0;
+    background: #0e1014;
+    z-index: 300;
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-panel.open { display: flex; }
+
+  .nav-panel-header {
+    position: sticky;
+    top: 0;
+    background: #0e1014;
+    height: 44px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 1;
+    border-bottom: 1px solid var(--border);
+    max-width: 42em;
     margin: 0 auto;
-    padding: 64px 20px 60px;
+    width: 100%;
   }
 
-  /* --- Chapter / verse / line styling --- */
-  .chapter { margin-bottom: 2.5em; }
+  .nav-panel-close {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    cursor: pointer;
+    font-size: 18px;
+  }
+  .nav-panel-close:hover { color: var(--text-dim); }
+
+  .nav-panel-title {
+    font-size: 0.88em;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+
+  .nav-panel-body {
+    padding: 0 1em 40px;
+    max-width: 42em;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .nav-book-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-dim);
+    font-size: 0.88em;
+  }
+  .nav-book-row:hover {
+    background: rgba(255,255,255,0.025);
+    color: var(--text);
+  }
+  .nav-book-row.active {
+    color: var(--accent);
+  }
+  .nav-book-chaps {
+    font-size: 0.72em;
+    color: var(--text-faint);
+  }
+
+  .nav-ch-grid {
+    display: none;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 6px 12px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-ch-grid.visible { display: flex; }
+
+  .nav-ch {
+    width: 34px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 0.72em;
+    color: var(--text-faint);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+  .nav-ch:hover {
+    background: rgba(255,255,255,0.06);
+    color: var(--text-dim);
+  }
+  .nav-ch.current {
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  /* === CONTENT AREA === */
+  #content {
+    padding: var(--content-padding);
+    padding-top: 8px;
+  }
+
+  .chapter { margin-bottom: 2em; }
 
   .verse {
-    margin-bottom: 0.3em;
+    margin-bottom: var(--verse-gap);
   }
 
   .verse-num {
     display: block;
-    font-size: 0.7rem;
-    color: #666;
+    font-size: 0.6em;
+    color: var(--text-faint);
     line-height: 1.4;
-    margin-top: 0.6em;
+    margin-top: 0.4em;
     user-select: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    letter-spacing: 0.02em;
   }
 
   .line {
     display: block;
-    text-indent: -0.75em;
-    padding-left: 0.75em;
+    text-indent: calc(-1 * var(--wrap-indent));
+    padding-left: var(--wrap-indent);
   }
 
-  /* --- Chapter nav buttons --- */
-  #chapter-nav {
+  /* === CHAPTER NAV BUTTONS === */
+  .chapter-nav {
     display: flex;
     justify-content: space-between;
-    padding: 20px 0 40px;
-    max-width: 700px;
-    margin: 0 auto;
+    align-items: center;
+    padding: 24px 0 48px;
   }
-  #chapter-nav button {
-    background: #2a2a4a;
-    color: #c0c0e0;
-    border: 1px solid #3a3a5a;
-    padding: 10px 24px;
-    border-radius: 6px;
+
+  .chapter-nav button {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 10px 20px;
+    border-radius: 8px;
     font-family: inherit;
-    font-size: 0.9rem;
+    font-size: 0.82em;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: all 0.15s;
   }
-  #chapter-nav button:hover { background: #3a3a5a; }
-  #chapter-nav button:disabled {
-    opacity: 0.3;
+  .chapter-nav button:hover {
+    color: var(--text);
+    border-color: var(--border-accent);
+    background: var(--accent-dim);
+  }
+  .chapter-nav button:disabled {
+    opacity: 0.2;
     cursor: default;
-    background: #2a2a4a;
-  }
-
-  /* --- Picker overlay --- */
-  #picker {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: #1a1a2e;
-    z-index: 200;
-    overflow-y: auto;
-    padding: 20px;
-  }
-  #picker.open { display: block; }
-
-  #picker-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  #picker-header h2 {
-    font-size: 1.1rem;
-    color: #c0c0e0;
-    font-weight: normal;
-  }
-  #picker-close {
     background: none;
-    border: none;
-    color: #888;
-    font-size: 1.6rem;
-    cursor: pointer;
-    padding: 4px 10px;
-    line-height: 1;
+    border-color: var(--border);
   }
-  #picker-close:hover { color: #e0e0e0; }
-  #picker-back {
-    background: none;
-    border: none;
-    color: #888;
-    font-size: 0.9rem;
-    cursor: pointer;
-    padding: 4px 10px;
-    display: none;
-  }
-  #picker-back:hover { color: #e0e0e0; }
 
-  /* Book grid */
-  #book-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 8px;
-    max-width: 700px;
-    margin: 0 auto;
-  }
-  .book-btn {
-    background: #22223a;
-    border: 1px solid #2a2a4a;
-    color: #c0c0e0;
-    padding: 12px 14px;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 0.9rem;
-    cursor: pointer;
-    text-align: left;
-    transition: background 0.15s;
-  }
-  .book-btn:hover { background: #2e2e50; }
-
-  /* Chapter grid */
-  #chapter-list {
-    display: none;
-    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
-    gap: 8px;
-    max-width: 700px;
-    margin: 0 auto;
-  }
-  .ch-btn {
-    background: #22223a;
-    border: 1px solid #2a2a4a;
-    color: #c0c0e0;
-    width: 100%;
-    aspect-ratio: 1;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s;
-  }
-  .ch-btn:hover { background: #2e2e50; }
-
-  /* --- Loading indicator --- */
+  /* === LOADING === */
   #loading {
     text-align: center;
-    color: #555;
+    color: var(--text-faint);
     padding: 80px 0;
-    font-size: 0.95rem;
+    font-size: 0.88em;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 0.5em; padding-top: 50px; }
+    #content { padding: 16px; padding-top: 8px; }
+    .nav-book-row { padding: 10px 8px; font-size: 0.82em; }
   }
 </style>
 </head>
 <body>
 
-<!-- Topbar -->
-<div id="topbar">
-  <span class="brand">NT Reader</span>
-  <span class="location" id="nav-location" onclick="openPicker()">Mark 1</span>
+<!-- Progress line -->
+<div class="progress-line" id="progress-line"></div>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="topbar-loc" id="topbar-loc" onclick="openNav()">
+    <span class="topbar-book" id="topbar-book">Mark</span>
+    <span class="topbar-chap" id="topbar-chap">1</span>
+  </div>
+  <span class="topbar-brand">NT Reader</span>
 </div>
 
-<!-- Main text area -->
+<!-- Nav panel -->
+<div class="nav-panel" id="nav-panel">
+  <div class="nav-panel-header">
+    <button class="nav-panel-close" onclick="closeNav()">&times;</button>
+    <span class="nav-panel-title">Greek New Testament</span>
+  </div>
+  <div class="nav-panel-body" id="nav-body"></div>
+</div>
+
+<!-- Main content -->
 <div id="content">
   <div id="loading">Loading...</div>
   <div id="text-container"></div>
-  <div id="chapter-nav">
-    <button id="btn-prev" onclick="goChapter(-1)">&#8592; Previous</button>
-    <button id="btn-next" onclick="goChapter(1)">Next &#8594;</button>
+  <div class="chapter-nav">
+    <button id="btn-prev" onclick="goChapter(-1)">&larr; Previous</button>
+    <button id="btn-next" onclick="goChapter(1)">Next &rarr;</button>
   </div>
-</div>
-
-<!-- Picker overlay -->
-<div id="picker">
-  <div id="picker-header">
-    <button id="picker-back" onclick="pickerShowBooks()">&#8592; Books</button>
-    <h2 id="picker-title">Select a Book</h2>
-    <button id="picker-close" onclick="closePicker()">&#215;</button>
-  </div>
-  <div id="book-list"></div>
-  <div id="chapter-list"></div>
 </div>
 
 <script>
@@ -255,13 +355,12 @@ const BOOKS = {
 };
 
 const BOOK_KEYS = Object.keys(BOOKS);
-
 let currentBook = 'mark';
 let currentChapter = 1;
-let bookCache = {};  // cached HTML per book slug
-let pickerSelectedBook = null;
+let bookCache = {};
+let expandedBook = null;
 
-// --- Navigation ---
+// --- Hash routing ---
 
 function parseHash() {
   const hash = location.hash.replace('#', '');
@@ -279,17 +378,30 @@ function setHash(book, chapter) {
   location.hash = book + '-' + chapter;
 }
 
-function updateLocationLabel() {
-  const name = BOOKS[currentBook].name;
-  document.getElementById('nav-location').textContent = name + ' ' + currentChapter;
-  document.title = name + ' ' + currentChapter + ' — NT Reader';
+// --- Topbar ---
+
+function updateTopbar() {
+  document.getElementById('topbar-book').textContent = BOOKS[currentBook].name;
+  document.getElementById('topbar-chap').textContent = currentChapter;
+  document.title = BOOKS[currentBook].name + ' ' + currentChapter + ' — NT Reader';
 }
+
+// --- Progress line ---
+
+function updateProgress() {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+  document.getElementById('progress-line').style.width = pct + '%';
+}
+
+// --- Navigation ---
 
 async function navigate(book, chapter) {
   currentBook = book;
   currentChapter = chapter;
   setHash(book, chapter);
-  updateLocationLabel();
+  updateTopbar();
   updateNavButtons();
   await loadBook(book);
   scrollToChapter(chapter);
@@ -314,7 +426,7 @@ async function loadBook(slug) {
     bookCache[slug] = html;
     container.innerHTML = html;
   } catch (e) {
-    container.innerHTML = '<p style="color:#666;text-align:center;padding:60px 0;">Could not load ' + BOOKS[slug].name + '.</p>';
+    container.innerHTML = '<p style="color:var(--text-faint);text-align:center;padding:60px 0;">Could not load ' + BOOKS[slug].name + '.</p>';
   } finally {
     loading.style.display = 'none';
   }
@@ -323,8 +435,7 @@ async function loadBook(slug) {
 function scrollToChapter(ch) {
   const el = document.getElementById('ch-' + ch);
   if (el) {
-    const topbarHeight = 44;
-    const y = el.getBoundingClientRect().top + window.scrollY - topbarHeight - 12;
+    const y = el.getBoundingClientRect().top + window.scrollY - 56;
     window.scrollTo({ top: y, behavior: 'auto' });
   } else {
     window.scrollTo({ top: 0, behavior: 'auto' });
@@ -336,13 +447,11 @@ function goChapter(delta) {
   let newBook = currentBook;
 
   if (newCh < 1) {
-    // Go to previous book's last chapter
     const idx = BOOK_KEYS.indexOf(currentBook);
     if (idx <= 0) return;
     newBook = BOOK_KEYS[idx - 1];
     newCh = BOOKS[newBook].chapters;
   } else if (newCh > BOOKS[currentBook].chapters) {
-    // Go to next book's first chapter
     const idx = BOOK_KEYS.indexOf(currentBook);
     if (idx >= BOOK_KEYS.length - 1) return;
     newBook = BOOK_KEYS[idx + 1];
@@ -354,75 +463,81 @@ function goChapter(delta) {
 
 function updateNavButtons() {
   const idx = BOOK_KEYS.indexOf(currentBook);
-  document.getElementById('btn-prev').disabled =
-    (idx === 0 && currentChapter === 1);
-  document.getElementById('btn-next').disabled =
-    (idx === BOOK_KEYS.length - 1 && currentChapter === BOOKS[currentBook].chapters);
+  document.getElementById('btn-prev').disabled = (idx === 0 && currentChapter === 1);
+  document.getElementById('btn-next').disabled = (idx === BOOK_KEYS.length - 1 && currentChapter === BOOKS[currentBook].chapters);
 }
 
-// --- Picker ---
+// --- Nav panel (BOM Reader style) ---
 
-function openPicker() {
-  pickerShowBooks();
-  document.getElementById('picker').classList.add('open');
+function openNav() {
+  buildNavPanel();
+  document.getElementById('nav-panel').classList.add('open');
 }
 
-function closePicker() {
-  document.getElementById('picker').classList.remove('open');
+function closeNav() {
+  document.getElementById('nav-panel').classList.remove('open');
 }
 
-function pickerShowBooks() {
-  pickerSelectedBook = null;
-  document.getElementById('picker-title').textContent = 'Select a Book';
-  document.getElementById('picker-back').style.display = 'none';
-  document.getElementById('book-list').style.display = 'grid';
-  document.getElementById('chapter-list').style.display = 'none';
-}
+function buildNavPanel() {
+  const body = document.getElementById('nav-body');
+  body.innerHTML = '';
 
-function pickerShowChapters(slug) {
-  pickerSelectedBook = slug;
-  const book = BOOKS[slug];
-  document.getElementById('picker-title').textContent = book.name;
-  document.getElementById('picker-back').style.display = 'inline-block';
-  document.getElementById('book-list').style.display = 'none';
-
-  const list = document.getElementById('chapter-list');
-  list.innerHTML = '';
-  for (let i = 1; i <= book.chapters; i++) {
-    const btn = document.createElement('button');
-    btn.className = 'ch-btn';
-    btn.textContent = i;
-    btn.onclick = () => pickChapter(slug, i);
-    list.appendChild(btn);
-  }
-  list.style.display = 'grid';
-}
-
-function pickChapter(slug, ch) {
-  closePicker();
-  navigate(slug, ch);
-}
-
-// --- Build book list ---
-
-function buildBookList() {
-  const list = document.getElementById('book-list');
   for (const slug of BOOK_KEYS) {
-    const btn = document.createElement('button');
-    btn.className = 'book-btn';
-    btn.textContent = BOOKS[slug].name;
-    btn.onclick = () => {
-      if (BOOKS[slug].chapters === 1) {
-        pickChapter(slug, 1);
-      } else {
-        pickerShowChapters(slug);
+    const book = BOOKS[slug];
+    const isActive = (slug === currentBook);
+
+    // Book row
+    const row = document.createElement('div');
+    row.className = 'nav-book-row' + (isActive ? ' active' : '');
+    row.innerHTML = '<span>' + book.name + '</span><span class="nav-book-chaps">' + book.chapters + ' ch</span>';
+    row.onclick = () => toggleBookChapters(slug);
+    body.appendChild(row);
+
+    // Chapter grid
+    const grid = document.createElement('div');
+    grid.className = 'nav-ch-grid';
+    grid.id = 'nav-grid-' + slug;
+
+    if (book.chapters === 1) {
+      row.onclick = () => { closeNav(); navigate(slug, 1); };
+    } else {
+      for (let i = 1; i <= book.chapters; i++) {
+        const ch = document.createElement('button');
+        ch.className = 'nav-ch' + (isActive && i === currentChapter ? ' current' : '');
+        ch.textContent = i;
+        ch.onclick = ((s, c) => () => { closeNav(); navigate(s, c); })(slug, i);
+        grid.appendChild(ch);
       }
-    };
-    list.appendChild(btn);
+    }
+
+    body.appendChild(grid);
+
+    // Auto-expand current book
+    if (isActive && book.chapters > 1) {
+      grid.classList.add('visible');
+      expandedBook = slug;
+    }
   }
+}
+
+function toggleBookChapters(slug) {
+  if (BOOKS[slug].chapters === 1) return;
+
+  const grid = document.getElementById('nav-grid-' + slug);
+  if (!grid) return;
+
+  if (expandedBook && expandedBook !== slug) {
+    const prev = document.getElementById('nav-grid-' + expandedBook);
+    if (prev) prev.classList.remove('visible');
+  }
+
+  grid.classList.toggle('visible');
+  expandedBook = grid.classList.contains('visible') ? slug : null;
 }
 
 // --- Init ---
+
+window.addEventListener('scroll', updateProgress, { passive: true });
 
 window.addEventListener('hashchange', () => {
   const { book, chapter } = parseHash();
@@ -432,7 +547,6 @@ window.addEventListener('hashchange', () => {
 });
 
 (function init() {
-  buildBookList();
   const { book, chapter } = parseHash();
   navigate(book, chapter);
 })();
