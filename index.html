@@ -499,6 +499,17 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   }
 
+  /* === VERSE POPOVER === */
+  .verse-popover-scrim { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 350; display: none; }
+  .verse-popover-scrim.open { display: block; }
+  .verse-popover { position: fixed; bottom: 0; left: 0; right: 0; max-width: 42em; margin: 0 auto; background: var(--bg-raised); border-radius: 12px 12px 0 0; padding: 20px; z-index: 360; transform: translateY(100%); transition: transform 0.25s ease; max-height: 60vh; overflow-y: auto; }
+  .verse-popover.open { transform: translateY(0); }
+  .verse-popover-title { font-size: 0.88em; color: var(--accent); font-weight: 600; margin-bottom: 4px; cursor: pointer; }
+  .verse-popover-subtitle { font-size: 0.72em; color: var(--text-faint); margin-bottom: 12px; }
+  .verse-popover-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+  .verse-popover-num { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 0.72em; color: var(--text-faint); cursor: pointer; border: 1px solid transparent; background: none; font-family: inherit; }
+  .verse-popover-num:hover { background: rgba(255,255,255,0.06); color: var(--text-dim); }
+
   /* === VERSE NUMBER VISIBILITY === */
   body.hide-verse-nums .verse-num { display: none; }
 
@@ -536,6 +547,15 @@
 <div class="settings-panel" id="settings-panel">
   <label><input type="checkbox" id="setting-punct" onchange="togglePunct(this.checked)"> Show punctuation</label>
   <label><input type="checkbox" id="setting-verses" checked onchange="toggleVerseNums(this.checked)"> Show verse numbers</label>
+  <div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <div>
+        <div style="font-size:0.78em; color:var(--text-dim);">Refresh content</div>
+        <div style="font-size:0.65em; color:var(--text-faint);">Clear cache and reload</div>
+      </div>
+      <button id="flush-btn" onclick="flushAndReload()" style="background:#705050; color:var(--text); border:none; border-radius:12px; padding:6px 14px; font-size:0.78em; cursor:pointer;">Refresh</button>
+    </div>
+  </div>
 </div>
 
 <!-- Search scrim + panel -->
@@ -558,6 +578,14 @@
     <div class="search-status" id="search-status"></div>
     <div id="search-results"></div>
   </div>
+</div>
+
+<!-- Verse popover -->
+<div class="verse-popover-scrim" id="verse-popover-scrim" onclick="closeVersePopover()"></div>
+<div class="verse-popover" id="verse-popover">
+  <div class="verse-popover-title" id="verse-popover-title"></div>
+  <div class="verse-popover-subtitle">Select a verse:</div>
+  <div class="verse-popover-grid" id="verse-popover-grid"></div>
 </div>
 
 <!-- Nav panel -->
@@ -615,6 +643,7 @@ let currentBook = 'mark';
 let currentChapter = 1;
 let bookCache = {};
 let expandedBook = null;
+let verseCountCache = {};  // {book: {chapter: verseCount}}
 
 // --- Hash routing ---
 
@@ -794,13 +823,13 @@ function buildNavPanel() {
     grid.id = 'nav-grid-' + slug;
 
     if (book.chapters === 1) {
-      row.onclick = () => { closeNav(); navigate(slug, 1); };
+      row.onclick = () => { showVersePopover(slug, 1); };
     } else {
       for (let i = 1; i <= book.chapters; i++) {
         const ch = document.createElement('button');
         ch.className = 'nav-ch' + (isActive && i === currentChapter ? ' current' : '');
         ch.textContent = i;
-        ch.onclick = ((s, c) => () => { closeNav(); navigate(s, c); })(slug, i);
+        ch.onclick = ((s, c) => () => { showVersePopover(s, c); })(slug, i);
         grid.appendChild(ch);
       }
     }
@@ -828,6 +857,110 @@ function toggleBookChapters(slug) {
 
   grid.classList.toggle('visible');
   expandedBook = grid.classList.contains('visible') ? slug : null;
+}
+
+// --- Verse popover ---
+
+function buildVerseCountsFromHtml(slug, html) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString('<div>' + html + '</div>', 'text/html');
+  const verses = doc.querySelectorAll('.verse');
+  const counts = {};
+  for (const v of verses) {
+    const id = v.id || '';
+    const m = id.match(/^v-(\d+)-(\d+)$/);
+    if (!m) continue;
+    const ch = parseInt(m[1]);
+    const vNum = parseInt(m[2]);
+    if (!counts[ch] || vNum > counts[ch]) counts[ch] = vNum;
+  }
+  verseCountCache[slug] = counts;
+  return counts;
+}
+
+function getVerseCounts(slug) {
+  if (verseCountCache[slug]) return verseCountCache[slug];
+  if (bookCache[slug]) {
+    return buildVerseCountsFromHtml(slug, bookCache[slug]);
+  }
+  return null;
+}
+
+async function showVersePopover(slug, chapterNum) {
+  let counts = getVerseCounts(slug);
+  if (!counts) {
+    // Need to fetch the book HTML first
+    try {
+      const resp = await fetch('books/' + slug + '.html');
+      if (!resp.ok) throw new Error('Not found');
+      const html = await resp.text();
+      bookCache[slug] = html;
+      counts = buildVerseCountsFromHtml(slug, html);
+    } catch (e) {
+      // Fallback: just navigate to chapter start
+      closeNav();
+      navigate(slug, chapterNum);
+      return;
+    }
+  }
+
+  const verseCount = counts[chapterNum] || 0;
+  if (verseCount === 0) {
+    // No verse data, just navigate
+    closeNav();
+    navigate(slug, chapterNum);
+    return;
+  }
+
+  const titleEl = document.getElementById('verse-popover-title');
+  titleEl.textContent = BOOKS[slug].name + ' ' + chapterNum;
+  titleEl.onclick = function() {
+    closeVersePopover();
+    closeNav();
+    navigate(slug, chapterNum);
+  };
+
+  const grid = document.getElementById('verse-popover-grid');
+  grid.innerHTML = '';
+  for (let v = 1; v <= verseCount; v++) {
+    const btn = document.createElement('button');
+    btn.className = 'verse-popover-num';
+    btn.textContent = v;
+    btn.onclick = ((s, c, vn) => function() {
+      closeVersePopover();
+      closeNav();
+      navigate(s, c, vn);
+    })(slug, chapterNum, v);
+    grid.appendChild(btn);
+  }
+
+  document.getElementById('verse-popover-scrim').classList.add('open');
+  document.getElementById('verse-popover').classList.add('open');
+}
+
+function closeVersePopover() {
+  document.getElementById('verse-popover-scrim').classList.remove('open');
+  document.getElementById('verse-popover').classList.remove('open');
+}
+
+// --- Flush and reload ---
+
+function flushAndReload() {
+  var btn = document.getElementById('flush-btn');
+  if (btn) { btn.textContent = 'Clearing...'; btn.disabled = true; }
+  // Clear in-memory caches
+  bookCache = {};
+  verseCountCache = {};
+  searchIndex = null;
+  searchIndexLoading = false;
+  // Clear browser caches
+  if ('caches' in window) {
+    caches.keys().then(function(names) {
+      return Promise.all(names.map(function(n) { return caches.delete(n); }));
+    }).then(function() { window.location.reload(true); });
+  } else {
+    window.location.reload(true);
+  }
 }
 
 // --- Settings ---
@@ -1360,8 +1493,13 @@ document.addEventListener('keydown', function(e) {
     return;
   }
 
-  // Escape closes search or settings
+  // Escape closes verse popover, search, or settings
   if (e.key === 'Escape') {
+    const versePopover = document.getElementById('verse-popover');
+    if (versePopover.classList.contains('open')) {
+      closeVersePopover();
+      return;
+    }
     const searchOverlay = document.getElementById('search-overlay');
     if (searchOverlay.classList.contains('open')) {
       closeSearch();
