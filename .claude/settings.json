@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:centerblc.github.io)",
+      "WebFetch(domain:universaldependencies.org)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\bibleman\\.claude\\projects\\c--Users-bibleman-repos-readers-nt"
+    ]
+  }
+}
