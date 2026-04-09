@@ -151,6 +151,51 @@ def apply_complementary_verb_merge(verse_lines):
     return result
 
 
+# ---------- Pattern 1b: Infinitive-governing construction merge ----------
+
+# Patterns where a construction governs an infinitive and the two should stay together.
+# When the tree splits "ὥστε αὐτὸν ... ἐμβάντα" / "καθῆσθαι ...", merge them.
+# Also covers πρίν + inf, μετὰ τό + inf, διὰ τό + inf, εἰς τό + inf, πρὸ τοῦ + inf.
+
+def apply_infinitive_construction_merge(verse_lines):
+    """Merge lines where an infinitive on the next line completes a governing construction."""
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        if i + 1 < len(verse_lines):
+            line = verse_lines[i]
+            next_line = verse_lines[i + 1]
+            # Check if next line starts with an infinitive
+            if line_starts_with_infinitive_or_complement(next_line):
+                # Check if current line ends with an accusative/participle pattern
+                # typical of ὥστε + acc + inf, or ends with a preposition governing inf
+                stripped = line.rstrip(' .,;·')
+                # ὥστε + accusative + participle, with infinitive on next line
+                if re.search(r'\bὥστε\b', line) and len(line) < 55:
+                    merged = line.rstrip() + ' ' + next_line.lstrip()
+                    # Only merge if combined length is reasonable
+                    if len(merged) < 90:
+                        result.append(merged)
+                        i += 2
+                        continue
+                # πρίν + infinitive
+                if stripped.endswith(('πρὶν', 'πρίν')):
+                    result.append(line.rstrip() + ' ' + next_line.lstrip())
+                    i += 2
+                    continue
+                # Articular infinitive: ends with τό, τοῦ after μετά, διά, εἰς, πρό
+                if re.search(r'\b(?:μετὰ|διὰ|εἰς|πρὸ)\s+τ[όοῦ][ῦ]?\s*$', stripped):
+                    result.append(line.rstrip() + ' ' + next_line.lstrip())
+                    i += 2
+                    continue
+        result.append(verse_lines[i])
+        i += 1
+    return result
+
+
 # ---------- Pattern 2: Standalone imperatives/exclamations ----------
 
 # Patterns for short imperatives/exclamations that should be their own line
@@ -638,6 +683,9 @@ def apply_all_patterns(verse_lines):
     # Pattern 1: Merge complementary verb + infinitive splits
     lines = apply_complementary_verb_merge(lines)
 
+    # Pattern 1b: Merge infinitive-governing constructions (ὥστε+inf, πρίν+inf, etc.)
+    lines = apply_infinitive_construction_merge(lines)
+
     # Speech intro fix (before standalone split, since it may create opportunities)
     lines = apply_speech_intro_fix(lines)
 
@@ -647,11 +695,15 @@ def apply_all_patterns(verse_lines):
     # Μήτι fix
     lines = apply_meti_fix(lines)
 
-    # Subordinating conjunction splits (ὥστε, ἵνα, ὅταν, etc.)
+    # Subordinating conjunction splits (ἵνα, ὅταν, etc. — but NOT ὥστε+inf)
     lines = apply_subordinating_conjunction_splits(lines)
 
     # ὅτι split for long lines
     lines = apply_hoti_split(lines)
+
+    # Pattern 1b AGAIN after conjunction splits — catch cases where the split
+    # created ὥστε+inf or similar constructions that should stay merged
+    lines = apply_infinitive_construction_merge(lines)
 
     # Pattern 3: Parallel list stacking
     lines = apply_parallel_list_stacking(lines)
