@@ -1,4 +1,4 @@
-# readers-nt
+# GNT Reader
 
 A colometric reading edition of the Greek New Testament.
 

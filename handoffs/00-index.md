@@ -1,4 +1,4 @@
-# Handoff Index — NT Reader
+# Handoff Index — GNT Reader
 
 These documents capture project state so that any session (human or AI) can spin up with full context. Read them in order.
 

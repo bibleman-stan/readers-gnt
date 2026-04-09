@@ -3,7 +3,7 @@
 ## Repo Structure (as of 2026-04-09)
 
 ```
-readers-nt/
+readers-gnt/
   CLAUDE.md                              # Claude Code orientation doc
   README.md                              # Public-facing description
   index.html                             # Main web app (all CSS/JS inline, ~340 lines)
@@ -98,7 +98,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark    # one book
 After any text edits:
 
 ```bash
-cd C:\Users\bibleman\repos\readers-nt
+cd C:\Users\bibleman\repos\readers-gnt
 PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py
 # Then commit the changed books/*.html files
 ```
@@ -122,7 +122,7 @@ Single-page app, all CSS and JS inline. No external dependencies except Google F
 - **Progress line** at top of viewport showing scroll position
 
 ### Navigation
-- **Topbar (44px fixed):** book name + chapter number (accent color) on left, "NT Reader" branding (italic, faint) on right. Clicking the book/chapter opens the nav panel.
+- **Topbar (44px fixed):** book name + chapter number (accent color) on left, "GNT Reader" branding (italic, faint) on right. Clicking the book/chapter opens the nav panel.
 - **Nav panel:** full-screen overlay (`#0e1014` background). Lists all 27 books as rows with chapter count. Clicking a book expands a chapter number grid inline. Clicking a chapter navigates and closes the panel. Single-chapter books (Philemon, 2 John, 3 John, Jude) navigate directly.
 - **Chapter nav buttons:** Previous/Next at bottom of text area. Cross book boundaries (end of Mark → Luke 1). Disabled at Matt 1 and Rev 22.
 - **Hash routing:** URL format `#mark-4`, `#acts-17`. Parsed on load and hashchange. Defaults to Mark 1.
@@ -135,7 +135,7 @@ Single-page app, all CSS and JS inline. No external dependencies except Google F
 ### GitHub Pages Compatible
 - Pure static — no server, no build step for the web app itself
 - `index.html` in repo root, `books/` directory alongside it
-- Served at `bibleman-stan.github.io/readers-nt/` (Pages must be enabled: Settings → Pages → main branch, root)
+- Served at `bibleman-stan.github.io/readers-gnt/` (Pages must be enabled: Settings → Pages → main branch, root)
 
 ## Book Inventory
 
@@ -174,14 +174,14 @@ Single-page app, all CSS and JS inline. No external dependencies except Google F
 ## Deployment
 
 ### GitHub Pages Setup
-1. Go to github.com/bibleman-stan/readers-nt → Settings → Pages
+1. Go to github.com/bibleman-stan/readers-gnt → Settings → Pages
 2. Source: Deploy from a branch → main → / (root) → Save
 3. Wait 1-2 minutes for first deploy
-4. Site live at: `bibleman-stan.github.io/readers-nt/`
+4. Site live at: `bibleman-stan.github.io/readers-gnt/`
 
 ### Custom Domain (future)
 - Registrar: Cloudflare (same account as bomreader.com)
-- Domain candidates: `ntreader.com`, `gntreader.com`, `nt-reader.com`
+- Domain candidates: `gntreader.com`, `gnt-reader.com`
 - Once purchased: add CNAME file to repo root, configure DNS in Cloudflare dashboard
 
 ## Git Workflow

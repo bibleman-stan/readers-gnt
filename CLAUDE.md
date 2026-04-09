@@ -1,4 +1,4 @@
-# NT Reader — Claude Code Instructions
+# GNT Reader — Claude Code Instructions
 
 Read this file completely before doing anything in this repo. It is your orientation document for every session.
 
@@ -10,8 +10,8 @@ A colometric reading edition of the Greek New Testament. The text is reformatted
 
 The colometric methodology draws on the scholarly tradition of Lee & Scott (sound mapping), Marschall (colometric analysis of Paul), and ancient manuscript practice.
 
-- **Repo:** github.com/bibleman-stan/readers-nt (public)
-- **Live site:** bibleman-stan.github.io/readers-nt/ (GitHub Pages, no custom domain yet)
+- **Repo:** github.com/bibleman-stan/readers-gnt (public)
+- **Live site:** bibleman-stan.github.io/readers-gnt/ (GitHub Pages, no custom domain yet)
 - **Base text:** SBL Greek New Testament (SBLGNT) — CC-BY-4.0
 - **User:** Stan (thebibleman77@gmail.com)
 - **Stage:** v1 complete — all 27 books auto-formatted, web app functional, hand editing not yet begun

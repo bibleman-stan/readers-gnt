@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="el">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>NT Reader — Greek New Testament</title>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GNT Reader — Greek New Testament</title>
 <meta name="description" content="A colometric reading edition of the Greek New Testament with sense-line formatting for oral delivery.">
 <meta name="theme-color" content="#1c1f24">
 <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,700;1,7..72,400&display=swap" rel="stylesheet">
@@ -301,7 +301,7 @@
     <span class="topbar-book" id="topbar-book">Mark</span>
     <span class="topbar-chap" id="topbar-chap">1</span>
   </div>
-  <span class="topbar-brand">NT Reader</span>
+  <span class="topbar-brand">GNT Reader</span>
 </div>
 
 <!-- Nav panel -->
@@ -383,7 +383,7 @@ function setHash(book, chapter) {
 function updateTopbar() {
   document.getElementById('topbar-book').textContent = BOOKS[currentBook].name;
   document.getElementById('topbar-chap').textContent = currentChapter;
-  document.title = BOOKS[currentBook].name + ' ' + currentChapter + ' — NT Reader';
+  document.title = BOOKS[currentBook].name + ' ' + currentChapter + ' — GNT Reader';
 }
 
 // --- Progress line ---

@@ -4,7 +4,7 @@
 
 A colometric reading edition of the Greek New Testament. The SBLGNT text is reformatted into **sense-lines (cola)** — each line is a natural breath unit based on Greek grammatical structure, designed for oral delivery and comprehension.
 
-The website is served from GitHub Pages. No custom domain yet — currently at `bibleman-stan.github.io/readers-nt/`. Domain registration is through Cloudflare (same account as bomreader.com). Domain candidates under consideration: `ntreader.com`, `gntreader.com`, `nt-reader.com`.
+The website is served from GitHub Pages. No custom domain yet — currently at `bibleman-stan.github.io/readers-gnt/`. Domain registration is through Cloudflare (same account as bomreader.com). Domain candidates under consideration: `gntreader.com`, `gnt-reader.com`.
 
 ## Origin (2026-04-09)
 
