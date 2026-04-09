@@ -93,6 +93,8 @@ def build_chapter_html(chapter_num, verses):
         parts.append(f'  <div class="verse" id="{verse_id}"><span class="verse-num">{ref}</span>')
         for line in verse["lines"]:
             escaped = html.escape(line)
+            # Wrap punctuation in spans for toggle visibility
+            escaped = re.sub(r'([,.\;·—])', r'<span class="punct">\1</span>', escaped)
             parts.append(f'    <span class="line">{escaped}</span>')
         parts.append("  </div>")
 

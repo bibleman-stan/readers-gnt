@@ -244,6 +244,15 @@
     padding-left: var(--wrap-indent);
   }
 
+  /* === PUNCTUATION (hidden by default — editorial, not original) === */
+  .punct {
+    display: none;
+  }
+  body.show-punct .punct {
+    display: inline;
+    opacity: 0.35;
+  }
+
   /* === CHAPTER NAV BUTTONS === */
   .chapter-nav {
     display: flex;
