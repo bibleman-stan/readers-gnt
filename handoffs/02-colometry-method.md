@@ -321,6 +321,24 @@ The Macula Greek Lowfat XML encodes syntactic roles on individual words (`role=s
 
 This enables a principled, testable colometric rule: a line containing a participle whose Macula clause has an object (`role=o`) not present on the line has unsatisfied valency and should merge with its neighbor. This is not an arbitrary length heuristic — it is a grammatically grounded test derived from the text's own syntactic structure.
 
+### Syntactic Clause ≠ Colometric Colon
+
+A central finding of this project, validated empirically across 137,554 words of the SBLGNT: the syntactic clause boundaries produced by formal grammar parsers (Macula syntax trees) do not reliably correspond to colometric cola — the meaning units that a hearer processes as one thought, one image, one breath.
+
+The divergence runs in both directions:
+
+- **Grammar over-splits.** A syntax tree correctly identifies a prepositional phrase, an article, or a participial clause as a separate grammatical node. But `ὁ` without its noun is meaningless to a hearer. `ἐν` without its object is not a thought. The grammar permits these as separate nodes; oral meaning does not.
+
+- **Grammar under-splits.** A syntax tree may correctly identify an entire Pauline periodic sentence as one predication. But a 200-character sentence with three participial images, two prepositional modifiers, and a relative clause is not one breath unit. The grammar sees one sentence; the ear hears six cola.
+
+The corrective layer — the principled rules that merge fragments the tree created and split mega-lines the tree left intact — is the methodological contribution. These rules are not ad hoc formatting preferences. Each is grounded in:
+- Ancient rhetorical theory (Pseudo-Demetrius on semantico-syntactic completeness)
+- Modern formalization (Marschall on cola vs. clauses, Nässelqvist on syllable ranges)
+- The foundational test (atomic thought, single image, breath unit)
+- Koine Greek grammar (Wallace, BDF on verb valency, conjunction classification, conditional sentences)
+
+The pipeline therefore moves from **esoteric grammar rules** (syntactic tree parsing) to **concrete and atomic senses of meaning** (what a hearer actually processes). This transition — from syntax to semantics for oral delivery — is a genuine advance in the field that neither pure grammatical analysis nor pure editorial intuition achieves alone.
+
 ### Note on editorial punctuation
 
 Modern editorial punctuation (commas, periods, ano teleia) in the SBLGNT is not original to the text. Colometric rules must never be based on punctuation placement. The original texts were written in scriptio continua with no punctuation — the colometric line breaks themselves do the structural work that later editorial punctuation attempts to do. The web reader hides punctuation by default for this reason.
