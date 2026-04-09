@@ -406,6 +406,28 @@ def line_has_unsatisfied_valency(line_text: str, book_slug: str,
     return check_line_valency(line_text, book_slug, chapter, verse).unsatisfied
 
 
+def line_has_predicate_role(line_text: str, book_slug: str,
+                            chapter: int, verse: int) -> bool:
+    """Check if a line contains a word with Macula role=p (predicate).
+
+    A line with a predicate adjective/noun has an implied copula (εἰμί)
+    and constitutes a complete thought — a verbless predication. Common
+    in Pauline style. Such lines should NOT be merged by the verbless rule.
+    """
+    macula_id = _SLUG_TO_MACULA.get(book_slug)
+    if not macula_id:
+        return False
+
+    if macula_id not in _book_cache:
+        _parse_book_valency(macula_id)
+    verse_words = _book_cache.get(macula_id, {}).get((chapter, verse), [])
+    if not verse_words:
+        return False
+
+    matched = _match_line_words_to_macula(line_text, verse_words)
+    return any(mw is not None and mw.role == 'p' for mw in matched)
+
+
 # ---------------------------------------------------------------------------
 # CLI for testing
 # ---------------------------------------------------------------------------

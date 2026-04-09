@@ -29,7 +29,7 @@ except ImportError:
 
 # Macula valency check for participle completeness
 try:
-    from macula_valency import check_line_valency
+    from macula_valency import check_line_valency, line_has_predicate_role
     _HAS_VALENCY = True
 except ImportError:
     _HAS_VALENCY = False
@@ -263,7 +263,7 @@ def apply_infinitive_merge_back(verse_lines):
 
 # ---------- Pattern 0b: Verbless line merge ----------
 
-def apply_verbless_line_merge(verse_lines, book_slug=None):
+def apply_verbless_line_merge(verse_lines, book_slug=None, verse_ref=None):
     """Merge short verbless lines forward into the following line.
 
     Grammatical basis: a line consisting only of a preposition, conjunction,
@@ -297,11 +297,23 @@ def apply_verbless_line_merge(verse_lines, book_slug=None):
         # Protect speech introductions (end with · ano teleia) from merging —
         # these are elliptical clauses where the verb of saying is implied
         ends_with_speech_marker = stripped.rstrip().endswith('·')
+        # Check for predicate role (implied copula — verbless but complete thought)
+        has_predicate = False
+        if _HAS_VALENCY and book_slug and verse_ref:
+            parts = verse_ref.split(':')
+            if len(parts) == 2:
+                try:
+                    ch, vs = int(parts[0]), int(parts[1])
+                    has_predicate = line_has_predicate_role(stripped, book_slug, ch, vs)
+                except ValueError:
+                    pass
+
         if (i + 1 < len(verse_lines)
                 and not is_standalone_unit(stripped)
                 and not ends_with_speech_marker
+                and not has_predicate
                 and not line_has_verbal_element(stripped, book_slug)):
-            # This line has no verbal element — merge forward
+            # This line has no verbal element and no predicate — merge forward
             next_line = verse_lines[i + 1]
             merged = stripped + ' ' + next_line.strip()
             result.append(merged)
@@ -858,7 +870,7 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     lines = apply_infinitive_merge_back(lines)
 
     # Pattern 0b: Verbless line merge (lines with no verbal element can't be cola)
-    lines = apply_verbless_line_merge(lines, book_slug=book_slug)
+    lines = apply_verbless_line_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
 
     # Pattern 0c: Valency satisfaction merge (participles with unsatisfied transitivity)
     lines = apply_valency_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
@@ -904,7 +916,7 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     lines = apply_infinitive_merge_back(lines)
 
     # Pattern 0b again — catch verbless fragments created by earlier passes
-    lines = apply_verbless_line_merge(lines, book_slug=book_slug)
+    lines = apply_verbless_line_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
 
     # Pattern 0c again — catch valency issues from fragments created by earlier passes
     lines = apply_valency_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
