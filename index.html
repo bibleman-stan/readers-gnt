@@ -1052,6 +1052,28 @@ function expandLemma(strippedTerm) {
   if (lemma && lemmaIndex.lemma_to_forms[lemma]) {
     return { lemma: lemma, forms: lemmaIndex.lemma_to_forms[lemma] };
   }
+  // Prefix/stem match: find lemmas starting with the same stem.
+  // Handles deponent verbs (user types -ω but lemma is -ομαι),
+  // alternate forms, and partial stems.
+  if (strippedTerm.length >= 4) {
+    // Try progressively shorter prefixes
+    for (let plen = strippedTerm.length; plen >= 4; plen--) {
+      const prefix = strippedTerm.substring(0, plen);
+      const allForms = [];
+      const matchedLemmas = [];
+      for (const lem in lemmaIndex.lemma_to_forms) {
+        if (lem.startsWith(prefix)) {
+          matchedLemmas.push(lem);
+          allForms.push(...lemmaIndex.lemma_to_forms[lem]);
+        }
+      }
+      if (matchedLemmas.length > 0 && matchedLemmas.length <= 5) {
+        // Found a reasonable number of stem matches
+        const uniqueForms = [...new Set(allForms)];
+        return { lemma: matchedLemmas.join('/'), forms: uniqueForms };
+      }
+    }
+  }
   return null;
 }
 
