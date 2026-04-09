@@ -353,22 +353,22 @@ def check_line_valency(
         if mw is not None:
             line_refs.add(mw.ref)
 
-    # Find participles on this line
-    participles_on_line = []
+    # Find all verbal elements on this line (participles AND finite verbs)
+    verbs_on_line = []
     for mw in matched:
-        if mw is not None and mw.mood == 'participle':
-            participles_on_line.append(mw)
+        if mw is not None and mw.role == 'v':
+            verbs_on_line.append(mw)
 
-    if not participles_on_line:
+    if not verbs_on_line:
         return ValencyResult()
 
-    # Check each participle's clause for unsatisfied valency
-    for ptc in participles_on_line:
+    # Check each verb's clause for unsatisfied valency
+    for verb in verbs_on_line:
         # Skip passive participles — the patient IS the subject, no object needed
-        if ptc.voice == 'passive':
+        if verb.mood == 'participle' and verb.voice == 'passive':
             continue
 
-        cl_id = ptc.clause_id
+        cl_id = verb.clause_id
         cr = clause_roles.get(cl_id)
         if cr is None:
             continue
@@ -377,23 +377,47 @@ def check_line_valency(
         if cr.has_object:
             obj_refs_on_line = line_refs.intersection(cr.object_word_refs)
             if not obj_refs_on_line:
-                # The clause is transitive but the object is elsewhere
                 return ValencyResult(
                     unsatisfied=True,
-                    reason=f"participle '{ptc.normalized}' (clause has object not on this line)",
-                    participle_text=ptc.normalized,
+                    reason=f"verb '{verb.normalized}' (clause has object not on this line)",
+                    participle_text=verb.normalized,
                     missing_role='o',
                 )
 
-        # Check subject valency (only if clause has no finite verb to carry implicit subject)
-        if cr.has_subject and not cr.has_finite_verb:
-            subj_refs_on_line = line_refs.intersection(cr.subject_word_refs)
-            if not subj_refs_on_line:
-                # Subject is elsewhere and no finite verb to carry it
+        # Check for infinitive complement: if the clause has another verb
+        # (e.g., an infinitive) that is NOT on this line, the finite verb's
+        # complement is missing. This catches δοκέω + infinitive, etc.
+        clause_verb_refs = set(cr.participle_refs)  # participle_refs includes all role=v
+        # Get ALL role=v refs in this clause from verse_words
+        all_clause_verb_refs = set()
+        for vw in verse_words:
+            if vw.clause_id == cl_id and vw.role == 'v':
+                all_clause_verb_refs.add(vw.ref)
+        other_verb_refs = all_clause_verb_refs - line_refs
+        if other_verb_refs and len(all_clause_verb_refs) > 1:
+            # The clause has verb(s) not on this line — check if this line's
+            # verb is a finite verb and the missing verb is an infinitive
+            verbs_here = [vw for vw in verse_words if vw.ref in line_refs and vw.role == 'v']
+            verbs_elsewhere = [vw for vw in verse_words if vw.ref in other_verb_refs]
+            has_finite_here = any(v.mood in ('indicative', 'subjunctive', 'imperative', 'optative')
+                                 for v in verbs_here)
+            has_inf_elsewhere = any(v.mood == 'infinitive' for v in verbs_elsewhere)
+            if has_finite_here and has_inf_elsewhere:
                 return ValencyResult(
                     unsatisfied=True,
-                    reason=f"participle '{ptc.normalized}' (clause has subject not on this line)",
-                    participle_text=ptc.normalized,
+                    reason=f"verb '{verb.normalized}' (infinitive complement not on this line)",
+                    participle_text=verb.normalized,
+                    missing_role='v',
+                )
+
+        # Check subject valency for participles (only if clause has no finite verb)
+        if verb.mood == 'participle' and cr.has_subject and not cr.has_finite_verb:
+            subj_refs_on_line = line_refs.intersection(cr.subject_word_refs)
+            if not subj_refs_on_line:
+                return ValencyResult(
+                    unsatisfied=True,
+                    reason=f"participle '{verb.normalized}' (clause has subject not on this line)",
+                    participle_text=verb.normalized,
                     missing_role='s',
                 )
 

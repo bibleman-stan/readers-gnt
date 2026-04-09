@@ -95,6 +95,8 @@ COMPLEMENTARY_VERBS = [
     'παύομαι', 'ἐπαύσατο', 'παύσονται',
     # Verbs of obligation (δεῖ takes infinitive directly, usually not split)
     'ὀφείλει', 'ὀφείλομεν',
+    # Verbs of seeming/deciding (take infinitive complement)
+    'ἔδοξε', 'ἔδοξεν', 'δοκεῖ', 'δόξῃ', 'δοκοῦσιν', 'εὐδόκησεν', 'εὐδόκησα',
 ]
 
 # Build a set for fast lookup
@@ -112,7 +114,6 @@ COMPLEMENTARY_VERB_PATTERNS = [
 def ends_with_complementary_verb(line):
     """Check if a line ends with a complementary verb form."""
     stripped = line.rstrip(' .,;·')
-    # Get the last word
     words = stripped.split()
     if not words:
         return False
@@ -121,6 +122,29 @@ def ends_with_complementary_verb(line):
         return True
     for pat in COMPLEMENTARY_VERB_PATTERNS:
         if pat.search(last_word):
+            return True
+    return False
+
+
+def line_contains_complementary_verb(line):
+    """Check if a line contains ANY complementary verb form (not just at end)."""
+    words = line.rstrip(' .,;·').split()
+    for w in words:
+        clean = w.rstrip('.,;·')
+        if clean in COMPLEMENTARY_VERB_SET:
+            return True
+        for pat in COMPLEMENTARY_VERB_PATTERNS:
+            if pat.search(clean):
+                return True
+    return False
+
+
+def line_contains_infinitive(line):
+    """Check if a line contains any infinitive form."""
+    words = line.strip().split()
+    for w in words:
+        clean = w.rstrip('.,;·')
+        if clean.endswith(_INF_ENDINGS):
             return True
     return False
 
@@ -258,6 +282,35 @@ def apply_infinitive_merge_back(verse_lines):
             continue
         result.append(verse_lines[i])
         i += 1
+    return result
+
+
+# ---------- Pattern 1a: Complementary verb without infinitive ----------
+
+def apply_complementary_verb_without_infinitive_merge(verse_lines):
+    """Merge lines that contain a complementary verb but lack its infinitive complement.
+
+    Grammatical basis: verbs like δοκέω, δύναμαι, ἄρχομαι, θέλω, μέλλω require
+    an infinitive complement to express a complete thought. "It seemed good to me"
+    (ἔδοξε κἀμοί) without "to write" (γράψαι) is an incomplete thought — the
+    reader is waiting to hear what seemed good.
+    """
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        line = verse_lines[i]
+        if (i + 1 < len(verse_lines)
+                and line_contains_complementary_verb(line)
+                and not line_contains_infinitive(line)):
+            merged = line.rstrip() + ' ' + verse_lines[i + 1].lstrip()
+            result.append(merged)
+            i += 2
+        else:
+            result.append(line)
+            i += 1
     return result
 
 
@@ -877,6 +930,10 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
 
     # Pattern 1: Merge complementary verb + infinitive splits
     lines = apply_complementary_verb_merge(lines)
+
+    # Pattern 1a: Merge lines containing a complementary verb but no infinitive
+    # (the verb's required complement is on a later line)
+    lines = apply_complementary_verb_without_infinitive_merge(lines)
 
     # Pattern 1b: Merge infinitive-governing constructions (ὥστε+inf, πρίν+inf, etc.)
     lines = apply_infinitive_construction_merge(lines)
