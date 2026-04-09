@@ -24,7 +24,13 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = SCRIPT_DIR.parent
 BEZAE_XML = PROJECT_DIR / "research" / "codex-bezae" / "Bezae-Greek.xml"
-V3_DIR = PROJECT_DIR / "data" / "text-files" / "v3-colometric"
+
+TIER_DIRS = {
+    "v1": PROJECT_DIR / "data" / "text-files" / "v1-colometric",
+    "v2": PROJECT_DIR / "data" / "text-files" / "v2-colometric",
+    "v3": PROJECT_DIR / "data" / "text-files" / "v3-colometric",
+}
+V3_DIR = TIER_DIRS["v3"]  # default
 
 NS = "http://www.tei-c.org/ns/1.0"
 NS_MAP = {"t": NS}
@@ -327,15 +333,16 @@ def parse_v3_chapter(filepath):
     return verses
 
 
-def load_v3_book(book_prefix, chapter_filter=None):
-    """Load all v3 chapters for a book.
+def load_v3_book(book_prefix, chapter_filter=None, input_dir=None):
+    """Load all colometric chapters for a book from a given tier directory.
 
     Returns:
         dict: {(chapter, verse): [line_words_list, ...]}
     """
+    src_dir = input_dir or V3_DIR
     all_verses = {}
     pattern = f"{book_prefix}-*.txt"
-    for filepath in sorted(V3_DIR.glob(pattern)):
+    for filepath in sorted(src_dir.glob(pattern)):
         # Extract chapter number from filename: mark-04.txt -> 4
         ch_match = re.search(r"-(\d+)\.txt$", filepath.name)
         if not ch_match:
@@ -452,12 +459,12 @@ def compute_verse_agreement(bezae_lines, v3_lines, tolerance=1):
 # Reports
 # ---------------------------------------------------------------------------
 
-def book_summary_report(bezae_data, hang_data, book_prefix, chapter_filter=None):
+def book_summary_report(bezae_data, hang_data, book_prefix, chapter_filter=None, input_dir=None):
     """Generate comparison data for a single book.
 
     Returns list of per-verse results.
     """
-    v3_data = load_v3_book(book_prefix, chapter_filter=chapter_filter)
+    v3_data = load_v3_book(book_prefix, chapter_filter=chapter_filter, input_dir=input_dir)
     bezae_verses = bezae_data.get(book_prefix, {})
 
     results = []
@@ -598,7 +605,8 @@ def print_side_by_side(results, book_prefix, chapter):
             print(f"  {bz_display:<{col_width}}  |  {v3}")
 
 
-def run_full_report(bezae_data, hang_data, book_filter=None, chapter_filter=None):
+def run_full_report(bezae_data, hang_data, book_filter=None, chapter_filter=None,
+                    input_dir=None, tier_label="v3"):
     """Run the full comparison report."""
     books = [book_filter] if book_filter else list(BOOK_MAP.values())
 
@@ -606,12 +614,13 @@ def run_full_report(bezae_data, hang_data, book_filter=None, chapter_filter=None
     for book in books:
         if book not in bezae_data:
             continue
-        results = book_summary_report(bezae_data, hang_data, book, chapter_filter=chapter_filter)
+        results = book_summary_report(bezae_data, hang_data, book,
+                                      chapter_filter=chapter_filter, input_dir=input_dir)
         all_results[book] = results
 
     # Per-book summary
     print("\n" + "=" * 80)
-    print("  BEZAE vs GNT READER v3 — BREAK AGREEMENT REPORT")
+    print(f"  BEZAE vs GNT READER {tier_label} — BREAK AGREEMENT REPORT")
     print("=" * 80)
 
     grand_v3 = 0
@@ -658,6 +667,10 @@ def main():
                         help="Chapter number (requires --book)")
     parser.add_argument("--side-by-side", action="store_true",
                         help="Show side-by-side comparison (requires --book and --chapter)")
+    parser.add_argument("--tier", type=str, default="v3", choices=["v1", "v2", "v3"],
+                        help="Which colometric tier to compare (default: v3)")
+    parser.add_argument("--all-tiers", action="store_true",
+                        help="Compare all three tiers against Bezae in a summary table")
     args = parser.parse_args()
 
     if args.chapter and not args.book:
@@ -673,17 +686,61 @@ def main():
     # Parse Bezae
     bezae_data, hang_data = parse_bezae(BEZAE_XML, book_filter=args.book)
 
-    # Run report
-    all_results = run_full_report(bezae_data, hang_data,
-                                  book_filter=args.book,
-                                  chapter_filter=args.chapter)
+    if args.all_tiers:
+        # Run all three tiers and show a comparison table
+        print("\n" + "=" * 80)
+        print("  BEZAE AGREEMENT — ALL TIERS COMPARISON")
+        print("=" * 80)
+        print(f"\n  {'BOOK':<8} {'v1':>8} {'v2':>8} {'v3':>8}")
+        print(f"  {'----':<8} {'----':>8} {'----':>8} {'----':>8}")
 
-    # Side-by-side
-    if args.side_by_side:
-        results = all_results.get(args.book, [])
-        print_side_by_side(results, args.book, args.chapter)
+        tier_totals = {t: {"breaks": 0, "agreed": 0} for t in ["v1", "v2", "v3"]}
+        books = [args.book] if args.book else list(BOOK_MAP.values())
 
-    print()
+        for book in books:
+            if book not in bezae_data:
+                continue
+            row = f"  {book.upper():<8}"
+            for tier in ["v1", "v2", "v3"]:
+                tier_dir = TIER_DIRS[tier]
+                results = book_summary_report(bezae_data, hang_data, book,
+                                              chapter_filter=args.chapter,
+                                              input_dir=tier_dir)
+                total_breaks = sum(r["v3_breaks"] for r in results)
+                total_agreed = sum(r["agreed"] for r in results)
+                rate = total_agreed / total_breaks if total_breaks > 0 else 0.0
+                row += f" {rate:>7.1%}"
+                tier_totals[tier]["breaks"] += total_breaks
+                tier_totals[tier]["agreed"] += total_agreed
+            print(row)
+
+        if len(books) > 1:
+            row = f"  {'OVERALL':<8}"
+            for tier in ["v1", "v2", "v3"]:
+                t = tier_totals[tier]
+                rate = t["agreed"] / t["breaks"] if t["breaks"] > 0 else 0.0
+                row += f" {rate:>7.1%}"
+            print(f"  {'-------':<8} {'-------':>8} {'-------':>8} {'-------':>8}")
+            print(row)
+
+        print()
+    else:
+        # Single tier report
+        input_dir = TIER_DIRS[args.tier]
+
+        # Run report
+        all_results = run_full_report(bezae_data, hang_data,
+                                      book_filter=args.book,
+                                      chapter_filter=args.chapter,
+                                      input_dir=input_dir,
+                                      tier_label=args.tier)
+
+        # Side-by-side
+        if args.side_by_side:
+            results = all_results.get(args.book, [])
+            print_side_by_side(results, args.book, args.chapter)
+
+        print()
 
 
 if __name__ == "__main__":
