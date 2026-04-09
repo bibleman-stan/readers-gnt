@@ -121,6 +121,77 @@ def line_has_verbal_element(line_text, book_slug):
     return False
 
 
+def line_has_finite_verb(line_text, book_slug):
+    """Check if a line contains a finite verb (indicative, subjunctive, or imperative).
+
+    MorphGNT parsing field position 3 (0-indexed) encodes mood:
+      I = indicative, S = subjunctive, D = imperative, O = optative.
+    We check every word in the line against the book's verse data.
+    """
+    if book_slug not in _word_pos_cache:
+        _load_book(book_slug)
+    # We need to check individual word parsings, not just POS
+    verses = _verse_cache.get(book_slug, {})
+    # Build a set of words on this line
+    line_words = set()
+    for w in line_text.strip().split():
+        clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', w)
+        if clean:
+            line_words.add(clean)
+
+    if not line_words:
+        return False
+
+    # Scan all verses for matching words with finite verb parsing
+    for (ch, vs), word_list in verses.items():
+        for word, pos, parsing in word_list:
+            if not pos.startswith('V'):
+                continue
+            clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', word)
+            if clean not in line_words:
+                continue
+            # Check mood: parsing format is e.g. "3AAI-S--" or "-PAPNPM-"
+            # Position 3 (0-indexed) is mood for finite verbs
+            if len(parsing) >= 4 and parsing[3] in ('I', 'S', 'D', 'O'):
+                return True
+    return False
+
+
+def word_is_comparative(word, book_slug):
+    """Check if a word is tagged as comparative degree in MorphGNT.
+
+    MorphGNT parsing field last character = 'C' for comparative degree.
+    This applies to adjectives (A-) and some adverbs.
+    """
+    clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', word)
+    if not clean:
+        return False
+    if book_slug not in _verse_cache:
+        _load_book(book_slug)
+    verses = _verse_cache.get(book_slug, {})
+    for (ch, vs), word_list in verses.items():
+        for w, pos, parsing in word_list:
+            w_clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', w)
+            if w_clean == clean and parsing.endswith('C'):
+                return True
+    return False
+
+
+def get_comparative_words(book_slug):
+    """Return a set of all words tagged as comparative degree in a book."""
+    if book_slug not in _verse_cache:
+        _load_book(book_slug)
+    verses = _verse_cache.get(book_slug, {})
+    comparatives = set()
+    for (ch, vs), word_list in verses.items():
+        for w, pos, parsing in word_list:
+            if parsing.endswith('C'):
+                clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', w)
+                if clean:
+                    comparatives.add(clean)
+    return comparatives
+
+
 def clear_cache():
     """Clear all cached data."""
     _word_pos_cache.clear()

@@ -22,7 +22,8 @@ import argparse
 
 # MorphGNT lookup for verbal element detection
 try:
-    from morphgnt_lookup import line_has_verbal_element
+    from morphgnt_lookup import (line_has_verbal_element, line_has_finite_verb,
+                                  get_comparative_words)
     _HAS_MORPHGNT = True
 except ImportError:
     _HAS_MORPHGNT = False
@@ -881,6 +882,172 @@ def apply_hoti_split(verse_lines):
     return result
 
 
+# ---------- Pattern 7: Correlative/paired construction merge ----------
+
+# Explicit comparative adverbs/adjectives (beyond MorphGNT degree tagging)
+_EXPLICIT_COMPARATIVES = {
+    'μᾶλλον', 'μείζων', 'μεῖζον', 'μεῖζόν', 'πλέον', 'πλεῖον', 'πλεῖόν',
+    'κρεῖσσον', 'κρεῖττον', 'χεῖρον', 'ἧσσον', 'ἧττον', 'ἥσσων',
+    'μείζονα', 'μείζονος', 'μείζονι', 'μείζονες',
+    'πλείονα', 'πλείονας', 'πλείονος', 'πλειόνων', 'πλείοσιν', 'πλείους',
+    'χείρονα', 'χείρονος', 'χείρονες',
+    'κρείσσονα', 'κρείττονα', 'κρείσσονος',
+    'ἐλάσσονα', 'ἐλάσσω', 'ἐλάττονα', 'ἐλάττω',
+    'μᾶλλόν',
+}
+
+# Cache for MorphGNT comparative words per book
+_morphgnt_comparatives_cache = {}
+
+
+def _get_comparatives_for_book(book_slug):
+    """Get the set of comparative-degree words for a book (cached)."""
+    if book_slug in _morphgnt_comparatives_cache:
+        return _morphgnt_comparatives_cache[book_slug]
+    if _HAS_MORPHGNT:
+        comps = get_comparative_words(book_slug)
+    else:
+        comps = set()
+    _morphgnt_comparatives_cache[book_slug] = comps
+    return comps
+
+
+def _line_contains_comparative(line, book_slug=None):
+    """Check if a line contains any comparative form.
+
+    Uses both the explicit word list and MorphGNT comparative-degree tagging.
+    """
+    words = line.strip().split()
+    morphgnt_comps = _get_comparatives_for_book(book_slug) if book_slug else set()
+    for w in words:
+        clean = re.sub(r'[,.\;·⸀⸁⸂⸃⸄⸅]', '', w)
+        if clean in _EXPLICIT_COMPARATIVES:
+            return True
+        if clean in morphgnt_comps:
+            return True
+    return False
+
+
+def _next_line_starts_with_h(line):
+    """Check if a line starts with ἤ/ἢ (comparative 'than' or alternative)."""
+    stripped = line.strip()
+    if not stripped:
+        return False
+    first_word = stripped.split()[0]
+    clean = re.sub(r'[,.\;·]', '', first_word)
+    return clean in ('ἤ', 'ἢ')
+
+
+def _h_line_is_independent_clause(line, book_slug):
+    """Check if an ἤ-line is a genuinely independent clause (has finite verb).
+
+    If the ἤ line has a finite verb as part of the ἤ-clause itself, it may be
+    an independent rhetorical question or alternative clause that should remain
+    on its own line.
+
+    We extract the ἤ-clause by taking the content after ἤ/ἢ up to the first
+    major punctuation break (comma, period, semicolon, ano teleia). If the
+    finite verb is AFTER a comma (i.e., in a separate clause like "κρίνατε"),
+    it doesn't count as part of the ἤ-clause.
+    """
+    if not _HAS_MORPHGNT or not book_slug:
+        # Conservative: assume it might be independent
+        return False
+
+    stripped = line.strip()
+    # Remove the leading ἤ/ἢ
+    h_content = re.sub(r'^[ἤἢ]\s+', '', stripped)
+    if not h_content:
+        return False
+
+    # Extract just the ἤ-clause: content before the first comma/period/semicolon/·
+    h_clause = re.split(r'[,.\;·]', h_content)[0].strip()
+    if not h_clause:
+        return False
+
+    return line_has_finite_verb(h_clause, book_slug)
+
+
+def apply_correlative_merge(verse_lines, book_slug=None):
+    """Pattern 7: Merge split correlative/paired constructions.
+
+    Greek has paired constructions that form indivisible thought units:
+    1. Comparative + ἤ: μᾶλλον / ἢ τοῦ θεοῦ → merge
+    2. οὔτε...οὔτε (neither...nor) — merge tiny fragments
+    3. μήτε...μήτε — same principle
+    4. εἴτε...εἴτε (whether...or) — merge tiny fragments
+    5. τε...καί (both...and) — merge when τε dangles
+
+    Protection: ἤ introducing a genuinely independent clause (with its own
+    finite verb) is left alone, as it represents a complete thought.
+    """
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        line = verse_lines[i]
+        stripped = line.strip()
+
+        # --- Category 1 & 5: Comparative + ἤ merge ---
+        if (i + 1 < len(verse_lines)
+                and _line_contains_comparative(stripped, book_slug)
+                and _next_line_starts_with_h(verse_lines[i + 1])):
+            next_stripped = verse_lines[i + 1].strip()
+            # Check if ἤ line is a genuinely independent clause
+            if _h_line_is_independent_clause(next_stripped, book_slug):
+                # Leave it alone — independent clause
+                result.append(line)
+                i += 1
+            else:
+                # Merge: the ἤ clause completes the comparison
+                merged = stripped + ' ' + next_stripped
+                result.append(merged)
+                i += 2
+            continue
+
+        # --- Category 2: οὔτε...οὔτε and μήτε...μήτε tiny fragment merge ---
+        if (i + 1 < len(verse_lines)
+                and re.search(r'\b(?:οὔτε|μήτε)\b', stripped)):
+            next_stripped = verse_lines[i + 1].strip()
+            # Check if next line starts with the matching paired element
+            if re.match(r'^(?:οὔτε|μήτε)\b', next_stripped):
+                # If either half is a tiny fragment (<20 chars), merge
+                if len(stripped) < 20 or len(next_stripped) < 20:
+                    merged = stripped + ' ' + next_stripped
+                    result.append(merged)
+                    i += 2
+                    continue
+
+        # --- Category 3: εἴτε...εἴτε tiny fragment merge ---
+        if (i + 1 < len(verse_lines)
+                and re.search(r'\bεἴτε\b', stripped)):
+            next_stripped = verse_lines[i + 1].strip()
+            if re.match(r'^εἴτε\b', next_stripped):
+                if len(stripped) < 20 or len(next_stripped) < 20:
+                    merged = stripped + ' ' + next_stripped
+                    result.append(merged)
+                    i += 2
+                    continue
+
+        # --- Category 4: τε...καί dangling merge ---
+        # If line ends with τε (or τε + punctuation), merge with next line
+        if (i + 1 < len(verse_lines)
+                and re.search(r'\bτε\s*[,]?\s*$', stripped)):
+            next_stripped = verse_lines[i + 1].strip()
+            # τε is dangling — merge with next line which should carry καί content
+            merged = stripped + ' ' + next_stripped
+            result.append(merged)
+            i += 2
+            continue
+
+        result.append(line)
+        i += 1
+
+    return result
+
+
 # ---------- Verse parsing and processing ----------
 
 def parse_v2_file(filepath):
@@ -956,6 +1123,9 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     # Pattern 1b AGAIN after conjunction splits — catch cases where the split
     # created ὥστε+inf or similar constructions that should stay merged
     lines = apply_infinitive_construction_merge(lines)
+
+    # Pattern 7: Correlative/paired construction merge (comparative+ἤ, οὔτε...οὔτε, etc.)
+    lines = apply_correlative_merge(lines, book_slug=book_slug)
 
     # Pattern 3: Parallel list stacking
     lines = apply_parallel_list_stacking(lines)
