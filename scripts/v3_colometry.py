@@ -516,53 +516,62 @@ def apply_meti_fix(verse_lines):
     return result
 
 
-# ---------- Additional pattern: Long lines with ὥστε ----------
+# ---------- Additional pattern: Subordinating conjunction splits ----------
 
-def apply_hoste_split(verse_lines):
-    """Split long lines before ὥστε (result clause) when they're too long."""
+# These conjunctions introduce subordinate clauses and should trigger a line break
+# when they appear mid-line with preceding content. Applied as a refinement on
+# v2 tree output, since the trees sometimes group subordinate clauses with their
+# main clause.
+SUBORDINATING_CONJUNCTIONS = [
+    'ὥστε',     # result
+    'ἵνα',      # purpose (only when mid-line, not at start)
+    'ὅταν',     # temporal (whenever)
+    'ὅτε',      # temporal (when)
+    'ἐάν',      # conditional
+    'μήποτε',   # lest
+    'καθὼς', 'καθώς',  # comparative
+    'ὥσπερ',    # comparative
+    'ἐπειδὴ', 'ἐπεὶ',  # causal
+    'διότι',    # causal
+    'ἄχρι',     # temporal (until)
+    'μέχρι',    # temporal (until)
+    'ὅπως',     # purpose
+    'ὅπου',     # local
+    'πρὶν',     # before
+]
+
+
+def apply_subordinating_conjunction_splits(verse_lines):
+    """Split lines before subordinating conjunctions when preceded by content.
+
+    The Macula trees sometimes keep a subordinating clause on the same line as
+    its main clause. This pass ensures conjunctions like ὥστε, ἵνα, ὅταν etc.
+    start a new line when there's substantial preceding content.
+    """
     result = []
     for line in verse_lines:
-        if len(line) > 60 and 'ὥστε' in line:
-            # Split before ὥστε
-            parts = re.split(r',?\s+(?=ὥστε\b)', line)
-            if len(parts) == 2:
-                first = parts[0].strip()
-                if not first.endswith(','):
-                    first = first + ','
-                result.append(first)
-                result.append(parts[1].strip())
-                continue
-        result.append(line)
-    return result
-
-
-# ---------- Additional pattern: Long lines with subordinate clause markers ----------
-
-def apply_long_line_clause_split(verse_lines):
-    """Split long lines before subordinate clause markers like καθώς, ὥσπερ, etc."""
-    markers = ['καθὼς', 'καθώς', 'ὥσπερ', 'ἐπειδὴ', 'ἐπεὶ', 'διότι']
-    result = []
-    for line in verse_lines:
-        if len(line) < 55:
+        if len(line) < 40:
             result.append(line)
             continue
         split_done = False
-        for marker in markers:
-            if marker in line:
-                # Split before marker, but not if it's at start
-                idx = line.find(marker)
-                if idx > 15:
-                    # Check for comma before marker
-                    before = line[:idx].strip()
-                    after = line[idx:].strip()
-                    if before and after:
-                        if before.endswith(','):
-                            result.append(before)
-                        else:
-                            result.append(before + ',')
-                        result.append(after)
-                        split_done = True
-                        break
+        for conj in SUBORDINATING_CONJUNCTIONS:
+            if conj not in line:
+                continue
+            # Find the conjunction preceded by space (or comma+space)
+            pattern = re.compile(r'[,]?\s+(?=' + re.escape(conj) + r'\b)')
+            m = pattern.search(line)
+            if m and m.start() > 10:
+                before = line[:m.end()].strip()
+                after = line[m.end():].strip()
+                if before and after and len(after) > 10:
+                    # Clean up trailing comma on before
+                    if before.endswith(','):
+                        result.append(before)
+                    else:
+                        result.append(before + ',')
+                    result.append(after)
+                    split_done = True
+                    break
         if not split_done:
             result.append(line)
     return result
@@ -638,14 +647,11 @@ def apply_all_patterns(verse_lines):
     # Μήτι fix
     lines = apply_meti_fix(lines)
 
-    # ὥστε split for long lines
-    lines = apply_hoste_split(lines)
+    # Subordinating conjunction splits (ὥστε, ἵνα, ὅταν, etc.)
+    lines = apply_subordinating_conjunction_splits(lines)
 
     # ὅτι split for long lines
     lines = apply_hoti_split(lines)
-
-    # Long line subordinate clause splits
-    lines = apply_long_line_clause_split(lines)
 
     # Pattern 3: Parallel list stacking
     lines = apply_parallel_list_stacking(lines)
