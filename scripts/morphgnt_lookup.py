@@ -388,6 +388,56 @@ def word_is_vocative(word, book_slug):
     return False
 
 
+def word_is_relative_pronoun(word, book_slug):
+    """Check if a word is tagged as a relative pronoun (RR) in MorphGNT.
+
+    MorphGNT POS tag RR = relative pronoun. This covers all forms of
+    ὅς, ἥ, ὅ (and compounds like ὅστις, ἥτις, ὅ τι).
+
+    Args:
+        word: A Greek word (may include punctuation)
+        book_slug: Book identifier (e.g., 'mark', 'acts')
+
+    Returns:
+        True if the word is tagged as a relative pronoun in any verse.
+    """
+    clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', word)
+    if not clean:
+        return False
+    pos_map = _load_word_pos(book_slug)
+    pos_tags = pos_map.get(clean, set())
+    return 'RR' in pos_tags
+
+
+def word_is_participle_accusative(word, book_slug):
+    """Check if a word is an accusative participle in MorphGNT.
+
+    MorphGNT parsing for verbs: position 3 = mood (P=participle),
+    position 4 = case (when participle: A=accusative).
+
+    Args:
+        word: A Greek word (may include punctuation)
+        book_slug: Book identifier (e.g., 'mark', 'acts')
+
+    Returns:
+        True if the word is tagged as an accusative participle in any verse.
+    """
+    clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', word)
+    if not clean:
+        return False
+    if book_slug not in _verse_cache:
+        _load_book(book_slug)
+    verses = _verse_cache.get(book_slug, {})
+    for (ch, vs), word_list in verses.items():
+        for w, pos, parsing in word_list:
+            if not pos.startswith('V'):
+                continue
+            w_clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', w)
+            if w_clean == clean and len(parsing) >= 5 and parsing[3] == 'P' and parsing[4] == 'A':
+                return True
+    return False
+
+
 def clear_cache():
     """Clear all cached data."""
     _word_pos_cache.clear()

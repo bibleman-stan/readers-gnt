@@ -516,6 +516,57 @@ def check_stranded_finite_verb(
                         missing_roles=missing_roles,
                     )
 
+        # --- Strategy 1b: Clause content split check ---
+        # Even if the clause has no role=o/role=s annotations, check if
+        # the verb's clause has content words that are NOT on this line.
+        # If the verb is the only clause member on this line but the clause
+        # has other content words elsewhere, the verb is separated from its
+        # clause siblings and should merge.
+        if cr is not None:
+            # Collect all refs for words in this clause
+            clause_word_refs = set()
+            clause_word_count = 0
+            for vw in verse_words:
+                if vw.clause_id == cl_id and vw.word_class not in ('conj', 'ptcl', ''):
+                    clause_word_refs.add(vw.ref)
+                    clause_word_count += 1
+
+            clause_refs_on_line = clause_word_refs.intersection(line_refs)
+
+            # If <50% of clause content words are on this line, the verb is separated
+            if clause_word_count >= 2 and len(clause_refs_on_line) * 2 < clause_word_count:
+                # Check which adjacent line has the clause's other content words
+                forward_clause = False
+                backward_clause = False
+
+                if next_line:
+                    next_matched = _match_line_words_to_macula(next_line, verse_words)
+                    next_refs = set(mw.ref for mw in next_matched if mw is not None)
+                    if next_refs.intersection(clause_word_refs - clause_refs_on_line):
+                        forward_clause = True
+
+                if prev_line:
+                    prev_matched = _match_line_words_to_macula(prev_line, verse_words)
+                    prev_refs = set(mw.ref for mw in prev_matched if mw is not None)
+                    if prev_refs.intersection(clause_word_refs - clause_refs_on_line):
+                        backward_clause = True
+
+                if forward_clause or backward_clause:
+                    if backward_clause and not forward_clause:
+                        direction = 'backward'
+                    elif forward_clause and not backward_clause:
+                        direction = 'forward'
+                    else:
+                        direction = 'forward'
+
+                    return StrandedVerbResult(
+                        stranded=True,
+                        reason=f"finite verb '{verb.normalized}' separated from clause siblings ({direction})",
+                        verb_text=verb.normalized,
+                        merge_direction=direction,
+                        missing_roles=['clause_content'],
+                    )
+
         # --- Strategy 2: Tiny clause heuristic ---
         # The verb's clause has NO annotated arguments (Macula nests them in
         # subordinate clauses), but the verb is alone on the line with at most

@@ -26,7 +26,9 @@ try:
                                   get_comparative_words, word_is_participle,
                                   word_has_lemma, word_is_imperative,
                                   get_imperative_words_on_line,
-                                  word_is_noun_or_pronoun, word_is_vocative)
+                                  word_is_noun_or_pronoun, word_is_vocative,
+                                  word_is_relative_pronoun,
+                                  word_is_participle_accusative)
     _HAS_MORPHGNT = True
 except ImportError:
     _HAS_MORPHGNT = False
@@ -768,6 +770,20 @@ def apply_stranded_verb_merge(verse_lines, book_slug=None, verse_ref=None):
                     result.append(line)
                     i += 1
                     continue
+
+        # Guard: never merge backward INTO a speech introduction (ending with ·)
+        if svr.merge_direction == 'backward' and prev_line and prev_line.rstrip().endswith('·'):
+            # Try forward instead if possible
+            if i + 1 < len(verse_lines) and next_line:
+                svr = svr.__class__(
+                    stranded=svr.stranded, reason=svr.reason,
+                    verb_text=svr.verb_text, merge_direction='forward',
+                    missing_roles=svr.missing_roles,
+                )
+            else:
+                result.append(line)
+                i += 1
+                continue
 
         # Perform the merge
         if svr.merge_direction == 'forward' and i + 1 < len(verse_lines):
@@ -1937,6 +1953,180 @@ def apply_subordinating_conjunction_splits(verse_lines):
     return result
 
 
+# ---------- Additional pattern: Relative pronoun clause splits ----------
+
+# Relative adverbs that introduce relative clauses (in addition to RR-tagged pronouns)
+RELATIVE_ADVERBS = {'ὅπου', 'ὅθεν'}
+
+# Global counter for reporting
+_relative_clause_split_count = 0
+
+
+def apply_relative_clause_splits(verse_lines, book_slug=None):
+    """Split lines before relative pronouns that introduce a new clause.
+
+    Grammatical basis: a relative pronoun (ὅς, ἥ, ὅ and all case forms,
+    plus ὅστις, ἥτις, ὅ τι) introduces a new predication — a relative clause
+    with its own finite verb. This constitutes a separate colon.
+
+    Detection uses MorphGNT POS tag RR (relative pronoun) for precision,
+    plus a small set of relative adverbs (ὅπου, ὅθεν).
+
+    Guards:
+      - Only split when the relative pronoun is mid-line (not at line start)
+      - Only split when there are >=15 chars before the relative pronoun
+        (substantial preceding content)
+      - Only split when the relative clause (everything after) is >=15 chars
+        (the clause has substance — avoids over-splitting short rel clauses)
+      - Do NOT split ὅπως when it's already in SUBORDINATING_CONJUNCTIONS
+        (handled by that pass instead)
+    """
+    global _relative_clause_split_count
+
+    if not _HAS_MORPHGNT or not book_slug:
+        return verse_lines
+
+    result = []
+    for line in verse_lines:
+        stripped = line.strip()
+        words = stripped.split()
+        if len(words) < 3:
+            result.append(line)
+            continue
+
+        split_done = False
+        # Walk through words looking for a relative pronoun mid-line
+        for wi, word in enumerate(words):
+            if wi == 0:
+                continue
+
+            clean = _clean_word(word)
+            is_relative = (word_is_relative_pronoun(clean, book_slug)
+                           or clean in RELATIVE_ADVERBS)
+
+            if is_relative:
+                # Calculate content before this word
+                before = ' '.join(words[:wi])
+                after = ' '.join(words[wi:])
+
+                if len(before) >= 15 and len(after) >= 15:
+                    result.append(before)
+                    result.append(after)
+                    _relative_clause_split_count += 1
+                    split_done = True
+                    break
+
+        if not split_done:
+            result.append(line)
+
+    return result
+
+
+# ---------- Additional pattern: Complement participle backward merge ----------
+
+# Global counter for reporting
+_complement_participle_merge_count = 0
+
+
+def apply_complement_participle_merge(verse_lines, book_slug=None, verse_ref=None):
+    """Merge lines starting with a complement participle backward into the governing verb line.
+
+    Grammatical basis (Wallace ch. 23): a complementary/object-complement participle
+    completes the meaning of a verb of perception, showing, finding, etc. Example:
+      παρέστησεν ἑαυτὸν ζῶντα = "he presented himself LIVING"
+    The participle ζῶντα tells you what state the object was in. Without it, the
+    thought is incomplete: presented himself HOW?
+
+    This is the reverse direction of the predication merge (which merges FORWARD).
+    Here the governing finite verb is on the PREVIOUS line, so we merge BACKWARD.
+
+    Guards:
+      - Don't merge backward across sentence boundaries
+      - Don't merge if the previous line ends with · (speech intro)
+      - Don't merge if the participle is a genitive absolute
+      - Don't merge if the participle line has its own object (self-contained image)
+      - Don't merge if the result would exceed 85 chars
+    """
+    global _complement_participle_merge_count
+
+    if not _HAS_MORPHGNT or not _HAS_PREDICATION or not book_slug or not verse_ref:
+        return verse_lines
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    # Parse verse reference
+    parts = verse_ref.split(':')
+    if len(parts) != 2:
+        return verse_lines
+    try:
+        chapter = int(parts[0])
+        verse = int(parts[1])
+    except ValueError:
+        return verse_lines
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        line = verse_lines[i]
+        stripped = line.strip()
+
+        if i > 0 and result:
+            prev = result[-1]
+            prev_stripped = prev.strip()
+            first_word = stripped.split()[0] if stripped.split() else ''
+            clean_first = _clean_word(first_word)
+
+            # Check: does the line start with a participle?
+            is_ptcp = word_is_participle(clean_first, book_slug)
+
+            if is_ptcp:
+                # Guard: previous line must not end with · (speech intro)
+                if not prev_stripped.rstrip().endswith('·'):
+                    # Guard: don't merge if the participle is a genitive absolute
+                    is_gen_abs = _is_genitive_absolute_line(stripped, book_slug, chapter, verse)
+
+                    if not is_gen_abs:
+                        # Guard: don't merge if the participle has its own object on this line
+                        has_own_object = _participle_has_object_on_line(stripped, book_slug, chapter, verse)
+
+                        if not has_own_object:
+                            # Check: does the previous line contain the governing finite verb?
+                            # Use the Macula tree: find the governing verb for this participle
+                            # and check if it appears on the previous line
+                            should_merge = False
+                            try:
+                                pr = check_line_completeness(stripped, book_slug, chapter, verse)
+                                if not pr.complete and pr.governor_text:
+                                    # The governing verb text is in pr.governor_text
+                                    # Check if it appears on the previous line
+                                    gov_clean = _clean_word(pr.governor_text)
+                                    prev_words = [_clean_word(w) for w in prev_stripped.split()]
+                                    if gov_clean in prev_words:
+                                        should_merge = True
+                            except Exception:
+                                pass
+
+                            if should_merge:
+                                # Guard: sentence boundary
+                                cross_sentence = False
+                                if _HAS_SENTENCES:
+                                    cross_sentence = words_cross_sentence_boundary(
+                                        prev_stripped, stripped, book_slug, chapter, verse)
+
+                                if not cross_sentence:
+                                    merged = prev_stripped + ' ' + stripped
+                                    # Guard: length
+                                    if len(merged) <= 85:
+                                        result[-1] = merged
+                                        _complement_participle_merge_count += 1
+                                        i += 1
+                                        continue
+
+        result.append(line)
+        i += 1
+    return result
+
+
 # ---------- Additional pattern: Long lines with ὅτι ----------
 
 def apply_hoti_split(verse_lines):
@@ -2485,6 +2675,12 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     # chains onto one line. This splits them back at clause boundaries.
     lines = apply_multi_image_split(lines, book_slug=book_slug, verse_ref=verse_ref)
 
+    # Complement participle backward merge — merge participles that complete
+    # a verb of perception/showing on the previous line (Wallace ch. 23).
+    # Must run right after predication merge to catch complement participles
+    # before later passes break them up.
+    lines = apply_complement_participle_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
+
     # Pattern 0a: Periphrastic construction merge (εἰμί + participle = one verb form)
     lines = apply_periphrastic_merge(lines, book_slug=book_slug)
 
@@ -2529,6 +2725,9 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
 
     # Subordinating conjunction splits (ἵνα, ὅταν, etc. — but NOT ὥστε+inf)
     lines = apply_subordinating_conjunction_splits(lines)
+
+    # Relative pronoun clause splits (ὅς, ἥ, ὅ etc. introduce new predications)
+    lines = apply_relative_clause_splits(lines, book_slug=book_slug)
 
     # ὅτι split for long lines
     lines = apply_hoti_split(lines)
@@ -2575,8 +2774,20 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     # Pattern 0d again — final predication cleanup after all splits/merges
     lines = apply_predication_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
 
+    # Complement participle backward merge again — catch cases created by later passes
+    lines = apply_complement_participle_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
+
     # Pattern 0e again — multi-image split after final predication merge
     lines = apply_multi_image_split(lines, book_slug=book_slug, verse_ref=verse_ref)
+
+    # Relative clause splits — FINAL position to prevent predication merge from
+    # re-merging relative clauses. A relative pronoun introduces a new predication
+    # and should start its own line.
+    lines = apply_relative_clause_splits(lines, book_slug=book_slug)
+
+    # After relative clause splits, short fragments may be created.
+    # Merge stranded verbs that the split may have isolated.
+    lines = apply_stranded_verb_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
 
     # FINAL GUARD: Sentence boundary splits — split any line that crosses a
     # Macula sentence boundary. This runs LAST so it overrides all merge rules.
@@ -2656,6 +2867,7 @@ def main():
 
     global _periphrastic_merge_count, _predication_merge_count, _sentence_split_count, _multi_image_split_count, _stranded_verb_merge_count
     global _stranded_participle_merge_count, _stranded_noun_merge_count, _two_word_function_merge_count
+    global _relative_clause_split_count, _complement_participle_merge_count
     _periphrastic_merge_count = 0
     _predication_merge_count = 0
     _sentence_split_count = 0
@@ -2664,6 +2876,8 @@ def main():
     _stranded_participle_merge_count = 0
     _stranded_noun_merge_count = 0
     _two_word_function_merge_count = 0
+    _relative_clause_split_count = 0
+    _complement_participle_merge_count = 0
 
     if args.book:
         if args.book not in BOOKS:
@@ -2691,6 +2905,10 @@ def main():
         print(f'Stranded noun/pronoun merges (single-word N/R reunited): {_stranded_noun_merge_count}')
     if _two_word_function_merge_count > 0:
         print(f'Two-word function fragment merges (e.g. μὴ πάντες): {_two_word_function_merge_count}')
+    if _relative_clause_split_count > 0:
+        print(f'Relative clause splits (rel. pronoun → new colon): {_relative_clause_split_count}')
+    if _complement_participle_merge_count > 0:
+        print(f'Complement participle merges (ptcp merged back into verb): {_complement_participle_merge_count}')
     if _sentence_split_count > 0:
         print(f'Sentence boundary splits (cross-sentence lines split): {_sentence_split_count}')
 
