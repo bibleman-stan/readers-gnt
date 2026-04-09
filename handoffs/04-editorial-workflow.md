@@ -154,3 +154,13 @@ The distinction between automated rules (v1-v3) and editorial judgment (v4) is n
 - **Editorial judgment (v4)** handles cases where multiple valid breakings exist. The grammar permits more than one analysis; the editor chooses based on rhetorical effect, performative feel, theological sensitivity, or contextual flow. These decisions are legitimate and necessary but inherently non-algorithmic.
 
 This distinction matters for the publishable research: the automated tiers produce replicable data suitable for quantitative analysis; the editorial tier produces a reading edition optimized for human use.
+
+#### Quality Assurance: Adversarial Testing Pattern
+
+After any significant change to merge/split rules, dispatch parallel adversarial agents before committing:
+
+1. **Feature-specific adversary** — tests the new rule for over-merges, under-merges, and edge cases
+2. **Rule-interaction adversary** — tests all rules together for cascading errors and fights between passes
+3. **Benchmark regression adversary** — re-runs Marschall comparison and Bezae multi-tier to check for regressions
+
+This pattern catches HIGH severity issues (rule interactions, sentence boundary violations, over-splitting of particles) that code review alone misses. Established in session 3 after discovering the adversarial approach caught issues across Rev 1:5, Heb 1:3, Mark 4:22, and 94 ἰδού over-splits.

@@ -801,6 +801,237 @@ def apply_predication_merge(verse_lines, book_slug=None, verse_ref=None):
     return result
 
 
+# ---------- Pattern 0e: Multi-image participial split ----------
+
+def apply_multi_image_split(verse_lines, book_slug=None, verse_ref=None):
+    """Split lines that contain 2+ distinct participial images.
+
+    Foundational criterion #2: "each line paints one image." A line with
+    multiple participles, each heading its own Macula clause with substantial
+    content (object, modifier), contains multiple images and must split.
+
+    Example — Heb 1:3 has three participial clauses (ὤν / φέρων / ποιησάμενος)
+    each painting a distinct image. If merged onto one line, the reader loses
+    the breath-unit structure.
+
+    Detection: match line words to Macula, group by clause_id, count clauses
+    that contain a participial verb (role=v or role=vc) with substantial content.
+    If 2+ such clauses, split at clause boundaries.
+
+    Guards:
+      - Don't split genitive absolutes (one scene-setting image)
+      - Don't split periphrastic constructions (εἰμί + participle = one verb)
+      - Each resulting half must contain a participle with substantial content
+    """
+    global _multi_image_split_count
+
+    if not _HAS_VALENCY or not book_slug or not verse_ref:
+        return verse_lines
+
+    # Parse verse reference
+    parts = verse_ref.split(':')
+    if len(parts) != 2:
+        return verse_lines
+    try:
+        chapter = int(parts[0])
+        verse = int(parts[1])
+    except ValueError:
+        return verse_lines
+
+    try:
+        from macula_valency import (
+            _parse_book_valency, _book_cache as valency_book_cache,
+            _clause_roles_cache, _match_line_words_to_macula,
+            _SLUG_TO_MACULA as valency_slug_map
+        )
+        from macula_clauses import get_verse_clauses_detailed
+    except ImportError:
+        return verse_lines
+
+    macula_id = valency_slug_map.get(book_slug.lower())
+    if not macula_id:
+        return verse_lines
+
+    _parse_book_valency(macula_id)
+    verse_words = valency_book_cache.get(macula_id, {}).get((chapter, verse), [])
+    clause_roles = _clause_roles_cache.get(macula_id, {})
+    if not verse_words:
+        return verse_lines
+
+    # Get genitive absolute clause texts for guard
+    try:
+        detailed_clauses = get_verse_clauses_detailed(book_slug, chapter, verse)
+        ga_clause_texts = set()
+        for ci in detailed_clauses:
+            if ci.is_genitive_absolute:
+                ga_clause_texts.add(frozenset(w for _, w in ci.words))
+    except Exception:
+        ga_clause_texts = set()
+
+    result = []
+    for line in verse_lines:
+        stripped = line.strip()
+        if not stripped:
+            result.append(line)
+            continue
+
+        split_lines = _try_multi_image_split(
+            stripped, verse_words, clause_roles, ga_clause_texts, book_slug
+        )
+        if split_lines and len(split_lines) > 1:
+            _multi_image_split_count += len(split_lines) - 1
+            result.extend(split_lines)
+        else:
+            result.append(line)
+
+    return result
+
+
+def _try_multi_image_split(line_text, verse_words, clause_roles, ga_clause_texts,
+                           book_slug):
+    """Attempt to split a line at participial clause boundaries.
+
+    Returns a list of split lines, or None if no split needed.
+    """
+    from macula_valency import _match_line_words_to_macula, _normalize_for_match
+    from collections import OrderedDict
+
+    matched = _match_line_words_to_macula(line_text, verse_words)
+    line_words = line_text.split()
+
+    if len(line_words) != len(matched):
+        return None
+
+    # Group word positions by clause_id, tracking which clauses have participial verbs
+    clause_info = OrderedDict()
+
+    for i, mw in enumerate(matched):
+        if mw is None:
+            continue
+        cl_id = mw.clause_id
+        if cl_id not in clause_info:
+            clause_info[cl_id] = {
+                'positions': [],
+                'has_ptc_verb': False,
+                'ptc_word': '',
+                'word_count': 0,
+                'has_object': False,
+                'is_ga': False,
+            }
+        ci = clause_info[cl_id]
+        ci['positions'].append(i)
+        ci['word_count'] += 1
+
+        # Check for participial verb (role=v or role=vc with participle mood)
+        if mw.mood == 'participle' and mw.role in ('v', 'vc'):
+            ci['has_ptc_verb'] = True
+            ci['ptc_word'] = mw.normalized
+
+        # Check for object in clause roles
+        cr = clause_roles.get(cl_id)
+        if cr and cr.has_object:
+            ci['has_object'] = True
+
+    # Mark genitive absolute clauses
+    for cl_id, ci in clause_info.items():
+        clause_word_norms = set()
+        for pos in ci['positions']:
+            if matched[pos]:
+                clause_word_norms.add(matched[pos].normalized)
+        for ga_set in ga_clause_texts:
+            if ga_set and clause_word_norms and len(ga_set & clause_word_norms) >= 2:
+                ci['is_ga'] = True
+                break
+
+    # Identify participial image clauses: has participial verb, is not GA,
+    # and has substantial content (object OR 3+ words on line from this clause)
+    ptc_image_clauses = []
+    for cl_id, ci in clause_info.items():
+        if not ci['has_ptc_verb']:
+            continue
+        if ci['is_ga']:
+            continue
+        # Substantial content: has object, or has 3+ words on line from this clause
+        has_substance = ci['has_object'] or ci['word_count'] >= 3
+        if has_substance:
+            ptc_image_clauses.append(cl_id)
+
+    if len(ptc_image_clauses) < 2:
+        return None
+
+    # Guard: check for periphrastic (εἰμί + participle in adjacent clauses)
+    eimi_forms = {
+        'εἰμί', 'ἦν', 'ἐστιν', 'ἐστὶν', 'ἦσαν', 'ἔσται', 'ἔσονται',
+        'ἤμην', 'ἦτε', 'ἦμεν', 'ἐσμέν', 'ἐστέ', 'εἶ',
+    }
+    eimi_clause_ids = set()
+    for cl_id, ci in clause_info.items():
+        for pos in ci['positions']:
+            mw = matched[pos]
+            if mw and _clean_word(mw.normalized) in eimi_forms:
+                eimi_clause_ids.add(cl_id)
+
+    # If a ptc_image_clause is adjacent to an εἰμί clause, they're periphrastic
+    all_clause_ids = list(clause_info.keys())
+    filtered_ptc = []
+    for cl_id in ptc_image_clauses:
+        idx = all_clause_ids.index(cl_id)
+        is_periphrastic = False
+        if idx > 0 and all_clause_ids[idx - 1] in eimi_clause_ids:
+            is_periphrastic = True
+        if idx < len(all_clause_ids) - 1 and all_clause_ids[idx + 1] in eimi_clause_ids:
+            is_periphrastic = True
+        if not is_periphrastic:
+            filtered_ptc.append(cl_id)
+
+    if len(filtered_ptc) < 2:
+        return None
+
+    # Find split points: between consecutive participial image clauses
+    # Split before the first word of each subsequent ptc clause,
+    # absorbing tiny connector clauses (τε, καί) into the next clause
+    split_positions = set()
+    for cl_id in filtered_ptc[1:]:
+        ci = clause_info[cl_id]
+        min_pos = min(ci['positions'])
+        # Walk backward to absorb tiny non-ptc clauses (conjunctions)
+        absorb_start = min_pos
+        for check_pos in range(min_pos - 1, -1, -1):
+            mw = matched[check_pos]
+            if mw is None:
+                absorb_start = check_pos
+                continue
+            check_cl = mw.clause_id
+            check_ci = clause_info.get(check_cl)
+            if (check_ci and check_ci['word_count'] <= 1
+                    and not check_ci['has_ptc_verb']):
+                # Tiny connector clause (τε, καί, etc.) — absorb
+                absorb_start = check_pos
+            else:
+                break
+        split_positions.add(absorb_start)
+
+    if not split_positions:
+        return None
+
+    # Build the split lines
+    sorted_splits = sorted(split_positions)
+    segments = []
+    prev = 0
+    for sp in sorted_splits:
+        if sp > prev:
+            segments.append(' '.join(line_words[prev:sp]))
+        prev = sp
+    if prev < len(line_words):
+        segments.append(' '.join(line_words[prev:]))
+
+    # Validate: each segment must have at least 2 words
+    if any(len(s.split()) < 2 for s in segments):
+        return None
+
+    return segments
+
+
 # ---------- Pattern 2: Standalone imperatives/exclamations ----------
 
 # Patterns for short imperatives/exclamations that should be their own line
@@ -1846,6 +2077,11 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     # when Macula data is unavailable.
     lines = apply_predication_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
 
+    # Pattern 0e: Multi-image participial split — "each line paints one image"
+    # Must run right after predication merge, which may over-merge participial
+    # chains onto one line. This splits them back at clause boundaries.
+    lines = apply_multi_image_split(lines, book_slug=book_slug, verse_ref=verse_ref)
+
     # Pattern 0a: Periphrastic construction merge (εἰμί + participle = one verb form)
     lines = apply_periphrastic_merge(lines, book_slug=book_slug)
 
@@ -1930,6 +2166,13 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     # Pattern 0d again — final predication cleanup after all splits/merges
     lines = apply_predication_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
 
+    # Pattern 0e again — multi-image split after final predication merge
+    lines = apply_multi_image_split(lines, book_slug=book_slug, verse_ref=verse_ref)
+
+    # FINAL GUARD: Sentence boundary splits — split any line that crosses a
+    # Macula sentence boundary. This runs LAST so it overrides all merge rules.
+    lines = apply_sentence_boundary_splits(lines, book_slug=book_slug, verse_ref=verse_ref)
+
     return lines
 
 
@@ -1983,9 +2226,11 @@ def main():
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    global _periphrastic_merge_count, _predication_merge_count
+    global _periphrastic_merge_count, _predication_merge_count, _sentence_split_count, _multi_image_split_count
     _periphrastic_merge_count = 0
     _predication_merge_count = 0
+    _sentence_split_count = 0
+    _multi_image_split_count = 0
 
     if args.book:
         if args.book not in BOOKS:
@@ -2003,6 +2248,10 @@ def main():
         print(f'Predication merges (participle → governing verb): {_predication_merge_count}')
     if _periphrastic_merge_count > 0:
         print(f'Periphrastic merges (εἰμί + participle): {_periphrastic_merge_count}')
+    if _multi_image_split_count > 0:
+        print(f'Multi-image participial splits (2+ images per line): {_multi_image_split_count}')
+    if _sentence_split_count > 0:
+        print(f'Sentence boundary splits (cross-sentence lines split): {_sentence_split_count}')
 
 
 if __name__ == '__main__':
