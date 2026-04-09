@@ -637,6 +637,78 @@ def apply_valency_merge(verse_lines, book_slug=None, verse_ref=None):
 _predication_merge_count = 0
 
 
+def _is_genitive_absolute_line(line_text, book_slug, chapter, verse):
+    """Check if a line contains a genitive absolute construction.
+
+    A genitive absolute (genitive participle + genitive noun/pronoun) is
+    grammatically independent — it sets the scene but is not subordinate
+    to the main verb in the same way a circumstantial participle is.
+    These should NOT be merged by the predication test.
+    """
+    try:
+        from macula_clauses import get_verse_clauses_detailed
+        clauses = get_verse_clauses_detailed(book_slug, chapter, verse)
+        # Check if any clause flagged as genitive absolute has words matching this line
+        for ci in clauses:
+            if ci.is_genitive_absolute:
+                # Check if this clause's text overlaps with our line
+                clause_words = set(w for _, w in ci.words)
+                line_words = set(line_text.strip().split())
+                # Strip punctuation for comparison
+                import re
+                clean_line = set(re.sub(r'[,.\;·]', '', w) for w in line_words)
+                clean_clause = set(re.sub(r'[,.\;·]', '', w) for w in clause_words)
+                if clean_clause and clean_line and len(clean_clause & clean_line) >= 2:
+                    return True
+    except Exception:
+        pass
+    return False
+
+
+def _participle_has_object_on_line(line_text, book_slug, chapter, verse):
+    """Check if a line's participle has its OBJECT actually present on this line.
+
+    A transitive participle with its object present represents a more complete
+    thought — "having said THESE THINGS" paints its own image. But a bare
+    intransitive participle like "having threatened" does not — it's just a
+    temporal frame for the main action.
+
+    Only returns True when the Macula clause has role=o AND that object word
+    is matched to this line. Does NOT protect intransitive participles.
+    """
+    if not _HAS_VALENCY:
+        return False
+    try:
+        from macula_valency import (
+            _parse_book_valency, _book_cache, _clause_roles_cache,
+            _match_line_words_to_macula, _SLUG_TO_MACULA
+        )
+        macula_id = _SLUG_TO_MACULA.get(book_slug.lower())
+        if not macula_id:
+            return False
+        _parse_book_valency(macula_id)
+        verse_words = _book_cache.get(macula_id, {}).get((chapter, verse), [])
+        clause_roles = _clause_roles_cache.get(macula_id, {})
+        if not verse_words:
+            return False
+
+        matched = _match_line_words_to_macula(line_text, verse_words)
+        line_refs = set(mw.ref for mw in matched if mw is not None)
+
+        # Find participles on this line
+        for mw in matched:
+            if mw is not None and mw.mood == 'participle' and mw.role == 'v':
+                cr = clause_roles.get(mw.clause_id)
+                if cr and cr.has_object:
+                    # The clause IS transitive — check if object is on THIS line
+                    obj_on_line = line_refs.intersection(cr.object_word_refs)
+                    if obj_on_line:
+                        return True
+        return False
+    except Exception:
+        return False
+
+
 def apply_predication_merge(verse_lines, book_slug=None, verse_ref=None):
     """Merge lines that don't contain a complete predication (unified tree test).
 
@@ -685,9 +757,17 @@ def apply_predication_merge(verse_lines, book_slug=None, verse_ref=None):
         # Protection: standalone units
         standalone = is_standalone_unit(stripped)
 
+        # Protection: genitive absolutes are grammatically independent
+        # even though the tree nests them under a governing clause.
+        # Also protect participles whose valency is satisfied (object on line).
+        is_gen_abs = _is_genitive_absolute_line(stripped, book_slug, chapter, verse)
+        has_satisfied_valency = _participle_has_object_on_line(stripped, book_slug, chapter, verse)
+
         if (i + 1 < len(verse_lines)
                 and not ends_with_speech_marker
-                and not standalone):
+                and not standalone
+                and not is_gen_abs
+                and not has_satisfied_valency):
             pr = check_line_completeness(stripped, book_slug, chapter, verse)
             if not pr.complete:
                 next_line = verse_lines[i + 1]
