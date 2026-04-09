@@ -439,6 +439,109 @@ def line_has_complete_predication(line_text: str, book_slug: str,
     return check_line_completeness(line_text, book_slug, chapter, verse).complete
 
 
+def find_participle_governor_on_other_line(
+    line_text: str,
+    other_line_text: str,
+    book_slug: str,
+    chapter: int,
+    verse: int,
+) -> str:
+    """Check if the first word (participle) on line_text is governed by a verb on other_line_text.
+
+    This walks the Macula syntax tree from the participle upward to find its
+    governing finite verb, then checks whether that verb appears on other_line_text.
+
+    Args:
+        line_text: The line starting with a participle.
+        other_line_text: The candidate line that may contain the governing verb.
+        book_slug: Project slug (e.g., 'acts').
+        chapter: Chapter number.
+        verse: Verse number.
+
+    Returns:
+        The governor verb text if found on other_line_text, else empty string.
+    """
+    macula_id = _SLUG_TO_MACULA.get(book_slug.lower())
+    if not macula_id:
+        return ""
+
+    root, parent_map, all_verse_words = _parse_book(macula_id)
+    if root is None:
+        return ""
+
+    verse_words = all_verse_words.get((chapter, verse), [])
+    if not verse_words:
+        return ""
+
+    # Match line_text words to Macula
+    matched = _match_line_words(line_text, verse_words)
+
+    # Find the first participle on line_text
+    ptc_wi = None
+    for wi in matched:
+        if wi is not None and wi.mood == 'participle':
+            ptc_wi = wi
+            break
+    if ptc_wi is None:
+        return ""
+
+    # Match other_line_text words to Macula for checking
+    other_matched = _match_line_words(other_line_text, verse_words)
+    other_xml_ids = set()
+    for wi in other_matched:
+        if wi is not None and wi.xml_id:
+            other_xml_ids.add(wi.xml_id)
+
+    # Search for ANY finite verb in the tree ancestry of this participle
+    # that appears on the other line. This handles both:
+    # (a) governing verbs in ancestor clauses (circumstantial participles)
+    # (b) governing verbs in the same clause (complement participles like ζῶντα)
+    ptc_xml_id = ptc_wi.xml_id
+    inner_clause = _find_innermost_clause(ptc_wi.element, parent_map)
+    if inner_clause is None:
+        return ""
+
+    current = inner_clause
+    inner_word_ids = set()
+    for w in inner_clause.iter('w'):
+        wid = w.get('{http://www.w3.org/XML/1998/namespace}id', '')
+        if wid:
+            inner_word_ids.add(wid)
+
+    while current in parent_map:
+        parent = parent_map[current]
+        if parent.tag == 'sentence' or parent.tag not in ('wg',):
+            # Don't search beyond the sentence
+            if parent.tag != 'wg':
+                break
+
+        # Search for ALL finite verbs in the parent, excluding inner clause words
+        for w in parent.iter('w'):
+            mood = w.get('mood', '')
+            if mood not in _FINITE_MOODS:
+                continue
+            wid = w.get('{http://www.w3.org/XML/1998/namespace}id', '')
+            if wid in inner_word_ids:
+                continue
+            # Check if this finite verb is on the other line
+            if wid in other_xml_ids:
+                gov_text = w.get('normalized', '') or (w.text or '')
+                return gov_text
+
+        # Update inner_clause for next iteration
+        if parent.tag == 'wg' and parent.get('class') == 'cl':
+            inner_clause = parent
+            inner_word_ids = set()
+            for w in inner_clause.iter('w'):
+                wid = w.get('{http://www.w3.org/XML/1998/namespace}id', '')
+                if wid:
+                    inner_word_ids.add(wid)
+
+        current = parent
+
+    return ""
+
+
 # ---------------------------------------------------------------------------
 # Cache management
 # ---------------------------------------------------------------------------
