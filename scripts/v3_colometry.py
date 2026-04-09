@@ -42,7 +42,7 @@ except ImportError:
 
 # Macula predication check — unified tree-based completeness test
 try:
-    from macula_predication import check_line_completeness, PredicationResult
+    from macula_predication import check_line_completeness, PredicationResult, find_participle_governor_on_other_line
     _HAS_PREDICATION = True
 except ImportError:
     _HAS_PREDICATION = False
@@ -2091,18 +2091,15 @@ def apply_complement_participle_merge(verse_lines, book_slug=None, verse_ref=Non
 
                         if not has_own_object:
                             # Check: does the previous line contain the governing finite verb?
-                            # Use the Macula tree: find the governing verb for this participle
-                            # and check if it appears on the previous line
+                            # Walk the Macula tree directly from the participle upward,
+                            # bypassing check_line_completeness (which may mark the line
+                            # as complete if it contains an infinitive).
                             should_merge = False
                             try:
-                                pr = check_line_completeness(stripped, book_slug, chapter, verse)
-                                if not pr.complete and pr.governor_text:
-                                    # The governing verb text is in pr.governor_text
-                                    # Check if it appears on the previous line
-                                    gov_clean = _clean_word(pr.governor_text)
-                                    prev_words = [_clean_word(w) for w in prev_stripped.split()]
-                                    if gov_clean in prev_words:
-                                        should_merge = True
+                                gov_text = find_participle_governor_on_other_line(
+                                    stripped, prev_stripped, book_slug, chapter, verse)
+                                if gov_text:
+                                    should_merge = True
                             except Exception:
                                 pass
 
