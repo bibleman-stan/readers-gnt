@@ -37,17 +37,15 @@ Stan identified a gap in the scholarly landscape: while colometric *analysis* of
 
 **Nobody has taken the Greek text, applied grammatically-motivated colometric line-breaking across the whole GNT, and produced a readable digital edition.** The theory is mature, the methodology has recent serious work, but the applied reading edition does not exist.
 
-## Four Research Advantages
+## Research Value
 
-Stan identified these during the initial design conversation:
+Colometric formatting reveals compositional structure that standard prose formatting obscures:
 
 1. **Revealing authorial intent** — When you break Mark's parables into parallel cola, you see that Mark constructed carefully patterned oral compositions, not rambling narratives. The sense-lines make the composer visible behind the text.
 
-2. **Revealing structure/consistency** — Once the text is in cola, you can count patterns: How does Mark's parable speech differ structurally from his narrative? Does Luke's Areopagus speech use different clause lengths than his travel narrative? The colometry becomes quantifiable data.
+2. **Revealing structure/consistency** — Once the text is in cola, you can count patterns: How does Mark's parable speech differ structurally from his narrative? The colometry becomes quantifiable data.
 
-3. **Text-critical implications** — If a variant reading breaks or preserves a colometric pattern, that's evidence for or against it. If the "harder reading" also happens to be the reading that maintains a tricolon, that's a new kind of argument. Marschall touched on this with repunctuation, but nobody has systematized it.
-
-4. **Stylometry-plus** — Average colon length per author, participial chain frequency, μέν/δέ density, ἵνα-clause frequency, tricolon vs. bicolon ratios. Mark vs. Luke vs. Paul vs. Hebrews become quantitatively distinguishable at the colometric level, not just the word level.
+Additional research advantages tracked privately.
 
 ## Project Siloing
 

@@ -254,8 +254,8 @@ Stan's hand editing. Makes final decisions on:
 | Source | Contribution to this project |
 |--------|------------------------------|
 | **Wallace, *GGBB* (1996)** ch. 23–25 | Conjunction/clause classification informing v1 break-point inventory |
-| **Marschall (2023)** "Refining the Criteria for Delineating Côla and Periods" | Cola ≠ clause; prepositional phrases can be cola; syllable length criteria (standard 9–23, acceptable 7–30); periodic vs. continuous style distinction |
-| **Marschall (2024)** *Colometric Analysis of Paul's Letters* (WUNT II) | Hand-analyzed colometric layouts of 2 Cor 10–13; direct validation benchmark |
+| **Marschall (2023)** "Refining the Criteria for Delineating Côla and Periods" | Cola ≠ clause; prepositional phrases can be cola; syllable length criteria; periodic vs. continuous style |
+| **Marschall (2024)** *Colometric Analysis of Paul's Letters* (WUNT II) | Methodological foundations for colometric analysis of Pauline letters |
 | **Lee & Scott (2009/2022)** *Sound Mapping the New Testament* | Cola as breath/sense units; sound mapping as exegetical method |
 | **Nässelqvist (2015)** *Public Reading in Early Christianity* | Refined syllable criteria; comma (κόμμα) vs. colon distinction |
 | **Macula Greek / Clear Bible** (CC-BY 4.0) | SBLGNT syntax trees providing clause boundaries for tier 2 |
@@ -263,26 +263,6 @@ Stan's hand editing. Makes final decisions on:
 
 ### Validation Benchmarks
 
-Three independent benchmarks for evaluating automated colometric output:
+- **Hand-crafted test chapters** — Mark 4 and Acts 17, hand-formatted by Stan in the initial design session. Preserved in `C:\tmp\gnt-colometry-test\`. v3 output matches the gold standard on nearly all verses of Mark 4.
+- Additional validation benchmarks tracked privately.
 
-1. **Marschall's hand analysis** — 2 Cor 10:1 comparison shows our pipeline agrees on 3 of 4 cola; divergence on colon a/b boundary (prepositional phrase break) reveals a known limitation in tree-driven breaking. Her syllable-count analysis (isosyllabic cola: 13, 13, 13, 8 syllables) provides a quality metric our pipeline doesn't yet exploit.
-
-2. **Codex Bezae** (5th c.) — Ancient colometric manuscript (Gospels + Acts) with sense-line formatting. Full XML transcription available from ITSEE Birmingham (GitHub). Direct comparison with our automated output: agreement rate reveals how closely modern syntax-driven colometry reproduces ancient scribal practice. In `research/codex-bezae/`.
-
-3. **Hand-crafted test chapters** — Mark 4 and Acts 17, hand-formatted by Stan in the initial design session. Preserved in `C:\tmp\gnt-colometry-test\`. v3 output matches the gold standard on nearly all verses of Mark 4.
-
-### Marschall's Key Insight for This Project
-
-Marschall argues that the criterion for a colon is **semantico-syntactic completeness** — not "contains a verb" (too restrictive) but "conveys a complete thought" (following Pseudo-Demetrius, *Eloc.*). This means:
-- Prepositional phrases can be cola (validates `διὰ πνεύματος ἁγίου` as its own line)
-- Noun phrases with dependents can be cola (validates parallel list stacking)
-- Very short cola (*commata*) are legitimate for passionate/vehement style (validates standalone imperatives)
-- The colon ≈ clause equivalence used by our Macula tree layer is a good approximation but systematically under-breaks at prepositional phrase boundaries
-
-### Publishable Research Directions
-
-Three paper seeds developed from this project (full outlines in `C:\vaults-nano\my_brain\10_Projects\Article Ideas\`):
-
-1. **Methodology paper** — "From Syntax Trees to Sense-Lines: Automated Colometric Formatting of the GNT." Pipeline description, validation against Marschall and Codex Bezae, replicability using open-access data.
-2. **Codex Bezae comparison** — "How Closely Does Automated Colometry Reproduce Ancient Manuscript Practice?" Novel question: systematic comparison of automated syntactic colometry against ancient colometric manuscript.
-3. **Colometric stylometry** — "Quantifying Authorial Style Through Sense-Line Analysis." Colon length distributions, break-point classification, rhetorical pattern frequency as author-distinguishing features.

@@ -1,5 +1,8 @@
-# Research symlink (private, not on public repo)
+# Research data (private, not on public repo)
 research/
+
+# Private strategy docs (not on public repo)
+private/
 
 # Python
 __pycache__/
