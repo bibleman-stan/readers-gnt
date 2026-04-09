@@ -37,6 +37,13 @@ try:
 except ImportError:
     _HAS_VALENCY = False
 
+# Macula predication check — unified tree-based completeness test
+try:
+    from macula_predication import check_line_completeness, PredicationResult
+    _HAS_PREDICATION = True
+except ImportError:
+    _HAS_PREDICATION = False
+
 # ---------- configuration ----------
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -395,12 +402,13 @@ def _line_ends_with_clause_punctuation(line):
     """Check if a line ends with punctuation suggesting a clause boundary.
 
     Greek clause-ending punctuation: . (period), · (ano teleia/semicolon),
-    ; (question mark).
+    ; (question mark), , (comma — separates clauses; a periphrastic participle
+    would not be separated from its εἰμί by a comma).
     """
     stripped = line.rstrip()
     if not stripped:
         return False
-    return stripped[-1] in '.·;'
+    return stripped[-1] in '.·;,'
 
 
 def _next_line_has_participle_after_optional_postpositive(line, book_slug):
@@ -623,6 +631,76 @@ def apply_valency_merge(verse_lines, book_slug=None, verse_ref=None):
     return result
 
 
+# ---------- Pattern 0d: Predication completeness merge (unified tree-based test) ----------
+
+# Global counter for reporting
+_predication_merge_count = 0
+
+
+def apply_predication_merge(verse_lines, book_slug=None, verse_ref=None):
+    """Merge lines that don't contain a complete predication (unified tree test).
+
+    Grammatical basis: every colometric line must contain a complete predication —
+    a verbal element that governs (not is governed by) another verb. A line with
+    only a participle whose governing finite verb is on a different line represents
+    an incomplete thought: the participle is subordinate to a verb the reader hasn't
+    reached yet.
+
+    This is the fundamental structural test from which the verbless, valency, and
+    periphrastic rules are all special cases. It uses the Macula syntax tree to
+    determine predication completeness by walking up from each participle to find
+    its governing finite verb and checking whether that verb is on the same line.
+
+    Protected from merging:
+      - Lines ending with · (speech introductions — deliberately standalone)
+      - Lines that are standalone units (vocatives, imperatives, etc.)
+      - Lines where Macula data is unavailable (conservative fallback)
+    """
+    global _predication_merge_count
+
+    if not _HAS_PREDICATION or not book_slug or not verse_ref:
+        return verse_lines
+    if len(verse_lines) < 2:
+        return verse_lines
+
+    # Parse verse reference
+    parts = verse_ref.split(':')
+    if len(parts) != 2:
+        return verse_lines
+    try:
+        chapter = int(parts[0])
+        verse = int(parts[1])
+    except ValueError:
+        return verse_lines
+
+    result = []
+    i = 0
+    while i < len(verse_lines):
+        line = verse_lines[i]
+        stripped = line.strip()
+
+        # Protection: speech introductions (end with · ano teleia)
+        ends_with_speech_marker = stripped.rstrip().endswith('·')
+
+        # Protection: standalone units
+        standalone = is_standalone_unit(stripped)
+
+        if (i + 1 < len(verse_lines)
+                and not ends_with_speech_marker
+                and not standalone):
+            pr = check_line_completeness(stripped, book_slug, chapter, verse)
+            if not pr.complete:
+                next_line = verse_lines[i + 1]
+                merged = stripped + ' ' + next_line.strip()
+                result.append(merged)
+                _predication_merge_count += 1
+                i += 2
+                continue
+        result.append(line)
+        i += 1
+    return result
+
+
 # ---------- Pattern 2: Standalone imperatives/exclamations ----------
 
 # Patterns for short imperatives/exclamations that should be their own line
@@ -668,6 +746,182 @@ def apply_standalone_imperative_split(verse_lines):
 
         if not split_done:
             result.append(line)
+    return result
+
+
+# ---------- Pattern 2b: Staccato commata split ----------
+#
+# Detects call-and-response patterns where a single-word emphatic response
+# (like κἀγώ.) is merged with the following clause on the same line.
+# Marschall (2023, Example 13) identifies these as "commata" — very short
+# cola used for vehement/passionate style (cf. Cicero: effect like "stabs").
+#
+# General rule: when a word followed by a sentence-ending marker (. ; · !)
+# appears mid-line and the preceding segment is short (<=3 words), split
+# after the marker.
+
+def _split_at_sentence_boundaries(line):
+    """Split a line at sentence-ending punctuation boundaries.
+
+    Finds points where a word ends with . ; · or ! followed by a space
+    and another word. Splits when the segment up to the punctuation is
+    short (staccato, <=3 words), producing commata.
+    """
+    stripped = line.strip()
+    if not stripped:
+        return [line]
+
+    # Find all positions of sentence-ending punctuation followed by space + word
+    boundary_re = re.compile(r'(\S+[.;·!])\s+(?=\S)')
+    matches = list(boundary_re.finditer(stripped))
+    if not matches:
+        return [line]
+
+    # Split at each boundary where the segment ending at this punctuation is short
+    parts = []
+    prev_end = 0
+    for m in matches:
+        candidate_before = stripped[prev_end:m.end()].strip()
+        before_words = candidate_before.split()
+        # Only split if the segment ending at this punctuation is short (staccato)
+        if len(before_words) <= 3:
+            parts.append(candidate_before)
+            prev_end = m.end()
+
+    # Add the remainder
+    remainder = stripped[prev_end:].strip()
+    if remainder:
+        parts.append(remainder)
+
+    if len(parts) > 1:
+        return parts
+    return [line]
+
+
+def apply_staccato_commata_split(verse_lines):
+    """Split mid-line staccato commata: short responses followed by new clauses."""
+    result = []
+    for line in verse_lines:
+        split_parts = _split_at_sentence_boundaries(line)
+        result.extend(split_parts)
+    return result
+
+
+# ---------- Pattern 2c: Asyndeton imperative split ----------
+#
+# Detects lines containing multiple independent imperative verbs without
+# subordinating conjunctions between them — asyndeton. Each imperative
+# should get its own line for oral delivery clarity.
+
+# Subordinating conjunctions that connect verbs dependently (don't split)
+_SUBORDINATING_SET = {
+    'ἵνα', 'ὥστε', 'ὅτι', 'ὅταν', 'ὅτε', 'ἐάν', 'μήποτε', 'καθώς', 'καθὼς',
+    'ὥσπερ', 'ἐπειδή', 'ἐπειδὴ', 'ἐπεί', 'ἐπεὶ', 'διότι', 'ὅπως', 'ὅπου',
+    'πρίν', 'πρὶν', 'ἄχρι', 'μέχρι',
+}
+
+
+def apply_asyndeton_imperative_split(verse_lines, book_slug=None):
+    """Split lines containing multiple asyndetic imperatives.
+
+    Uses MorphGNT to identify imperative verbs. If a line has 2+
+    imperatives with no subordinating conjunction between them,
+    split before the second and subsequent imperatives.
+    """
+    if not _HAS_MORPHGNT or not book_slug:
+        return verse_lines
+
+    result = []
+    for line in verse_lines:
+        stripped = line.strip()
+        if not stripped:
+            result.append(line)
+            continue
+
+        # Find imperative words on this line
+        imperatives = get_imperative_words_on_line(stripped, book_slug)
+        if len(imperatives) < 2:
+            result.append(line)
+            continue
+
+        # Build word position mapping
+        words = stripped.split()
+        word_positions = []
+        pos = 0
+        for w in words:
+            word_positions.append((w, pos))
+            pos += len(w) + 1
+
+        # Map imperative char positions to word indices
+        imp_word_indices = []
+        for imp_word, imp_pos in imperatives:
+            for idx, (w, wpos) in enumerate(word_positions):
+                clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', w)
+                if clean == imp_word and abs(wpos - imp_pos) < 3:
+                    imp_word_indices.append(idx)
+                    break
+
+        if len(imp_word_indices) < 2:
+            result.append(line)
+            continue
+
+        # Check for subordinating conjunctions between consecutive imperatives
+        has_subordinating = False
+        for i in range(len(imp_word_indices) - 1):
+            start_idx = imp_word_indices[i]
+            end_idx = imp_word_indices[i + 1]
+            for j in range(start_idx + 1, end_idx):
+                w_clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', words[j])
+                if w_clean in _SUBORDINATING_SET:
+                    has_subordinating = True
+                    break
+            if has_subordinating:
+                break
+
+        if has_subordinating:
+            result.append(line)
+            continue
+
+        # Split before each imperative after the first.
+        # Walk backwards from each subsequent imperative to find phrase start.
+        split_points = []
+        for k in range(1, len(imp_word_indices)):
+            imp_idx = imp_word_indices[k]
+            phrase_start = imp_idx
+            for j in range(imp_idx - 1, imp_word_indices[k - 1], -1):
+                w = words[j]
+                clean = re.sub(r'[,.\;·\s⸀⸁⸂⸃⸄⸅]', '', w)
+                if word_is_imperative(clean, book_slug):
+                    break
+                if w.rstrip().endswith((',', ';', '·', '.')):
+                    phrase_start = j + 1 if j + 1 <= imp_idx else imp_idx
+                    break
+                phrase_start = j
+
+            if phrase_start < len(word_positions):
+                split_points.append(word_positions[phrase_start][1])
+
+        if not split_points:
+            result.append(line)
+            continue
+
+        # Perform the splits
+        parts = []
+        prev = 0
+        for sp in split_points:
+            part = stripped[prev:sp].strip()
+            if part:
+                parts.append(part)
+            prev = sp
+        remainder = stripped[prev:].strip()
+        if remainder:
+            parts.append(remainder)
+
+        if len(parts) > 1:
+            result.extend(parts)
+        else:
+            result.append(line)
+
     return result
 
 
@@ -1402,6 +1656,13 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     # Fix dangling conjunctions at line end (v2 tree artifact) — must run first
     lines = apply_dangling_conjunction_fix(lines)
 
+    # Pattern 0d: Predication completeness merge (unified tree-based test) — PRIMARY
+    # This is the fundamental structural test: every line must contain a complete
+    # predication. Runs first because it subsumes verbless, valency, and periphrastic
+    # cases. The individual rules below serve as fallbacks for edge cases and for
+    # when Macula data is unavailable.
+    lines = apply_predication_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
+
     # Pattern 0a: Periphrastic construction merge (εἰμί + participle = one verb form)
     lines = apply_periphrastic_merge(lines, book_slug=book_slug)
 
@@ -1409,9 +1670,11 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     lines = apply_infinitive_merge_back(lines)
 
     # Pattern 0b: Verbless line merge (lines with no verbal element can't be cola)
+    # (fallback for cases predication merge doesn't catch — e.g., no Macula data)
     lines = apply_verbless_line_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
 
     # Pattern 0c: Valency satisfaction merge (participles with unsatisfied transitivity)
+    # (fallback for edge cases the tree-based test doesn't cover)
     lines = apply_valency_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
 
     # Pattern 1: Merge complementary verb + infinitive splits
@@ -1429,6 +1692,12 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
 
     # Pattern 2: Split standalone imperatives/exclamations
     lines = apply_standalone_imperative_split(lines)
+
+    # Pattern 2b: Staccato commata split (call-and-response, e.g. 2 Cor 11:22)
+    lines = apply_staccato_commata_split(lines)
+
+    # Pattern 2c: Asyndeton imperative split (e.g. 1 Thess 5:16-18 style)
+    lines = apply_asyndeton_imperative_split(lines, book_slug=book_slug)
 
     # Μήτι fix
     lines = apply_meti_fix(lines)
@@ -1474,6 +1743,9 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
 
     # Pattern 0c again — catch valency issues from fragments created by earlier passes
     lines = apply_valency_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
+
+    # Pattern 0d again — final predication cleanup after all splits/merges
+    lines = apply_predication_merge(lines, book_slug=book_slug, verse_ref=verse_ref)
 
     return lines
 
@@ -1528,8 +1800,9 @@ def main():
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    global _periphrastic_merge_count
+    global _periphrastic_merge_count, _predication_merge_count
     _periphrastic_merge_count = 0
+    _predication_merge_count = 0
 
     if args.book:
         if args.book not in BOOKS:
@@ -1543,6 +1816,8 @@ def main():
             process_book(book_key)
         print('Done.')
 
+    if _predication_merge_count > 0:
+        print(f'Predication merges (participle → governing verb): {_predication_merge_count}')
     if _periphrastic_merge_count > 0:
         print(f'Periphrastic merges (εἰμί + participle): {_periphrastic_merge_count}')
 
