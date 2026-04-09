@@ -464,6 +464,41 @@
     padding: 0 1px;
   }
 
+  /* === SEARCH OPERATOR BUTTONS === */
+  .search-ops {
+    display: flex;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #2a2a2a;
+    border-bottom: 1px solid #444;
+    flex-wrap: wrap;
+  }
+
+  .search-op {
+    padding: 3px 10px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.06);
+    color: var(--text-faint);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.72em;
+    cursor: pointer;
+    user-select: none;
+    letter-spacing: 0.03em;
+    transition: background 0.15s, color 0.15s;
+  }
+  .search-op:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-dim);
+  }
+
+  .search-loading {
+    text-align: center;
+    color: var(--text-faint);
+    padding: 30px 0;
+    font-size: 0.85em;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+
   /* === VERSE NUMBER VISIBILITY === */
   body.hide-verse-nums .verse-num { display: none; }
 
@@ -510,6 +545,14 @@
     <button class="search-back" onclick="closeSearch()">&#8592;</button>
     <input type="text" id="search-input" placeholder="Search Greek text..." autocomplete="off" spellcheck="false">
     <button class="search-close" onclick="closeSearch()">&#10005;</button>
+  </div>
+  <div class="search-ops">
+    <span class="search-op" onclick="insertSearchOp(' AND ')">AND</span>
+    <span class="search-op" onclick="insertSearchOp(' OR ')">OR</span>
+    <span class="search-op" onclick="insertSearchOp(' NOT ')">NOT</span>
+    <span class="search-op" onclick="insertSearchOp('(', ')')">( )</span>
+    <span class="search-op" onclick="insertSearchOp('&quot;', '&quot;')">&quot; &quot;</span>
+    <span class="search-op" onclick="insertSearchOp(' NEAR5 ')">NEAR</span>
   </div>
   <div class="search-body">
     <div class="search-status" id="search-status"></div>
@@ -819,13 +862,114 @@ function loadSettings() {
   document.body.classList.toggle('hide-verse-nums', !verses);
 }
 
-// --- Search ---
+// --- Search (Boolean query parser + cross-book index) ---
 
 let searchTimeout = null;
+let searchIndex = null;    // Array of { book, bookName, chapter, verse, text }
+let searchIndexLoading = false;
+let lastSearchTerms = [];  // for highlighting
 
 function stripDiacritics(str) {
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// --- Search index: fetch all 27 book HTML files, extract verses ---
+
+async function buildSearchIndex() {
+  if (searchIndex) return;
+  if (searchIndexLoading) return;
+  searchIndexLoading = true;
+
+  const statusEl = document.getElementById('search-status');
+  statusEl.innerHTML = '<div class="search-loading">Building search index...</div>';
+
+  const index = [];
+  const parser = new DOMParser();
+
+  for (const slug of BOOK_KEYS) {
+    try {
+      let html;
+      if (bookCache[slug]) {
+        html = bookCache[slug];
+      } else {
+        const resp = await fetch('books/' + slug + '.html');
+        if (!resp.ok) continue;
+        html = await resp.text();
+        bookCache[slug] = html;
+      }
+
+      const doc = parser.parseFromString('<div>' + html + '</div>', 'text/html');
+      const verses = doc.querySelectorAll('.verse');
+
+      for (const verse of verses) {
+        const id = verse.id || '';
+        const m = id.match(/^v-(\d+)-(\d+)$/);
+        if (!m) continue;
+
+        const ch = parseInt(m[1]);
+        const vNum = parseInt(m[2]);
+
+        // Get all line text, join with space, strip punctuation spans
+        const lines = verse.querySelectorAll('.line');
+        let text = '';
+        for (const line of lines) {
+          // Clone and remove .punct spans to get clean text
+          const clone = line.cloneNode(true);
+          const puncts = clone.querySelectorAll('.punct');
+          for (const p of puncts) p.remove();
+          text += (text ? ' ' : '') + clone.textContent.trim();
+        }
+
+        if (text) {
+          index.push({
+            book: slug,
+            bookName: BOOKS[slug].name,
+            chapter: ch,
+            verse: vNum,
+            text: text,
+            textStripped: stripDiacritics(text)
+          });
+        }
+      }
+    } catch (e) {
+      console.error('Failed to index ' + slug, e);
+    }
+  }
+
+  searchIndex = index;
+  searchIndexLoading = false;
+  statusEl.textContent = '';
+}
+
+// --- Insert operator at cursor ---
+
+function insertSearchOp(before, after) {
+  const input = document.getElementById('search-input');
+  input.focus();
+  const start = input.selectionStart;
+  const end = input.selectionEnd;
+  const val = input.value;
+  if (after) {
+    const selected = val.substring(start, end);
+    const insert = before + selected + after;
+    input.value = val.substring(0, start) + insert + val.substring(end);
+    if (selected.length > 0) {
+      input.selectionStart = input.selectionEnd = start + insert.length;
+    } else {
+      input.selectionStart = input.selectionEnd = start + before.length;
+    }
+  } else {
+    input.value = val.substring(0, start) + before + val.substring(end);
+    input.selectionStart = input.selectionEnd = start + before.length;
+  }
+  input.dispatchEvent(new Event('input'));
+}
+
+// --- Toggle / Open / Close ---
 
 function toggleSearch() {
   const overlay = document.getElementById('search-overlay');
@@ -845,6 +989,10 @@ function openSearch() {
   input.focus();
   document.getElementById('search-status').textContent = '';
   document.getElementById('search-results').innerHTML = '';
+  // Build index on first open
+  if (!searchIndex && !searchIndexLoading) {
+    buildSearchIndex();
+  }
 }
 
 function closeSearch() {
@@ -853,6 +1001,162 @@ function closeSearch() {
   document.getElementById('search-input').blur();
 }
 
+// --- Boolean query detection ---
+
+function hasBooleanOps(query) {
+  return /\b(AND|OR|NOT|NEAR\d+)\b/.test(query) || /[()]/.test(query);
+}
+
+// --- Word splitting (strips Greek punctuation for word-position matching) ---
+
+function getWords(text) {
+  // Strip punctuation but keep Greek letters and spaces
+  return text.replace(/[^\p{L}\p{N}\s]/gu, '').split(/\s+/).filter(w => w.length > 0);
+}
+
+// --- Term matching helpers (diacritic-stripped) ---
+
+function termWordPositions(term, verseTextStripped) {
+  const words = getWords(verseTextStripped);
+
+  if (term.charAt(0) === '"' && term.charAt(term.length - 1) === '"') {
+    // Exact phrase
+    const phrase = stripDiacritics(term.slice(1, -1)).split(/\s+/).filter(w => w);
+    const positions = [];
+    for (let i = 0; i <= words.length - phrase.length; i++) {
+      let match = true;
+      for (let p = 0; p < phrase.length; p++) {
+        if (words[i + p] !== phrase[p]) { match = false; break; }
+      }
+      if (match) positions.push(i);
+    }
+    return positions;
+  } else {
+    // Single word
+    const stripped = stripDiacritics(term);
+    const positions = [];
+    for (let i = 0; i < words.length; i++) {
+      if (words[i] === stripped) positions.push(i);
+    }
+    return positions;
+  }
+}
+
+function nearMatch(term1, term2, distance, verseTextStripped) {
+  const pos1 = termWordPositions(term1, verseTextStripped);
+  const pos2 = termWordPositions(term2, verseTextStripped);
+  for (let i = 0; i < pos1.length; i++) {
+    for (let j = 0; j < pos2.length; j++) {
+      if (Math.abs(pos1[i] - pos2[j]) <= distance) return true;
+    }
+  }
+  return false;
+}
+
+function termMatchesVerse(term, verseTextStripped) {
+  if (term.charAt(0) === '"' && term.charAt(term.length - 1) === '"') {
+    const phrase = stripDiacritics(term.slice(1, -1));
+    return verseTextStripped.indexOf(phrase) !== -1;
+  }
+  // Single word: strip diacritics and match as substring bounded by non-letter
+  const stripped = stripDiacritics(term);
+  // Use word-boundary-like matching for Greek (match whole words)
+  const words = getWords(verseTextStripped);
+  for (let i = 0; i < words.length; i++) {
+    if (words[i] === stripped) return true;
+  }
+  return false;
+}
+
+// --- Recursive descent Boolean query parser ---
+
+function parseBooleanQuery(query) {
+  const tokens = [];
+  const re = /"[^"]*"|\bAND\b|\bOR\b|\bNOT\b|\bNEAR\d+\b|[()]|[^\s()]+/g;
+  let m;
+  while ((m = re.exec(query)) !== null) {
+    tokens.push(m[0]);
+  }
+
+  // Collect all non-operator terms for highlighting
+  const highlightTerms = [];
+  for (let i = 0; i < tokens.length; i++) {
+    const tok = tokens[i];
+    if (tok !== 'AND' && tok !== 'OR' && tok !== 'NOT' && tok !== '(' && tok !== ')' && !/^NEAR\d+$/.test(tok)) {
+      if (tok.charAt(0) === '"' && tok.charAt(tok.length - 1) === '"') {
+        highlightTerms.push(stripDiacritics(tok.slice(1, -1)));
+      } else {
+        highlightTerms.push(stripDiacritics(tok));
+      }
+    }
+  }
+
+  let pos = 0;
+  let lastNearTerm = '';
+
+  function parseOr() {
+    let left = parseAnd();
+    while (pos < tokens.length && tokens[pos] === 'OR') {
+      pos++;
+      const right = parseAnd();
+      left = ((l, r) => (v => l(v) || r(v)))(left, right);
+    }
+    return left;
+  }
+
+  function parseAnd() {
+    let left = parseNot();
+    while (pos < tokens.length && (tokens[pos] === 'AND' || /^NEAR\d+$/.test(tokens[pos]))) {
+      const op = tokens[pos];
+      pos++;
+      if (/^NEAR\d+$/.test(op)) {
+        const dist = parseInt(op.replace('NEAR', ''), 10);
+        const leftTerm = lastNearTerm;
+        const rightNode = parseNot();
+        const rightTerm = lastNearTerm;
+        left = ((lt, rt, d) => (v => nearMatch(lt, rt, d, v)))(leftTerm, rightTerm, dist);
+      } else {
+        const right = parseNot();
+        left = ((l, r) => (v => l(v) && r(v)))(left, right);
+      }
+    }
+    // Implicit AND: adjacent terms with no operator
+    while (pos < tokens.length && tokens[pos] !== 'OR' && tokens[pos] !== 'AND' && tokens[pos] !== ')' && !/^NEAR\d+$/.test(tokens[pos])) {
+      const right = parseNot();
+      left = ((l, r) => (v => l(v) && r(v)))(left, right);
+    }
+    return left;
+  }
+
+  function parseNot() {
+    if (pos < tokens.length && tokens[pos] === 'NOT') {
+      pos++;
+      const inner = parseTerm();
+      return (fn => (v => !fn(v)))(inner);
+    }
+    return parseTerm();
+  }
+
+  function parseTerm() {
+    if (pos >= tokens.length) return () => false;
+    const tok = tokens[pos];
+    if (tok === '(') {
+      pos++;
+      const inner = parseOr();
+      if (pos < tokens.length && tokens[pos] === ')') pos++;
+      return inner;
+    }
+    pos++;
+    lastNearTerm = tok;
+    return (verseText) => termMatchesVerse(tok, verseText);
+  }
+
+  const matcher = parseOr();
+  return { matcher, highlightTerms };
+}
+
+// --- Main search function ---
+
 function performSearch(query) {
   const statusEl = document.getElementById('search-status');
   const resultsEl = document.getElementById('search-results');
@@ -860,111 +1164,188 @@ function performSearch(query) {
   if (!query || query.trim().length < 2) {
     statusEl.textContent = '';
     resultsEl.innerHTML = '';
+    lastSearchTerms = [];
+    return;
+  }
+
+  if (!searchIndex) {
+    statusEl.innerHTML = '<div class="search-loading">Building search index...</div>';
+    // Retry after index loads
+    const checkInterval = setInterval(() => {
+      if (searchIndex) {
+        clearInterval(checkInterval);
+        performSearch(query);
+      }
+    }, 200);
     return;
   }
 
   statusEl.textContent = 'Searching...';
   resultsEl.innerHTML = '';
 
-  const strippedQuery = stripDiacritics(query.trim());
+  const isBoolean = hasBooleanOps(query);
+  const isExact = /^".*"$/.test(query.trim());
+  let boolMatcher = null;
 
-  // Search within currently loaded book's HTML in the text container
-  const container = document.getElementById('text-container');
-  const verses = container.querySelectorAll('.verse');
-  const results = [];
-
-  for (const verse of verses) {
-    // Get verse reference from the id attribute (v-ch-verse)
-    const id = verse.id || '';
-    const match = id.match(/^v-(\d+)-(\d+)$/);
-    if (!match) continue;
-
-    const ch = match[1];
-    const vNum = match[2];
-
-    // Get all lines in this verse
-    const lines = verse.querySelectorAll('.line');
-    for (const line of lines) {
-      const text = line.textContent || '';
-      const strippedText = stripDiacritics(text);
-
-      const idx = strippedText.indexOf(strippedQuery);
-      if (idx === -1) continue;
-
-      // Build highlighted text
-      // Map back to original text positions
-      const origText = text;
-      // Find the matching portion in original text by matching character positions
-      // Since NFD decomposition can change string length, we need to map carefully
-      const highlighted = highlightMatch(origText, strippedQuery);
-
-      results.push({
-        book: currentBook,
-        chapter: parseInt(ch),
-        verse: parseInt(vNum),
-        ref: BOOKS[currentBook].name + ' ' + ch + ':' + vNum,
-        html: highlighted
-      });
-
-      if (results.length >= 50) break;
-    }
-    if (results.length >= 50) break;
+  if (isBoolean) {
+    const parsed = parseBooleanQuery(query);
+    boolMatcher = parsed.matcher;
+    lastSearchTerms = parsed.highlightTerms;
+  } else if (isExact) {
+    const exact = stripDiacritics(query.trim().replace(/^"|"$/g, ''));
+    lastSearchTerms = [exact];
+  } else {
+    // Simple search: split into words, each must match (implicit AND)
+    const words = query.trim().split(/\s+/).filter(w => w.length > 0);
+    lastSearchTerms = words.map(w => stripDiacritics(w));
   }
 
-  if (results.length === 0) {
+  const hits = [];
+
+  for (const entry of searchIndex) {
+    let matched = false;
+
+    if (boolMatcher) {
+      matched = boolMatcher(entry.textStripped);
+    } else if (isExact) {
+      const phrase = stripDiacritics(query.trim().replace(/^"|"$/g, ''));
+      matched = entry.textStripped.indexOf(phrase) !== -1;
+    } else {
+      // All terms must appear (implicit AND for multi-word)
+      matched = true;
+      for (const term of lastSearchTerms) {
+        const words = getWords(entry.textStripped);
+        let found = false;
+        for (const w of words) {
+          if (w === term) { found = true; break; }
+        }
+        if (!found) { matched = false; break; }
+      }
+    }
+
+    if (matched) {
+      hits.push(entry);
+    }
+  }
+
+  // Display results
+  const totalCount = hits.length;
+  const displayLimit = 100;
+
+  if (totalCount === 0) {
     statusEl.textContent = 'No results found.';
     return;
   }
 
-  statusEl.textContent = results.length + (results.length >= 50 ? '+' : '') + ' match' + (results.length === 1 ? '' : 'es');
+  statusEl.textContent = totalCount + ' verse' + (totalCount !== 1 ? 's' : '') + ' found';
 
-  for (const r of results) {
-    const div = document.createElement('div');
-    div.className = 'search-result';
-    div.innerHTML = '<div class="search-result-ref">' + escapeHtml(r.ref) + '</div>' +
-                    '<div class="search-result-text">' + r.html + '</div>';
-    div.onclick = () => {
-      closeSearch();
-      navigate(r.book, r.chapter, r.verse);
-    };
-    resultsEl.appendChild(div);
+  const shown = Math.min(totalCount, displayLimit);
+  for (let i = 0; i < shown; i++) {
+    const entry = hits[i];
+    const ref = entry.bookName + ' ' + entry.chapter + ':' + entry.verse;
+
+    const card = document.createElement('div');
+    card.className = 'search-result';
+
+    const refDiv = document.createElement('div');
+    refDiv.className = 'search-result-ref';
+    refDiv.textContent = ref;
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'search-result-text';
+    textDiv.innerHTML = highlightSearchResult(entry.text, lastSearchTerms);
+
+    card.appendChild(refDiv);
+    card.appendChild(textDiv);
+
+    ((book, ch, v) => {
+      card.onclick = () => {
+        closeSearch();
+        navigate(book, ch, v);
+      };
+    })(entry.book, entry.chapter, entry.verse);
+
+    resultsEl.appendChild(card);
+  }
+
+  if (totalCount > displayLimit) {
+    const more = document.createElement('div');
+    more.style.cssText = 'color:var(--text-faint); text-align:center; padding:20px 0; font-size:0.85em;';
+    more.textContent = (totalCount - displayLimit) + ' more results...';
+    resultsEl.appendChild(more);
   }
 }
 
-function highlightMatch(originalText, strippedQuery) {
-  // Build a mapping from stripped index to original index
+// --- Highlight matching terms in verse text ---
+
+function highlightSearchResult(originalText, terms) {
+  if (!terms || terms.length === 0) return escapeHtml(originalText);
+
+  // Build NFD mapping for diacritic-aware highlighting
   const nfd = originalText.normalize('NFD');
-  const stripped = [];
+  const strippedChars = [];
   const origIndices = [];
 
   for (let i = 0; i < nfd.length; i++) {
     const code = nfd.charCodeAt(i);
-    // Skip combining diacritical marks (U+0300-U+036F)
     if (code >= 0x0300 && code <= 0x036f) continue;
-    stripped.push(nfd[i].toLowerCase());
+    strippedChars.push(nfd[i].toLowerCase());
     origIndices.push(i);
   }
 
-  const strippedStr = stripped.join('');
-  const idx = strippedStr.indexOf(strippedQuery);
-  if (idx === -1) return escapeHtml(originalText);
+  const strippedStr = strippedChars.join('');
 
-  // Map stripped indices back to NFD indices
-  const nfdStart = origIndices[idx];
-  const nfdEnd = (idx + strippedQuery.length < origIndices.length)
-    ? origIndices[idx + strippedQuery.length]
-    : nfd.length;
+  // Find all match ranges in the stripped string
+  const ranges = [];
+  for (const term of terms) {
+    let idx = 0;
+    while (idx <= strippedStr.length - term.length) {
+      const found = strippedStr.indexOf(term, idx);
+      if (found === -1) break;
+      ranges.push([found, found + term.length]);
+      idx = found + 1;
+    }
+  }
 
-  // Convert NFD positions back to NFC by slicing NFD and re-composing
-  const before = nfd.slice(0, nfdStart).normalize('NFC');
-  const matched = nfd.slice(nfdStart, nfdEnd).normalize('NFC');
-  const after = nfd.slice(nfdEnd).normalize('NFC');
+  if (ranges.length === 0) return escapeHtml(originalText);
 
-  return escapeHtml(before) + '<mark>' + escapeHtml(matched) + '</mark>' + escapeHtml(after);
-}
+  // Merge overlapping ranges
+  ranges.sort((a, b) => a[0] - b[0]);
+  const merged = [ranges[0]];
+  for (let i = 1; i < ranges.length; i++) {
+    const last = merged[merged.length - 1];
+    if (ranges[i][0] <= last[1]) {
+      last[1] = Math.max(last[1], ranges[i][1]);
+    } else {
+      merged.push(ranges[i]);
+    }
+  }
 
-function escapeHtml(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // Map stripped indices back to NFD indices, build output
+  let result = '';
+  let prevEnd = 0;
+
+  for (const [start, end] of merged) {
+    const nfdStart = origIndices[start];
+    const nfdEnd = (end < origIndices.length) ? origIndices[end] : nfd.length;
+
+    const before = nfd.slice(prevEnd === 0 ? 0 : (origIndices[prevEnd] || nfd.length), nfdStart).normalize('NFC');
+    const matched = nfd.slice(nfdStart, nfdEnd).normalize('NFC');
+
+    if (prevEnd === 0) {
+      result += escapeHtml(nfd.slice(0, nfdStart).normalize('NFC'));
+    } else {
+      result += escapeHtml(before);
+    }
+    result += '<mark>' + escapeHtml(matched) + '</mark>';
+    prevEnd = end;
+  }
+
+  // Append remainder
+  const lastNfdEnd = (prevEnd < origIndices.length) ? origIndices[prevEnd] : nfd.length;
+  result += escapeHtml(nfd.slice(lastNfdEnd).normalize('NFC'));
+
+  return result;
 }
 
 // --- Keyboard Shortcuts ---
