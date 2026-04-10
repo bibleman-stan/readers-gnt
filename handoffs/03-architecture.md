@@ -344,3 +344,65 @@ build_books.py now reads from `data/text-files/v3-colometric/` (was v2-colometri
 - `build_books.py` updated: now reads both v3-colometric and ylt-colometric, emits dual-text HTML with language-class spans
 - `index.html` updated: display mode toggle (Greek / English / Both) in settings panel, CSS-driven visibility
 - Repo structure diagram updated to reflect all new files and directories
+
+---
+
+### Update — 2026-04-09 (session 3)
+
+#### New and Updated Scripts
+
+- **macula_predication.py** (new): Unified predication test using Macula tree walk. Determines whether a participle governs its own clause or is governed by a matrix verb, replacing patchwork heuristics with a single tree-traversal decision.
+- **macula_sentences.py** (new): Sentence boundary detection using Macula `<sentence>` elements. Provides hard-constraint sentence breaks — no colon may span a sentence boundary. Produced 1,298 splits corpus-wide.
+- **macula_wordgroups.py** (new): Sub-clause splitting using Macula `<wg>` (word group) elements. Targets lines >80 chars that contain multiple word-group boundaries. Produced ~1,100 splits; reduced lines >120 chars to zero.
+- **ylt_download.py** (new): Downloads YLT source files (USFM format) from eBible.org into `research/ylt/`.
+- **ylt_parse.py** (updated): Parses downloaded YLT USFM files into `data/ylt-verses.json`.
+- **ylt_align.py** (updated): Aligns YLT verse text to Greek colometric line breaks. Achieved 99.8% gloss match rate.
+- **v3_colometry.py** (major update): Now includes unified predication test, sentence boundary detection, sub-clause splitting, dangling function word fix, post-split safety guards (genitive articles, negations, possessives, postpositives), stranded finite verb merge (451 merges), stranded participle/noun merge (128 merges), relative clause splits (529 splits), complement participle backward merge (560 merges), conditional fixes, staccato commata + asyndeton imperatives, periphrastic εἰμί + participle merge (11 merges), correlative pair merge, ἰδού presentative particle handling, verb valency majority threshold (50%), and role=vc valency tracking.
+
+#### Updated Build Pipeline
+
+The full pipeline now includes YLT alignment:
+
+```
+v2_colometry.py       (syntax-tree clause boundaries)
+       |
+       v
+v3_colometry.py       (unified predication + sentence boundaries + sub-clause splits
+                       + merge rules + safety guards + valency checks)
+       |
+       v
+ylt_align.py          (align YLT English to Greek colometric breaks)
+       |
+       v
+build_books.py        (reads v3-colometric/ + ylt-colometric/ -> dual-text books/*.html)
+```
+
+#### New Data Files
+
+- `data/ylt-verses.json` — parsed YLT keyed by book/chapter/verse
+- `data/text-files/ylt-colometric/` — 260 YLT chapter files aligned to Greek colometric breaks
+
+#### v3 Processing Counters (corpus-wide)
+
+| Operation | Count |
+|-----------|-------|
+| Sentence boundary splits | 1,298 |
+| Multi-image splits | 378 |
+| Sub-clause splits | ~1,100 |
+| Dangling function word fixes | 530+ |
+| Stranded finite verb merges | 451 |
+| Stranded participle/noun merges | 128 |
+| Relative clause splits | 529 |
+| Complement participle backward merges | 560 |
+| Periphrastic εἰμί merges | 11 |
+
+#### Web App Features Added
+
+- **Landing page:** Book grid TOC showing all 27 books with chapter counts; replaces direct book load
+- **Home button:** In topbar, returns to landing page
+- **Help overlay:** `?` icon opens overlay explaining navigation, display modes, and keyboard shortcuts
+- **Text size controls:** S/M/L buttons in settings panel, persisted to localStorage
+- **Search return button:** After navigating from search results, a button returns to the previous search
+- **Back-to-top button:** Floating button appears on scroll, returns to top of current chapter
+- **Floating chapter arrows:** Left/right arrows for chapter navigation, always visible during reading
+- **Display toggle:** Greek / English / Both modes for dual-text reading

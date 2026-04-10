@@ -418,3 +418,46 @@ This adds a third validation dimension to the existing framework:
 | **Bezae** | Ancient scribal sense-line practice | Physical layout constraints introduce noise |
 | **YLT alignment** | Whether breaks produce coherent English thoughts | YLT sometimes departs from Greek clause order |
 
+---
+
+### Update — 2026-04-09 (session 3, pipeline refinements)
+
+#### Unified Predication Test
+
+Replaced the patchwork of participle-handling heuristics with a single principled test using Macula tree walk. For any participle on a line, the test walks up the Macula syntax tree to determine whether the participle governs its own predication (adverbial/circumstantial — earns its own line) or is governed by a matrix verb (complementary/periphrastic — merges into the governing line). This replaces separate rules for complement participles, periphrastic constructions, and participial phrases with one unified decision procedure.
+
+#### Verb Valency Majority Threshold
+
+Refined the verb valency satisfaction rule: a verb's valency is considered satisfied if 50% or more of its Macula-annotated object references (`role=o` and now `role=vc`) appear on the same line. This prevents false positives where a single distant object reference causes a merge. The 50% threshold was validated on Acts 9:2 (εὕρῃ keeps its complement) and other adversarial test cases.
+
+#### Sentence Boundary Detection as Hard Constraint
+
+Macula `<sentence>` elements now provide hard-constraint sentence boundaries. No colometric colon may span a sentence boundary — this is enforced as a post-processing pass that splits any line crossing a sentence break. Produced 1,298 splits corpus-wide. This rule has no exceptions: sentence boundaries are structural facts of the text, not editorial preferences.
+
+#### Sub-Clause Splitting Using Macula Word Groups
+
+For lines exceeding 80 characters that contain multiple Macula `<wg>` (word group) boundaries, the pipeline now splits at the highest-level word-group boundary. This addresses the "grammar under-splits" problem where long Pauline periodic sentences remain as single lines after clause-boundary extraction. Produced ~1,100 splits and reduced lines >120 characters to zero across the entire corpus.
+
+#### Post-Split Safety Guards
+
+Every splitting operation is followed by safety guards that prevent splitting inside tight grammatical units:
+- **Genitive articles:** Never split between an article and its following genitive noun
+- **Negations:** Never split between οὐ/μή and the word they negate
+- **Possessives:** Never split between a noun and its possessive pronoun
+- **Postpositives:** Never strand a postpositive particle (γάρ, δέ, οὖν, μέν, τε) at the start of a new line without its host word
+
+#### YLT Alignment as Pragmatic Validation
+
+The YLT English layer (99.8% gloss-matched to the Greek) provides a third validation dimension. Incoherent English lines signal potentially bad Greek breaks. This is pragmatic validation, not a principled criterion — Greek grammar drives the breaks, English coherence cross-checks them.
+
+**Known limitation:** Ambiguous common words (it, the, and) in the YLT are sometimes misassigned when they appear multiple times in a verse. This needs POS-based disambiguation using Macula role annotations — a future refinement.
+
+#### Corpus Health After Session 3
+
+| Metric | Before session 3 | After session 3 |
+|--------|-------------------|------------------|
+| Lines >120 chars | present | **0** |
+| Lines >80 chars | many | **~16** |
+| Dangling function words | many | **~14** |
+| Bezae agreement | 60.7% | **61.3%** |
+
