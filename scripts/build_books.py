@@ -118,6 +118,8 @@ def build_chapter_html(chapter_num, gk_verses, en_lookup=None):
             # Get corresponding English line (or empty string)
             en_text = en_lines[i] if i < len(en_lines) else ""
             en_escaped = html.escape(en_text)
+            # Wrap English punctuation in spans for toggle visibility (same as Greek)
+            en_escaped = re.sub(r'([,.\;:!?\'"—\-])', r'<span class="punct">\1</span>', en_escaped)
 
             parts.append(f'    <span class="line"><span class="gk">{gk_escaped}</span><span class="en">{en_escaped}</span></span>')
         parts.append("  </div>")
