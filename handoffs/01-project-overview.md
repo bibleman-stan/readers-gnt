@@ -126,3 +126,40 @@ Claim 2 is editorial work that can be wrong independently of claim 1. A bad YLT 
 - Strategic rationale documented: broadens audience, makes colometric argument self-demonstrating
 - YLT chosen for highest Greek word-order fidelity of any public domain English translation
 - Two-claim framework established: colometric structure (claim 1) and YLT alignment accuracy (claim 2) are independently reviewable
+
+---
+
+### Update — 2026-04-10 (session 4)
+
+#### YLT Replaced by WEB (World English Bible)
+
+YLT (Young's Literal Translation, 1898) was replaced by the **World English Bible** (WEB, public domain, modern English) as the English rendering layer.
+
+**Why the switch:** The YLT's archaisms ("doth", "hath", "art thou", "fowls of the heaven") create readability barriers for the English-only demographic the project aims to serve. WEB is still very literal (formal equivalence) but uses modern English, making the colometric structure immediately comprehensible without requiring the reader to parse 19th-century idiom.
+
+**Alignment approach changed:** YLT alignment used a sequential forward-scan matching Macula glosses to YLT text. WEB alignment uses a "double-wire" approach: Greek to Macula English (perfect by construction) to WEB (LCS alignment), with spaCy dependency parsing as a cut-point validator to prevent splitting inside English phrases.
+
+**Known limitation:** WEB sometimes restructures sentences differently from Greek word order, causing unavoidable alignment mismatches on approximately 10% of verses. This is inherent to any modern-English translation and cannot be fully solved algorithmically.
+
+The YLT section above is retained for historical context but YLT is no longer the active English layer.
+
+#### Domain Purchased and Configured
+
+- **gnt-reader.com** purchased via Cloudflare
+- DNS configured: Cloudflare DNS pointing to GitHub Pages
+- CNAME file added to repo root
+- HTTPS enforced
+- Landing page updated with verse popover matching in-app navigation
+- Domain status: live and serving
+
+#### Colometric Methodology Reset
+
+YLT/WEB alignment work in session 4 revealed that the v3 colometric pipeline has an approximately **10-12% error rate** in the Greek breaks themselves (not just English alignment problems).
+
+Examples discovered:
+- Mark 4:1 — subject split from verb
+- Matt 16:25 — inconsistent conditional treatment
+
+Comparison showed that v1 (simple conjunction rules) got some verses RIGHT that v3 (sophisticated Macula-driven pipeline) BROKE. Root cause: v3 optimizes for grammar rules rather than the three core criteria (atomic thought, single image, breath unit). The v2/v3 layers were actively making some things worse — "polluting" v1's criteria-driven breaks.
+
+This does not invalidate the v3 pipeline but establishes that automated sophistication is not automatically better. The v4 editorial pass is now understood as essential, not optional.

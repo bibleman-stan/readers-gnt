@@ -406,3 +406,50 @@ build_books.py        (reads v3-colometric/ + ylt-colometric/ -> dual-text books
 - **Back-to-top button:** Floating button appears on scroll, returns to top of current chapter
 - **Floating chapter arrows:** Left/right arrows for chapter navigation, always visible during reading
 - **Display toggle:** Greek / English / Both modes for dual-text reading
+
+---
+
+### Update — 2026-04-10 (session 4)
+
+#### Repo Structure Changes
+
+New directories:
+- `data/text-files/v4-editorial/` — Tier 4 editorial hand output (Stan's hand-edited chapters)
+- `data/text-files/web-colometric/` — WEB (World English Bible) aligned to colometric breaks (replaces ylt-colometric as active English layer)
+
+New and updated scripts:
+- **web_align.py** (new): Double-wire WEB alignment with spaCy dependency parsing validation. Approach: Greek to Macula English (perfect by construction) to WEB (LCS alignment). spaCy validates cut points to prevent splitting inside English phrases.
+- **diagnostic_scanner.py** (new): Criteria-based line auditing tool. Applies the three core colometric criteria to flag lines that fail atomic thought, single image, or breath unit tests.
+- **ylt_align_lcs.py** (new): Experimental LCS-based YLT alignment (R&D, superseded by web_align.py).
+- **ylt_align_double.py** (new): Experimental double-wire YLT alignment (R&D, superseded by web_align.py).
+- **build_books.py** (updated): Now checks v4-editorial before v3-colometric for Greek source (editorial hand takes priority). Checks web-colometric before ylt-colometric for English source.
+- **index.html** (updated): UI updated for WEB display, English punctuation hideable via toggle, landing page verse navigation popover.
+
+#### Updated Build Pipeline
+
+```
+v2_colometry.py       (syntax-tree clause boundaries)
+       |
+       v
+v3_colometry.py       (unified predication + sentence boundaries + sub-clause splits
+                       + merge rules + safety guards + valency checks)
+       |
+       v
+[v4-editorial/]       (Stan's hand edits — overrides v3 where present)
+       |
+       v
+web_align.py          (align WEB English to Greek colometric breaks via double-wire + spaCy)
+       |
+       v
+build_books.py        (reads v4-editorial > v3-colometric for Greek,
+                       web-colometric > ylt-colometric for English -> books/*.html)
+```
+
+build_books.py priority chain: v4-editorial (if exists) > v3-colometric for Greek; web-colometric (if exists) > ylt-colometric for English.
+
+#### Domain and Deployment
+
+- **gnt-reader.com** purchased and configured (Cloudflare DNS to GitHub Pages)
+- CNAME file added to repo root
+- HTTPS enforced via GitHub Pages settings
+- Custom domain section no longer "future" — it is live

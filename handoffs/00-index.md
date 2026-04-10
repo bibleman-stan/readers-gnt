@@ -26,3 +26,13 @@ When updating handoff docs, append a dated block at the bottom of the relevant f
 ```
 
 Never overwrite history — always append.
+
+---
+
+### Update — 2026-04-10 (session 4)
+
+Files updated this session:
+- `01-project-overview.md` — YLT replaced by WEB; domain purchased and configured; colometric methodology reset documented
+- `02-colometry-method.md` — Five new editorial principles from Mark 4 v4 gold standard (updated separately during session)
+- `03-architecture.md` — New scripts (web_align.py, diagnostic_scanner.py, experimental alignment scripts), new directories (v4-editorial, web-colometric), updated build pipeline, domain/CNAME deployment
+- `04-editorial-workflow.md` — v4 editorial tier established with Mark 4 as first gold standard chapter; pipeline diagram updated; colometric methodology reset and its implications for v3 output

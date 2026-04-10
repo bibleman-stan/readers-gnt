@@ -338,3 +338,79 @@ The alignment now automatically re-pegs when Greek colometric breaks change — 
 - **Sequential matching, not bag-of-words.** Word-position information must be preserved.
 - **Adversarial audit after every significant change.** The Mark 4 thermometer pattern: fix, rebuild, audit all verses, fix what the audit finds, repeat until clean.
 - **Three parallel adversarial agents per problem class.** Each agent diagnoses one pattern, proposes a fix, and tests it. Fixes are then synthesized and applied together.
+
+---
+
+### Update — 2026-04-10 (session 4)
+
+#### YLT Alignment Rewrite and Abandonment
+
+The session began with further refinement of YLT alignment. Manual review of Mark 4 YLT output (after the adversarial audit fixes from session 3's update) revealed 6 additional errors: orphaned pronouns, split phrasal verbs, and split conjunctions. The fundamental problem: the alignment algorithm has no English quality gate — it can match words to lines but cannot evaluate whether the resulting English lines read as coherent phrases.
+
+This, combined with YLT's archaic language barriers, led to the decision to abandon YLT in favor of WEB (World English Bible).
+
+#### Switch from YLT to WEB
+
+- **WEB** (World English Bible, public domain, modern English) replaces YLT as the English rendering layer
+- Alignment approach changed to "double-wire": Greek to Macula English (perfect by construction) to WEB (LCS alignment), with spaCy dependency parsing as a cut-point validator
+- Known limitation: WEB sometimes restructures sentences differently from Greek, causing unavoidable alignment mismatches on approximately 10% of verses
+- YLT alignment scripts retained for historical reference but are no longer in the active pipeline
+
+#### Colometric Methodology Reset
+
+YLT/WEB alignment work revealed that the v3 colometric pipeline has an approximately 10-12% error rate — problems in the GREEK breaks, not just English alignment:
+- Mark 4:1: subject split from verb
+- Matt 16:25: inconsistent conditional treatment
+
+Critical finding: v1 (simple conjunction rules) got some verses RIGHT that v3 (sophisticated Macula-driven pipeline) BROKE. Root cause: v3 optimizes for grammar rules, not the three core criteria (atomic thought, single image, breath unit). The v2/v3 layers were actively degrading some of v1's criteria-driven breaks.
+
+This does not mean v3 is worse overall — it is better on most verses. But "more sophisticated" does not equal "more correct" in every case. The v4 editorial pass is now understood as essential corrective work, not optional polish.
+
+#### Mark 4 v4 Editorial Gold Standard
+
+Stan hand-edited Mark 4 as the first v4 editorial chapter. The `v4-editorial/` directory was created as the tier 4 (editorial hand) output location.
+
+Five new colometric principles were established during this editing pass and documented in `02-colometry-method.md`:
+
+1. **Ellipsis:** Elided verbs are real predications — triadic stacks (e.g., "thirty... sixty... hundred") each get their own line because each implied verb is a separate predication.
+2. **Subordinate clause attachment:** Adjectival subordinate clauses merge with their head noun; adverbial subordinate clauses stand alone as separate cola.
+3. **Vocative attachment:** Vocatives join the speech they introduce; imperatives stand alone as their own cola.
+4. **Paradox pairs:** Antithetical pairs ("whoever wants to save his life will lose it") merge as one unit — the paradox is a single image.
+5. **καί + finite verb:** Primary break signal in narrative Greek. This is the most reliable indicator of a new colon in Markan narrative.
+
+Additional refinements from the editing pass:
+- Verbs describing the same phenomenon merge (sprout and grow = one image)
+- Sequential causation splits; simultaneous paradox merges
+- Short genitive absolutes modifying speech introductions merge (adverbial framing)
+- Indirect questions stay with their governing verb
+
+#### Updated Pipeline Diagram
+
+```
+SBLGNT source (canonical, never edit)
+        |
+        v
+  v2_colometry.py + macula_clauses.py (tier 2: syntax-tree clause boundaries)
+        |
+        v
+  v3_colometry.py (tier 3: rhetorical patterns + merge rules + safety guards)
+        |
+        v
+  v4-editorial/ (tier 4: Stan's hand edits — overrides v3 where present)
+        |
+        v
+  web_align.py (double-wire WEB alignment with spaCy validation)
+        |
+        v
+  build_books.py (reads v4 > v3 for Greek, web > ylt for English -> books/*.html)
+        |
+        v
+  books/*.html -> index.html loads via fetch()
+```
+
+#### What's Next (established end of session 4)
+
+- Build the diagnostic scanner for English alignment quality (apply three criteria to English output)
+- Extend v4 editorial to more chapters: Acts 17 (rhetoric), Romans 8 (argumentation)
+- Evaluate tree-first colometric approach: start from Macula clause structure instead of pattern matching
+- The English alignment problem is partially solved but has inherent limitations when translations restructure sentences

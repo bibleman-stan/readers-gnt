@@ -31,6 +31,12 @@ import time
 import urllib.request
 import xml.etree.ElementTree as ET
 from collections import defaultdict
+
+try:
+    import spacy
+    _nlp = spacy.load("en_core_web_sm")
+except (ImportError, OSError):
+    _nlp = None
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
@@ -627,6 +633,133 @@ def _assign_lines_from_matches(matches, macula_tokens, web_tokens):
 # ---------------------------------------------------------------------------
 # Main double-wire split function
 # ---------------------------------------------------------------------------
+# Dependency labels that indicate tight syntactic bonds — never split these
+_TIGHT_DEPS = frozenset({
+    'det',       # determiner: "the" -> "birds"
+    'poss',      # possessive: "his" -> "name"
+    'amod',      # adjectival modifier: "great" -> "branches"
+    'compound',  # compound: "lamp" -> "stand"
+    'prt',       # particle: "in" -> "entering", "up" -> "come"
+    'aux',       # auxiliary: "did" -> "come", "was" -> "scorched"
+    'auxpass',   # passive auxiliary: "was" -> "given"
+    'neg',       # negation: "not" -> "care"
+    'predet',    # predeterminer: "all" -> "the"
+    'nummod',    # numeral modifier: "one" -> "hundred"
+    'case',      # case marker (prep in UD): "of" -> "heaven"
+    'mark',      # subordinating conjunction: "that" -> clause
+    'cc',        # coordinating conjunction at phrase level
+})
+
+
+def _spacy_validate_cuts(web_text, raw_tokens, line_assignments):
+    """Use spaCy dependency parsing to prevent cuts inside English phrases.
+
+    For each proposed cut point (where line_assignments[i] != line_assignments[i-1]),
+    check if the cut would split a tight syntactic bond. If so, shift the
+    dependent to be on the same line as its head.
+
+    Returns corrected line_assignments list.
+    """
+    if _nlp is None or not raw_tokens:
+        return line_assignments
+
+    assignments = list(line_assignments)
+    doc = _nlp(web_text)
+
+    # Build a map from raw token index to spaCy token index.
+    # Both are left-to-right, but spaCy may tokenize differently.
+    # Use character offsets to align.
+    token_char_starts = []
+    search_start = 0
+    for rt in raw_tokens:
+        pos = web_text.find(rt, search_start)
+        if pos >= 0:
+            token_char_starts.append(pos)
+            search_start = pos + len(rt)
+        else:
+            token_char_starts.append(search_start)
+
+    def raw_idx_to_spacy(ri):
+        """Find the spaCy token that covers raw_token[ri]."""
+        if ri >= len(token_char_starts):
+            return None
+        char_pos = token_char_starts[ri]
+        for tok in doc:
+            if tok.idx <= char_pos < tok.idx + len(tok.text):
+                return tok
+        return None
+
+    # Iterate through cut points and validate
+    MAX_PASSES = 3
+    for _ in range(MAX_PASSES):
+        changed = False
+        for i in range(1, len(assignments)):
+            if assignments[i] == assignments[i - 1]:
+                continue  # No cut here
+
+            # There's a cut between token i-1 and token i.
+            # Check if token i depends on token i-1 (or vice versa)
+            # via a tight syntactic relationship.
+            sp_before = raw_idx_to_spacy(i - 1)
+            sp_after = raw_idx_to_spacy(i)
+
+            if sp_before is None or sp_after is None:
+                continue
+
+            # Case 1: token after the cut depends on token before (or its head)
+            # e.g., "the | birds" — "the" (i-1) is det of "birds" (i) — wait,
+            # actually "the" depends on "birds", so sp_before.head == sp_after
+            if sp_before.dep_ in _TIGHT_DEPS and sp_before.head == sp_after:
+                # "the" depends on "birds" — pull "the" forward to birds' line
+                assignments[i - 1] = assignments[i]
+                changed = True
+                continue
+
+            if sp_after.dep_ in _TIGHT_DEPS and sp_after.head == sp_before:
+                # "in" depends on "entering" — pull "in" back to entering's line
+                assignments[i] = assignments[i - 1]
+                changed = True
+                continue
+
+            # Case 2: Check one level deeper — the word after the cut might
+            # depend on a word that's also after the cut, but the word before
+            # the cut depends on the word after. E.g., "all | the herbs" —
+            # "all" (predet) depends on "herbs", "the" (det) also depends on "herbs"
+            if sp_before.dep_ in _TIGHT_DEPS:
+                # sp_before depends on its head — is the head on the other side?
+                head = sp_before.head
+                head_ri = None
+                for ri2, rt in enumerate(raw_tokens):
+                    sp2 = raw_idx_to_spacy(ri2)
+                    if sp2 is not None and sp2.i == head.i:
+                        head_ri = ri2
+                        break
+                if head_ri is not None and head_ri >= i:
+                    # Head is after the cut — pull dependent forward
+                    assignments[i - 1] = assignments[i]
+                    changed = True
+                    continue
+
+            if sp_after.dep_ in _TIGHT_DEPS:
+                head = sp_after.head
+                head_ri = None
+                for ri2, rt in enumerate(raw_tokens):
+                    sp2 = raw_idx_to_spacy(ri2)
+                    if sp2 is not None and sp2.i == head.i:
+                        head_ri = ri2
+                        break
+                if head_ri is not None and head_ri < i:
+                    # Head is before the cut — pull dependent back
+                    assignments[i] = assignments[i - 1]
+                    changed = True
+                    continue
+
+        if not changed:
+            break
+
+    return assignments
+
+
 def split_web_by_double_wire(web_text, greek_lines, macula_words):
     """Split WEB text to match Greek colometric line breaks.
 
@@ -657,6 +790,11 @@ def split_web_by_double_wire(web_text, greek_lines, macula_words):
 
     # Hop 2: LCS align Macula English -> WEB
     line_assignments = lcs_align(macula_filtered, web_norm_tokens)
+
+    # Validate cut points with spaCy dependency parsing — shift any cut
+    # that would split a tight syntactic bond (det+noun, prep+object,
+    # particle+verb, compound words)
+    line_assignments = _spacy_validate_cuts(web_text, web_raw_tokens, line_assignments)
 
     # Build WEB lines by cutting at line transitions
     result_lines = [[] for _ in range(num_lines)]

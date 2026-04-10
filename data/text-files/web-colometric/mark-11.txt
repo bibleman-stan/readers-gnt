@@ -70,7 +70,7 @@ again!” and his disciples heard it.
 
 11:15
 They came to Jerusalem,
-and
+and 
 Jesus entered into the temple, and began to throw out those who sold and those who bought in the temple,
 and overthrew the money changers’
 tables, and the seats of those who sold the doves.
@@ -130,8 +130,8 @@ the chief priests, and the scribes, and the elders came to him,
 
 11:28
 and they began saying to him,
-“By what authority do you do these
-things? Or who gave you this authority
+“By what authority do you do
+these things? Or who gave you this authority
 to do these things?”
 
 11:29
