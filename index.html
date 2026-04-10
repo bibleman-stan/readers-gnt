@@ -1404,8 +1404,8 @@ function flushAndReload() {
 function toggleSettings() {
   const panel = document.getElementById('settings-panel');
   panel.classList.toggle('open');
-  // Close search if open
-  if (panel.classList.contains('open')) closeSearch();
+  // Close other overlays if opening settings
+  if (panel.classList.contains('open')) { closeSearch(); closeHelp(); }
 }
 
 function closeSettings() {
@@ -2098,8 +2098,13 @@ document.addEventListener('keydown', function(e) {
     return;
   }
 
-  // Escape closes verse popover, search, or settings
+  // Escape closes help, verse popover, search, or settings
   if (e.key === 'Escape') {
+    const helpOverlay = document.getElementById('help-overlay');
+    if (helpOverlay.classList.contains('open')) {
+      closeHelp();
+      return;
+    }
     const versePopover = document.getElementById('verse-popover');
     if (versePopover.classList.contains('open')) {
       closeVersePopover();
