@@ -131,6 +131,34 @@ These introduce contrasts or corrections and earn a new line:
 ἀλλὰ περιμένειν τὴν ἐπαγγελίαν τοῦ πατρός
 ```
 
+## Principles Established by v4 Editorial Pass (Mark 4)
+
+These principles were identified during the first hand-editing pass on Mark 4 (session 4, 2026-04-10). They refine the three core tests with specific grammatical guidance.
+
+### Ellipsis Principle
+An elided (gapped) verb is a real predication for colometric purposes. When a verb appears once and is implied for subsequent members of a parallel structure, each member is a complete atomic thought with a recoverable verb. This applies to:
+- **Triadic object lists:** "bore thirty / [bore] sixty / [bore] a hundred" (Mark 4:8, 4:20)
+- **Triadic subject lists:** "worries [choke] / deceit [chokes] / desires choke" (Mark 4:19)
+- **Growth stage lists:** "first blade / [then] ear / [then] full grain" (Mark 4:28)
+- **Any parallel structure** where the verb is expressed once and implied for subsequent members
+
+The scholarly warrant: this is standard Greek gapping (ellipsis). Each elided clause is semantically complete because the verb is recoverable from context.
+
+### Subordinate Clause Attachment
+- **Adjectival subordinate clauses** (ὅπου, ὅς modifying a noun) merge with their head noun — they describe the thing just mentioned and are not independent thoughts. "Fell on rocky ground where it had not much earth" = one image (Mark 4:5).
+- **Adverbial subordinate clauses** (ὅτε, ἵνα, ὥστε, ὅταν) can stand as scene-setters on their own line — they frame a new temporal, purpose, or result context (Mark 4:6 "καὶ ὅτε ἀνέτειλεν ὁ ἥλιος").
+
+### Vocative Attachment
+Vocatives (Διδάσκαλε, etc.) attach to their speech — they are addresses, not independent predications. A vocative alone is not an atomic thought (Mark 4:38). Exception: imperatives (Ἀκούετε, Σιώπα) ARE complete predications and can stand alone (Mark 4:3, 4:39).
+
+### Paradox Pairs
+Antithetical pairs that form a single paradox merge onto one line: "seeing they may see and not perceive" is one thought — the paradox is the unit, not its halves (Mark 4:12, Isaiah quotation). The same applies to any construction where the second element completes (not extends) the first.
+
+### καί + Finite Verb
+Each καί + new finite verb is a candidate for a new line — a new finite verb introduces a new predication, which is by definition a new thought. This is the primary break signal in Markan paratactic narrative.
+
+---
+
 ## Carry-Over Rules
 
 These rules apply universally, adapted from established editorial practice:
