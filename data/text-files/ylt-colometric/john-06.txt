@@ -13,9 +13,9 @@ and he was there sitting with his disciples,
 and the passover was nigh, the feast of the Jews.
 
 6:5
-Jesus then having lifted up [his] eyes
-and having seen that a great multitude doth
-come to him, saith unto Philip,
+Jesus then having lifted up [his] eyes and having seen
+that a great multitude doth come to him,
+saith unto Philip,
 'Whence shall we buy loaves,
 that these may eat?' --
 
@@ -25,8 +25,8 @@ for he himself had known what
 he was about to do.
 
 6:7
-Philip answered
-him, 'Two hundred denaries' worth of loaves are not sufficient to them, that each of them may receive some little;'
+Philip answered him,
+'Two hundred denaries' worth of loaves are not sufficient to them, that each of them may receive some little;'
 
 6:8
 one of his disciples -- Andrew, the brother of Simon Peter -- saith to him,
@@ -37,11 +37,11 @@ who hath five barley loaves, and two fishes,
 but these -- what are they to so many?'
 
 6:10
-And Jesus
-said, 'Make the men to sit
-down;' and there was much grass in the place, the men
+And Jesus said,
+'Make the men to sit
+down;'
+and there was much grass in the place, the men
 then sat down, in number, as it were, five thousand,
-
 
 6:11
 and Jesus took the loaves,
@@ -95,9 +95,9 @@ and immediately the boat came unto the land to which they were going.
 
 6:22
 On the morrow, the multitude that was standing on the other side of the sea, having seen
-that there was no
-other little boat there except one --
-that into which his disciples entered -- and that Jesus went not in with his disciples into the little boat, but his disciples went away alone,
+that there was no other little boat there except one --
+that into which his disciples entered -- and that Jesus
+went not in with his disciples into the little boat, but his disciples went away alone,
 
 6:23
 (and other little boats came from Tiberias, nigh the place
@@ -112,8 +112,8 @@ seeking Jesus;
 
 6:25
 and having found him on the other side of the sea,
-they said
-to him, 'Rabbi, when hast thou come hither?'
+they said to him,
+'Rabbi, when hast thou come hither?'
 
 6:26
 Jesus answered them
@@ -126,24 +126,24 @@ and were satisfied;
 
 6:27
 work not for the food that is perishing,
-but for the food that is remaining to life
-age-during, which the Son of Man will give to you,
+but for the food that is remaining to life age-during,
+which the Son of Man will give to you,
 for him did the Father seal -- [even] God.'
 
 6:28
-They said therefore
-unto him, 'What may we do that we may work the works of God?'
+They said therefore unto him, 'What may we do
+that we may work the works of God?'
 
 6:29
 Jesus answered
 and said to them,
 'This is the work of God,
-that ye may believe
-in him whom He did send.'
+that ye may believe in him
+whom He did send.'
 
 6:30
-They said therefore
-to him, 'What sign, then, dost thou, that we may see
+They said therefore to him,
+'What sign, then, dost thou, that we may see
 and may believe thee? what dost thou work?
 
 6:31
@@ -166,9 +166,9 @@ unto him, 'Sir, always give us this bread.'
 6:35
 And Jesus said to them,
 'I am the bread of the life; he
-who is coming unto me
-may not hunger,
-and he who is believing in me may not thirst -- at any time;
+who is coming
+unto me may not hunger, and he
+who is believing in me may not thirst -- at any time;
 
 6:36
 but I said to you, that ye also have seen me,
@@ -179,8 +179,8 @@ all that the Father doth give to me will come unto me;
 and him who is coming unto me, I may in no wise cast without,
 
 6:38
-because I have come down out of the heaven, not
-that I may do my will,
+because I have come down out of the heaven,
+not that I may do my will,
 but the will of Him who sent me.
 
 6:39
@@ -202,12 +202,12 @@ The Jews, therefore, were murmuring at him, because he said,
 6:42
 and they said,
 'Is not this Jesus, the son of Joseph,
-whose father and mother we
-have known? how then saith this one -- Out of the heaven I have come down?'
+whose father and mother we have known? how
+then saith this one -- Out of the heaven I have come down?'
 
 6:43
-Jesus answered,
-therefore, and said to them,
+Jesus answered, therefore,
+and said to them,
 'Murmur not one with another;
 
 6:44
@@ -215,8 +215,8 @@ no one is able to come unto me,
 if the Father who sent me may not draw him, and I will raise him up in the last day;
 
 6:45
-it is having been written in the prophets, And they shall be all taught of God;
-every one therefore who heard from the Father, and learned, cometh to me;
+it is having been written in the prophets, And they shall be all taught of God; every one
+therefore who heard from the Father, and learned, cometh to me;
 
 6:46
 not that any one hath seen the Father, except he
@@ -238,23 +238,23 @@ that any one may eat of it,
 and not die.
 
 6:51
-'I am the living
-bread that came down out of the heaven;
-if any one may eat of this bread he shall live --
-to the age; and the bread also that I will give is
-my flesh, that I will give
-for the life of the world.'
-
+'I am the living bread
+that came down out of the heaven; if any one
+may eat
+of this bread he
+shall live -- to the age;
+and the bread also that I will give is
+my flesh, that I will give for the life of the world.'
 
 6:52
 The Jews, therefore, were striving with one another, saying,
 'How is this one able to give us [his] flesh to eat?'
 
 6:53
-Jesus, therefore, said to them, 'Verily, verily, I say to you, If ye may not eat the flesh of the Son of Man,
-and may not drink his blood,
-ye have no life in yourselves;
-
+Jesus, therefore, said to them,
+'Verily, verily, I say to you,
+If ye may not eat the flesh of the Son of Man,
+and may not drink his blood, ye have no life in yourselves;
 
 6:54
 he who is eating my flesh,
@@ -272,14 +272,14 @@ and is drinking my blood, doth remain in me, and I in him.
 
 6:57
 'According as the living
-Father sent me, and I live because of the Father, he also
-who is eating me, even that one shall live because of me;
+Father sent me, and I live because of the Father,
+he also who is eating me, even that one shall live because of me;
 
 6:58
 this is the bread that came down out of the heaven;
-not as your fathers
-did eat the manna, and died;
-he who is eating this bread
+not as your fathers did eat the manna,
+and died; he
+who is eating this bread
 shall live -- to the age.'
 
 6:59
@@ -287,31 +287,31 @@ These things he said
 in a synagogue, teaching in Capernaum;
 
 6:60
-many, therefore, of his disciples
-having heard, said, 'This word is hard;
+many, therefore, of his disciples having heard, said,
+'This word is hard;
 who is able to hear it?'
 
 6:61
-And Jesus having known in himself that his disciples are murmuring
-about this, said to them,
+And Jesus having known in himself that his disciples are murmuring about this,
+said to them,
 'Doth this stumble you?
 
 6:62
-if then ye may behold the Son of Man going
-up where he was before?
+if then ye may behold the Son of Man going up
+where he was before?
 
 6:63
-the spirit it is that is giving
-life; the flesh doth not profit anything;
-the sayings
-that I speak to you are spirit,
+the spirit it is that is giving life;
+the flesh doth not profit anything; the sayings
+that I speak to you
+are spirit,
 and they are life;
 
 6:64
 but there are certain of you
 who do not believe;'
-for Jesus had known from the beginning who they
-are who are not believing, and who is he who will deliver him up,
+for Jesus had known from the beginning who they are
+who are not believing, and who is he who will deliver him up,
 
 6:65
 and he said,
@@ -326,17 +326,17 @@ and were no more walking with him,
 Jesus, therefore, said to the twelve, 'Do ye also wish to go away?'
 
 6:68
-Simon Peter,
-therefore, answered him, 'Sir, unto whom shall we go?
-thou hast sayings of life age-during;
+Simon Peter, therefore, answered him, 'Sir,
+unto whom shall we go? thou
+hast sayings of life age-during;
 
 6:69
 and we have believed,
 and we have known, that thou art the Christ, the Son of the living God.'
 
 6:70
-Jesus answered them, 'Did not I choose
-you -- the twelve? and of you -- one is a devil.
+Jesus answered them, 'Did not I choose you -- the twelve?
+and of you -- one is a devil.
 
 6:71
 And he spake of Judas, Simon's [son], Iscariot,

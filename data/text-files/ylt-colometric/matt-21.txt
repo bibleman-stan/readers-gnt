@@ -1,17 +1,17 @@
 21:1
-And when they came nigh to Jerusalem, and came to Bethphage, unto the mount of the Olives,
+And when they came nigh to Jerusalem,
+and came to Bethphage, unto the mount of the Olives,
 then Jesus sent two disciples,
-
 
 21:2
 saying to them,
 'Go on to the village over-against you,
-and immediately ye shall find an ass bound, and a colt with her
--- having loosed, bring ye to me;
+and immediately ye shall find an ass bound, and a colt with her -- having loosed,
+bring ye to me;
 
 21:3
-and if any one may say anything
-to you, ye shall say, that the lord hath need of them,
+and if any one may say anything to you,
+ye shall say, that the lord hath need of them,
 and immediately he will send them.'
 
 21:4
@@ -68,15 +68,15 @@ And there came to him blind and lame men in the temple,
 and he healed them,
 
 21:15
-and the chief priests and the scribes having seen the wonderful things
-that he did, and the children crying in the temple, and saying,
+and the chief priests and the scribes having seen the wonderful things that he did,
+and the children crying in the temple, and saying,
 'Hosanna to the Son of David,' were much displeased;
 
 21:16
-and they said
-to him, 'Hearest thou what these say?'
-And Jesus saith
-to them, 'Yes, did ye never read, that, Out of the mouth of babes
+and they said to him,
+'Hearest thou what these say?'
+And Jesus saith to them,
+'Yes, did ye never read, that, Out of the mouth of babes
 and sucklings Thou didst prepare praise?'
 
 21:17
@@ -118,17 +118,17 @@ and who gave thee this authority?'
 
 21:24
 And Jesus answering said to them,
-'I will ask you -- I also -- one
-word, which if ye may tell me,
+'I will ask you -- I also -- one word,
+which if ye may tell me,
 I also will tell you by what authority I do these things;
 
 21:25
 the baptism of John,
 whence was it? -- from heaven, or from men?'
-And they were reasoning with themselves,
-saying,
+And they were reasoning with themselves, saying,
 'If we should say,
-From heaven; he will say to us, Wherefore,
+From
+heaven; he will say to us, Wherefore,
 then, did ye not believe him?
 
 21:26
@@ -139,9 +139,9 @@ for all hold John as a prophet.'
 21:27
 And answering Jesus they said,
 'We have not known.'
-He said to them --
-he also --
-'Neither do I tell you by what authority I do these things.
+He said to them
+-- he
+also -- 'Neither do I tell you by what authority I do these things.
 
 21:28
 'And what think ye?
@@ -151,9 +151,9 @@ Child, go,
 to-day be working in my vineyard.'
 
 21:29
-And he answering said, 'I will not,'
-but at last,
-having repented, he went.
+And he answering said,
+'I will not,'
+but at last, having repented, he went.
 
 21:30
 'And having come to the second, he said in the same manner,
@@ -162,23 +162,23 @@ I [go], sir,
 and went not;
 
 21:31
-which of the two did the will of the father?'
+which of the two did
+the will of the father?'
 They say to him,
 'The first.'
-Jesus saith to them, 'Verily I say to you,
-that the tax-gatherers
+Jesus saith to them,
+'Verily I say to you, that the tax-gatherers
 and the harlots do go before you
 into the reign of God,
 
-
 21:32
-for John came unto you in the way of righteousness, and ye did not believe him,
-and the tax-gatherers and the harlots did believe him,
+for John came unto you in the way of righteousness, and ye did not believe him, and the tax-gatherers
+and the harlots did believe him,
 and ye, having seen, repented not at last -- to believe him.
 
 21:33
-'Hear ye
-another simile: There was a certain man, a householder,
+'Hear ye another simile:
+There was a certain man, a householder,
 who planted a vineyard,
 and did put a hedge round it,
 and digged in it a wine-press,
@@ -217,8 +217,8 @@ they cast [him] out of the vineyard,
 and killed him;
 
 21:40
-whenever therefore the lord of the vineyard may
-come, what will he do to these husbandmen?'
+whenever therefore the lord of the vineyard may come,
+what will he do to these husbandmen?'
 
 21:41
 They say to him,
@@ -245,8 +245,8 @@ and on whomsoever it may fall it
 will crush him to pieces.'
 
 21:45
-And the chief priests and the Pharisees having heard
-his similes, knew that of them he speaketh,
+And the chief priests and the Pharisees having heard his similes,
+knew that of them he speaketh,
 
 21:46
 and seeking to lay

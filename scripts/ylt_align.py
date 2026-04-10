@@ -408,7 +408,7 @@ _SYNONYM_SETS = [
     ("bird", "birds", "fowl", "fowls"),
     ("way", "road", "path"),
     ("grow", "grew", "grown", "increase", "increased"),
-    ("earth", "ground", "soil", "land"),
+    ("earth", "soil"),
     ("good", "beautiful", "fair"),
     ("hundred", "hundredfold"),
     ("thirty", "thirtyfold"),
@@ -417,7 +417,7 @@ _SYNONYM_SETS = [
     ("throw", "threw", "thrown", "cast"),
     ("break", "broke", "broken"),
     ("choose", "chose", "chosen"),
-    ("hide", "hid", "hidden"),
+    ("hide", "hid", "hidden", "secret", "concealed"),
     ("wake", "woke", "woken", "awake", "awoke"),
     ("swear", "swore", "sworn"),
     ("tear", "tore", "torn"),
@@ -454,14 +454,23 @@ def _are_synonyms(g, y):
 # Stop words for alignment — too common/ambiguous to be reliable anchors.
 _ALIGNMENT_STOP_WORDS = frozenset({
     'the', 'a', 'an', 'of', 'in', 'to', 'and', 'or', 'but', 'for',
-    'on', 'by', 'at', 'no', 'not', 'it', 'he', 'she', 'they',
+    'on', 'by', 'at', 'no', 'it', 'he', 'she', 'they',
     'his', 'her', 'its', 'their', 'him', 'them', 'this', 'that',
     'is', 'was', 'are', 'were', 'be', 'been', 'with', 'from',
     'as', 'so', 'do', 'did', 'does', 'has', 'had', 'have', 'having',
     'may', 'might', 'shall', 'should', 'will', 'would',
     'can', 'could', 'nor', 'yet', 'if', 'then', 'than',
-    'own', 'also',
+    'own',
+    # Relative/interrogative pronouns — too common as function words to anchor
+    'who', 'whom', 'whose', 'which', 'what', 'where', 'when', 'how',
+    # Demonstratives and existentials that gloss Greek articles/particles
+    'these', 'those', 'there', 'here',
+    # "thing/things" glosses Greek articles and creates false substring matches
+    'thing', 'things',
 })
+# Note: 'not' and 'also' removed from stop words — they are semantically
+# significant at line boundaries (negation clauses, additive markers) and
+# their glosses serve as important anchors for alignment.
 
 
 def _stem_english(word):
@@ -533,9 +542,10 @@ def _content_matches(ylt_normalized, anchor_tokens):
         if t_stem != t and _are_synonyms(yn, t_stem):
             return True
         # Substring: "thirtyfold" contains "thirty" (handles hyphenated compounds)
-        if len(t) >= 5 and t in yn:
+        # Require minimum length 6 to avoid false positives like "thing" in "anything"
+        if len(t) >= 6 and t in yn:
             return True
-        if len(yn) >= 5 and yn in t:
+        if len(yn) >= 6 and yn in t:
             return True
 
     return False
@@ -566,17 +576,36 @@ def _find_gap_split(ylt_tokens, prev_pos, next_pos):
                        'whom', 'where', 'when', 'if', 'though', 'although',
                        'lest', 'unless', 'until', 'after', 'before', 'while'}
 
-    # Look for clause-starting word in the gap (first one = new clause start)
+    # Look for clause-starting word in the gap — prefer the one closest to
+    # the gap midpoint.  When multiple clause starters exist (e.g. "then" and
+    # "that"), the first one is often a parenthetical while the last one marks
+    # the real clause boundary (e.g. ὅτι → "that").  Midpoint preference
+    # balances both directions.
+    gap_mid = (prev_pos + next_pos) / 2
+    best_clause_pos = None
+    best_clause_dist = float("inf")
     for pos in range(prev_pos + 1, next_pos):
         word = _normalize(ylt_tokens[pos][0])
         if word in CLAUSE_STARTERS:
-            return pos
+            dist = abs(pos - gap_mid)
+            if dist <= best_clause_dist:
+                best_clause_pos = pos
+                best_clause_dist = dist
+    if best_clause_pos is not None:
+        return best_clause_pos
 
-    # Look for punctuation boundary (comma, semicolon, colon on previous word)
+    # Look for punctuation boundary on word before a gap position (split BEFORE)
     for pos in range(prev_pos + 1, next_pos):
         prev_raw = ylt_tokens[pos - 1][0] if pos > 0 else ''
         if prev_raw and prev_raw[-1] in '.,;:!?':
             return pos
+
+    # Look for punctuation on gap words themselves (split AFTER the punctuated word)
+    for pos in range(prev_pos + 1, next_pos):
+        raw = ylt_tokens[pos][0]
+        if raw and raw[-1] in '.,;:!?':
+            if pos + 1 <= next_pos:
+                return pos + 1
 
     # Midpoint fallback
     return (prev_pos + next_pos + 1) // 2
@@ -625,6 +654,33 @@ def split_ylt_by_glosses(ylt_text, greek_lines, macula_words):
         if tokens:
             anchors.append((line_idx, tokens))
 
+    # Step 2b: Detect lines with zero anchors (all glosses are stop words).
+    # For those lines, promote their stop-word glosses to anchors AND mark
+    # them so the forward scan will try matching stop-word YLT tokens too.
+    # Without this, lines like "Τίς ἄρα οὗτός ἐστιν" (glosses: who/then/
+    # this/is — all stop words) produce no anchors and get merged.
+    anchor_lines = {a[0] for a in anchors}
+    stopword_anchor_lines = set()
+    for line_idx in range(num_lines):
+        if line_idx in anchor_lines:
+            continue
+        # This line has no anchors — promote its stop-word glosses
+        for wlm_line_idx, gloss, english in word_line_map:
+            if wlm_line_idx != line_idx:
+                continue
+            tokens = set()
+            for t in _gloss_to_tokens(gloss) + _gloss_to_tokens(english):
+                tn = _normalize(t)
+                if tn and len(tn) >= 3:  # allow stop words
+                    tokens.add(tn)
+            if tokens:
+                anchors.append((line_idx, tokens))
+                stopword_anchor_lines.add(line_idx)
+        anchor_lines.add(line_idx)
+
+    # Re-sort anchors to maintain line order for the forward scan.
+    anchors.sort(key=lambda a: a[0])
+
     if not anchors:
         return None
 
@@ -636,22 +692,84 @@ def split_ylt_by_glosses(ylt_text, greek_lines, macula_words):
     # Step 4: Forward scan — match YLT content words to Macula anchors in order.
     # Walk both sequences left-to-right. When a YLT content word matches the
     # current anchor, record the match and advance the anchor pointer.
+    #
+    # Word-order swap handling: Greek and English sometimes order words
+    # differently within the same line (e.g., Greek γῆν πολλήν = "earth much"
+    # but YLT says "much earth"). When the forward scan would jump to a new
+    # line, we first check if a recently skipped anchor on the SAME line as
+    # the last match would also match. If so, prefer the same-line match
+    # (it's a within-line word-order swap, not a real line transition).
     ylt_matches = []  # [(ylt_word_idx, line_idx), ...]
     anchor_ptr = 0
+    consumed_anchors = set()  # Track which anchor indices have been matched
 
     for yi, (word, _, _) in enumerate(ylt_tokens):
         yn = _normalize(word)
-        if not yn or len(yn) < 3 or yn in _ALIGNMENT_STOP_WORDS:
-            continue
+        is_stop = not yn or len(yn) < 3 or yn in _ALIGNMENT_STOP_WORDS
+
+        # For normal content words, always try to match.
+        # For stop words, only try if the next unmatched anchor belongs to a
+        # promoted stop-word line — otherwise skip to avoid false positives.
+        if is_stop:
+            # Check if any upcoming anchor is on a stop-word-only line
+            has_promoted = False
+            for ai in range(anchor_ptr, min(anchor_ptr + 4, len(anchors))):
+                if anchors[ai][0] in stopword_anchor_lines:
+                    has_promoted = True
+                    break
+            if not has_promoted:
+                continue
 
         # Try to match against upcoming anchors (limited lookahead)
+        forward_match = None  # (anchor_index, line_idx)
         limit = min(anchor_ptr + 8, len(anchors))
         for ai in range(anchor_ptr, limit):
             line_idx, tokens = anchors[ai]
             if _content_matches(yn, tokens):
-                ylt_matches.append((yi, line_idx))
-                anchor_ptr = ai + 1
+                forward_match = (ai, line_idx)
                 break
+
+        if forward_match is not None:
+            fwd_ai, fwd_line = forward_match
+            last_line = ylt_matches[-1][1] if ylt_matches else 0
+
+            # If forward match jumps to a new line, check if a skipped anchor
+            # on the SAME line as the last match also matches this word.
+            # This catches within-line word-order swaps.
+            # Only consider anchors that haven't already been consumed by a
+            # different YLT word — otherwise repeated glosses (e.g., "one"
+            # appearing on both lines) cause false same-line matches.
+            if fwd_line != last_line and ylt_matches:
+                same_line_match = False
+                for ai in range(max(0, anchor_ptr - 6), anchor_ptr):
+                    if ai in consumed_anchors:
+                        continue  # Already matched to a different YLT word
+                    skip_line, skip_tokens = anchors[ai]
+                    if skip_line == last_line and _content_matches(yn, skip_tokens):
+                        ylt_matches.append((yi, skip_line))
+                        consumed_anchors.add(ai)
+                        same_line_match = True
+                        break
+                if not same_line_match:
+                    ylt_matches.append((yi, fwd_line))
+                    consumed_anchors.add(fwd_ai)
+                    anchor_ptr = fwd_ai + 1
+            else:
+                ylt_matches.append((yi, fwd_line))
+                consumed_anchors.add(fwd_ai)
+                anchor_ptr = fwd_ai + 1
+        else:
+            # No forward match — check recently skipped anchors on same line
+            if ylt_matches:
+                last_line = ylt_matches[-1][1]
+                for ai in range(max(0, anchor_ptr - 6), anchor_ptr):
+                    if ai in consumed_anchors:
+                        continue  # Already matched to a different YLT word
+                    skip_line, skip_tokens = anchors[ai]
+                    if skip_line == last_line and _content_matches(yn, skip_tokens):
+                        ylt_matches.append((yi, last_line))
+                        consumed_anchors.add(ai)
+                        break
 
     if not ylt_matches:
         return None
@@ -706,6 +824,11 @@ def cleanup_english_dangles(lines):
 
     Same principle as the Greek dangling function word fix: 'and', 'but', 'for',
     'or', 'that', 'which', 'who', 'whom', etc. should never end a line.
+
+    Handles multi-word trailing clusters: if a line ends with consecutive
+    function words (e.g., "and one", "not that"), move the entire cluster
+    to the next line. This catches cases where a conjunction + short word
+    pair belongs with the following clause.
     """
     ENGLISH_DANGLES = {
         'and', 'but', 'for', 'or', 'nor', 'yet', 'so',
@@ -713,6 +836,7 @@ def cleanup_english_dangles(lines):
         'if', 'though', 'although', 'because', 'since', 'while',
         'the', 'a', 'an', 'of', 'to', 'in', 'on', 'at', 'by',
         'with', 'from', 'into', 'upon', 'unto', 'through',
+        'also',
     }
     if len(lines) < 2:
         return lines
@@ -721,11 +845,21 @@ def cleanup_english_dangles(lines):
         words = lines[i].split()
         if not words:
             continue
-        last = words[-1].rstrip('.,;:!?').lower()
-        if last in ENGLISH_DANGLES and len(words) > 1:
-            dangling = words[-1]
-            lines[i] = ' '.join(words[:-1])
-            lines[i + 1] = dangling + ' ' + lines[i + 1]
+        # Count how many trailing words are all function words
+        # (walk backwards from end of line)
+        dangle_count = 0
+        for w in reversed(words):
+            cleaned = w.rstrip('.,;:!?').lower()
+            if cleaned in ENGLISH_DANGLES:
+                dangle_count += 1
+            else:
+                break
+        # Move the trailing cluster if: at least one dangling word,
+        # and we'd leave at least one content word on this line
+        if dangle_count > 0 and dangle_count < len(words):
+            dangling_words = words[-dangle_count:]
+            lines[i] = ' '.join(words[:-dangle_count])
+            lines[i + 1] = ' '.join(dangling_words) + ' ' + lines[i + 1]
 
     return lines
 
@@ -773,9 +907,16 @@ def cleanup_ylt_fragments(lines, target_count, greek_lines=None):
         else:
             break
 
-    # Final line count enforcement — pad or merge to match target
+    # Final line count enforcement — re-split longest or merge to match target
     while len(lines) < target_count:
-        lines.append('')
+        # Instead of padding with empty lines, try to split the longest line
+        longest_idx = max(range(len(lines)), key=lambda i: len(lines[i]))
+        parts = split_text_into_n(lines[longest_idx], 2)
+        if len(parts) == 2 and parts[0].strip() and parts[1].strip():
+            lines = lines[:longest_idx] + parts + lines[longest_idx + 1:]
+        else:
+            lines.append('')
+            break
     while len(lines) > target_count:
         lines[-2] = (lines[-2] + ' ' + lines[-1]).strip()
         lines.pop()
