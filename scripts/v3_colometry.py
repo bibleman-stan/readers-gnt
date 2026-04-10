@@ -2791,11 +2791,28 @@ def apply_sentence_boundary_splits(verse_lines, book_slug=None, verse_ref=None):
         boundary_idx = find_sentence_boundary_in_line(line, book_slug, ch, vs)
         if boundary_idx is not None and boundary_idx > 0:
             words = line.split()
-            line1 = ' '.join(words[:boundary_idx])
-            line2 = ' '.join(words[boundary_idx:])
-            result.append(line1)
-            result.append(line2)
-            _sentence_split_count += 1
+            # Validate the split won't break tight grammatical pairs
+            if _is_safe_split_point(words, boundary_idx):
+                line1 = ' '.join(words[:boundary_idx])
+                line2 = ' '.join(words[boundary_idx:])
+                result.append(line1)
+                result.append(line2)
+                _sentence_split_count += 1
+            else:
+                # Unsafe split — try shifting the boundary ±1 word
+                shifted = False
+                for offset in [1, -1, 2, -2]:
+                    alt_idx = boundary_idx + offset
+                    if 1 <= alt_idx < len(words) and _is_safe_split_point(words, alt_idx):
+                        line1 = ' '.join(words[:alt_idx])
+                        line2 = ' '.join(words[alt_idx:])
+                        result.append(line1)
+                        result.append(line2)
+                        _sentence_split_count += 1
+                        shifted = True
+                        break
+                if not shifted:
+                    result.append(line)  # can't split safely — keep whole
         else:
             result.append(line)
 
