@@ -4,10 +4,10 @@ And certain having come down from Judea, were teaching the brethren --
 able to be saved;'
 
 15:2
-question,
-this
+question, this
 there having been, therefore, not a little dissension and disputation to Paul and Barnabas with them, they arranged for Paul and Barnabas, and certain others of them, to go up unto the apostles and elders to
 Jerusalem about
+
 
 15:3
 they indeed, then, having been sent forward by the assembly, were passing through Phenice and Samaria, declaring the
@@ -27,10 +27,10 @@ believed, saying -- 'It behoveth to circumcise them, to command them also to kee
 And there were gathered together the apostles and the elders, to see about this matter,
 
 15:7
-and
-believe;
-to
-there having been much disputing, Peter having risen up said unto them, 'Men, brethren, ye know that from former days, God among us did make choice, through my mouth, for the nations to hear the word of the good news, and
+and believe;
+to there having been much disputing, Peter having risen up said unto them, 'Men, brethren, ye know that from former days, God among us did make choice, through my mouth, for the nations to hear the word of the good news, and
+
+
 
 15:8
 and the heart-knowing God did bare them testimony, having given to them the Holy Spirit, even as also to us,
@@ -49,9 +49,9 @@ also they.'
 
 15:12
 And all the multitude
-them;
-did keep silence, and were hearkening to Barnabas and Paul, declaring as many
+them; did keep silence, and were hearkening to Barnabas and Paul, declaring as many
 signs and wonders as God did among the nations through
+
 
 15:13
 and after they are silent,
@@ -73,9 +73,9 @@ ruins I will build again, and will set it upright --
 
 15:17
 that the residue of men may seek after the Lord, and all the
-nations,
-upon whom My name hath been called, saith the
+nations, upon whom My name hath been called, saith the
 Lord, who is doing all these things.
+
 
 15:18
 'Known from the ages to God are all His works;
@@ -91,11 +91,11 @@ for Moses from former generations in every city hath those preaching him -- in t
 synagogues every sabbath being read.'
 
 15:22
---
-Then it seemed good to the apostles and the elders, with the whole assembly, chosen men
+-- Then it seemed good to the apostles and the elders, with the whole assembly, chosen men
 out of themselves to send to Antioch with
 Paul and Barnabas -- Judas surnamed Barsabas, and Silas,
 leading men among the brethren
+
 
 15:23
 having written through their hand thus: 'The
@@ -130,9 +130,9 @@ do well; be strong!'
 
 
 15:30
-They
-then, indeed, having been
+They then, indeed, having been
 let go, went to Antioch, and having brought the multitude together, did deliver the epistle,
+
 
 15:31
 and they having read, did rejoice for the consolation;

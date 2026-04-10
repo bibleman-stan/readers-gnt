@@ -772,7 +772,60 @@ def split_ylt_by_glosses(ylt_text, greek_lines, macula_words):
         # Merge extras onto last line
         output = output[:num_lines - 1] + [' '.join(output[num_lines - 1:])]
 
-    return output
+    return cleanup_ylt_fragments(output, num_lines, greek_lines)
+
+
+def cleanup_ylt_fragments(lines, target_count, greek_lines=None):
+    """Merge fragment lines (1-2 words) into their neighbors.
+
+    The gloss alignment can create tiny fragments when short words get
+    assigned to their own line. A 1-2 word English line is almost never
+    a valid sense-line — UNLESS the corresponding Greek line is also
+    short (1-2 words), meaning the alignment intentionally made it brief.
+
+    When merging, DON'T try to restore line count by splitting the longest
+    line at midpoint (that creates new fragments). Instead, just merge and
+    accept the line count difference. The build_books.py handles mismatched
+    line counts gracefully (empty .en spans for extra Greek lines).
+    """
+    if len(lines) <= 1:
+        return lines
+
+    MAX_ITERATIONS = 10
+    for _ in range(MAX_ITERATIONS):
+        fragment_idx = None
+        for i, line in enumerate(lines):
+            word_count = len(line.split()) if line.strip() else 0
+            if 0 < word_count <= 1 and len(lines) > 1:
+                # Only merge if the corresponding Greek line is NOT also short
+                if greek_lines and i < len(greek_lines):
+                    gk_words = len(greek_lines[i].split()) if greek_lines[i].strip() else 0
+                    if gk_words <= 2:
+                        continue  # Greek line is also short — intentional
+                fragment_idx = i
+                break
+
+        if fragment_idx is None:
+            break
+
+        idx = fragment_idx
+        if idx + 1 < len(lines):
+            lines[idx + 1] = (lines[idx] + ' ' + lines[idx + 1]).strip()
+            lines.pop(idx)
+        elif idx > 0:
+            lines[idx - 1] = (lines[idx - 1] + ' ' + lines[idx]).strip()
+            lines.pop(idx)
+        else:
+            break
+
+    # Final line count enforcement — pad or merge to match target
+    while len(lines) < target_count:
+        lines.append('')
+    while len(lines) > target_count:
+        lines[-2] = (lines[-2] + ' ' + lines[-1]).strip()
+        lines.pop()
+
+    return lines
 
 
 # ---------------------------------------------------------------------------
