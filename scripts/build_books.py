@@ -1,9 +1,9 @@
 """
 build_books.py — Generate HTML book files from colometric text sources.
 
-Reads chapter files from data/text-files/v3-colometric/ (Greek) and
-optionally from data/text-files/ylt-colometric/ (English YLT), and writes
-one HTML fragment per book into books/.
+Reads chapter files from v4-editorial/ (preferred) or v3-colometric/ (Greek)
+and optionally from web-colometric/ (preferred) or ylt-colometric/ (English),
+and writes one HTML fragment per book into books/.
 
 Each .line span contains a .gk span (Greek) and optionally a .en span
 (English), enabling Greek/English/Both display modes in the web app.
@@ -24,7 +24,10 @@ from collections import defaultdict
 # Paths relative to this script's location
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPT_DIR)
-INPUT_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v3-colometric")
+GK_PRIMARY_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4-editorial")
+GK_FALLBACK_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v3-colometric")
+INPUT_DIR = GK_FALLBACK_DIR  # used by discover_books for globbing all chapters
+WEB_DIR = os.path.join(REPO_ROOT, "data", "text-files", "web-colometric")
 YLT_DIR = os.path.join(REPO_ROOT, "data", "text-files", "ylt-colometric")
 OUTPUT_DIR = os.path.join(REPO_ROOT, "books")
 
@@ -165,26 +168,53 @@ def discover_books(input_dir, book_filter=None):
     return dict(books)
 
 
+def resolve_greek_path(fpath):
+    """Return the best Greek source: v4-editorial if it exists, else v3-colometric."""
+    basename = os.path.basename(fpath)
+    v4_path = os.path.join(GK_PRIMARY_DIR, basename)
+    if os.path.isfile(v4_path):
+        return v4_path, "v4"
+    return fpath, "v3"
+
+
+def resolve_english_path(fpath):
+    """Return the best English source: web-colometric first, then ylt-colometric.
+
+    Returns (path, label) or (None, None) if neither exists.
+    """
+    basename = os.path.basename(fpath)
+    web_path = os.path.join(WEB_DIR, basename)
+    if os.path.isfile(web_path):
+        return web_path, "WEB"
+    ylt_path = os.path.join(YLT_DIR, basename)
+    if os.path.isfile(ylt_path):
+        return ylt_path, "YLT"
+    return None, None
+
+
 def build_book(prefix, chapter_files, output_dir):
     """Build and write the HTML file for one book.
 
-    Returns the number of chapters and verses processed.
+    Returns the number of chapters, verses, and English label.
     """
     all_chapter_html = []
     total_verses = 0
+    en_labels = set()
 
     for _ch_num, fpath in chapter_files:
-        chapter_num, gk_verses = parse_chapter(fpath)
+        # Resolve Greek source (v4-editorial preferred over v3-colometric)
+        gk_path, _gk_tag = resolve_greek_path(fpath)
+        chapter_num, gk_verses = parse_chapter(gk_path)
         if chapter_num is None:
-            # Fallback to filename chapter number if file was empty/unparseable
             chapter_num = _ch_num
 
-        # Try to load corresponding YLT file
+        # Resolve English source (WEB preferred over YLT)
         en_lookup = None
-        ylt_path = os.path.join(YLT_DIR, os.path.basename(fpath))
-        if os.path.isfile(ylt_path):
-            _, en_verses = parse_chapter(ylt_path)
+        en_path, en_label = resolve_english_path(fpath)
+        if en_path:
+            _, en_verses = parse_chapter(en_path)
             en_lookup = build_ylt_lookup(en_verses)
+            en_labels.add(en_label)
 
         total_verses += len(gk_verses)
         chapter_html = build_chapter_html(chapter_num, gk_verses, en_lookup)
@@ -196,7 +226,7 @@ def build_book(prefix, chapter_files, output_dir):
     with open(output_path, "w", encoding="utf-8") as f:
         f.write("\n".join(all_chapter_html) + "\n")
 
-    return len(chapter_files), total_verses, output_path
+    return len(chapter_files), total_verses, output_path, en_labels
 
 
 def main():
@@ -227,17 +257,14 @@ def main():
 
     for prefix in sorted(books.keys()):
         chapter_files = books[prefix]
-        num_chapters, num_verses, output_path = build_book(
+        num_chapters, num_verses, output_path, en_labels = build_book(
             prefix, chapter_files, OUTPUT_DIR
         )
         rel_path = os.path.relpath(output_path, REPO_ROOT)
-        # Check if YLT data exists for any chapter
-        has_ylt = any(
-            os.path.isfile(os.path.join(YLT_DIR, os.path.basename(fp)))
-            for _, fp in chapter_files
-        )
-        ylt_marker = " +YLT" if has_ylt else ""
-        print(f"  {prefix:<10} {num_chapters:>3} ch, {num_verses:>4} vv  -> {rel_path}{ylt_marker}")
+        en_marker = ""
+        if en_labels:
+            en_marker = " +" + "+".join(sorted(en_labels))
+        print(f"  {prefix:<10} {num_chapters:>3} ch, {num_verses:>4} vv  -> {rel_path}{en_marker}")
 
     print(f"\nDone. Output in {os.path.relpath(OUTPUT_DIR, REPO_ROOT)}/")
 
