@@ -2786,13 +2786,21 @@ def apply_sentence_boundary_splits(verse_lines, book_slug=None, verse_ref=None):
     except ValueError:
         return verse_lines
 
+    def _is_valid_sentence_split(words, idx):
+        """Combined validation: safe split + no verb-object separation."""
+        if not _is_safe_split_point(words, idx):
+            return False
+        if _split_separates_verb_from_object(words, idx, book_slug, ch, vs):
+            return False
+        return True
+
     result = []
     for line in verse_lines:
         boundary_idx = find_sentence_boundary_in_line(line, book_slug, ch, vs)
         if boundary_idx is not None and boundary_idx > 0:
             words = line.split()
-            # Validate the split won't break tight grammatical pairs
-            if _is_safe_split_point(words, boundary_idx):
+            # Validate the split won't break tight grammatical pairs or verb-object units
+            if _is_valid_sentence_split(words, boundary_idx):
                 line1 = ' '.join(words[:boundary_idx])
                 line2 = ' '.join(words[boundary_idx:])
                 result.append(line1)
@@ -2803,7 +2811,7 @@ def apply_sentence_boundary_splits(verse_lines, book_slug=None, verse_ref=None):
                 shifted = False
                 for offset in [1, -1, 2, -2]:
                     alt_idx = boundary_idx + offset
-                    if 1 <= alt_idx < len(words) and _is_safe_split_point(words, alt_idx):
+                    if 1 <= alt_idx < len(words) and _is_valid_sentence_split(words, alt_idx):
                         line1 = ' '.join(words[:alt_idx])
                         line2 = ' '.join(words[alt_idx:])
                         result.append(line1)
@@ -2847,6 +2855,168 @@ _HEURISTIC_SPLIT_PREPS = frozenset([
     'κατά', 'κατ', 'μετά', 'μετ', 'διά', 'δι', 'ὑπό', 'ὑπ',
     'παρά', 'παρ', 'περί', 'πρό', 'σύν', 'ἀντί', 'ὑπέρ',
 ])
+
+
+def _split_separates_verb_from_object(words, idx, book_slug, chapter, verse):
+    """Check if splitting BEFORE word at idx separates a verb from its object/complement.
+
+    Rule 1 (Valency validation): After any split, check if the left half's last
+    verb has its Macula role=o or role=vc words on the right half. If so, reject.
+
+    Returns True if the split would separate a verb from its object (= bad split).
+    """
+    if not _HAS_VALENCY or not book_slug or idx <= 0 or idx >= len(words):
+        return False
+
+    try:
+        from macula_valency import (
+            _parse_book_valency, _book_cache as valency_book_cache,
+            _clause_roles_cache, _match_line_words_to_macula,
+            _SLUG_TO_MACULA as valency_slug_map
+        )
+    except ImportError:
+        return False
+
+    macula_id = valency_slug_map.get(book_slug.lower())
+    if not macula_id:
+        return False
+
+    _parse_book_valency(macula_id)
+    verse_words = valency_book_cache.get(macula_id, {}).get((chapter, verse), [])
+    clause_roles = _clause_roles_cache.get(macula_id, {})
+    if not verse_words:
+        return False
+
+    # Build left/right text
+    left_text = ' '.join(words[:idx])
+    right_text = ' '.join(words[idx:])
+
+    # Match left half words to Macula
+    left_matched = _match_line_words_to_macula(left_text, verse_words)
+    right_matched = _match_line_words_to_macula(right_text, verse_words)
+
+    # Collect refs on each half
+    left_refs = set(mw.ref for mw in left_matched if mw is not None)
+    right_refs = set(mw.ref for mw in right_matched if mw is not None)
+
+    if not left_refs or not right_refs:
+        return False
+
+    # Find the rightmost verb on the left half
+    rightmost_verb = None
+    for mw in reversed(left_matched):
+        if mw is not None and mw.role == 'v':
+            rightmost_verb = mw
+            break
+
+    if rightmost_verb is None:
+        return False
+
+    # Check if that verb's clause has role=o or role=vc words on the right half
+    cl_id = rightmost_verb.clause_id
+    cr = clause_roles.get(cl_id)
+    if cr is None:
+        return False
+
+    # Find the first matched Macula word on the right half (for proximity checks)
+    first_right_mw = None
+    for mw in right_matched:
+        if mw is not None:
+            first_right_mw = mw
+            break
+
+    # Check object words (role=o, role=o2)
+    if cr.has_object:
+        obj_on_right = right_refs.intersection(cr.object_word_refs)
+        if obj_on_right:
+            # Guard: only reject if the split directly cuts between verb and
+            # its immediate object. If the verb already has some object words
+            # on its side, the remaining ones on the right are in a sub-phrase
+            # (prepositional modifier, participial extension) — allow the split.
+            obj_on_left = left_refs.intersection(cr.object_word_refs)
+            if not obj_on_left:
+                # Verb has NONE of its object words — bad split
+                return True
+            if first_right_mw is not None and first_right_mw.ref in cr.object_word_refs:
+                # Right half starts with an object word — but allow if the
+                # first word is a preposition (starts a new sub-phrase within
+                # the object NP, e.g., Ἰησοῦν | διὰ τὸ πάθημα)
+                if first_right_mw.word_class not in ('prep',):
+                    return True
+            # Verb has some objects on left, remaining are in sub-phrases — allow
+
+    # Check verb complement (role=vc) — collect vc refs from verse_words in same clause
+    vc_on_right = False
+    for vw in verse_words:
+        if vw.clause_id == cl_id and vw.role == 'vc' and vw.ref in right_refs:
+            vc_on_right = True
+            # Check if right half starts with this vc word
+            if first_right_mw is not None and first_right_mw.ref == vw.ref:
+                return True
+            # Check if verb has no vc words on left at all
+            vc_on_left = any(
+                lvw.clause_id == cl_id and lvw.role == 'vc' and lvw.ref in left_refs
+                for lvw in verse_words
+            )
+            if not vc_on_left:
+                return True
+
+    return False
+
+
+def _split_inside_same_clause(words, idx, book_slug, chapter, verse):
+    """Check if both sides of a split are in the same Macula clause.
+
+    Rule 2 (Same-clause check): If both the last word of left half and first
+    word of right half are in the same Macula clause, the split fell inside
+    a clause. Returns True if this is the case (= suspicious split).
+    """
+    if not _HAS_VALENCY or not book_slug or idx <= 0 or idx >= len(words):
+        return False
+
+    try:
+        from macula_valency import (
+            _parse_book_valency, _book_cache as valency_book_cache,
+            _match_line_words_to_macula,
+            _SLUG_TO_MACULA as valency_slug_map
+        )
+    except ImportError:
+        return False
+
+    macula_id = valency_slug_map.get(book_slug.lower())
+    if not macula_id:
+        return False
+
+    _parse_book_valency(macula_id)
+    verse_words = valency_book_cache.get(macula_id, {}).get((chapter, verse), [])
+    if not verse_words:
+        return False
+
+    # Match just the boundary words
+    # Left half last word
+    left_text = ' '.join(words[:idx])
+    right_text = ' '.join(words[idx:])
+
+    left_matched = _match_line_words_to_macula(left_text, verse_words)
+    right_matched = _match_line_words_to_macula(right_text, verse_words)
+
+    # Find last matched word on left, first matched word on right
+    last_left = None
+    for mw in reversed(left_matched):
+        if mw is not None:
+            last_left = mw
+            break
+
+    first_right = None
+    for mw in right_matched:
+        if mw is not None:
+            first_right = mw
+            break
+
+    if last_left is None or first_right is None:
+        return False
+
+    return last_left.clause_id == first_right.clause_id
 
 
 def _is_safe_split_point(words, idx):
@@ -2941,6 +3111,27 @@ def _find_best_macula_split(line, words, book_slug, chapter, verse):
     if not valid_points:
         return None
 
+    # Filter out split points that separate a verb from its object/complement
+    # (Rule 1: valency validation)
+    valency_safe_points = [(idx, depth) for idx, depth in valid_points
+                           if not _split_separates_verb_from_object(
+                               words, idx, book_slug, chapter, verse)]
+
+    # Filter out split points that fall inside a single clause
+    # (Rule 2: same-clause check — supplementary, only if valency filter left options)
+    if valency_safe_points:
+        clause_safe_points = [(idx, depth) for idx, depth in valency_safe_points
+                              if not _split_inside_same_clause(
+                                  words, idx, book_slug, chapter, verse)]
+        # Use clause-filtered points if any remain; otherwise fall back to valency-only
+        if clause_safe_points:
+            valid_points = clause_safe_points
+        else:
+            valid_points = valency_safe_points
+    # If ALL points fail valency check, return None — no safe split exists
+    else:
+        return None
+
     # Strictly prefer the shallowest (highest-level) boundary.
     # A split at a clause boundary that creates unbalanced halves (30/70)
     # is better than a split at a word-group boundary that's centered (50/50)
@@ -2948,13 +3139,23 @@ def _find_best_macula_split(line, words, book_slug, chapter, verse):
     # shallow boundary produces valid halves.
     min_depth = min(d for _, d in valid_points)
 
-    # Try shallowest depth first
+    # Try candidates in order of preference (shallowest depth first, then closest to midpoint)
     for depth_level in sorted(set(d for _, d in valid_points)):
-        candidates = [(idx, d) for idx, d in valid_points if d == depth_level]
-        if candidates:
-            # Among equal-depth candidates, prefer closest to midpoint
-            best = min(candidates, key=lambda x: abs(x[0] - midpoint))
-            return best[0]
+        depth_candidates = [(idx, d) for idx, d in valid_points if d == depth_level]
+        # Sort by distance from midpoint
+        depth_candidates.sort(key=lambda x: abs(x[0] - midpoint))
+        for idx, d in depth_candidates:
+            # Validate: don't split verb from its object
+            left_text = ' '.join(words[:idx])
+            right_text = ' '.join(words[idx:])
+            if book_slug and chapter and verse:
+                try:
+                    svr = check_stranded_finite_verb(left_text, '', right_text, book_slug, chapter, verse)
+                    if svr.stranded:
+                        continue  # This split separates verb from object — try next
+                except Exception:
+                    pass
+            return idx
 
     return None
 
@@ -3032,6 +3233,10 @@ def _split_line_once(line, book_slug, chapter, verse):
         split_idx = _find_heuristic_split(words, len(stripped))
 
     if split_idx is None:
+        return None
+
+    # Valency guard: reject heuristic splits that separate verb from object
+    if _split_separates_verb_from_object(words, split_idx, book_slug, chapter, verse):
         return None
 
     left = ' '.join(words[:split_idx])
