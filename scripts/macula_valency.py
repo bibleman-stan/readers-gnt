@@ -78,10 +78,10 @@ class MaculaWord:
 class ClauseRoles:
     """Role summary for a single clause."""
     clause_id: int
-    has_object: bool = False        # any child with role=o or role=o2
+    has_object: bool = False        # any child with role=o, role=o2, or role=vc
     has_subject: bool = False       # any child with role=s
     has_finite_verb: bool = False   # any word with finite mood (indicative, subjunctive, etc.)
-    object_word_refs: list = field(default_factory=list)   # refs of object words
+    object_word_refs: list = field(default_factory=list)   # refs of object/complement words
     subject_word_refs: list = field(default_factory=list)  # refs of subject words
     participle_refs: list = field(default_factory=list)    # refs of participle words
 
@@ -226,7 +226,7 @@ def _parse_book_valency(macula_id: str):
                 if child.tag == 'w':
                     ref = child.get('ref', '')
                     mood = child.get('mood', '')
-                    if role in ('o', 'o2'):
+                    if role in ('o', 'o2', 'vc'):
                         cr.has_object = True
                         cr.object_word_refs.append(ref)
                     if role == 's':
@@ -243,7 +243,7 @@ def _parse_book_valency(macula_id: str):
                     wg_class = child.get('class', '')
                     sub_refs = [w.get('ref', '') for w in child.iter('w')]
 
-                    if wg_role in ('o', 'o2'):
+                    if wg_role in ('o', 'o2', 'vc'):
                         cr.has_object = True
                         cr.object_word_refs.extend(sub_refs)
                     if wg_role == 's':
