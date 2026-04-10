@@ -164,3 +164,22 @@ After any significant change to merge/split rules, dispatch parallel adversarial
 3. **Benchmark regression adversary** — re-runs Marschall comparison and Bezae multi-tier to check for regressions
 
 This pattern catches HIGH severity issues (rule interactions, sentence boundary violations, over-splitting of particles) that code review alone misses. Established in session 3 after discovering the adversarial approach caught issues across Rev 1:5, Heb 1:3, Mark 4:22, and 94 ἰδού over-splits.
+
+#### Standard Operating Procedures
+
+**When fixing a bug:**
+1. Identify the class of problem (not just the single instance)
+2. Enumerate ALL instances of that class in the Greek language
+3. Fix them all in one commit
+4. Example: finding elided ἀλλʼ not handled → immediately add ALL Greek elided forms (παρʼ, ἀπʼ, ἐπʼ, ὑπʼ, κατʼ, μετʼ, διʼ, ἀφʼ, ἐφʼ), not just ἀλλʼ
+
+**When running corpus-wide operations:**
+1. Split agents by genre group: Mark / Matthew / Luke-Acts / John+Johannine / Pauline / Hebrews / General Epistles / Revelation
+2. Never run one agent on all 27 books — Luke-Acts alone is a quarter of the NT
+3. When the task is "find and fix," each agent should find AND fix in its section, not just report
+
+**When adding split/merge rules:**
+1. Every split must validate both halves are viable cola
+2. Never split: article+noun, preposition+object, negation+verb, noun+genitive modifier, noun+possessive pronoun
+3. After any split pass, re-run the dangling function word fix
+4. Test on Mark 4 (gold standard), Rom 2:12-13 (Marschall), Acts 1:1-4 (most-reviewed), Heb 1:3 (participial images)
