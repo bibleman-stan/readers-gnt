@@ -173,10 +173,13 @@ This pattern catches HIGH severity issues (rule interactions, sentence boundary 
 3. Fix them all in one commit
 4. Example: finding elided ἀλλʼ not handled → immediately add ALL Greek elided forms (παρʼ, ἀπʼ, ἐπʼ, ὑπʼ, κατʼ, μετʼ, διʼ, ἀφʼ, ἐφʼ), not just ἀλλʼ
 
-**When running corpus-wide operations:**
-1. Split agents by genre group: Mark / Matthew / Luke-Acts / John+Johannine / Pauline / Hebrews / General Epistles / Revelation
-2. Never run one agent on all 27 books — Luke-Acts alone is a quarter of the NT
-3. When the task is "find and fix," each agent should find AND fix in its section, not just report
+**When changing the pipeline (MANDATORY two-phase pattern):**
+1. **Phase 1 — Algorithm change:** One agent modifies the script (v3_colometry.py, macula_*.py, etc.). This is a single-file code change.
+2. **Phase 2 — Corpus rebuild:** 8 SEPARATE agents run the modified script on genre groups: Mark / Matthew / Luke-Acts / John+Johannine / Pauline / Hebrews / General Epistles / Revelation
+3. These are ALWAYS two separate dispatches. NEVER dispatch one agent to do both code change AND full corpus rebuild.
+4. Never run one agent on all 27 books — Luke-Acts alone is a quarter of the NT.
+5. When the task is "find and fix," each agent should find AND fix in its section, not just report.
+6. This is not optional. Every violation of this pattern has resulted in a bottleneck.
 
 **When proposing rule changes:**
 1. Generate multiple candidate approaches (3-5 angles)
