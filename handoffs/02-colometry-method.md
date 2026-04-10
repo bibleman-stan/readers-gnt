@@ -339,7 +339,61 @@ The corrective layer — the principled rules that merge fragments the tree crea
 
 The pipeline therefore moves from **esoteric grammar rules** (syntactic tree parsing) to **concrete and atomic senses of meaning** (what a hearer actually processes). This transition — from syntax to semantics for oral delivery — is a genuine advance in the field that neither pure grammatical analysis nor pure editorial intuition achieves alone.
 
+### Exegetical Hot Spots: Grammar-Driven Colometric Findings
+
+Spot-checking the colometric output against classic textual and structural debates reveals that grammar-driven formatting independently produces exegetically significant arrangements. These are not editorial decisions — they result from the same rules applied to every verse in the corpus.
+
+#### John 1:3-4 — ὃ γέγονεν placement
+**Debate:** Does ὃ γέγονεν complete v.3 ("not one thing that has been made") or begin v.4 ("what has come into being — in him was life")?
+**Colometry shows:** ὃ γέγονεν stays with v.3. The relative clause is governed by the antecedent ἕν in the preceding negative construction οὐδὲ ἕν. Separating it orphans the relative pronoun from its syntactic anchor.
+**Rule producing this:** Relative clause attachment to antecedent; verbless-line merge (ὃ γέγονεν alone fails the atomic thought test).
+
+#### Romans 9:5 — ὁ ὤν and Christological referent
+**Debate:** Does ὁ ὤν ἐπὶ πάντων θεὸς εὐλογητός refer to Christ or is it an independent doxology to the Father?
+**Colometry shows:** ὁ ὤν connects to ὁ Χριστός. The substantival participle functions as an appositional modifier and attaches to the nearest preceding substantive.
+**Rule producing this:** Participial phrase attachment; appositional modifier stays with its head noun.
+
+#### Ephesians 1:4-5 — ἐν ἀγάπῃ attachment
+**Debate:** Does ἐν ἀγάπῃ modify "holy and blameless" (backward) or "having predestined us" (forward)?
+**Colometry shows:** ἐν ἀγάπῃ attaches backward to ἁγίους καὶ ἀμώμους. The line break falls after ἐν ἀγάπῃ because the participial phrase προορίσας ἡμᾶς begins a new grammatical unit.
+**Rule producing this:** Participial phrase break (προορίσας triggers new line); prepositional phrase stays with its modified element.
+
+#### 1 Timothy 3:16 — hymn structure
+**Debate:** Is 3:16b a pre-Pauline hymn? What is its internal structure?
+**Colometry shows:** Six relative-clause lines fall into three antithetical pairs. The parallelism emerges from the grammar alone — relative clause + aorist passive, repeated six times.
+**Rule producing this:** Relative clause break; parallel stacking.
+
+#### Philippians 2:6-8 — kenosis hymn descent
+**Debate:** Internal structure of the recognized hymn (two strophes? three? chiastic?).
+**Colometry shows:** The descent structure is visually self-evident. Each downward step (μορφῇ θεοῦ → μορφὴν δούλου → σχήματι... ὡς ἄνθρωπος → θανάτου → θανάτου δὲ σταυροῦ) lands on its own line. The θανάτου repetition is preserved as a dramatic short-line appendage because δέ triggers a new line.
+**Rule producing this:** Participial phrase break (ὑπάρχων, λαβών, γενόμενος); subordinating conjunction break (ἵνα); discourse marker break (δέ).
+
+#### 1 Corinthians 15:3-5 — fourfold ὅτι creedal formula
+**Debate:** Boundaries and internal structure of the pre-Pauline creedal formula.
+**Colometry shows:** The fourfold ὅτι stacks as four parallel declarations, each a complete predication. The creedal formula's oral architecture — four parallel, self-contained units — emerges without any knowledge that this is a creed.
+**Rule producing this:** Subordinating conjunction break (ὅτι begins a new line); parallel stacking.
+
+#### Colossians 1:15-17 — cosmic scope hymn
+**Debate:** Structure and extent of the Col 1:15-20 hymn; status of the εἴτε list.
+**Colometry shows:** The εἴτε quadruple list (θρόνοι / κυριότητες / ἀρχαί / ἐξουσίαι) stacks as four parallel lines. The hymnic frame (ὅς ἐστιν... ὅτι ἐν αὐτῷ... τὰ πάντα) structures itself around this list.
+**Rule producing this:** Conjunction break (εἴτε); parallel stacking; relative clause break (ὅς).
+
+#### The pattern across all seven cases
+
+The pipeline has no concept of "hymn," "creed," "Christology," or "predestination." It applies the same grammatical rules to these verses that it applies to every other verse. The convergence between grammar-driven colometry and the conclusions of structural and exegetical scholarship validates both the method and the traditional analyses. The compositional architecture was always encoded in the grammar; prose formatting hides it; colometric formatting makes it visible.
+
+---
+
 ### Note on editorial punctuation
 
 Modern editorial punctuation (commas, periods, ano teleia) in the SBLGNT is not original to the text. Colometric rules must never be based on punctuation placement. The original texts were written in scriptio continua with no punctuation — the colometric line breaks themselves do the structural work that later editorial punctuation attempts to do. The web reader hides punctuation by default for this reason.
+
+---
+
+### Update — 2026-04-09 (session 3)
+
+- Added "Exegetical Hot Spots" section documenting seven cases where grammar-driven colometry independently produces exegetically significant structures: John 1:3-4, Rom 9:5, Eph 1:4-5, 1 Tim 3:16, Phil 2:6-8, 1 Cor 15:3-5, Col 1:15-17
+- Each finding documents the scholarly debate, what our colometry shows, and which grammatical rule produced the arrangement
+- Key insight: the pipeline converges with scholarly consensus on structural analysis without any interpretive input — the grammar encodes the compositional architecture that prose formatting hides
+- Paper seed created for a findings paper ("Grammar Reveals Structure") targeting NTS or JBL
 
