@@ -279,3 +279,62 @@ both men and women, he may bring them bound to Jerusalem.
 - Two-claim review framework established: colometric structure and YLT alignment accuracy are independently reviewable
 - Manual adjustment cases identified: rearranged clauses, merged clauses, expanded/contracted rendering
 - Review process: line-by-line comparison, coherence check, line count verification, web app toggle testing
+
+---
+
+### Update — 2026-04-10 (YLT alignment rewrite)
+
+#### The Problem
+
+The original YLT alignment algorithm (session 3) used a **bag-of-words gloss matching** approach: Macula glosses were pooled per colometric line, then each YLT word was fuzzy-matched against all lines simultaneously. This destroyed word-position information and caused cascading failures:
+
+- **False anchors from prefix matching:** "he" matched "heaven" via a 4-char prefix rule, poisoning downstream assignments.
+- **Bag-of-words pooling:** Collecting glosses per line as unordered sets lost the sequential correspondence between Greek word order and English word order.
+- **Monotonicity enforcement cascade:** One bad anchor forced all subsequent words onto wrong lines via the non-decreasing line-assignment constraint.
+- **Interpolation failures:** Unmatched words were distributed proportionally between anchors, which produced gibberish when anchors were wrong (e.g., Mark 4:4 "and it; devour").
+
+Mark 4 was used as the diagnostic thermometer. Initial spot-checking revealed obvious problems in 4:4, 4:5, 4:6, 4:7, 4:8 — verses where the YLT is highly literal and alignment should have been trivial.
+
+#### The Fix: Sequential Forward-Scan Alignment
+
+The algorithm was completely rewritten around a different principle: **walk both the Macula gloss sequence and the YLT text left-to-right in parallel**, matching content words against ordered anchors. The approach:
+
+1. **Map each Macula word to its colometric line** (Greek word → line index via normalized form matching against colometric text).
+2. **Build an ordered anchor sequence** from the Macula words: each content word's gloss/english attributes become matchable tokens, tagged with the line index. Stop words (the, a, of, and, it, etc.) are excluded as anchors.
+3. **Forward-scan the YLT text:** for each YLT content word, try to match against the next few anchors in sequence. When a match is found, record the line assignment and advance the anchor pointer.
+4. **Find line transitions:** where consecutive matched words jump from line K to line K+1, that's where the English split goes.
+5. **Gap split heuristic:** for the words between two matched anchors on different lines, prefer clause-starting conjunctions > punctuation boundaries > midpoint.
+
+This preserves word-position information (no pooling), handles repeated words naturally (sequential consumption), and automatically re-pegs when Greek breaks change.
+
+#### Three Refinement Rounds via Adversarial Audit
+
+After the initial rewrite fixed the gross failures (4:4 "and it; devour", 4:6 scrambled lines), an adversarial audit of all 41 Mark 4 verses found 12 remaining problems in three pattern classes:
+
+**Pattern 1 — Truncation/merge (5 verses: 4:16, 4:18, 4:20, 4:22, 4:24):**
+Greek function words (ὅς, οὗτοι, τίς) glossed as "who", "these", "what" were acting as false content anchors, causing the algorithm to split too early and produce short stubs ("'And these are they," / rest of line merged with next). Fix: added relative/interrogative/demonstrative pronouns to stop words; raised substring match minimum from 5 to 6 characters; added hide/secret synonym for Macula vocabulary gaps.
+
+**Pattern 2 — Dangling words (3 verses: 4:8, 4:21, 4:25):**
+Words at line boundaries pulled onto the wrong line. Two sub-causes: (a) the word-order-swap lookback was re-matching already-consumed anchors for repeated glosses like "one" (ἕν appears on both lines 41 and 42); (b) negation/additive markers ("not", "also") were invisible as stop words even though they start new clauses. Fix: track consumed anchors to prevent re-matching; removed "not" from stop words since it's semantically significant at clause boundaries.
+
+**Pattern 3 — Line count mismatch (2 verses: 4:32, 4:41):**
+Some Greek lines (like Τίς ἄρα οὗτός ἐστιν — "Who then is this") consist entirely of stop-word glosses, producing zero anchors and causing the line to be merged with its neighbor. Fix: detect anchorless lines and promote their stop-word glosses to anchors; prefer midpoint clause starters in gap splits (not first one); re-split longest line at clause boundary instead of empty-padding.
+
+#### Results After All Fixes
+
+| Metric | Before (session 3) | After rewrite |
+|--------|-------------------|---------------|
+| Gloss-aligned | ~99.8% | 99.9% (7,935/7,939) |
+| Clause fallbacks | ~15 | 2 |
+| Mark 4 problems | 12+ obvious | 0 (adversarial-verified) |
+| Algorithm | Bag-of-words + interpolation | Sequential forward-scan |
+
+The alignment now automatically re-pegs when Greek colometric breaks change — it derives English splits from the Macula word-level Greek→line mapping, so future editorial changes to Greek line breaks cascade correctly to the English layer.
+
+#### Key Design Principles Established
+
+- **Greek breaks are the source of truth.** The English simply needs to be brought into alignment.
+- **YLT is literal enough that alignment should normally be easy.** When it's not, the algorithm is wrong — not the data.
+- **Sequential matching, not bag-of-words.** Word-position information must be preserved.
+- **Adversarial audit after every significant change.** The Mark 4 thermometer pattern: fix, rebuild, audit all verses, fix what the audit finds, repeat until clean.
+- **Three parallel adversarial agents per problem class.** Each agent diagnoses one pattern, proposes a fix, and tests it. Fixes are then synthesized and applied together.

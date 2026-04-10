@@ -30,7 +30,7 @@ readers-gnt/
     v3_colometry.py                      # Tier 3: rhetorical patterns + merge rules
     morphgnt_lookup.py                   # MorphGNT word-level morphological lookup
     ylt_parse.py                         # Downloads/parses YLT into ylt-verses.json
-    ylt_align.py                         # Aligns YLT text to colometric line breaks
+    ylt_align.py                         # Sequential forward-scan YLT alignment
     build_books.py                       # Text→HTML fragment builder (reads v3 + ylt)
   handoffs/                              # Project documentation (this folder)
   research/                              # Gitignored — external datasets
