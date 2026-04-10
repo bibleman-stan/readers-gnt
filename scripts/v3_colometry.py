@@ -2878,16 +2878,22 @@ def _find_best_macula_split(line, words, book_slug, chapter, verse):
     if not valid_points:
         return None
 
-    # Find the minimum (shallowest) depth among valid points
+    # Strictly prefer the shallowest (highest-level) boundary.
+    # A split at a clause boundary that creates unbalanced halves (30/70)
+    # is better than a split at a word-group boundary that's centered (50/50)
+    # but cuts inside a phrase. Only fall back to deeper boundaries when no
+    # shallow boundary produces valid halves.
     min_depth = min(d for _, d in valid_points)
 
-    # Among points at or near the shallowest depth (within 2 levels),
-    # pick the one closest to the midpoint
-    candidates = [(idx, depth) for idx, depth in valid_points
-                  if depth <= min_depth + 2]
+    # Try shallowest depth first
+    for depth_level in sorted(set(d for _, d in valid_points)):
+        candidates = [(idx, d) for idx, d in valid_points if d == depth_level]
+        if candidates:
+            # Among equal-depth candidates, prefer closest to midpoint
+            best = min(candidates, key=lambda x: abs(x[0] - midpoint))
+            return best[0]
 
-    best = min(candidates, key=lambda x: abs(x[0] - midpoint))
-    return best[0]
+    return None
 
 
 def _find_heuristic_split(words, line_len):
