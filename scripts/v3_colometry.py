@@ -2835,18 +2835,52 @@ _HEURISTIC_SPLIT_PREPS = frozenset([
 def _is_safe_split_point(words, idx):
     """Check if splitting BEFORE word at idx is safe (won't break tight pairs).
 
-    Guards:
-    - Don't split after an article (article must stay with its noun)
-    - Don't split after a preposition (preposition must stay with its object)
-    - Don't split at index 0 (would create empty first half)
+    Guards against splitting inside grammatical units:
+    - Article + noun (ὁ | ἄνθρωπος)
+    - Preposition + object (ἐν | τῇ θαλάσσῃ)
+    - Elided preposition + object (παρʼ | ᾧ)
+    - Noun + genitive modifier (βάθη | τοῦ θεοῦ) — genitive article signals
+    - Negation + verb (οὐ | φρονεῖς, μὴ | ποιεῖν)
+    - Possessive after noun (πατήρ | σου, μαθηταί | μου)
     """
     if idx <= 0 or idx >= len(words):
         return False
 
     prev_word = re.sub(r'[,.\;·⸀⸁⸂⸃⸄⸅]', '', words[idx - 1])
+    next_word = re.sub(r'[,.\;·⸀⸁⸂⸃⸄⸅]', '', words[idx]) if idx < len(words) else ''
+
+    # Don't split after an article
     if prev_word in _ARTICLES:
         return False
+
+    # Don't split after a preposition (including elided forms)
     if prev_word in _PREPOSITIONS_SET:
+        return False
+    _ELIDED_PREPS = {
+        'παρʼ', "παρ'", 'ἀπʼ', "ἀπ'", 'ἐπʼ', "ἐπ'", 'ὑπʼ', "ὑπ'",
+        'κατʼ', "κατ'", 'μετʼ', "μετ'", 'διʼ', "δι'", 'ἀφʼ', "ἀφ'", 'ἐφʼ', "ἐφ'",
+    }
+    if prev_word in _ELIDED_PREPS:
+        return False
+
+    # Don't split before a genitive article (noun | τοῦ θεοῦ)
+    _GENITIVE_ARTICLES = {'τοῦ', 'τῆς', 'τῶν', 'τοῖς', 'ταῖς'}
+    if next_word in _GENITIVE_ARTICLES:
+        return False
+
+    # Don't split after a negation particle
+    _NEGATIONS = {'οὐ', 'οὐκ', 'οὐχ', 'μή', 'μὴ', 'οὔ'}
+    if prev_word in _NEGATIONS:
+        return False
+
+    # Don't split before personal pronouns in possessive position
+    _POSSESSIVES = {'μου', 'σου', 'αὐτοῦ', 'αὐτῆς', 'ἡμῶν', 'ὑμῶν', 'αὐτῶν'}
+    if next_word in _POSSESSIVES:
+        return False
+
+    # Don't split before a conjunction that's part of a correlative/list
+    # (τε in τε...καί constructions)
+    if prev_word == 'τε' or next_word == 'τε':
         return False
 
     return True
