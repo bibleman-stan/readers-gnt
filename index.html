@@ -244,6 +244,16 @@
     padding-left: var(--wrap-indent);
   }
 
+  /* === DUAL-TEXT DISPLAY MODES === */
+  /* Default: Greek only */
+  .en { display: none; }
+  /* English only */
+  body.show-english .gk { display: none; }
+  body.show-english .en { display: inline; }
+  /* Both (interleaved) */
+  body.show-both .gk { display: block; }
+  body.show-both .en { display: block; font-style: italic; color: var(--text-dim); font-size: 0.88em; margin-top: 2px; }
+
   /* === PUNCTUATION (hidden by default — editorial, not original) === */
   .punct {
     display: none;
@@ -641,6 +651,123 @@
     color: var(--text-dim);
   }
 
+  /* === TEXT SIZE BUTTONS === */
+  .size-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .size-btn {
+    flex: 1;
+    padding: 7px 0;
+    border-radius: 8px;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-faint);
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    transition: all 0.15s;
+  }
+  .size-btn:hover {
+    border-color: rgba(255,255,255,0.1);
+    color: var(--text-dim);
+  }
+  .size-btn.active {
+    border-color: var(--border-accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+  .size-btn .letter {
+    font-size: 0.88em;
+    font-weight: 600;
+  }
+  .size-btn .label {
+    font-size: 0.68em;
+    opacity: 0.6;
+  }
+
+  /* === SEARCH RETURN BUTTON === */
+  #search-return-btn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 180;
+    background: rgba(40,40,40,0.92);
+    color: var(--accent);
+    border: 1px solid var(--border-accent);
+    border-radius: 20px;
+    padding: 8px 18px;
+    font-size: 0.82em;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    white-space: nowrap;
+    transition: opacity 0.3s;
+  }
+  #search-return-btn.visible { display: block; }
+  #search-return-btn:hover { background: rgba(60,60,60,0.95); }
+
+  /* === BACK TO TOP BUTTON === */
+  #back-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: rgba(58,58,58,0.85);
+    color: #999;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    z-index: 20;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: opacity 0.2s;
+  }
+  #back-to-top:hover { background: rgba(80,80,80,0.95); color: #ccc; }
+
+  /* === FLOATING CHAPTER ARROWS === */
+  .float-nav {
+    display: none;
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 54px;
+    line-height: 54px;
+    text-align: center;
+    font-size: 1.3em;
+    background: rgba(30,30,30,0.6);
+    color: #888;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 15;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .float-nav.active { display: block; opacity: 0.6; }
+  .float-nav:hover { opacity: 1; background: rgba(40,40,40,0.85); color: #ccc; }
+  .float-nav-prev { left: 4px; }
+  .float-nav-next { right: 4px; }
+
+  @media (max-width: 600px) {
+    .float-nav { width: 26px; height: 44px; line-height: 44px; font-size: 1.1em; opacity: 0.4; }
+    .float-nav.active { opacity: 0.4; }
+  }
+
   @media (max-width: 480px) {
     body { padding: 0.5em; padding-top: 50px; }
     #content { padding: 16px; padding-top: 8px; }
@@ -653,9 +780,77 @@
       grid-template-columns: repeat(4, 1fr);
     }
   }
+
+  /* === HELP OVERLAY === */
+  .help-overlay {
+    position: fixed;
+    inset: 0;
+    background: #0e1014;
+    z-index: 300;
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .help-overlay.open { display: flex; }
+  .help-header {
+    position: sticky; top: 0; background: #0e1014;
+    height: 44px; padding: 0 14px;
+    display: flex; align-items: center; gap: 8px;
+    z-index: 1; border-bottom: 1px solid var(--border);
+    max-width: 42em; margin: 0 auto; width: 100%;
+  }
+  .help-close {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 6px; background: none; border: none;
+    color: var(--text-faint); cursor: pointer; font-size: 18px;
+  }
+  .help-close:hover { color: var(--text-dim); }
+  .help-title { font-size: 0.88em; color: var(--text-dim); font-weight: 400; }
+  .help-body {
+    padding: 0 1.5em 3em; max-width: 42em; margin: 0 auto; width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.88em; color: #b8b2a8; line-height: 1.7;
+  }
+  .help-body h2 {
+    font-size: 1.05em; font-weight: 600; color: #dce4ec;
+    margin: 1.8em 0 0.5em; letter-spacing: 0.01em;
+  }
+  .help-body h2:first-child { margin-top: 1em; }
+  .help-body p { margin: 0 0 0.7em; }
+  .help-body .help-card {
+    background: rgba(255,255,255,0.025); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.8em 1em; margin: 0.6em 0;
+  }
+  .help-body .help-card-name {
+    font-weight: 600; font-size: 0.92em; color: var(--accent); margin-bottom: 0.2em;
+  }
+  .help-body .help-card-desc { font-size: 0.88em; color: #999; line-height: 1.6; }
+  .help-body ul { margin: 0.3em 0 0.7em 1.2em; padding: 0; }
+  .help-body li { margin-bottom: 0.3em; }
+  .help-body code {
+    background: rgba(255,255,255,0.06); padding: 1px 5px; border-radius: 3px;
+    font-size: 0.92em; font-family: Consolas, 'Courier New', monospace; color: var(--text-dim);
+  }
+  .help-body a { color: var(--accent); text-decoration: none; }
+  .help-body a:hover { text-decoration: underline; }
+  .help-back-link { display: inline-block; color: var(--accent); font-size: 0.9em; margin-top: 1.5em; cursor: pointer; }
 </style>
 </head>
 <body>
+
+<!-- Floating chapter arrows -->
+<a id="float-prev" class="float-nav float-nav-prev" href="#" onclick="goChapter(-1); return false;">&lsaquo;</a>
+<a id="float-next" class="float-nav float-nav-next" href="#" onclick="goChapter(1); return false;">&rsaquo;</a>
+
+<!-- Search return button -->
+<button id="search-return-btn" onclick="searchReturn()">&#8592; Return to previous position</button>
+
+<!-- Back to top button -->
+<a href="#" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;" title="Back to top">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+</a>
 
 <!-- Progress line -->
 <div class="progress-line" id="progress-line"></div>
@@ -677,6 +872,9 @@
     <button class="topbar-icon" id="btn-settings" onclick="toggleSettings()" aria-label="Settings" title="Settings">
       <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 00-.48-.41h-3.84a.48.48 0 00-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87a.48.48 0 00.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.26.41.48.41h3.84c.24 0 .44-.17.48-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.61 3.61 0 0112 15.6z"/></svg>
     </button>
+    <button class="topbar-icon" id="btn-help" onclick="openHelp()" aria-label="Help" title="Help">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+    </button>
   </div>
 </div>
 
@@ -684,6 +882,31 @@
 <div class="settings-panel" id="settings-panel">
   <label><input type="checkbox" id="setting-punct" onchange="togglePunct(this.checked)"> Show punctuation</label>
   <label><input type="checkbox" id="setting-verses" checked onchange="toggleVerseNums(this.checked)"> Show verse numbers</label>
+  <div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">
+    <div style="font-size:0.78em; color:var(--text-dim); margin-bottom:6px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">Text size</div>
+    <div class="size-row">
+      <button class="size-btn" onclick="setTextSize('small')">
+        <span class="letter" style="font-size:0.8em;">A</span>
+        <span class="label">Small</span>
+      </button>
+      <button class="size-btn active" onclick="setTextSize('medium')">
+        <span class="letter" style="font-size:1.05em;">A</span>
+        <span class="label">Medium</span>
+      </button>
+      <button class="size-btn" onclick="setTextSize('large')">
+        <span class="letter" style="font-size:1.35em;">A</span>
+        <span class="label">Large</span>
+      </button>
+    </div>
+  </div>
+  <div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">
+    <div style="font-size:0.78em; color:var(--text-dim); margin-bottom:6px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">Display</div>
+    <select id="setting-display" onchange="setDisplayMode(this.value)" style="width:100%; padding:6px 8px; background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:6px; font-size:0.82em; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; cursor:pointer; outline:none;">
+      <option value="greek">Greek</option>
+      <option value="english">English (YLT)</option>
+      <option value="both">Both</option>
+    </select>
+  </div>
   <div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">
     <div style="display:flex; align-items:center; justify-content:space-between;">
       <div>
@@ -726,6 +949,69 @@
   <div class="verse-popover-grid" id="verse-popover-grid"></div>
 </div>
 
+<!-- Help overlay -->
+<div class="help-overlay" id="help-overlay">
+  <div class="help-header">
+    <button class="help-close" onclick="closeHelp()">&times;</button>
+    <span class="help-title">Help</span>
+  </div>
+  <div class="help-body">
+    <h2>Reading Modes</h2>
+    <div class="help-card">
+      <div class="help-card-name">Greek (default)</div>
+      <div class="help-card-desc">The SBL Greek New Testament formatted in sense-lines &mdash; one thought, one breath per line.</div>
+    </div>
+    <div class="help-card">
+      <div class="help-card-name">English</div>
+      <div class="help-card-desc">Young&rsquo;s Literal Translation (1898, public domain), aligned to the same sense-line breaks as the Greek.</div>
+    </div>
+    <div class="help-card">
+      <div class="help-card-name">Both</div>
+      <div class="help-card-desc">Greek and English interleaved, with the English in dimmer italic below each Greek line.</div>
+    </div>
+    <p>To switch modes: tap the settings gear in the top bar, then change the Display dropdown.</p>
+
+    <h2>What Are Sense-Lines?</h2>
+    <p>Each line in this edition represents one thought, one breath, one image. The original texts of the New Testament were composed for oral delivery, not silent reading.</p>
+    <p>Modern formatting &mdash; verse numbers, paragraph breaks, editorial punctuation &mdash; was added centuries after composition and can obscure the original structure. This edition recovers the compositional flow using Greek grammatical analysis, placing natural break points where the grammar itself dictates: at subordinate clauses, discourse markers, participial phrases, and parallel structures.</p>
+
+    <h2>Navigation</h2>
+    <ul>
+      <li>Tap the book name or chapter number in the top bar to open the navigation panel.</li>
+      <li>Tap a chapter number, then select a verse to jump directly to it.</li>
+      <li>URL format: <code>#book-chapter-verse</code> (e.g., <code>#acts-2-38</code>)</li>
+      <li>Tap the home icon or &ldquo;GNT Reader&rdquo; text to return to the landing page.</li>
+      <li>Use arrow keys or the floating arrows at screen edges to move between chapters.</li>
+    </ul>
+
+    <h2>Search</h2>
+    <ul>
+      <li>Tap the magnifying glass icon or press <code>Ctrl+F</code> to open search.</li>
+      <li>Type Greek <strong>without</strong> accents or breathing marks &mdash; search handles diacritics automatically.</li>
+      <li>Type a dictionary form (e.g., <code>ακουω</code>) to find all inflected forms (52 forms for ἀκούω).</li>
+      <li>Use quotes for an exact form: <code>"ακουσας"</code> matches only that form.</li>
+      <li>Boolean operators: <code>AND</code>, <code>OR</code>, <code>NOT</code>, <code>NEAR5</code>, parentheses.</li>
+      <li>Tap a result to navigate directly to that verse.</li>
+    </ul>
+
+    <h2>Settings</h2>
+    <ul>
+      <li><strong>Punctuation:</strong> Show or hide editorial punctuation (hidden by default &mdash; it is not original to the text).</li>
+      <li><strong>Verse numbers:</strong> Show or hide verse reference numbers.</li>
+      <li><strong>Text size:</strong> Small, Medium, or Large.</li>
+      <li><strong>Display:</strong> Greek, English, or Both.</li>
+    </ul>
+
+    <h2>About</h2>
+    <p><strong>Base text:</strong> SBL Greek New Testament (SBLGNT), licensed under CC-BY-4.0.</p>
+    <p><strong>English translation:</strong> Young&rsquo;s Literal Translation (1898), public domain.</p>
+    <p><strong>Method:</strong> Sense-lines derived from Greek grammatical structure using syntax tree analysis, following the scholarly tradition of colometric formatting for oral delivery.</p>
+    <p>For more information, see the <a href="https://github.com/bibleman-stan/readers-nt" target="_blank">project on GitHub</a>.</p>
+
+    <p><a class="help-back-link" href="#" onclick="closeHelp(); return false;">&larr; Back to reading</a></p>
+  </div>
+</div>
+
 <!-- Nav panel -->
 <div class="nav-panel" id="nav-panel">
   <div class="nav-panel-header">
@@ -739,7 +1025,7 @@
 <div class="landing" id="landing">
   <div class="landing-title">Greek New Testament<br><span class="landing-title-sub">Colometric Reading Edition</span></div>
   <p class="landing-tagline">The text as it was meant to be heard.</p>
-  <p class="landing-desc">Ancient authors composed for the ear, not the eye. Modern Bible formatting — verse numbers, paragraph breaks, punctuation — was added centuries after composition and obscures the original structure. This edition formats the Greek New Testament into sense-lines based on grammatical structure, recovering the breath units and thought patterns that the original audiences heard.</p>
+  <p class="landing-desc">Ancient authors composed for the ear, not the eye. Modern Bible formatting — verse numbers, paragraph breaks, punctuation — was added centuries after composition and obscures the original structure. This edition formats the Greek New Testament into sense-lines based on grammatical structure, recovering the breath units and thought patterns that the original audiences heard. Available in Greek, English (Young's Literal Translation), or both.</p>
   <div class="landing-books-label">Select a book</div>
   <div class="landing-books" id="landing-books"></div>
 </div>
@@ -860,6 +1146,7 @@ async function navigate(book, chapter, verse) {
   setHash(book, chapter, verse);
   updateTopbar();
   updateNavButtons();
+  updateFloatNav();
   await loadBook(book);
   if (verse) {
     scrollToVerse(chapter, verse);
@@ -1135,6 +1422,29 @@ function toggleVerseNums(on) {
   localStorage.setItem('gnt-show-verses', on ? '1' : '0');
 }
 
+// --- Text size ---
+
+const TEXT_SIZES = { small: '15px', medium: '17px', large: '19px' };
+
+function setTextSize(size) {
+  document.documentElement.style.setProperty('--font-size', TEXT_SIZES[size]);
+  localStorage.setItem('gnt-text-size', size);
+  document.querySelectorAll('.size-btn').forEach(function(btn) {
+    const label = btn.querySelector('.label');
+    if (label) btn.classList.toggle('active', label.textContent.toLowerCase() === size);
+  });
+}
+
+function setDisplayMode(mode) {
+  document.body.classList.remove('show-english', 'show-both');
+  if (mode === 'english') document.body.classList.add('show-english');
+  else if (mode === 'both') document.body.classList.add('show-both');
+  localStorage.setItem('gnt-display-mode', mode);
+  // Update select element to match
+  const sel = document.getElementById('setting-display');
+  if (sel) sel.value = mode;
+}
+
 function loadSettings() {
   const punct = localStorage.getItem('gnt-show-punct') === '1';
   const verses = localStorage.getItem('gnt-show-verses') !== '0'; // default ON
@@ -1142,6 +1452,12 @@ function loadSettings() {
   document.getElementById('setting-verses').checked = verses;
   document.body.classList.toggle('show-punct', punct);
   document.body.classList.toggle('hide-verse-nums', !verses);
+  // Load text size
+  const savedSize = localStorage.getItem('gnt-text-size') || 'medium';
+  setTextSize(savedSize);
+  // Load display mode
+  const savedDisplay = localStorage.getItem('gnt-display-mode') || 'greek';
+  setDisplayMode(savedDisplay);
 }
 
 // --- Search (Boolean query parser + cross-book index) ---
@@ -1251,25 +1567,35 @@ async function buildSearchIndex() {
         const ch = parseInt(m[1]);
         const vNum = parseInt(m[2]);
 
-        // Get all line text, join with space, strip punctuation spans
+        // Get Greek and English text separately for dual-language search
         const lines = verse.querySelectorAll('.line');
-        let text = '';
+        let gkText = '';
+        let enText = '';
         for (const line of lines) {
-          // Clone and remove .punct spans to get clean text
-          const clone = line.cloneNode(true);
-          const puncts = clone.querySelectorAll('.punct');
-          for (const p of puncts) p.remove();
-          text += (text ? ' ' : '') + clone.textContent.trim();
+          const gkSpan = line.querySelector('.gk');
+          const enSpan = line.querySelector('.en');
+          if (gkSpan) {
+            const clone = gkSpan.cloneNode(true);
+            const puncts = clone.querySelectorAll('.punct');
+            for (const p of puncts) p.remove();
+            gkText += (gkText ? ' ' : '') + clone.textContent.trim();
+          }
+          if (enSpan) {
+            const t = enSpan.textContent.trim();
+            if (t) enText += (enText ? ' ' : '') + t;
+          }
         }
 
-        if (text) {
+        if (gkText || enText) {
           index.push({
             book: slug,
             bookName: BOOKS[slug].name,
             chapter: ch,
             verse: vNum,
-            text: text,
-            textStripped: stripDiacritics(text)
+            text: gkText,
+            textStripped: stripDiacritics(gkText),
+            enText: enText,
+            enTextLower: enText.toLowerCase()
           });
         }
       }
@@ -1324,6 +1650,9 @@ function openSearch() {
   document.getElementById('search-overlay').classList.add('open');
   const input = document.getElementById('search-input');
   input.value = '';
+  // Set placeholder based on display mode
+  const dm = localStorage.getItem('gnt-display-mode') || 'greek';
+  input.placeholder = dm === 'english' ? 'Search English text...' : 'Search Greek text...';
   input.focus();
   document.getElementById('search-status').textContent = '';
   document.getElementById('search-results').innerHTML = '';
@@ -1588,11 +1917,19 @@ function performSearch(query) {
   }
 
   const hits = [];
+  const displayMode = localStorage.getItem('gnt-display-mode') || 'greek';
+  const searchEnglish = (displayMode === 'english');
 
   for (const entry of searchIndex) {
     let matched = false;
 
-    if (boolMatcher) {
+    if (searchEnglish) {
+      // English mode: simple case-insensitive search on English text
+      if (!entry.enText) continue;
+      const queryLower = query.trim().toLowerCase();
+      const words = queryLower.split(/\s+/).filter(w => w.length > 0);
+      matched = words.every(w => entry.enTextLower.indexOf(w) !== -1);
+    } else if (boolMatcher) {
       matched = boolMatcher(entry.textStripped);
     } else if (isExact) {
       const phrase = stripDiacritics(query.trim().replace(/^"|"$/g, ''));
@@ -1648,15 +1985,21 @@ function performSearch(query) {
 
     const textDiv = document.createElement('div');
     textDiv.className = 'search-result-text';
-    textDiv.innerHTML = highlightSearchResult(entry.text, lastSearchTerms);
+    if (searchEnglish) {
+      const qw = query.trim().toLowerCase().split(/\s+/).filter(w => w.length > 0);
+      textDiv.innerHTML = highlightSearchResult(entry.enText, qw);
+    } else {
+      textDiv.innerHTML = highlightSearchResult(entry.text, lastSearchTerms);
+    }
 
     card.appendChild(refDiv);
     card.appendChild(textDiv);
 
     ((book, ch, v) => {
       card.onclick = () => {
+        savePositionForReturn();
         closeSearch();
-        navigate(book, ch, v);
+        navigate(book, ch, v).then(() => showReturnButton());
       };
     })(entry.book, entry.chapter, entry.verse);
 
@@ -1773,6 +2116,11 @@ document.addEventListener('keydown', function(e) {
       return;
     }
   }
+
+  // Arrow keys for chapter nav (only when not in input fields)
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'ArrowLeft') { goChapter(-1); }
+  if (e.key === 'ArrowRight') { goChapter(1); }
 });
 
 // Search input handler with debounce
@@ -1789,6 +2137,60 @@ document.addEventListener('click', function(e) {
     closeSettings();
   }
 });
+
+// --- Search return button ---
+
+let searchReturnState = null;
+let searchReturnTimer = null;
+
+function savePositionForReturn() {
+  searchReturnState = {
+    book: currentBook,
+    chapter: currentChapter,
+    scrollY: window.scrollY
+  };
+}
+
+function showReturnButton() {
+  const btn = document.getElementById('search-return-btn');
+  if (!btn) return;
+  btn.classList.add('visible');
+  clearTimeout(searchReturnTimer);
+  searchReturnTimer = setTimeout(() => { hideReturnButton(); }, 10000);
+}
+
+function hideReturnButton() {
+  const btn = document.getElementById('search-return-btn');
+  if (btn) btn.classList.remove('visible');
+  clearTimeout(searchReturnTimer);
+  searchReturnState = null;
+}
+
+function searchReturn() {
+  if (!searchReturnState) return;
+  const st = searchReturnState;
+  hideReturnButton();
+  navigate(st.book, st.chapter).then(() => {
+    setTimeout(() => { window.scrollTo({ top: st.scrollY, behavior: 'smooth' }); }, 100);
+  });
+}
+
+// --- Floating chapter arrows ---
+
+function updateFloatNav() {
+  const prev = document.getElementById('float-prev');
+  const next = document.getElementById('float-next');
+  if (!prev || !next) return;
+  const landing = document.getElementById('landing');
+  if (landing && landing.classList.contains('visible')) {
+    prev.classList.remove('active');
+    next.classList.remove('active');
+    return;
+  }
+  const idx = BOOK_KEYS.indexOf(currentBook);
+  if (currentChapter > 1 || idx > 0) { prev.classList.add('active'); } else { prev.classList.remove('active'); }
+  if (currentChapter < BOOKS[currentBook].chapters || idx < BOOK_KEYS.length - 1) { next.classList.add('active'); } else { next.classList.remove('active'); }
+}
 
 // --- Landing page ---
 
@@ -1876,6 +2278,7 @@ function showLanding() {
   closeSettings();
   closeSearch();
   closeVersePopover();
+  closeHelp();
   // Show landing, hide content
   document.getElementById('landing').classList.add('visible');
   document.getElementById('content').style.display = 'none';
@@ -1883,6 +2286,9 @@ function showLanding() {
   document.getElementById('topbar-loc').style.display = 'none';
   document.getElementById('btn-home').style.display = 'none';
   document.getElementById('progress-line').style.width = '0%';
+  // Hide floating nav
+  document.getElementById('float-prev').classList.remove('active');
+  document.getElementById('float-next').classList.remove('active');
   // Clear hash
   if (location.hash && location.hash !== '#home') {
     history.replaceState(null, '', location.pathname);
@@ -1897,9 +2303,29 @@ function hideLanding() {
   document.getElementById('btn-home').style.display = '';
 }
 
+
+// --- Help overlay ---
+
+function openHelp() {
+  closeNav();
+  closeSettings();
+  closeSearch();
+  closeVersePopover();
+  document.getElementById('help-overlay').classList.add('open');
+}
+
+function closeHelp() {
+  document.getElementById('help-overlay').classList.remove('open');
+}
+
 // --- Init ---
 
-window.addEventListener('scroll', updateProgress, { passive: true });
+const backToTopBtn = document.getElementById('back-to-top');
+window.addEventListener('scroll', function() {
+  updateProgress();
+  // Back-to-top button visibility
+  if (backToTopBtn) backToTopBtn.style.display = window.scrollY > 300 ? 'flex' : 'none';
+}, { passive: true });
 
 window.addEventListener('hashchange', () => {
   const { book, chapter, verse } = parseHash();
