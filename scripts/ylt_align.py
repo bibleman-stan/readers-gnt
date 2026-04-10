@@ -752,7 +752,12 @@ def split_ylt_by_glosses(ylt_text, greek_lines, macula_words):
     # Step 5: Resolve unmatched words and enforce monotonicity
     resolved = _resolve_assignments(assignments, num_lines)
 
-    # Step 6: Build output lines by splitting at line-assignment boundaries
+    # Step 6: Build output lines. The key insight: the `resolved` array assigns
+    # each YLT token (in original English order) to a line number, and the
+    # assignments are monotonically non-decreasing. So we simply walk through
+    # the tokens in order and group them by their assigned line. Since the
+    # tokens are already in English reading order, each line's words will
+    # naturally be in the correct English order.
     result_lines = [[] for _ in range(num_lines)]
     for i, (word, start, end) in enumerate(ylt_tokens):
         line_idx = resolved[i]
@@ -760,7 +765,6 @@ def split_ylt_by_glosses(ylt_text, greek_lines, macula_words):
             line_idx = num_lines - 1
         result_lines[line_idx].append(word)
 
-    # Reconstruct with proper spacing, preserving original punctuation
     output = []
     for words in result_lines:
         output.append(' '.join(words))
@@ -772,7 +776,76 @@ def split_ylt_by_glosses(ylt_text, greek_lines, macula_words):
         # Merge extras onto last line
         output = output[:num_lines - 1] + [' '.join(output[num_lines - 1:])]
 
-    return cleanup_ylt_fragments(output, num_lines, greek_lines)
+    output = cleanup_english_dangles(output)
+    output = cleanup_ylt_fragments(output, num_lines, greek_lines)
+
+    # Quality check: if the gloss alignment produced lines with scrambled
+    # word order (detected by checking if any word appears before a word
+    # that precedes it in the original text), fall back to clause heuristic
+    if _has_scrambled_words(output, ylt_text):
+        clause_output = split_text_into_n(ylt_text, num_lines)
+        if clause_output and not _has_scrambled_words(clause_output, ylt_text):
+            return cleanup_english_dangles(
+                cleanup_ylt_fragments(clause_output, num_lines, greek_lines)
+            )
+
+    return output
+
+
+def _has_scrambled_words(lines, original_text):
+    """Check if any line's words appear out of order relative to the original text."""
+    original_lower = original_text.lower()
+    for line in lines:
+        words = line.split()
+        if len(words) < 2:
+            continue
+        positions = []
+        search_start = 0
+        for w in words:
+            clean = w.strip('.,;:!?\'"()[]').lower()
+            if not clean:
+                continue
+            pos = original_lower.find(clean, search_start)
+            if pos == -1:
+                # Word not found from search_start — try from beginning
+                pos = original_lower.find(clean)
+            if pos >= 0:
+                positions.append(pos)
+                search_start = pos + len(clean)
+        # Check if positions are monotonically non-decreasing
+        for i in range(1, len(positions)):
+            if positions[i] < positions[i-1]:
+                return True
+    return False
+
+
+def cleanup_english_dangles(lines):
+    """Move dangling English conjunctions/prepositions from line end to next line start.
+
+    Same principle as the Greek dangling function word fix: 'and', 'but', 'for',
+    'or', 'that', 'which', 'who', 'whom', etc. should never end a line.
+    """
+    ENGLISH_DANGLES = {
+        'and', 'but', 'for', 'or', 'nor', 'yet', 'so',
+        'that', 'which', 'who', 'whom', 'whose', 'where', 'when',
+        'if', 'though', 'although', 'because', 'since', 'while',
+        'the', 'a', 'an', 'of', 'to', 'in', 'on', 'at', 'by',
+        'with', 'from', 'into', 'upon', 'unto', 'through',
+    }
+    if len(lines) < 2:
+        return lines
+
+    for i in range(len(lines) - 1):
+        words = lines[i].split()
+        if not words:
+            continue
+        last = words[-1].rstrip('.,;:!?').lower()
+        if last in ENGLISH_DANGLES and len(words) > 1:
+            dangling = words[-1]
+            lines[i] = ' '.join(words[:-1])
+            lines[i + 1] = dangling + ' ' + lines[i + 1]
+
+    return lines
 
 
 def cleanup_ylt_fragments(lines, target_count, greek_lines=None):
