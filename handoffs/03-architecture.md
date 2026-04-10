@@ -14,19 +14,29 @@ readers-gnt/
         Matt.txt, Mark.txt, ... Rev.txt
       v1-colometric/                     # 260 pattern-matched chapter files (tier 1)
         matt-01.txt ... rev-22.txt
-      v2-colometric/                     # 260 syntax-tree-driven chapter files (tier 2, active)
+      v2-colometric/                     # 260 syntax-tree-driven chapter files (tier 2)
         matt-01.txt ... rev-22.txt
-  books/                                 # 27 generated HTML fragment files (from v2)
+      v3-colometric/                     # 260 rhetorical+refined chapter files (tier 3, active)
+        matt-01.txt ... rev-22.txt
+      ylt-colometric/                    # YLT English aligned to colometric breaks
+        matt-01.txt ... rev-22.txt
+    ylt-verses.json                      # Parsed YLT text keyed by book/chapter/verse
+  books/                                 # 27 generated HTML fragment files (dual-text)
     matt.html, mark.html, ... rev.html
   scripts/
     auto_colometry.py                    # Tier 1: rule-based sense-line formatter
     v2_colometry.py                      # Tier 2: Macula syntax-tree-driven formatter
     macula_clauses.py                    # Clause boundary extractor from Macula XML
-    build_books.py                       # Text→HTML fragment builder (reads v2-colometric)
+    v3_colometry.py                      # Tier 3: rhetorical patterns + merge rules
+    morphgnt_lookup.py                   # MorphGNT word-level morphological lookup
+    ylt_parse.py                         # Downloads/parses YLT into ylt-verses.json
+    ylt_align.py                         # Aligns YLT text to colometric line breaks
+    build_books.py                       # Text→HTML fragment builder (reads v3 + ylt)
   handoffs/                              # Project documentation (this folder)
   research/                              # Gitignored — external datasets
     morphgnt-sblgnt/                     # MorphGNT SBLGNT morphological tagging
     macula-greek/                        # Macula Greek syntax trees (Clear Bible)
+    ylt/                                 # YLT source files (USFM from eBible.org)
 ```
 
 ## Base Text: SBLGNT
@@ -101,9 +111,48 @@ Library module that extracts clause boundaries from Macula Greek Lowfat XML synt
 - `get_chapter_clauses(book, chapter)` → `{verse: [clause_text, ...]}`
 - `get_chapter_clauses_detailed(book, chapter)` → `{verse: [ClauseInfo, ...]}` with metadata (participle flags, genitive absolute detection)
 
+### ylt_parse.py
+
+Downloads and parses the YLT (Young's Literal Translation) into a structured JSON file.
+
+**Usage:**
+```bash
+PYTHONIOENCODING=utf-8 py -3 scripts/ylt_parse.py
+```
+
+**What it does:**
+1. Reads YLT source files (USFM format from eBible.org) from `research/ylt/`
+2. Parses into book/chapter/verse structure
+3. Writes `data/ylt-verses.json` — keyed by book, chapter, verse with plain text content
+
+**Input:** `research/ylt/*.usfm` (gitignored, downloaded separately)
+**Output:** `data/ylt-verses.json`
+
+### ylt_align.py
+
+Aligns YLT verse text to the colometric line breaks established in the Greek text.
+
+**Usage:**
+```bash
+PYTHONIOENCODING=utf-8 py -3 scripts/ylt_align.py                    # all 27 books
+PYTHONIOENCODING=utf-8 py -3 scripts/ylt_align.py --book Acts         # one book
+PYTHONIOENCODING=utf-8 py -3 scripts/ylt_align.py --book Acts --chapter 9  # one chapter
+```
+
+**What it does:**
+1. Reads the Greek colometric chapter files (v3-colometric) to get line counts per verse
+2. Reads the corresponding YLT verse text from `data/ylt-verses.json`
+3. Splits YLT text at clause boundaries that correspond to the Greek colometric breaks
+4. Writes aligned YLT text files with the same line count as the Greek
+
+**Input:** `data/text-files/v3-colometric/*.txt` + `data/ylt-verses.json`
+**Output:** `data/text-files/ylt-colometric/*.txt` (one file per chapter, same naming as Greek)
+
+**Alignment is ~60% automated, ~40% hand-refinement.** Where YLT departs from Greek clause order, manual adjustment is needed.
+
 ### build_books.py
 
-Converts v2-colometric text files to HTML fragment files.
+Converts v3-colometric and ylt-colometric text files to dual-text HTML fragment files.
 
 **Usage:**
 ```bash
@@ -112,18 +161,21 @@ PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark    # one book
 ```
 
 **What it does:**
-1. Globs all `.txt` files in `data/text-files/v2-colometric/`
-2. Groups by book prefix (everything before last dash in filename)
-3. Parses each chapter file into verse blocks (verse ref line, then sense-lines, separated by blank lines)
-4. Skips header lines before first verse reference
-5. HTML-escapes Greek text
-6. Writes one HTML fragment per book to `books/{book}.html`
+1. Globs all `.txt` files in `data/text-files/v3-colometric/`
+2. If YLT files exist in `data/text-files/ylt-colometric/`, reads those in parallel
+3. Groups by book prefix (everything before last dash in filename)
+4. Parses each chapter file into verse blocks (verse ref line, then sense-lines, separated by blank lines)
+5. Skips header lines before first verse reference
+6. HTML-escapes Greek and English text
+7. Emits dual-text HTML: each line wrapped with language class for CSS show/hide
+8. Writes one HTML fragment per book to `books/{book}.html`
 
-**HTML output structure:**
+**HTML output structure (dual-text):**
 ```html
 <div class="chapter" id="ch-4">
   <div class="verse"><span class="verse-num">4:1</span>
-    <span class="line">Καὶ πάλιν ἤρξατο διδάσκειν παρὰ τὴν θάλασσαν.</span>
+    <span class="line greek-line">Καὶ πάλιν ἤρξατο διδάσκειν παρὰ τὴν θάλασσαν.</span>
+    <span class="line english-line">And again he began to teach by the sea.</span>
   </div>
 </div>
 ```
@@ -157,6 +209,14 @@ Single-page app, all CSS and JS inline. No external dependencies except Google F
 - **Line-height 2.35**, wrap-indent 0.75em, max-width 42em — same reading metrics
 - **Verse numbers:** small, sans-serif, muted color, block-level above each verse
 - **Progress line** at top of viewport showing scroll position
+
+### Display Mode Toggle
+- **Settings panel** includes a three-way display mode: **Greek** (default) / **English** (YLT) / **Both** (interleaved)
+- Greek mode: only `.greek-line` spans visible (default, matches original behavior)
+- English mode: only `.english-line` spans visible (YLT rendering of colometric breaks)
+- Both mode: both spans visible, interleaved (Greek line followed by its English equivalent)
+- Toggle state persisted in localStorage
+- CSS classes control visibility — no DOM manipulation needed, just class swapping on the container
 
 ### Navigation
 - **Topbar (44px fixed):** book name + chapter number (accent color) on left, "GNT Reader" branding (italic, faint) on right. Clicking the book/chapter opens the nav panel.
@@ -273,3 +333,14 @@ build_books.py   (reads v3-colometric/ -> books/*.html)
 ```
 
 build_books.py now reads from `data/text-files/v3-colometric/` (was v2-colometric).
+
+---
+
+### Update — 2026-04-09 (YLT integration)
+
+- New directories added: `data/text-files/ylt-colometric/`, `research/ylt/`
+- New data file: `data/ylt-verses.json` (parsed YLT keyed by book/chapter/verse)
+- New scripts: `ylt_parse.py` (downloads/parses YLT source), `ylt_align.py` (aligns YLT to colometric breaks)
+- `build_books.py` updated: now reads both v3-colometric and ylt-colometric, emits dual-text HTML with language-class spans
+- `index.html` updated: display mode toggle (Greek / English / Both) in settings panel, CSS-driven visibility
+- Repo structure diagram updated to reflect all new files and directories

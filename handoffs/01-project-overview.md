@@ -69,8 +69,60 @@ Stan explicitly decided that this project should be **publicly siloed** from the
 
 ---
 
+## YLT English Layer
+
+### What It Is
+
+A toggleable public-domain English rendering aligned to the colometric line breaks. The translation is Young's Literal Translation (1898), chosen for its unmatched Greek word-order fidelity among English translations. The web app offers three display modes: **Greek** (default), **English** (YLT only), and **Both** (interleaved Greek and English lines).
+
+### Why YLT
+
+Young's Literal Translation preserves Greek clause structure, tense distinctions, and word order to a degree no other English translation approaches. This means:
+
+- Colometric line breaks in the Greek correspond closely to natural break points in the YLT text
+- The participial and subordinate clause structure that motivates the line breaks is preserved in the English rendering
+- YLT's "woodenness" is a feature, not a bug: "having gone to the chief priest" preserves the participial structure that motivated the line break, where a smooth modern translation would obscure it
+
+YLT is fully public domain (1898), available in machine-readable formats from eBible.org.
+
+### Why This Matters
+
+This decision transforms the project from a Greek specialist tool into a platform accessible to anyone. The potential audience expands from Greek readers (hundreds) to a much broader community (thousands):
+
+- **Seminary students** preparing sermons or studying discourse structure
+- **Pastors** without active Greek who want to see the text's compositional architecture
+- **Digital humanities researchers** analyzing oral performance, rhetorical structure, or translation methodology without requiring Greek fluency
+- **Literary scholars** interested in ancient compositional technique
+- **Translation theorists** evaluating how sense-line structure maps across languages
+
+The scholarly argument becomes **self-demonstrating**: a reader can toggle to English and immediately see that each line IS one thought. Instead of writing a paper that describes colometric principles, the site shows them.
+
+### What This Is NOT
+
+This is not a translation project. The colometric structure is the contribution; the language is just the rendering. The same line breaks drive both the Greek and English views. YLT is a lens through which non-Greek-readers can evaluate the colometric claims — nothing more.
+
+### Two Claims, Not One
+
+With the YLT layer, the project now makes two independent claims:
+
+1. **These line breaks reflect Greek discourse structure** (the original colometric claim)
+2. **The YLT splitting accurately represents those breaks in English** (the alignment claim)
+
+Claim 2 is editorial work that can be wrong independently of claim 1. A bad YLT split could undermine confidence in the Greek colometry. Both claims must be reviewed and validated independently.
+
+---
+
 ### Established — 2026-04-09
 - Project conceived, researched, built to working v1
 - Scholarly landscape mapped
 - Four research advantages identified
 - Siloing decision made
+
+---
+
+### Update — 2026-04-09
+- YLT English layer integration decided
+- Three display modes designed: Greek (default) / English (YLT) / Both (interleaved)
+- Strategic rationale documented: broadens audience, makes colometric argument self-demonstrating
+- YLT chosen for highest Greek word-order fidelity of any public domain English translation
+- Two-claim framework established: colometric structure (claim 1) and YLT alignment accuracy (claim 2) are independently reviewable

@@ -397,3 +397,24 @@ Modern editorial punctuation (commas, periods, ano teleia) in the SBLGNT is not 
 - Key insight: the pipeline converges with scholarly consensus on structural analysis without any interpretive input — the grammar encodes the compositional architecture that prose formatting hides
 - Paper seed created for a findings paper ("Grammar Reveals Structure") targeting NTS or JBL
 
+---
+
+### Update — 2026-04-09 (YLT integration)
+
+#### English Validation via YLT Alignment
+
+The YLT English layer provides a pragmatic validation benchmark for colometric breaks, alongside the existing Marschall and Bezae benchmarks:
+
+- **If a Greek colometric break produces an incoherent English line** (a fragment that is not a complete thought in YLT), that is a signal the break may be wrong — or that YLT departs from Greek clause order at that point.
+- **If a Greek colometric break produces a clean, readable English thought**, that confirms the break reflects a genuine sense-unit boundary.
+
+This is **pragmatic validation, not a principled criterion**. The English rendering cannot drive colometric decisions — the breaks are determined by Greek grammar (tiers 1-3) and editorial judgment (tier 4). But the YLT alignment serves as a useful cross-check: a break that works in both Greek and English is more likely to be structurally motivated than one that only works in Greek. A break that fails in English warrants a second look, even if it may ultimately be correct (since YLT does rearrange some clauses).
+
+This adds a third validation dimension to the existing framework:
+
+| Benchmark | What it tests | Limitation |
+|-----------|---------------|------------|
+| **Marschall** | Scholarly colometric analysis of Paul | Limited to 2 Cor 10-13 |
+| **Bezae** | Ancient scribal sense-line practice | Physical layout constraints introduce noise |
+| **YLT alignment** | Whether breaks produce coherent English thoughts | YLT sometimes departs from Greek clause order |
+

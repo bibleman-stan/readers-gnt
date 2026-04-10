@@ -201,3 +201,81 @@ This pattern catches HIGH severity issues (rule interactions, sentence boundary 
 2. Never split: article+noun, preposition+object, negation+verb, noun+genitive modifier, noun+possessive pronoun
 3. After any split pass, re-run the dangling function word fix
 4. Test on Mark 4 (gold standard), Rom 2:12-13 (Marschall), Acts 1:1-4 (most-reviewed), Heb 1:3 (participial images)
+
+---
+
+## YLT Alignment Editorial Workflow
+
+### Overview
+
+The YLT English layer aligns Young's Literal Translation (1898, public domain) to the colometric line breaks established in the Greek text. The alignment is approximately **60% automated and 40% hand-refinement**.
+
+### Automated Alignment
+
+The `ylt_align.py` script performs the initial alignment:
+
+1. Reads the Greek colometric chapter file to determine how many lines each verse has
+2. Reads the corresponding YLT verse text from `data/ylt-verses.json`
+3. Splits the YLT text at clause boundaries that correspond to the Greek colometric breaks
+4. Writes aligned YLT files with the same line count as the Greek
+
+Where YLT closely follows Greek clause order (which is frequent, given Young's methodology), the automated alignment produces clean results.
+
+### Manual Adjustment
+
+Where YLT departs from Greek clause order, manual adjustment is needed. Common cases:
+
+- **Rearranged clauses:** Young sometimes moves a subordinate clause for English readability. The YLT text must be re-split to match the Greek line structure.
+- **Merged clauses:** Where the Greek has two lines but YLT renders the content as a single English phrase, the English must be split into two coherent lines.
+- **Expanded/contracted rendering:** Where YLT uses more or fewer words than the Greek for a given colon, the English line must still read as a complete thought.
+
+### Review Process
+
+The review process for each chapter:
+
+1. Run `ylt_align.py` to generate the initial automated alignment
+2. Open the Greek and YLT chapter files side by side
+3. Compare line by line: does each English line represent a coherent thought?
+4. Where an English line is incoherent or fragmentary, adjust the split point
+5. Verify the line counts match (Greek and YLT must have identical line counts per verse)
+6. Run `build_books.py` to rebuild the HTML
+7. Test in the web app: toggle between Greek/English/Both and verify each view reads correctly
+
+### Two Independent Claims
+
+With the YLT layer, the project now makes two claims that must be reviewed independently:
+
+1. **Claim 1 — Colometric structure:** The line breaks reflect Greek discourse structure. This is validated by the existing methodology (Marschall benchmark, Bezae comparison, grammar-driven rules).
+2. **Claim 2 — YLT alignment accuracy:** The YLT splitting accurately represents those breaks in English. This requires its own review: does each English line read as a complete thought? Does the English faithfully represent the structural claim made by the Greek break?
+
+A bad YLT split can undermine confidence in the Greek colometry even if the Greek break is correct. Both claims deserve independent scrutiny.
+
+### YLT Editorial Files
+
+YLT chapter files follow the same format as Greek colometric files:
+
+```
+9:1
+And Saul, yet breathing out threatenings and slaughter to the disciples of the Lord,
+having gone to the chief priest,
+
+9:2
+asked from him letters to Damascus unto the synagogues,
+that if he may find any being of the way,
+both men and women, he may bring them bound to Jerusalem.
+```
+
+- Verse reference on its own line
+- Sense-lines below, one per line (matching Greek line count)
+- Blank line between verses
+- Same file naming convention: `{abbrev}-{chapter}.txt` in `data/text-files/ylt-colometric/`
+
+---
+
+### Update — 2026-04-09 (YLT integration)
+
+- YLT alignment editorial workflow documented
+- Automation/hand-refinement ratio estimated at 60/40
+- Two-claim review framework established: colometric structure and YLT alignment accuracy are independently reviewable
+- Manual adjustment cases identified: rearranged clauses, merged clauses, expanded/contracted rendering
+- Review process: line-by-line comparison, coherence check, line count verification, web app toggle testing
