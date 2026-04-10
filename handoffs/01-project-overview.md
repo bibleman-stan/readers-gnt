@@ -45,12 +45,21 @@ Colometric formatting reveals compositional structure that standard prose format
 
 2. **Revealing structure/consistency** — Once the text is in cola, you can count patterns: How does Mark's parable speech differ structurally from his narrative? The colometry becomes quantifiable data.
 
-Additional research directions tracked privately. At a high level, consistent colometric formatting across the entire GNT enables several categories of inquiry:
+At a high level, consistent colometric formatting across the entire GNT enables several categories of inquiry:
 
 - **Structural revelation** — compositional structures (tricolon, chiasm, parallel cola) become physically visible in the line layout without interpretive overlay. Structures hiding in prose formatting are exposed by the sense-lines.
 - **Exegetical architecture** — authors' rhetorical strategies (Paul's argumentation structure, Mark's oral patterning, Luke's periodic restructuring) are laid bare in the colon structure. The line breaks show where an author shifts from assertion to evidence, from narrative to speech, from parallel to climactic.
 - **Synoptic analysis** — when the same material appears in different Gospels, the colometric structure reveals how redactors transformed the compositional units. Mark's short paratactic cola vs. Luke's longer periodic reworking of the same content is measurable at the thought-unit level, not just the word level.
 - **Quantitative stylometry** — colon-length distributions, break-point classifications, and rhetorical pattern frequencies become author-discriminating data points. This operates at the oral-compositional level rather than the vocabulary level where traditional stylometry works.
+- **Discourse structure / pericope boundaries** — colometric shifts (short→long cola, paratactic→periodic) signal genre transitions within a text; may challenge traditional lectionary/pericope divisions
+- **Translation methodology** — colometric edition maps original thought architecture for translators; reveals how many sense-lines in modern translations correspond to the author's actual cola
+- **Oral performance reconstruction** — line length alternation is a performance score: short lines = emphasis/pause, long lines = momentum. Complete colometric data enables performance dynamics mapping across entire books.
+- **Intertextuality / quotation detection** — when OT is quoted in NT, does the quotation maintain its original colometric structure or get restructured? The structural contrast or assimilation is visible.
+- **Pedagogy** — Greek students get text formatted for comprehension (one thought per line) rather than for verse-lookup
+- **Computational rhetorical figure detection** — chiasm, inclusio, ring composition involve patterned repetition at the colon level. With cola identified and numbered, automated detection becomes possible.
+- **Diachronic comparison** — track how an author's style changes across their corpus (does Paul's colon length increase over his career? does Luke differ between Gospel and Acts?)
+
+Additional research directions tracked privately.
 
 ## Project Siloing
 
