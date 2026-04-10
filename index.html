@@ -2237,10 +2237,10 @@ function buildLandingBooks() {
       chGrid.className = 'landing-ch-grid';
 
       if (book.chapters === 1) {
-        // Single-chapter book: clicking the button navigates directly
+        // Single-chapter book: show verse popover directly
         btn.onclick = () => {
           hideLanding();
-          navigate(slug, 1);
+          showVersePopover(slug, 1);
         };
       } else {
         for (let c = 1; c <= book.chapters; c++) {
@@ -2250,7 +2250,7 @@ function buildLandingBooks() {
           ch.onclick = ((s, cn) => (e) => {
             e.stopPropagation();
             hideLanding();
-            navigate(s, cn);
+            showVersePopover(s, cn);
           })(slug, c);
           chGrid.appendChild(ch);
         }
