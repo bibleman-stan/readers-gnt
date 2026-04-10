@@ -178,6 +178,14 @@ This pattern catches HIGH severity issues (rule interactions, sentence boundary 
 2. Never run one agent on all 27 books — Luke-Acts alone is a quarter of the NT
 3. When the task is "find and fix," each agent should find AND fix in its section, not just report
 
+**When proposing rule changes:**
+1. Generate multiple candidate approaches (3-5 angles)
+2. Dispatch parallel adversarial agents to evaluate EACH approach against real corpus data
+3. Each evaluation agent tests: accuracy rate, false positive rate, implementation complexity
+4. Compile ranked recommendation with data before implementing anything
+5. Only implement the top-ranked approach (or top 2 if they're complementary)
+6. This prevents building the wrong solution and having to undo it
+
 **When running adversarial agents:**
 1. Give specific, scoped mandates — not "review all of Luke-Acts" but "check Luke 1, 15, Acts 1, 2, 17 for these 5 specific patterns"
 2. Use haiku model for read-only review tasks (faster, cheaper)
