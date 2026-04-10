@@ -373,13 +373,16 @@ def check_line_valency(
         if cr is None:
             continue
 
-        # Check object valency: clause has object but object is not on this line
+        # Check object valency: clause has object but majority of object refs
+        # are not on this line. The 50% threshold catches cases like Acts 9:2
+        # where 1/8 object refs (τινας) is on the line but 7/8 (the complement
+        # phrase τῆς ὁδοῦ ὄντας ἄνδρας τε καὶ γυναῖκας) are on the next line.
         if cr.has_object:
             obj_refs_on_line = line_refs.intersection(cr.object_word_refs)
-            if not obj_refs_on_line:
+            if len(obj_refs_on_line) < len(cr.object_word_refs) * 0.5:
                 return ValencyResult(
                     unsatisfied=True,
-                    reason=f"verb '{verb.normalized}' (clause has object not on this line)",
+                    reason=f"verb '{verb.normalized}' (majority of object refs not on this line: {len(obj_refs_on_line)}/{len(cr.object_word_refs)})",
                     participle_text=verb.normalized,
                     missing_role='o',
                 )
