@@ -340,80 +340,23 @@ def _build_word_line_map(greek_lines, macula_words):
     return result
 
 
-def _collect_glosses_per_line(word_line_map, num_lines):
-    """Group glosses by colometric line index.
-
-    Returns: list of lists, one per line, each containing gloss tokens.
-    """
-    line_glosses = [[] for _ in range(num_lines)]
-    for line_idx, gloss, english in word_line_map:
-        if 0 <= line_idx < num_lines:
-            # Use both gloss and english for matching — more tokens = better matching
-            tokens = _gloss_to_tokens(gloss)
-            eng_tokens = _gloss_to_tokens(english)
-            # Combine unique tokens
-            seen = set()
-            combined = []
-            for t in tokens + eng_tokens:
-                if t not in seen and t:
-                    seen.add(t)
-                    combined.append(t)
-            line_glosses[line_idx].extend(combined)
-    return line_glosses
-
-
-def _fuzzy_match_word(gloss_token, ylt_word):
-    """Check if a gloss token fuzzy-matches a YLT word.
-
-    Returns True if they match.
-    """
-    g = _normalize(gloss_token)
-    y = _normalize(ylt_word)
-
-    if not g or not y:
-        return False
-
-    # Exact match
-    if g == y:
-        return True
-
-    # One is a prefix of the other (handles "went" vs "went.out", "sow" vs "sowing")
-    if g.startswith(y) or y.startswith(g):
-        return True
-
-    # Common stem match: share first 4+ chars
-    if len(g) >= 4 and len(y) >= 4 and g[:4] == y[:4]:
-        return True
-
-    # Handle compound glosses like "went.out" -> matches "went" or "out"
-    if '.' in gloss_token:
-        for part in gloss_token.split('.'):
-            p = _normalize(part)
-            if p and (p == y or (len(p) >= 4 and len(y) >= 4 and p[:4] == y[:4])):
-                return True
-
-    # Synonym map for common translation variations between Macula glosses and YLT
-    if _are_synonyms(g, y):
-        return True
-
-    return False
-
-
-# Bidirectional synonym sets for matching Macula glosses to YLT vocabulary.
-# Each tuple is a set of words that should be treated as equivalent.
+# ---------------------------------------------------------------------------
+# Synonym sets for matching Macula glosses to YLT vocabulary.
+# Each tuple is a set of words treated as equivalent for alignment.
+# ---------------------------------------------------------------------------
 _SYNONYM_SETS = [
-    ("listen", "hearken", "hear"),
-    ("behold", "lo", "look", "see"),
+    ("listen", "hearken", "hear", "heard"),
+    ("behold", "lo", "look", "see", "saw", "seen"),
     ("say", "said", "saying", "saith"),
     ("go", "went", "gone", "goeth"),
     ("come", "came", "cometh"),
     ("make", "made", "maketh"),
-    ("give", "gave", "giveth"),
-    ("take", "took", "taketh"),
-    ("know", "knew", "knoweth"),
+    ("give", "gave", "giveth", "given"),
+    ("take", "took", "taketh", "taken"),
+    ("know", "knew", "knoweth", "known"),
     ("send", "sent", "sendeth"),
     ("do", "did", "doeth", "done"),
-    ("speak", "spoke", "spake", "speaketh"),
+    ("speak", "spoke", "spake", "speaketh", "spoken"),
     ("call", "called", "calleth"),
     ("answer", "answered", "answereth"),
     ("ask", "asked", "asketh", "request", "requested"),
@@ -421,7 +364,7 @@ _SYNONYM_SETS = [
     ("write", "wrote", "written"),
     ("begin", "began", "begun"),
     ("put", "placed", "set"),
-    ("raise", "raised", "rose", "arise", "arose"),
+    ("raise", "raised", "rose", "arise", "arose", "risen", "rise", "rising"),
     ("die", "died", "dead", "death"),
     ("kill", "killed", "slew", "slain", "slay", "slaughter"),
     ("eat", "ate", "eaten", "devour", "devoured"),
@@ -449,23 +392,46 @@ _SYNONYM_SETS = [
     ("suddenly", "straightway", "immediately"),
     ("shine", "shone", "shining", "flash", "flashed"),
     ("proceed", "proceeding", "traveled", "going", "journeying", "journey"),
-    ("flash", "flashed"),
     ("manifest", "manifested", "appeared"),
-    ("righteous", "justified", "declared righteous"),
+    ("righteous", "justified"),
     ("preach", "preached", "proclaimed"),
     ("believe", "believed"),
-    ("receive", "received", "taken up"),
+    ("receive", "received"),
     ("glory", "glorious"),
     ("godliness", "piety"),
     ("mystery", "secret"),
-    ("confessedly", "confessedly"),
-    ("spirit", "spirit"),
-    ("flesh", "flesh"),
     ("angel", "angels", "messenger", "messengers"),
-    ("world", "world"),
+    # New entries for broader coverage:
+    ("sow", "sowed", "sowing", "sown", "sower"),
+    ("spring", "sprang", "sprung"),
+    ("bear", "bore", "bare", "born", "borne", "bearing"),
+    ("bird", "birds", "fowl", "fowls"),
+    ("way", "road", "path"),
+    ("grow", "grew", "grown", "increase", "increased"),
+    ("earth", "ground", "soil", "land"),
+    ("good", "beautiful", "fair"),
+    ("hundred", "hundredfold"),
+    ("thirty", "thirtyfold"),
+    ("sixty", "sixtyfold"),
+    ("run", "ran"),
+    ("throw", "threw", "thrown", "cast"),
+    ("break", "broke", "broken"),
+    ("choose", "chose", "chosen"),
+    ("hide", "hid", "hidden"),
+    ("wake", "woke", "woken", "awake", "awoke"),
+    ("swear", "swore", "sworn"),
+    ("tear", "tore", "torn"),
+    ("shake", "shook", "shaken"),
+    ("forgive", "forgave", "forgiven"),
+    ("forbid", "forbade", "forbidden"),
+    ("yield", "yielded"),
+    ("choke", "choked"),
+    ("wither", "withered"),
+    ("scorch", "scorched"),
+    ("fruit", "fruits", "grain"),
 ]
 
-# Build a lookup: word -> set of synonyms
+# Build lookup: word -> set of synonyms
 _SYNONYM_MAP = {}
 for syn_set in _SYNONYM_SETS:
     for word in syn_set:
@@ -485,113 +451,94 @@ def _are_synonyms(g, y):
     return False
 
 
-def _find_ylt_word_matches(line_glosses, ylt_words):
-    """For each YLT word, find which colometric line it best matches.
+# Stop words for alignment — too common/ambiguous to be reliable anchors.
+_ALIGNMENT_STOP_WORDS = frozenset({
+    'the', 'a', 'an', 'of', 'in', 'to', 'and', 'or', 'but', 'for',
+    'on', 'by', 'at', 'no', 'not', 'it', 'he', 'she', 'they',
+    'his', 'her', 'its', 'their', 'him', 'them', 'this', 'that',
+    'is', 'was', 'are', 'were', 'be', 'been', 'with', 'from',
+    'as', 'so', 'do', 'did', 'does', 'has', 'had', 'have', 'having',
+    'may', 'might', 'shall', 'should', 'will', 'would',
+    'can', 'could', 'nor', 'yet', 'if', 'then', 'than',
+    'own', 'also',
+})
 
-    Uses a two-pass approach:
-    1. Find strong anchor matches (content words that uniquely match one line)
-    2. Use anchors + position to assign remaining words
 
-    Args:
-        line_glosses: list of lists of gloss tokens per line
-        ylt_words: list of (word, start_char, end_char) from YLT text
+def _stem_english(word):
+    """Simple English stemmer for alignment matching.
 
-    Returns:
-        list of (line_index_or_None) for each YLT word
+    Strips common suffixes to find a root form. Only handles regular
+    morphology — irregular forms (rose/risen, bore/bare) need the
+    synonym map.
     """
-    num_ylt = len(ylt_words)
-    num_lines = len(line_glosses)
-    assignments = [None] * num_ylt
+    w = word.lower()
+    if len(w) <= 3:
+        return w
+    if w.endswith('ying') and len(w) > 5:
+        return w[:-3]  # "denying" -> "deny" (approx)
+    if w.endswith('ied') and len(w) > 4:
+        return w[:-3] + 'y'  # "carried" -> "carry"
+    if w.endswith('ies') and len(w) > 4:
+        return w[:-3] + 'y'  # "carries" -> "carry"
+    if w.endswith('ing') and len(w) > 5:
+        base = w[:-3]
+        if len(base) > 2 and base[-1] == base[-2]:
+            return base[:-1]  # "running" -> "run"
+        return base  # "sowing" -> "sow"
+    if w.endswith('eth') and len(w) > 5:
+        return w[:-3]  # "giveth" -> "giv"
+    if w.endswith('est') and len(w) > 5:
+        return w[:-3]
+    if w.endswith('ed') and len(w) > 4:
+        base = w[:-2]
+        if len(base) > 2 and base[-1] == base[-2]:
+            return base[:-1]  # "scorched" doesn't double, but "stopped" -> "stop"
+        return base  # "scorched" -> "scorch", "sowed" -> "sow"
+    if w.endswith('en') and len(w) > 4 and not w.endswith('men') and not w.endswith('ten'):
+        return w[:-2]  # "spoken" -> "spok"
+    if w.endswith('er') and len(w) > 4:
+        base = w[:-2]
+        if len(base) > 2 and base[-1] == base[-2]:
+            return base[:-1]
+        return base  # "sower" -> "sow"
+    if w.endswith('s') and len(w) > 3 and not w.endswith('ss') and not w.endswith('us'):
+        return w[:-1]  # "thorns" -> "thorn"
+    return w
 
-    # Common function words that appear in many lines — weak signals
-    COMMON_WORDS = {'the', 'a', 'an', 'of', 'in', 'to', 'and', 'is', 'was',
-                    'are', 'were', 'he', 'she', 'it', 'they', 'his', 'her',
-                    'its', 'their', 'him', 'them', 'not', 'but', 'for', 'with',
-                    'from', 'that', 'this', 'who', 'which', 'be', 'been', 'being',
-                    'on', 'by', 'at', 'or', 'no', 'all', 'one'}
 
-    # Pass 1: Find matches, weighted by uniqueness
-    # For each YLT word, check which lines it matches
-    for yi, (ylt_word, _, _) in enumerate(ylt_words):
-        yn = _normalize(ylt_word)
-        if not yn or yn in COMMON_WORDS:
-            continue
+def _content_matches(ylt_normalized, anchor_tokens):
+    """Check if a normalized YLT word matches any token in an anchor set.
 
-        matching_lines = []
-        for li, glosses in enumerate(line_glosses):
-            for g in glosses:
-                if _fuzzy_match_word(g, ylt_word):
-                    matching_lines.append(li)
-                    break  # one match per line is enough
+    Uses exact match, stem match, synonym lookup, and substring containment.
+    Stricter than fuzzy matching — no prefix shortcuts that create false
+    positives like 'he' matching 'heaven'.
+    """
+    yn = ylt_normalized
+    yn_stem = _stem_english(yn)
 
-        # Only assign if matches exactly one line (strong anchor)
-        if len(matching_lines) == 1:
-            assignments[yi] = matching_lines[0]
-        elif len(matching_lines) > 1:
-            # Multiple lines match — mark as ambiguous (leave None for now)
-            pass
+    for t in anchor_tokens:
+        # Exact match
+        if yn == t:
+            return True
+        # Stem match (both sides stemmed)
+        t_stem = _stem_english(t)
+        if yn_stem == t_stem and len(yn_stem) >= 3:
+            return True
+        # Synonym (original forms)
+        if _are_synonyms(yn, t):
+            return True
+        # Synonym (stemmed forms)
+        if yn_stem != yn and _are_synonyms(yn_stem, t):
+            return True
+        if t_stem != t and _are_synonyms(yn, t_stem):
+            return True
+        # Substring: "thirtyfold" contains "thirty" (handles hyphenated compounds)
+        if len(t) >= 5 and t in yn:
+            return True
+        if len(yn) >= 5 and yn in t:
+            return True
 
-    # Pass 2: For words that matched multiple lines, use positional context
-    # from anchors to disambiguate. Skip common words — let position resolve them.
-    for yi, (ylt_word, _, _) in enumerate(ylt_words):
-        if assignments[yi] is not None:
-            continue
-        yn = _normalize(ylt_word)
-        if not yn or yn in COMMON_WORDS:
-            continue
-
-        matching_lines = []
-        for li, glosses in enumerate(line_glosses):
-            for g in glosses:
-                if _fuzzy_match_word(g, ylt_word):
-                    matching_lines.append(li)
-                    break
-
-        if len(matching_lines) <= 1:
-            if matching_lines:
-                assignments[yi] = matching_lines[0]
-            continue
-
-        # Use nearest anchors to pick the best line
-        # Look backward for nearest assigned word
-        prev_line = None
-        for j in range(yi - 1, -1, -1):
-            if assignments[j] is not None:
-                prev_line = assignments[j]
-                break
-        # Look forward for nearest assigned word
-        next_line = None
-        for j in range(yi + 1, num_ylt):
-            if assignments[j] is not None:
-                next_line = assignments[j]
-                break
-
-        # Pick matching line closest to surrounding context
-        best = None
-        if prev_line is not None and next_line is not None:
-            # Between two anchors — pick the matching line in range
-            for li in matching_lines:
-                if prev_line <= li <= next_line:
-                    best = li
-                    break
-        if best is None and prev_line is not None:
-            # After an anchor — pick smallest >= prev_line
-            for li in matching_lines:
-                if li >= prev_line:
-                    best = li
-                    break
-        if best is None and next_line is not None:
-            # Before an anchor — pick largest <= next_line
-            for li in reversed(matching_lines):
-                if li <= next_line:
-                    best = li
-                    break
-        if best is None:
-            best = matching_lines[0]
-
-        assignments[yi] = best
-
-    return assignments
+    return False
 
 
 def _tokenize_ylt(text):
@@ -605,132 +552,80 @@ def _tokenize_ylt(text):
     return tokens
 
 
-def _resolve_assignments(assignments, num_lines):
-    """Fill in None assignments using positional interpolation,
-    enforcing monotonicity (line assignments must be non-decreasing).
+def _find_gap_split(ylt_tokens, prev_pos, next_pos):
+    """Find the best split point in a gap between two matched anchors.
 
-    Strategy:
-    - Words between two anchors are distributed proportionally
-    - Leading unmatched words: if first anchor is line > 0, distribute
-      leading words across lines 0..anchor_line
-    - Trailing unmatched words: assign to last anchor's line
-
-    Returns list of line indices for each YLT word.
+    Returns the ylt_token index where the new line should START.
+    Prefers: clause-starting conjunctions > punctuation boundaries > midpoint.
     """
-    n = len(assignments)
-    if n == 0:
-        return []
+    if next_pos <= prev_pos + 1:
+        return next_pos
 
-    result = list(assignments)
+    CLAUSE_STARTERS = {'and', 'but', 'for', 'or', 'nor', 'yet', 'so', 'then',
+                       'therefore', 'because', 'since', 'that', 'which', 'who',
+                       'whom', 'where', 'when', 'if', 'though', 'although',
+                       'lest', 'unless', 'until', 'after', 'before', 'while'}
 
-    # Find all anchor positions (words with known line assignments)
-    anchors = [(i, result[i]) for i in range(n) if result[i] is not None]
+    # Look for clause-starting word in the gap (first one = new clause start)
+    for pos in range(prev_pos + 1, next_pos):
+        word = _normalize(ylt_tokens[pos][0])
+        if word in CLAUSE_STARTERS:
+            return pos
 
-    if not anchors:
-        # No anchors at all — distribute evenly across lines
-        for i in range(n):
-            result[i] = min(int(i * num_lines / n), num_lines - 1)
-        return result
+    # Look for punctuation boundary (comma, semicolon, colon on previous word)
+    for pos in range(prev_pos + 1, next_pos):
+        prev_raw = ylt_tokens[pos - 1][0] if pos > 0 else ''
+        if prev_raw and prev_raw[-1] in '.,;:!?':
+            return pos
 
-    # Fill gaps between anchors using interpolation
-    # Leading gap (before first anchor)
-    first_anchor_idx, first_anchor_line = anchors[0]
-    if first_anchor_idx > 0 and first_anchor_line > 0:
-        # Distribute leading words across lines 0 to first_anchor_line-1
-        # proportionally
-        for i in range(first_anchor_idx):
-            frac = i / first_anchor_idx  # 0.0 to ~1.0
-            result[i] = min(int(frac * first_anchor_line), first_anchor_line - 1)
-    elif first_anchor_idx > 0:
-        # First anchor is line 0 — all leading words are also line 0
-        for i in range(first_anchor_idx):
-            result[i] = 0
-
-    # Gaps between consecutive anchors
-    for a_idx in range(len(anchors) - 1):
-        start_pos, start_line = anchors[a_idx]
-        end_pos, end_line = anchors[a_idx + 1]
-
-        if end_pos - start_pos <= 1:
-            continue  # No gap to fill
-
-        for i in range(start_pos + 1, end_pos):
-            if result[i] is not None:
-                continue
-            if start_line == end_line:
-                result[i] = start_line
-            else:
-                frac = (i - start_pos) / (end_pos - start_pos)
-                result[i] = start_line + int(frac * (end_line - start_line))
-                result[i] = max(start_line, min(result[i], end_line))
-
-    # Trailing gap (after last anchor)
-    last_anchor_idx, last_anchor_line = anchors[-1]
-    for i in range(last_anchor_idx + 1, n):
-        if result[i] is None:
-            result[i] = last_anchor_line
-
-    # Default: everything to line 0 if still None
-    result = [r if r is not None else 0 for r in result]
-
-    # Enforce monotonicity: line assignments must be non-decreasing
-    for i in range(1, n):
-        if result[i] < result[i - 1]:
-            result[i] = result[i - 1]
-
-    # Ensure all lines are represented if possible
-    line_counts = defaultdict(int)
-    for r in result:
-        line_counts[r] += 1
-
-    missing_lines = [l for l in range(num_lines) if line_counts[l] == 0]
-    if missing_lines and n >= num_lines:
-        for ml in missing_lines:
-            # Find the transition point: last word assigned to a line < ml
-            # and split there
-            for i in range(n - 1, 0, -1):
-                if result[i - 1] < ml and result[i] > ml:
-                    # Insert ml at position i
-                    result[i] = ml
-                    break
-                elif result[i] > ml:
-                    # Check if we can steal from a line with multiple words
-                    if result[i - 1] == result[i] and line_counts.get(result[i], 0) > 1:
-                        old_line = result[i]
-                        result[i] = ml
-                        line_counts[old_line] -= 1
-                        line_counts[ml] = 1
-                        break
-
-    return result
+    # Midpoint fallback
+    return (prev_pos + next_pos + 1) // 2
 
 
 def split_ylt_by_glosses(ylt_text, greek_lines, macula_words):
-    """Split YLT text using Macula gloss anchoring.
+    """Split YLT text using sequential forward-scan alignment.
 
-    Args:
-        ylt_text: full YLT verse text
-        greek_lines: list of Greek colometric lines
-        macula_words: list of (word_pos, greek_text, gloss, english)
+    The Greek colometric breaks are the source of truth. Each Macula word
+    is mapped to its colometric line, and its English gloss provides a
+    bridge to the YLT text. We walk YLT content words left-to-right,
+    matching them against the ordered sequence of Macula glosses. Where
+    the matched glosses transition from line K to line K+1, we place the
+    English split.
 
-    Returns:
-        list of English lines (same count as greek_lines), or None if fallback needed.
+    This approach:
+    - Preserves word-position information (no bag-of-words pooling)
+    - Uses sequential matching (no false anchors from repeated words)
+    - Automatically re-pegs when Greek breaks change
+    - Handles Greek/English word-order divergence gracefully
+
+    Returns list of English lines (same count as greek_lines), or None
+    if alignment fails and caller should fall back to clause heuristic.
     """
     num_lines = len(greek_lines)
     if num_lines <= 1:
         return [ylt_text.strip()]
 
-    # Step 1: Map each Macula word to a colometric line
+    # Step 1: Map each Macula word to its colometric line index
     word_line_map = _build_word_line_map(greek_lines, macula_words)
     if not word_line_map:
         return None
 
-    # Step 2: Collect glosses per line
-    line_glosses = _collect_glosses_per_line(word_line_map, num_lines)
+    # Step 2: Build ordered content-anchor sequence from Macula word order.
+    # Each anchor: (line_idx, set of matchable tokens) for one Greek content word.
+    anchors = []
+    for line_idx, gloss, english in word_line_map:
+        tokens = set()
+        for t in _gloss_to_tokens(gloss) + _gloss_to_tokens(english):
+            tn = _normalize(t)
+            if tn and len(tn) >= 3 and tn not in _ALIGNMENT_STOP_WORDS:
+                tokens.add(tn)
+                stemmed = _stem_english(tn)
+                if stemmed and len(stemmed) >= 3:
+                    tokens.add(stemmed)
+        if tokens:
+            anchors.append((line_idx, tokens))
 
-    # Check if we have any glosses at all
-    total_glosses = sum(len(g) for g in line_glosses)
-    if total_glosses == 0:
+    if not anchors:
         return None
 
     # Step 3: Tokenize YLT
@@ -738,85 +633,72 @@ def split_ylt_by_glosses(ylt_text, greek_lines, macula_words):
     if not ylt_tokens:
         return None
 
-    # Step 4: Match YLT words to lines via glosses
-    assignments = _find_ylt_word_matches(line_glosses, ylt_tokens)
+    # Step 4: Forward scan — match YLT content words to Macula anchors in order.
+    # Walk both sequences left-to-right. When a YLT content word matches the
+    # current anchor, record the match and advance the anchor pointer.
+    ylt_matches = []  # [(ylt_word_idx, line_idx), ...]
+    anchor_ptr = 0
 
-    # Check match quality — if too few words matched, fall back
-    matched_count = sum(1 for a in assignments if a is not None)
-    match_ratio = matched_count / len(ylt_tokens) if ylt_tokens else 0
+    for yi, (word, _, _) in enumerate(ylt_tokens):
+        yn = _normalize(word)
+        if not yn or len(yn) < 3 or yn in _ALIGNMENT_STOP_WORDS:
+            continue
 
-    if match_ratio < 0.15:
-        # Very poor matching — fall back
+        # Try to match against upcoming anchors (limited lookahead)
+        limit = min(anchor_ptr + 8, len(anchors))
+        for ai in range(anchor_ptr, limit):
+            line_idx, tokens = anchors[ai]
+            if _content_matches(yn, tokens):
+                ylt_matches.append((yi, line_idx))
+                anchor_ptr = ai + 1
+                break
+
+    if not ylt_matches:
         return None
 
-    # Step 5: Resolve unmatched words and enforce monotonicity
-    resolved = _resolve_assignments(assignments, num_lines)
+    # Step 5: Find line transitions — where consecutive matches jump to a new line
+    boundaries = []  # [(last_pos_on_prev_line, first_pos_on_next_line), ...]
+    for mi in range(1, len(ylt_matches)):
+        prev_pos, prev_line = ylt_matches[mi - 1]
+        curr_pos, curr_line = ylt_matches[mi]
+        if curr_line > prev_line:
+            boundaries.append((prev_pos, curr_pos))
 
-    # Step 6: Build output lines. The key insight: the `resolved` array assigns
-    # each YLT token (in original English order) to a line number, and the
-    # assignments are monotonically non-decreasing. So we simply walk through
-    # the tokens in order and group them by their assigned line. Since the
-    # tokens are already in English reading order, each line's words will
-    # naturally be in the correct English order.
-    result_lines = [[] for _ in range(num_lines)]
-    for i, (word, start, end) in enumerate(ylt_tokens):
-        line_idx = resolved[i]
-        if line_idx >= num_lines:
-            line_idx = num_lines - 1
-        result_lines[line_idx].append(word)
+    # Step 6: Find best split point in each gap between boundary anchors
+    split_positions = []
+    for prev_pos, next_pos in boundaries:
+        split_positions.append(_find_gap_split(ylt_tokens, prev_pos, next_pos))
 
-    output = []
-    for words in result_lines:
-        output.append(' '.join(words))
+    # Step 7: Build lines from split positions
+    cuts = sorted(set([0] + split_positions + [len(ylt_tokens)]))
 
-    # Ensure exactly num_lines
-    while len(output) < num_lines:
-        output.append('')
-    if len(output) > num_lines:
-        # Merge extras onto last line
-        output = output[:num_lines - 1] + [' '.join(output[num_lines - 1:])]
+    result = []
+    for i in range(len(cuts) - 1):
+        words = [ylt_tokens[j][0] for j in range(cuts[i], cuts[i + 1])]
+        result.append(' '.join(words))
 
-    output = cleanup_english_dangles(output)
-    output = cleanup_ylt_fragments(output, num_lines, greek_lines)
+    # Step 8: Pad or merge to match exact line count
+    while len(result) < num_lines:
+        # Split the longest line at a clause boundary
+        longest_idx = max(range(len(result)), key=lambda i: len(result[i]))
+        parts = split_text_into_n(result[longest_idx], 2)
+        if len(parts) == 2 and parts[0] and parts[1]:
+            result = result[:longest_idx] + parts + result[longest_idx + 1:]
+        else:
+            result.append('')
+            break
+    while len(result) > num_lines:
+        # Merge shortest adjacent pair
+        best_idx = min(range(len(result) - 1),
+                       key=lambda i: len(result[i]) + len(result[i + 1]))
+        result[best_idx] = (result[best_idx] + ' ' + result[best_idx + 1]).strip()
+        result.pop(best_idx + 1)
 
-    # Quality check: if the gloss alignment produced lines with scrambled
-    # word order (detected by checking if any word appears before a word
-    # that precedes it in the original text), fall back to clause heuristic
-    if _has_scrambled_words(output, ylt_text):
-        clause_output = split_text_into_n(ylt_text, num_lines)
-        if clause_output and not _has_scrambled_words(clause_output, ylt_text):
-            return cleanup_english_dangles(
-                cleanup_ylt_fragments(clause_output, num_lines, greek_lines)
-            )
+    # Step 9: Cleanup
+    result = cleanup_english_dangles(result)
+    result = cleanup_ylt_fragments(result, num_lines, greek_lines)
 
-    return output
-
-
-def _has_scrambled_words(lines, original_text):
-    """Check if any line's words appear out of order relative to the original text."""
-    original_lower = original_text.lower()
-    for line in lines:
-        words = line.split()
-        if len(words) < 2:
-            continue
-        positions = []
-        search_start = 0
-        for w in words:
-            clean = w.strip('.,;:!?\'"()[]').lower()
-            if not clean:
-                continue
-            pos = original_lower.find(clean, search_start)
-            if pos == -1:
-                # Word not found from search_start — try from beginning
-                pos = original_lower.find(clean)
-            if pos >= 0:
-                positions.append(pos)
-                search_start = pos + len(clean)
-        # Check if positions are monotonically non-decreasing
-        for i in range(1, len(positions)):
-            if positions[i] < positions[i-1]:
-                return True
-    return False
+    return result
 
 
 def cleanup_english_dangles(lines):
