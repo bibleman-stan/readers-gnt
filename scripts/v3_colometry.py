@@ -2900,6 +2900,12 @@ def _is_safe_split_point(words, idx):
     if prev_word == 'τε' or next_word == 'τε':
         return False
 
+    # Don't split so right half starts with a postpositive particle
+    # (δέ, γάρ, οὖν, μέν are second-position — they belong with preceding word)
+    _POSTPOSITIVES = {'δέ', 'δὲ', 'γάρ', 'γὰρ', 'οὖν', 'μέν', 'μὲν', 'τε'}
+    if next_word in _POSTPOSITIVES:
+        return False
+
     return True
 
 
