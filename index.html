@@ -521,11 +521,137 @@
   /* === VERSE NUMBER VISIBILITY === */
   body.hide-verse-nums .verse-num { display: none; }
 
+  /* === LANDING PAGE === */
+  .landing {
+    display: none;
+    padding: 1.5em var(--content-padding) 3em;
+  }
+  .landing.visible { display: block; }
+
+  .landing-title {
+    font-size: 1.25em;
+    color: var(--accent);
+    font-weight: 400;
+    margin-bottom: 0.15em;
+    line-height: 1.3;
+  }
+  .landing-title-sub {
+    font-size: 0.52em;
+    color: var(--text-faint);
+    font-style: italic;
+  }
+
+  .landing-tagline {
+    font-size: 1.05em;
+    font-weight: 600;
+    color: #dce4ec;
+    margin: 0.8em 0 0.6em;
+  }
+
+  .landing-desc {
+    font-size: 0.92em;
+    line-height: 1.9;
+    color: #b8b2a8;
+    margin-bottom: 2em;
+  }
+
+  .landing-books-label {
+    font-size: 0.65em;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
+    margin: 2.2em 0 0.8em;
+    font-weight: 600;
+  }
+
+  .landing-section-label {
+    grid-column: 1 / -1;
+    font-size: 0.6em;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-faint);
+    margin: 0.8em 0 0.2em;
+    font-weight: 600;
+  }
+  .landing-section-label:first-child {
+    margin-top: 0;
+  }
+
+  .landing-books {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 7px;
+    max-width: 420px;
+  }
+
+  .landing-book {
+    padding: 9px 4px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: Literata, Georgia, serif;
+    font-size: 0.7em;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    line-height: 1.3;
+  }
+  .landing-book:hover {
+    background: var(--accent-dim);
+    color: var(--text);
+    border-color: var(--border-accent);
+  }
+  .landing-book.active {
+    background: var(--accent-dim);
+    color: var(--text);
+    border-color: var(--border-accent);
+  }
+
+  .landing-expand {
+    display: none;
+    grid-column: 1 / -1;
+    padding: 10px 4px 14px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+  }
+  .landing-expand.visible { display: block; }
+  .landing-expand .landing-ch-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .landing-expand .landing-ch {
+    width: 34px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 0.72em;
+    color: var(--text-faint);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+  .landing-expand .landing-ch:hover {
+    background: rgba(255,255,255,0.06);
+    color: var(--text-dim);
+  }
+
   @media (max-width: 480px) {
     body { padding: 0.5em; padding-top: 50px; }
     #content { padding: 16px; padding-top: 8px; }
     .nav-book-row { padding: 10px 8px; font-size: 0.82em; }
     .settings-panel { right: 8px; }
+  }
+
+  @media (max-width: 380px) {
+    .landing-books {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
 </style>
 </head>
@@ -541,7 +667,7 @@
     <span class="topbar-chap" id="topbar-chap">1</span>
   </div>
   <div class="topbar-icons">
-    <span class="topbar-brand">GNT Reader</span>
+    <span class="topbar-brand" onclick="showLanding()" style="cursor:pointer;">GNT Reader</span>
     <button class="topbar-icon" id="btn-search" onclick="toggleSearch()" aria-label="Search" title="Search (Ctrl+F)">
       <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
     </button>
@@ -606,6 +732,15 @@
   <div class="nav-panel-body" id="nav-body"></div>
 </div>
 
+<!-- Landing page -->
+<div class="landing" id="landing" style="display:none;">
+  <div class="landing-title">Greek New Testament<br><span class="landing-title-sub">Colometric Reading Edition</span></div>
+  <p class="landing-tagline">The text as it was meant to be heard.</p>
+  <p class="landing-desc">Ancient authors composed for the ear, not the eye. Modern Bible formatting — verse numbers, paragraph breaks, punctuation — was added centuries after composition and obscures the original structure. This edition formats the Greek New Testament into sense-lines based on grammatical structure, recovering the breath units and thought patterns that the original audiences heard.</p>
+  <div class="landing-books-label">Select a book</div>
+  <div class="landing-books" id="landing-books"></div>
+</div>
+
 <!-- Main content -->
 <div id="content">
   <div id="loading">Loading...</div>
@@ -658,7 +793,7 @@ let verseCountCache = {};  // {book: {chapter: verseCount}}
 
 function parseHash() {
   const hash = location.hash.replace('#', '');
-  if (!hash) return { book: 'mark', chapter: 1, verse: null };
+  if (!hash || hash === 'home') return { book: null, chapter: null, verse: null };
   const parts = hash.split('-');
   // Try 3-part: book-chapter-verse (e.g., acts-2-38)
   // Or 2-part: book-chapter (e.g., acts-2)
@@ -686,7 +821,7 @@ function parseHash() {
       return { book, chapter: ch, verse: null };
     }
   }
-  return { book: 'mark', chapter: 1, verse: null };
+  return { book: null, chapter: null, verse: null };
 }
 
 function setHash(book, chapter, verse) {
@@ -1652,21 +1787,136 @@ document.addEventListener('click', function(e) {
   }
 });
 
+// --- Landing page ---
+
+const BOOK_SECTIONS = [
+  { label: 'Gospels', keys: ['matt', 'mark', 'luke', 'john'] },
+  { label: 'History', keys: ['acts'] },
+  { label: 'Pauline Epistles', keys: ['rom', '1cor', '2cor', 'gal', 'eph', 'phil', 'col', '1thess', '2thess', '1tim', '2tim', 'titus', 'phlm'] },
+  { label: 'General Epistles', keys: ['heb', 'jas', '1pet', '2pet', '1john', '2john', '3john', 'jude'] },
+  { label: 'Prophecy', keys: ['rev'] },
+];
+
+let landingExpanded = null;
+
+function buildLandingBooks() {
+  const grid = document.getElementById('landing-books');
+  grid.innerHTML = '';
+
+  for (const section of BOOK_SECTIONS) {
+    const label = document.createElement('div');
+    label.className = 'landing-section-label';
+    label.textContent = section.label;
+    grid.appendChild(label);
+
+    for (const slug of section.keys) {
+      const book = BOOKS[slug];
+      const btn = document.createElement('div');
+      btn.className = 'landing-book';
+      btn.setAttribute('data-book', slug);
+      btn.textContent = book.name;
+      btn.onclick = () => toggleLandingBook(slug);
+      grid.appendChild(btn);
+
+      // Expandable chapter picker
+      const expand = document.createElement('div');
+      expand.className = 'landing-expand';
+      expand.id = 'landing-expand-' + slug;
+      const chGrid = document.createElement('div');
+      chGrid.className = 'landing-ch-grid';
+
+      if (book.chapters === 1) {
+        // Single-chapter book: clicking the button navigates directly
+        btn.onclick = () => {
+          hideLanding();
+          navigate(slug, 1);
+        };
+      } else {
+        for (let c = 1; c <= book.chapters; c++) {
+          const ch = document.createElement('button');
+          ch.className = 'landing-ch';
+          ch.textContent = c;
+          ch.onclick = ((s, cn) => (e) => {
+            e.stopPropagation();
+            hideLanding();
+            navigate(s, cn);
+          })(slug, c);
+          chGrid.appendChild(ch);
+        }
+        expand.appendChild(chGrid);
+        grid.appendChild(expand);
+      }
+    }
+  }
+}
+
+function toggleLandingBook(slug) {
+  const expand = document.getElementById('landing-expand-' + slug);
+  if (!expand) return;
+  const wasVisible = expand.classList.contains('visible');
+  // Close all others
+  document.querySelectorAll('.landing-expand.visible').forEach(e => e.classList.remove('visible'));
+  document.querySelectorAll('.landing-book.active').forEach(b => b.classList.remove('active'));
+  if (!wasVisible) {
+    expand.classList.add('visible');
+    const btn = document.querySelector('.landing-book[data-book="' + slug + '"]');
+    if (btn) btn.classList.add('active');
+  } else {
+    landingExpanded = null;
+  }
+}
+
+function showLanding() {
+  // Close any open overlays
+  closeNav();
+  closeSettings();
+  closeSearch();
+  closeVersePopover();
+  // Show landing, hide content
+  document.getElementById('landing').classList.add('visible');
+  document.getElementById('content').style.display = 'none';
+  // Update topbar
+  document.getElementById('topbar-loc').style.display = 'none';
+  document.getElementById('progress-line').style.width = '0%';
+  // Clear hash
+  if (location.hash && location.hash !== '#home') {
+    history.replaceState(null, '', location.pathname);
+  }
+  window.scrollTo({ top: 0 });
+}
+
+function hideLanding() {
+  document.getElementById('landing').classList.remove('visible');
+  document.getElementById('content').style.display = '';
+  document.getElementById('topbar-loc').style.display = '';
+}
+
 // --- Init ---
 
 window.addEventListener('scroll', updateProgress, { passive: true });
 
 window.addEventListener('hashchange', () => {
   const { book, chapter, verse } = parseHash();
+  if (book === null) {
+    showLanding();
+    return;
+  }
   if (book !== currentBook || chapter !== currentChapter || verse) {
+    hideLanding();
     navigate(book, chapter, verse);
   }
 });
 
 (function init() {
   loadSettings();
+  buildLandingBooks();
   const { book, chapter, verse } = parseHash();
-  navigate(book, chapter, verse);
+  if (book === null) {
+    showLanding();
+  } else {
+    hideLanding();
+    navigate(book, chapter, verse);
+  }
 })();
 </script>
 
