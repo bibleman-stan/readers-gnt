@@ -1,8 +1,12 @@
 """
 build_books.py — Generate HTML book files from colometric text sources.
 
-Reads chapter files from data/text-files/v1-colometric/ and writes
+Reads chapter files from data/text-files/v3-colometric/ (Greek) and
+optionally from data/text-files/ylt-colometric/ (English YLT), and writes
 one HTML fragment per book into books/.
+
+Each .line span contains a .gk span (Greek) and optionally a .en span
+(English), enabling Greek/English/Both display modes in the web app.
 
 Usage:
     py -3 scripts/build_books.py              # build all books
@@ -21,6 +25,7 @@ from collections import defaultdict
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPT_DIR)
 INPUT_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v3-colometric")
+YLT_DIR = os.path.join(REPO_ROOT, "data", "text-files", "ylt-colometric")
 OUTPUT_DIR = os.path.join(REPO_ROOT, "books")
 
 # Verse reference pattern: digits, colon, digits (e.g. "4:1", "17:33")
@@ -81,21 +86,40 @@ def parse_chapter(filepath):
     return chapter_num, verses
 
 
-def build_chapter_html(chapter_num, verses):
-    """Build HTML for one chapter."""
+def build_ylt_lookup(ylt_verses):
+    """Build a dict mapping verse ref -> list of English lines."""
+    lookup = {}
+    for verse in ylt_verses:
+        lookup[verse["ref"]] = verse["lines"]
+    return lookup
+
+
+def build_chapter_html(chapter_num, gk_verses, en_lookup=None):
+    """Build HTML for one chapter with paired Greek/English lines."""
     parts = []
     parts.append(f'<div class="chapter" id="ch-{chapter_num}">')
 
-    for verse in verses:
+    for verse in gk_verses:
         ref = html.escape(verse["ref"])
         # Parse verse number for ID: "2:38" -> "v-2-38"
         verse_id = 'v-' + ref.replace(':', '-')
         parts.append(f'  <div class="verse" id="{verse_id}"><span class="verse-num">{ref}</span>')
-        for line in verse["lines"]:
-            escaped = html.escape(line)
+
+        # Get English lines for this verse (if available)
+        en_lines = []
+        if en_lookup and verse["ref"] in en_lookup:
+            en_lines = en_lookup[verse["ref"]]
+
+        for i, gk_line in enumerate(verse["lines"]):
+            gk_escaped = html.escape(gk_line)
             # Wrap punctuation in spans for toggle visibility
-            escaped = re.sub(r'([,.\;·—])', r'<span class="punct">\1</span>', escaped)
-            parts.append(f'    <span class="line">{escaped}</span>')
+            gk_escaped = re.sub(r'([,.\;·—])', r'<span class="punct">\1</span>', gk_escaped)
+
+            # Get corresponding English line (or empty string)
+            en_text = en_lines[i] if i < len(en_lines) else ""
+            en_escaped = html.escape(en_text)
+
+            parts.append(f'    <span class="line"><span class="gk">{gk_escaped}</span><span class="en">{en_escaped}</span></span>')
         parts.append("  </div>")
 
     parts.append("</div>")
@@ -148,12 +172,20 @@ def build_book(prefix, chapter_files, output_dir):
     total_verses = 0
 
     for _ch_num, fpath in chapter_files:
-        chapter_num, verses = parse_chapter(fpath)
+        chapter_num, gk_verses = parse_chapter(fpath)
         if chapter_num is None:
             # Fallback to filename chapter number if file was empty/unparseable
             chapter_num = _ch_num
-        total_verses += len(verses)
-        chapter_html = build_chapter_html(chapter_num, verses)
+
+        # Try to load corresponding YLT file
+        en_lookup = None
+        ylt_path = os.path.join(YLT_DIR, os.path.basename(fpath))
+        if os.path.isfile(ylt_path):
+            _, en_verses = parse_chapter(ylt_path)
+            en_lookup = build_ylt_lookup(en_verses)
+
+        total_verses += len(gk_verses)
+        chapter_html = build_chapter_html(chapter_num, gk_verses, en_lookup)
         all_chapter_html.append(chapter_html)
 
     output_path = os.path.join(output_dir, f"{prefix}.html")
@@ -197,7 +229,13 @@ def main():
             prefix, chapter_files, OUTPUT_DIR
         )
         rel_path = os.path.relpath(output_path, REPO_ROOT)
-        print(f"  {prefix:<10} {num_chapters:>3} ch, {num_verses:>4} vv  -> {rel_path}")
+        # Check if YLT data exists for any chapter
+        has_ylt = any(
+            os.path.isfile(os.path.join(YLT_DIR, os.path.basename(fp)))
+            for _, fp in chapter_files
+        )
+        ylt_marker = " +YLT" if has_ylt else ""
+        print(f"  {prefix:<10} {num_chapters:>3} ch, {num_verses:>4} vv  -> {rel_path}{ylt_marker}")
 
     print(f"\nDone. Output in {os.path.relpath(OUTPUT_DIR, REPO_ROOT)}/")
 
