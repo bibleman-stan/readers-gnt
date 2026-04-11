@@ -148,8 +148,14 @@ The scholarly warrant: this is standard Greek gapping (ellipsis). Each elided cl
 - **Adjectival subordinate clauses** (ὅπου, ὅς modifying a noun) merge with their head noun — they describe the thing just mentioned and are not independent thoughts. "Fell on rocky ground where it had not much earth" = one image (Mark 4:5).
 - **Adverbial subordinate clauses** (ὅτε, ἵνα, ὥστε, ὅταν) can stand as scene-setters on their own line — they frame a new temporal, purpose, or result context (Mark 4:6 "καὶ ὅτε ἀνέτειλεν ὁ ἥλιος").
 
-### Vocative Attachment
-Vocatives (Διδάσκαλε, etc.) attach to their speech — they are addresses, not independent predications. A vocative alone is not an atomic thought (Mark 4:38). Exception: imperatives (Ἀκούετε, Σιώπα) ARE complete predications and can stand alone (Mark 4:3, 4:39).
+### Vocative Rule
+All vocatives get their own line. A vocative is both an atomic thought (a complete address act — "I am speaking to you") and a breath unit (oral delivery naturally pauses after an address before the speech content follows). This applies universally regardless of word count, formality, or syntactic position: Κύριε, Διδάσκαλε, κράτιστε Θεόφιλε, Ἄνδρες Γαλιλαῖοι — all standalone.
+
+**One exception: repeated vocatives as a rhetorical unit.** "Κύριε κύριε" (Lord, Lord — Matt 7:21-22) stays together because the doubling is itself the rhetorical device — one speech act, not two. This exception actually confirms the rule: the repetition proves that a single vocative is a complete unit, because doubling it creates emphasis rather than redundancy.
+
+Note: imperatives (Ἀκούετε, Σιώπα) also stand alone — they are complete predications (Mark 4:3, 4:39). Vocatives and imperatives are different grammatically but behave the same colometrically: each is a complete speech act that earns its own line.
+
+**Supersedes** the earlier "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" sections. Those distinctions were explored during the Mark 4 and Acts 1 editorial passes and resolved into this simpler universal rule during the Luke 1:3 discussion.
 
 ### Paradox Pairs
 Antithetical pairs that form a single paradox merge onto one line: "seeing they may see and not perceive" is one thought — the paradox is the unit, not its halves (Mark 4:12, Isaiah quotation). The same applies to any construction where the second element completes (not extends) the first.
@@ -598,29 +604,9 @@ Several syntactic bond rules already appear in our Carry-Over Rules section. The
 
 **Test:** Does the qualifying phrase narrow the scope (restriction → merge) or intensify the claim (escalation → break)?
 
-#### 7. Epistolary vs. Narrative Vocative Distinction
+#### 7. Vocative Rule (Simplified — supersedes earlier distinctions)
 
-**Principle:** Vocatives in the GNT fall into three categories with different colometric behavior:
-
-**A. Epistolary vocatives (genre markers) — can stand alone:**
-Vocatives that function as genre markers or audience identifiers in epistolary/oratorical contexts. They signal a shift in address and can occupy their own line:
-- ὦ Θεόφιλε (Acts 1:1) — epistolary address, genre marker for the Luke-Acts dedication. Can stand alone as its own line.
-- Ἄνδρες Ἀθηναῖοι (Acts 17:22) — oratorical address formula opening a speech. Stands alone.
-- Ἄνδρες Γαλιλαῖοι (Acts 1:11) — compound address formula, a breath unit that can stand alone.
-- Ἄνδρες ἀδελφοί (Acts 2:29) — compound address formula in speech.
-
-**B. Narrative speech vocatives — attach to their speech:**
-Vocatives within narrative that address a character during action or dialogue. They attach to the speech they introduce because the address and the speech are one rhetorical act:
-- Κύριε, σῶσον (Matt 8:25) — the plea is one unit with the address.
-- Διδάσκαλε, οὐ μέλει σοι; (Mark 4:38) — "Teacher, do you not care?" is one cry.
-- Ῥαββί, ἴδε (Mark 11:21) — address + imperative = one breath.
-
-**C. Compound address formulas — breath units:**
-Extended formal addresses in speeches that are themselves complete breath units:
-- Ἄνδρες Ἰσραηλῖται (Acts 2:22) — indivisible formula.
-- Ἄνδρες ἀδελφοὶ καὶ πατέρες (Acts 22:1) — expanded compound formula, still one breath unit.
-
-**The distinction:** Epistolary/oratorical vocatives (A) mark discourse boundaries and can stand alone. Narrative vocatives (B) are embedded in the speech act and attach. Compound formulas (C) are always indivisible regardless of context. This refines Carry-Over Rule 7 (vocative units indivisible) by adding the standalone/attachment distinction.
+**SUPERSEDED.** The three-category vocative distinction (epistolary / narrative / compound) explored during the Mark 4 and Acts 1 editorial passes has been resolved into a single universal rule. See the "Vocative Rule" section in "Principles Established by v4 Editorial Pass" above. All vocatives get their own line — no categories needed. The earlier distinction between epistolary and narrative vocatives was dissolved by recognizing that ALL vocatives are both atomic thoughts (complete address acts) and breath units (natural oral-delivery pauses). Confirmed by Luke 1:3 κράτιστε Θεόφιλε discussion.
 
 #### 8. ὅτι Cataphoric/Anaphoric Distinction
 
