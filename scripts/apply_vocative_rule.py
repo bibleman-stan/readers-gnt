@@ -158,13 +158,30 @@ VOCATIVE_OVERRIDES = {
 
 
 def get_phrases_for_verse(book_abbrev, verse_ref, raw_vocatives):
-    """Get vocative phrases for a verse, using overrides if present."""
+    """Get vocative phrases for a verse, using overrides + raw vocatives.
+
+    Overrides take priority; raw vocatives that don't overlap with overrides
+    are also included. SKIP and empty-list overrides suppress all vocatives.
+    """
     key = f"{book_abbrev} {verse_ref}"
     if key in VOCATIVE_OVERRIDES:
         val = VOCATIVE_OVERRIDES[key]
         if val == "SKIP" or val == []:
             return []
-        return val
+        # Start with override phrases
+        phrases = list(val)
+        # Also include raw vocatives not covered by overrides
+        if verse_ref in raw_vocatives:
+            override_words = set()
+            for phrase in val:
+                for w in phrase:
+                    override_words.add(w)
+            raw_groups = group_consecutive(raw_vocatives[verse_ref])
+            for rg in raw_groups:
+                # Include this group if none of its words appear in overrides
+                if not any(w in override_words for w in rg):
+                    phrases.append(rg)
+        return phrases
 
     if verse_ref not in raw_vocatives:
         return []
