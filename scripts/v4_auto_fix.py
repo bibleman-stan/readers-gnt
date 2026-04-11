@@ -2,11 +2,13 @@
 """
 Automatic mechanical fixer for v4-editorial colometric files.
 
-Fixes four pattern-matchable violations:
+Fixes six pattern-matchable violations:
   1. Dangling conjunctions (postpositives at line end or orphaned at line start)
   2. Vocative rule (vocatives not on their own line, using Macula XML data)
   3. Overlong lines with subordinating conjunctions (>80 chars with ἵνα/ὅτι/etc.)
   4. Ultra-long lines (>140 chars) split at structural boundaries
+  5. Overlong καί + finite verb split (>100 chars, uses MorphGNT morphology)
+  6. Parallel list stacker (3+ repeated εἴτε/οὔτε/καί + same-case noun)
 
 Usage:
     PYTHONIOENCODING=utf-8 py -3 scripts/v4_auto_fix.py          # apply fixes
@@ -26,6 +28,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_DIR = os.path.dirname(SCRIPT_DIR)
 V4_DIR = os.path.join(REPO_DIR, 'data', 'text-files', 'v4-editorial')
 MACULA_DIR = os.path.join(REPO_DIR, 'research', 'macula-greek', 'SBLGNT', 'lowfat')
+MORPHGNT_DIR = os.path.join(REPO_DIR, 'research', 'morphgnt-sblgnt')
 
 # Postpositive / coordinating conjunctions that should not dangle
 POSTPOSITIVES = {'δέ', 'γάρ', 'οὖν', 'τε'}
@@ -75,6 +78,43 @@ MACULA_ID_TO_PREFIX = {
     '3JN': '3john', 'JUD': 'jude', 'REV': 'rev',
 }
 
+# Map from v4-editorial file prefix to MorphGNT filename
+PREFIX_TO_MORPHGNT = {
+    'matt':    '61-Mt-morphgnt.txt',
+    'mark':    '62-Mk-morphgnt.txt',
+    'luke':    '63-Lk-morphgnt.txt',
+    'john':    '64-Jn-morphgnt.txt',
+    'acts':    '65-Ac-morphgnt.txt',
+    'rom':     '66-Ro-morphgnt.txt',
+    '1cor':    '67-1Co-morphgnt.txt',
+    '2cor':    '68-2Co-morphgnt.txt',
+    'gal':     '69-Ga-morphgnt.txt',
+    'eph':     '70-Eph-morphgnt.txt',
+    'phil':    '71-Php-morphgnt.txt',
+    'col':     '72-Col-morphgnt.txt',
+    '1thess':  '73-1Th-morphgnt.txt',
+    '2thess':  '74-2Th-morphgnt.txt',
+    '1tim':    '75-1Ti-morphgnt.txt',
+    '2tim':    '76-2Ti-morphgnt.txt',
+    'titus':   '77-Tit-morphgnt.txt',
+    'phlm':    '78-Phm-morphgnt.txt',
+    'heb':     '79-Heb-morphgnt.txt',
+    'jas':     '80-Jas-morphgnt.txt',
+    '1pet':    '81-1Pe-morphgnt.txt',
+    '2pet':    '82-2Pe-morphgnt.txt',
+    '1john':   '83-1Jn-morphgnt.txt',
+    '2john':   '84-2Jn-morphgnt.txt',
+    '3john':   '85-3Jn-morphgnt.txt',
+    'jude':    '86-Jud-morphgnt.txt',
+    'rev':     '87-Re-morphgnt.txt',
+}
+
+# Finite verb moods in MorphGNT parse code (position index 3)
+FINITE_MOODS = {'I', 'S', 'O', 'M'}  # Indicative, Subjunctive, Optative, Imperative
+
+# Conjunction patterns for parallel list stacking
+PARALLEL_CONJUNCTIONS = ['εἴτε', 'οὔτε', 'μήτε']
+
 
 def strip_punctuation(word):
     """Strip Greek punctuation from a word for comparison."""
@@ -118,6 +158,90 @@ def load_vocatives_for_book(book_prefix):
         print(f"  WARNING: Could not parse {xml_path}", file=sys.stderr)
 
     return dict(vocatives)
+
+
+# ---------- MorphGNT loading ----------
+
+def load_morphgnt_for_book(book_prefix):
+    """
+    Parse MorphGNT data for a book and return a dict keyed by verse ref:
+      { "1:1": [{'form': 'Βίβλος', 'pos': 'N-', 'parse': '----NSF-', 'lemma': 'βίβλος'}, ...], ... }
+
+    Each entry has: form, pos (part-of-speech), parse (8-char), lemma.
+    """
+    mgnt_file = PREFIX_TO_MORPHGNT.get(book_prefix)
+    if not mgnt_file:
+        return {}
+    mgnt_path = os.path.join(MORPHGNT_DIR, mgnt_file)
+    if not os.path.exists(mgnt_path):
+        return {}
+
+    verses = defaultdict(list)
+    try:
+        with open(mgnt_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                parts = line.split()
+                if len(parts) < 7:
+                    continue
+                bcv = parts[0]
+                pos = parts[1]
+                parse = parts[2]
+                form = parts[3]
+                lemma = parts[6]
+                # Decode bcv: BBCCVV
+                book_num = bcv[:2]
+                chapter = str(int(bcv[2:4]))
+                verse = str(int(bcv[4:6]))
+                ref = f"{chapter}:{verse}"
+                verses[ref].append({
+                    'form': form,
+                    'pos': pos,
+                    'parse': parse,
+                    'lemma': lemma,
+                })
+    except Exception as e:
+        print(f"  WARNING: Could not parse {mgnt_path}: {e}", file=sys.stderr)
+
+    return dict(verses)
+
+
+def is_finite_verb(word_entry):
+    """Check if a MorphGNT word entry is a finite verb."""
+    if not word_entry['pos'].startswith('V'):
+        return False
+    parse = word_entry['parse']
+    if len(parse) >= 4:
+        mood = parse[3]
+        return mood in FINITE_MOODS
+    return False
+
+
+def get_kai_finite_verb_positions(verse_words):
+    """
+    Find positions in a verse's word list where καί is immediately followed
+    by a finite verb (or within 1-2 words of one).
+
+    Returns list of indices (into verse_words) where καί occurs before a finite verb.
+    """
+    positions = []
+    for i, w in enumerate(verse_words):
+        if w['lemma'] != 'καί':
+            continue
+        # Check next 1-3 words for a finite verb
+        for offset in range(1, 4):
+            j = i + offset
+            if j >= len(verse_words):
+                break
+            if is_finite_verb(verse_words[j]):
+                positions.append(i)
+                break
+            # If we hit another conjunction or preposition before a verb, stop
+            if verse_words[j]['pos'].startswith('C') or verse_words[j]['pos'].startswith('P'):
+                break
+    return positions
 
 
 # ---------- file parsing ----------
