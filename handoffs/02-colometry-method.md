@@ -157,6 +157,11 @@ Antithetical pairs that form a single paradox merge onto one line: "seeing they 
 ### καί + Finite Verb
 Each καί + new finite verb is a candidate for a new line — a new finite verb introduces a new predication, which is by definition a new thought. This is the primary break signal in Markan paratactic narrative.
 
+### Standalone Verb Test
+Intransitive verbs of motion or state change can stand alone as a complete predication: ἐπήρθη (he was taken up), ἐκαυματίσθη (it was scorched), ἀναβαίνει (it grows up). The subject is implied, no object is required — the predication is complete.
+
+Transitive verbs and speech verbs CANNOT stand alone — they need their complement to be a complete thought. εἶπεν (he said) without its speech is a fragment. ἐδίδασκεν (he was teaching) without its object or manner phrase is incomplete. These must stay with their complement on the same line or function as a speech introduction line followed by the speech content.
+
 ---
 
 ## Carry-Over Rules
@@ -653,4 +658,22 @@ Build a Runge-informed diagnostic script (analogous to the BOM project's `parry_
 - οὐαί chains (Woe oracles)
 
 This would accelerate the identification of passages where the automated pipeline fails to stack parallel structures consistently — the #3 failure mode identified in the session 4 scope audit.
+
+---
+
+### Update — 2026-04-11 (Acts 1 editorial pass)
+
+Insights confirmed or discovered during the Acts 1 v4 editorial work:
+
+- **Lukan periodic style as FEF:** Acts 1:1-4 confirmed as a Forced Extended Format. The periodic sentence suspends resolution across participial chains; the "least bad" break strategy is Option B — temporal/circumstantial frame → participial elaboration → main verb resolution. FEF-aware formatting in Luke-Acts means accepting longer lines for periodic sentences and using this three-layer structure rather than forcing short lines that break mid-thought.
+
+- **Epistolary vs. narrative genre shift visible in colometry:** Acts 1:1-4 (epistolary prologue) produces long periodic lines; v5 onward produces short paratactic lines. The colometric line-length shift makes the genre boundary visible without editorial commentary. This may also reveal Semitic source material — vv5-11 have been identified by scholars (Torrey, Black) as showing Semitic interference, and the short paratactic lines corroborate this.
+
+- **Standalone verb test refined:** Intransitive verbs of motion/state change (ἐπήρθη, ἐκαυματίσθη) can stand alone as a complete line. Transitive/speech verbs (εἶπεν, ἐδίδασκεν) cannot — they need their complement on the same line. Confirmed by Acts 1:15 editorial decision.
+
+- **Elaborative apposition merges:** When a verb + action is followed by elaboration identifying WHO or WHAT (Acts 1:23 "they put forward two, Joseph... and Matthias"), the elaboration is not a new image — it identifies the same action. Merge as one line.
+
+- **Geographic expansion stacking:** Acts 1:8 stacks "Jerusalem / all Judea / Samaria / the ends of the earth" as expanding concentric circles — each an implied "[you will be my witnesses] in X." This is the ellipsis principle applied to geographic lists.
+
+- **Short genitive absolute merging confirmed:** Acts 1:4 "συναλιζόμενος" (while eating together) merges with its main verb as adverbial framing, consistent with Mark 4:35 "ὀψίας γενομένης" merge. Short circumstantial participles functioning as scene-setting frame merge with the clause they modify.
 
