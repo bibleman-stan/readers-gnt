@@ -27,8 +27,7 @@ REPO_ROOT = os.path.dirname(SCRIPT_DIR)
 GK_PRIMARY_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4-editorial")
 GK_FALLBACK_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v3-colometric")
 INPUT_DIR = GK_FALLBACK_DIR  # used by discover_books for globbing all chapters
-WEB_DIR = os.path.join(REPO_ROOT, "data", "text-files", "web-colometric")
-YLT_DIR = os.path.join(REPO_ROOT, "data", "text-files", "ylt-colometric")
+EN_DIR = os.path.join(REPO_ROOT, "data", "text-files", "web-colometric")
 OUTPUT_DIR = os.path.join(REPO_ROOT, "books")
 
 # Verse reference pattern: digits, colon, digits (e.g. "4:1", "17:33")
@@ -178,17 +177,14 @@ def resolve_greek_path(fpath):
 
 
 def resolve_english_path(fpath):
-    """Return the best English source: web-colometric first, then ylt-colometric.
+    """Return the English structural gloss path if it exists.
 
-    Returns (path, label) or (None, None) if neither exists.
+    Returns (path, label) or (None, None) if not found.
     """
     basename = os.path.basename(fpath)
-    web_path = os.path.join(WEB_DIR, basename)
-    if os.path.isfile(web_path):
-        return web_path, "WEB"
-    ylt_path = os.path.join(YLT_DIR, basename)
-    if os.path.isfile(ylt_path):
-        return ylt_path, "YLT"
+    en_path = os.path.join(EN_DIR, basename)
+    if os.path.isfile(en_path):
+        return en_path, "EN"
     return None, None
 
 
