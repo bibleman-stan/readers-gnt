@@ -45,10 +45,12 @@ that is, to be mutually encouraged among you
 through the faith that is in one another, both yours and mine.
 
 1:13
-I do not want you to be unaware, brothers, that many times I planned to come to you,
-and I was prevented until now,
-so that I might have some fruit among you also,
-just as among the rest of the nations.
+I do not want you to be
+brothers,
+unaware that many times I planned to come
+to you, and I was prevented until
+now, so that I might have some fruit among you
+also, just as among the rest of the nations.
 
 1:14
 To Greeks and to barbarians, to the wise and to the foolish, I am a debtor;
@@ -70,9 +72,8 @@ For the wrath of God is revealed from heaven against all ungodliness and unright
 of those who suppress the truth in unrighteousness,
 
 1:19
-because what is known about God is evident among them,
-for God
-made it evident to them.
+because what is known about God is evident among them, for God made
+it evident to them.
 
 1:20
 For his invisible attributes since the creation of the world are perceived through the things made,
@@ -133,3 +134,4 @@ that those who practice such things
 are worthy of death,
 not only do them
 but also approve of those who practice them.
+
