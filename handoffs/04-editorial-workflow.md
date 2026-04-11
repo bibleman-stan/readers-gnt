@@ -451,3 +451,35 @@ The four criteria (atomic thought, single image, breath unit, source-language sy
 
 - **Mark 4** — original gold standard (session 4), narrative parable discourse
 - **Acts 1** — second gold standard (v4 editorial review), mixed narrative/speech with complex participial chains
+
+---
+
+### Update — 2026-04-11 (session 6: all 260 chapters v4-editorial)
+
+#### All 260 Chapters Now v4-Editorial
+
+The v4-editorial directory is now the single source of truth for all 260 chapters of the Greek New Testament. No gaps remain. The final 72 previously-unreviewed chapters were editorially reviewed by 9 parallel agents across genre groups.
+
+#### English Gloss Quality Audit
+
+260/260 structural English glosses are in place. Most are real translations written to match Greek clause structure by construction. Known quality concerns:
+
+- **Mark 8-16:** English may be script-generated quality rather than hand-verified structural glosses. Needs audit before publication use.
+- **Some Acts chapters:** English needs verification.
+- Recommendation: run a quality audit pass on English glosses before any publication or external review.
+
+#### Pauline Opportunity Space
+
+Paul's compressed style (ellipsis, anacoluthon, dense argumentation) is where colometric formatting yields the highest marginal benefit. Key findings:
+
+- **Ellipsis detection:** Paul frequently elides verbs in parallel constructions. Colometric formatting makes these implied predications visible through vertical stacking.
+- **Compression-as-lucidity thesis:** Paul's most compressed passages become MORE readable (not less) when formatted colometrically, because the visual structure disambiguates what the prose obscures.
+- **Marschall comparison on 2 Cor 10:8-11:** 3 specific divergences identified, providing concrete data points for methodological comparison.
+
+#### Cognitive Hierarchy
+
+Established ordering: **chunking > oral > rhetorical**. Colometry first aids comprehension through cognitive chunking, then supports oral performance, then reveals rhetorical structure. This hierarchy governs editorial decisions when criteria conflict.
+
+#### Skousen Intellectual Genealogy
+
+The project's relationship to Royal Skousen's textual criticism methodology has been documented, connecting colometric editing to established traditions in critical text work.
