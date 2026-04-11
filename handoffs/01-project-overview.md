@@ -163,3 +163,35 @@ Examples discovered:
 Comparison showed that v1 (simple conjunction rules) got some verses RIGHT that v3 (sophisticated Macula-driven pipeline) BROKE. Root cause: v3 optimizes for grammar rules rather than the three core criteria (atomic thought, single image, breath unit). The v2/v3 layers were actively making some things worse — "polluting" v1's criteria-driven breaks.
 
 This does not invalidate the v3 pipeline but establishes that automated sophistication is not automatically better. The v4 editorial pass is now understood as essential, not optional.
+
+---
+
+### Update — 2026-04-11 (post v4 editorial review)
+
+#### English Layer: Structural Glosses Replace WEB/YLT Entirely
+
+The English rendering is no longer an aligned translation (WEB or YLT). It is now a **purpose-built structural gloss** that tracks Greek clause order by construction. Each English line was written to match its corresponding Greek line — there is no alignment algorithm because alignment is guaranteed by design. 260 chapters complete.
+
+This eliminates the two-claim problem documented above. The English is not a translation being force-fit to Greek breaks; it is a rendering constructed from the breaks. The single claim is: these line breaks reflect Greek discourse structure, and the English lets you see that structure without knowing Greek.
+
+#### Universal Vocative Rule
+
+All vocatives now get their own line — each is an atomic thought (a complete address act) and a natural breath unit (pause before and after). One exception: repeated vocatives (e.g., Κύριε κύριε) stay on one line. This supersedes the earlier three-category distinction (vocative attachment principle from session 4).
+
+#### Cross-Pollination from BOM Reader
+
+Ten principles were ported and adapted for Greek colometry:
+1. Framing-element fragments (FEFs) — merge into adjacent cola
+2. Three-category editorial framework (mechanical / rhetorical / theological)
+3. Framing device isolation (temporal, spatial, circumstantial)
+4. ἰδού distinction (presentative vs. interjection behavior)
+5. Syntactic bond hierarchy (what must never be split)
+6. Escalation/restriction pattern recognition
+7. Vocative rule (adapted to Greek address conventions)
+8. ὅτι distinction (content clause vs. causal clause treatment)
+9. Authorial style principle (Mark's parataxis vs. Luke's periodicity)
+10. Parallel diagnostic scanner (automated detection of stackable structures)
+
+#### Methodology Maturation
+
+The four core criteria (atomic thought, single image, breath unit, source-language syntax) are now supported by approximately 15 sub-principles, all tested against editorial practice in the Mark 4 and Acts 1 gold standard chapters. The methodology has moved from ad hoc rule accumulation to a principled framework with documented precedent for each sub-rule.

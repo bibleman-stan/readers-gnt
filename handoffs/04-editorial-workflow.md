@@ -414,3 +414,40 @@ SBLGNT source (canonical, never edit)
 - Extend v4 editorial to more chapters: Acts 17 (rhetoric), Romans 8 (argumentation)
 - Evaluate tree-first colometric approach: start from Macula clause structure instead of pattern matching
 - The English alignment problem is partially solved but has inherent limitations when translations restructure sentences
+
+---
+
+### Update — 2026-04-11 (post v4 editorial review)
+
+#### System-Wide v4 Editorial Review Completed
+
+120 chapters now have v4-editorial files, produced by 6 genre-group agents operating in parallel across the corpus. Approximately 944 line changes total. Most common fix patterns:
+
+- **Fragment merges:** Short orphaned lines (articles, particles, prepositions) merged back into adjacent cola
+- **Dangling postpositive repairs:** Postpositive particles (δέ, γάρ, οὖν, μέν) that ended up at line-end moved to start of next line
+- **Parallel stacking corrections:** Parallel structures (μέν/δέ, triadic lists, antithetical pairs) vertically aligned
+- **Speech intro isolation:** Direct speech introductions (λέγει αὐτοῖς·, ἀπεκρίθη καὶ εἶπεν·) given their own line
+- **Adjectival clause attachment:** Relative clauses modifying a head noun merged with that noun's line
+
+Approximately 52 chapters still need second-pass editorial work.
+
+#### English Layer: Structural Glosses
+
+The English is now a purpose-built rendering tracking Greek clause order by construction. No alignment algorithm — alignment is guaranteed because each English line was written to match its Greek line. 260 chapters complete. This eliminates the WEB/YLT alignment problem entirely.
+
+#### Universal Vocative Rule
+
+All vocatives get their own line — atomic thought (complete address act) + breath unit (natural pause before and after). One exception: repeated vocatives (Κύριε κύριε). Supersedes the earlier three-category vocative distinction.
+
+#### Cross-Pollination from BOM Reader
+
+Ten principles ported and adapted for Greek: FEFs, three-category framework, framing devices, ἰδού distinction, syntactic bonds, escalation/restriction, vocative rule, ὅτι distinction, authorial style principle, parallel diagnostic scanner.
+
+#### Methodology Maturation
+
+The four criteria (atomic thought, single image, breath unit, source-language syntax) are now supported by approximately 15 sub-principles, all tested against editorial practice in the Mark 4 and Acts 1 gold standard chapters.
+
+#### Gold Standards
+
+- **Mark 4** — original gold standard (session 4), narrative parable discourse
+- **Acts 1** — second gold standard (v4 editorial review), mixed narrative/speech with complex participial chains

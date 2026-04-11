@@ -453,3 +453,23 @@ build_books.py priority chain: v4-editorial (if exists) > v3-colometric for Gree
 - CNAME file added to repo root
 - HTTPS enforced via GitHub Pages settings
 - Custom domain section no longer "future" — it is live
+
+---
+
+### Update — 2026-04-11 (post v4 editorial review)
+
+#### Updated Pipeline Priority Chain
+
+The build pipeline now operates with the following priority:
+- **Greek:** v4-editorial (if exists) > v3-colometric
+- **English:** web-colometric (structural glosses, purpose-built per line — no alignment algorithm)
+
+The English layer is no longer an aligned translation. Each structural gloss was written to match its Greek line, so alignment is guaranteed by construction. `web_align.py` and `ylt_align.py` are no longer in the active pipeline.
+
+#### Domain Status
+
+**gnt-reader.com** is live with HTTPS enforced via GitHub Pages. Cloudflare DNS configured. CNAME in repo root.
+
+#### v4 Editorial Coverage
+
+120 of 260 chapters now have v4-editorial files produced by the system-wide editorial review. Approximately 52 chapters flagged for second-pass work. The v4-editorial directory is the authoritative Greek source wherever it exists; v3-colometric remains the fallback for chapters not yet editorially reviewed.
