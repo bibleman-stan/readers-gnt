@@ -61,6 +61,49 @@ At a high level, consistent colometric formatting across the entire GNT enables 
 
 Additional research directions tracked privately.
 
+## Computational Opportunity Space: The Pre-Parsed Analytical Substrate
+
+The colometric edition creates something that has not previously existed for the Greek New Testament: a **pre-parsed analytical substrate** — every verse broken into syntactically-motivated sense-lines using consistent, documented criteria. This transforms problems that were previously trapped in close-reading methodology into computationally tractable tasks.
+
+### The Core Insight
+
+In a standard paragraph-formatted GNT, any analytical task requires simultaneously solving two problems: (1) where are the clause boundaries? and (2) what is the phenomenon I'm looking for? The colometric edition pre-solves problem (1). Each line is one colon. Every analytical question reduces to: "does this line exhibit property X?" That reduction is what makes agent-based detection feasible at corpus scale.
+
+### Pauline Studies: Ellipsis, Anacoluthon, and Structural Compression
+
+Paul's letters are the richest test case. His frequent use of ellipsis (gapping) — where a verb or predicate is syntactically required but omitted because it is recoverable from context — becomes detectable when the text is in sense-lines. A line that lacks a verbal element in a context where one is required is a candidate for ellipsis. The question reduces to: "is this line syntactically complete?"
+
+Example: Galatians 2:7 — the καθώς clause presupposes the entire verbal idea (πεπίστευμαι τὸ εὐαγγέλιον) from the previous line. In sense-line format, the gapped line is immediately visible as incomplete; in paragraph format, it's buried in a subordinate clause.
+
+Beyond ellipsis, the same substrate enables systematic detection of:
+- **Anacoluthon** — lines where Paul starts a construction and never finishes it (the colon just stops, and the next one picks up differently)
+- **Parenthesis mapping** — where Paul interrupts his own argument with a digression, visible as cola that break the syntactic flow of surrounding lines
+- **Asyndeton patterns** — cola lacking connective particles, which in Paul often signal emotional intensity or rhetorical climax
+- **Colon-length compression** — places where Paul's cola get dramatically shorter, often marking argumentative peaks
+
+### Structural Glosses as a Force Multiplier
+
+The structural English glosses (aligned by construction to Greek sense-lines) double the analytical surface. An agent can reason about both the Greek syntax and the English rendering simultaneously. For ellipsis detection specifically: a Greek line missing a verb paired with an English line that also lacks a verb is a high-confidence ellipsis candidate. A Greek line missing a verb but whose English line contains one reveals where the translator silently supplied the gapped element.
+
+### Reframing Pauline Difficulty: Compression as Lucidity
+
+The entire scholarly tradition has a bias toward "Paul-as-difficult." But ellipsis is only possible when the logic is so clear that the speaker can omit the verb and trust the audience to supply it. Gapping is a marker of compositional confidence, not confusion.
+
+When the gapped elements are systematically reconstructed and found to be always recoverable from the immediate context — when Paul never actually leaves his audience without the information they need — then the "difficult Paul" reputation starts looking like a problem of prose formatting rather than a problem of Pauline thought. The colometric edition may show that Paul is one of the most disciplined composers in the NT — that his density is architectural precision, not muddled thinking.
+
+The practical implication: systematically distinguishing genuinely difficult passages (where the syntax is truly broken or ambiguous) from merely compressed passages (where the structure is tight enough to support ellipsis) would produce a much smaller, more precisely defined set of Pauline cruces than the tradition currently recognizes. That distinction has never been drawn systematically because the prerequisite work — consistent sense-line formatting across the entire corpus — didn't exist until now.
+
+### Beyond Paul
+
+The same analytical substrate serves every NT author, though the phenomena differ:
+- **Mark:** Paratactic chain analysis — where does Mark's καί-chain create genuine narrative segmentation vs. mere conjunction?
+- **Luke-Acts:** Genre-shift detection — quantifiable line-length differences between epistolary prologues, narrative, and embedded speeches
+- **John:** Repetition-with-variation patterns — John's spiral rhetoric (restating with slight modification) becomes visible as near-identical cola with targeted substitutions
+- **Revelation:** Vision formula mapping — the repeated "καὶ εἶδον" structures become countable, classifiable, and comparable
+- **Hebrews:** A fortiori chain detection — πόσῳ μᾶλλον escalation patterns across the argument
+
+None of these analyses require new theory. They require the formatted dataset that this project provides.
+
 ## Project Siloing
 
 Stan explicitly decided that this project should be **publicly siloed** from the BOM Reader project. No cross-references in README, CLAUDE.md, or any public-facing files. The connection exists in Stan's private memory files and internal knowledge, but the two projects present as independent efforts to the public.
