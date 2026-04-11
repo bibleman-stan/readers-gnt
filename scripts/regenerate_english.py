@@ -176,10 +176,9 @@ def redistribute_verse(greek_lines, english_lines):
     """Redistribute English text to match the Greek line count.
 
     Strategy:
-    1. Merge all English into one text block.
-    2. For each Greek line, check if it's a known vocative - if so, use the
-       known English translation and remove that from the pool.
-    3. Distribute remaining English proportionally across non-vocative Greek lines.
+    1. Identify vocative-only Greek lines and assign known translations.
+    2. Identify which existing English lines are vocative translations to exclude.
+    3. Merge remaining English and distribute proportionally across non-vocative lines.
     """
     n_greek = len(greek_lines)
     n_english = len(english_lines)
@@ -187,66 +186,52 @@ def redistribute_verse(greek_lines, english_lines):
     if n_greek == n_english:
         return english_lines
 
-    # Merge all English
-    all_english = ' '.join(english_lines)
-
-    # Remove any existing vocative text from the merged English
-    # so we don't double-count it
-    vocative_indices = []
-    vocative_translations = []
-
+    # Identify vocative Greek lines
+    vocative_indices = {}
     for i, gl in enumerate(greek_lines):
         stripped = gl.strip()
         if stripped in VOCATIVE_PHRASE_MAP:
-            vocative_indices.append(i)
-            vocative_translations.append(VOCATIVE_PHRASE_MAP[stripped])
+            vocative_indices[i] = VOCATIVE_PHRASE_MAP[stripped]
 
-    # Remove the English vocative from the merged text
-    remaining_english = all_english
-    for voc_eng in vocative_translations:
-        # Try to find and remove the vocative from the English text
-        voc_clean = voc_eng.rstrip('.,;:!?')
-        # Try various patterns
-        for pattern in [
-            r',?\s*' + re.escape(voc_clean) + r'\s*,?',
-            r'\b' + re.escape(voc_clean) + r'\b\s*,?',
-            r'\b' + re.escape(voc_clean.lower()) + r'\b\s*,?',
-        ]:
-            new_text = re.sub(pattern, ' ', remaining_english, count=1, flags=re.IGNORECASE)
-            if new_text != remaining_english:
-                remaining_english = new_text.strip()
-                remaining_english = re.sub(r'\s+', ' ', remaining_english)
-                # Fix double commas or comma-space issues
-                remaining_english = remaining_english.replace(' ,', ',').replace(',,', ',')
-                remaining_english = remaining_english.replace(', ,', ',')
-                break
+    # Build reverse lookup: known vocative English translations
+    known_voc_english = set()
+    for eng in VOCATIVE_PHRASE_MAP.values():
+        known_voc_english.add(eng.strip())
+        known_voc_english.add(eng.strip().rstrip('.,;:!?'))
 
-    # Now distribute remaining English across non-vocative Greek lines
+    # Filter out English lines that are vocative translations
+    non_voc_english = []
+    for el in english_lines:
+        stripped = el.strip()
+        if stripped in known_voc_english or stripped.rstrip('.,;:!?') in known_voc_english:
+            continue
+        non_voc_english.append(el)
+
+    # Merge non-vocative English
+    remaining_english = ' '.join(non_voc_english).strip()
+    remaining_english = re.sub(r'\s+', ' ', remaining_english)
+
+    # Non-vocative Greek line indices
     non_voc_indices = [i for i in range(n_greek) if i not in vocative_indices]
     n_non_voc = len(non_voc_indices)
 
     if n_non_voc == 0:
-        # All lines are vocatives
         result = [''] * n_greek
-        for i, vi in enumerate(vocative_indices):
-            result[vi] = vocative_translations[i]
+        for i, eng in vocative_indices.items():
+            result[i] = eng
         return result
 
-    # Proportional distribution of remaining English across non-vocative lines
-    eng_words = remaining_english.split()
+    # Proportional distribution
+    eng_words = remaining_english.split() if remaining_english else []
     total_eng_words = len(eng_words)
-
-    # Get Greek word counts for non-vocative lines
     non_voc_greek_counts = [len(greek_lines[i].split()) for i in non_voc_indices]
     total_greek_words = sum(non_voc_greek_counts)
 
-    # Distribute
     distributed = {}
     eng_idx = 0
     for j, nvi in enumerate(non_voc_indices):
         gwc = non_voc_greek_counts[j]
         if j == len(non_voc_indices) - 1:
-            # Last non-vocative line gets everything remaining
             distributed[nvi] = ' '.join(eng_words[eng_idx:])
         else:
             if total_greek_words > 0:
@@ -257,12 +242,10 @@ def redistribute_verse(greek_lines, english_lines):
             distributed[nvi] = ' '.join(eng_words[eng_idx:eng_idx + n_words])
             eng_idx += n_words
 
-    # Build final result
     result = []
     for i in range(n_greek):
         if i in vocative_indices:
-            vi_pos = vocative_indices.index(i)
-            result.append(vocative_translations[vi_pos])
+            result.append(vocative_indices[i])
         elif i in distributed:
             result.append(distributed[i])
         else:
