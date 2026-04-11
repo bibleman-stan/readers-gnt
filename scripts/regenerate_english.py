@@ -184,7 +184,13 @@ def redistribute_verse(greek_lines, english_lines):
     n_english = len(english_lines)
 
     if n_greek == n_english:
-        return english_lines
+        # Even when counts match, fix vocative-only lines to use canonical translations
+        result = list(english_lines)
+        for i, gl in enumerate(greek_lines):
+            stripped = gl.strip()
+            if stripped in VOCATIVE_PHRASE_MAP:
+                result[i] = VOCATIVE_PHRASE_MAP[stripped]
+        return result
 
     # Identify vocative Greek lines
     vocative_indices = {}
@@ -279,15 +285,10 @@ def process_file(v4_file, force=False):
 
     for verse_ref, greek_lines in v4_verses.items():
         existing = web_verses.get(verse_ref, [])
-        needs_regen = len(greek_lines) != len(existing)
-        if not needs_regen and (force or check_vocative_quality(greek_lines, existing)):
-            needs_regen = True
-        if needs_regen:
+        new_lines = redistribute_verse(greek_lines, existing)
+        if new_lines != existing:
             changes += 1
-            new_lines = redistribute_verse(greek_lines, existing)
-            new_english[verse_ref] = new_lines
-        else:
-            new_english[verse_ref] = list(existing)
+        new_english[verse_ref] = new_lines
 
     if changes == 0:
         return 0
