@@ -6,7 +6,10 @@
       "Read(//c/Users/bibleman/repos/readers-bofm/**)",
       "Read(//c/vaults-nano/**)",
       "WebFetch(domain:www.biblegateway.com)",
-      "Read(//c/Users/bibleman/Downloads/**)"
+      "Read(//c/Users/bibleman/Downloads/**)",
+      "Bash(rm -f .git/index.lock)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)"
     ],
     "additionalDirectories": [
       "C:\\Users\\bibleman\\.claude\\projects\\c--Users-bibleman-repos-readers-nt"
