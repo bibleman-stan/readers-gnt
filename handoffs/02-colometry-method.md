@@ -26,21 +26,21 @@ We preserve verse references for alignment with standard editions, but they do n
 - **Rhetorical patterns** — parallelism, tricolon, chiasm, μέν/δέ contrast
 - **Breath and thought units** — each line processable as a single cognitive chunk
 
-## The Three Tests
+## The Four Criteria
 
-### 1. The Foundational Test
-**Each line must be an atomic thought, an atomic breath unit, or ideally both.**
+### 1. Atomic Thought
+Each line must contain one complete thought — a predication that can stand on its own as a unit of meaning. A line that requires the next line to resolve its subject, verb, or complement is incomplete.
 
-This overrides all other rules. A line that passes this test is valid. A line that fails it needs revision.
-
-- **Atomic thought:** the reader can process this line as a single unit of meaning without needing the next line to resolve it
-- **Atomic breath unit:** the line can be delivered in one breath at natural reading pace
-
-### 2. The Image Test
+### 2. Single Image
 Each line should paint a single image or picture in the mind. If a line contains two distinct images, it's a candidate for splitting. If a line contains no complete image, it may need merging.
 
-### 3. Grammar Reveals Structure — It Doesn't Create It
-Line breaks follow grammatical structure that already exists in the text. The breaks are descriptive, not interpretive. We make visible what is already encoded.
+### 3. Breath Unit
+Each line can be delivered in one breath at natural reading pace. This is the oral-delivery criterion: ancient authors composed for the ear. Very short fragments (1-2 words) are rarely valid unless they are complete predications (imperatives, vocatives-as-commands). Very long lines likely contain multiple thoughts.
+
+### 4. Source-Language Syntax
+Line breaks are informed by the clause and syntax structure of the source language. For Greek: conditional constructions (εἰ/ἐάν protasis/apodosis), correlative pairs (μέν/δέ, μᾶλλον...ἤ, οὔτε...οὔτε), subordinating conjunctions (ἵνα, ὥστε, ὅταν, ὅτε), participial phrases, genitive absolutes, and discourse markers (γάρ, ἀλλά, οὖν) all signal natural break points. For the BOM Reader, the equivalent is English clause structure. For Hebrew (if extended to the OT), the same principle applies to Hebrew syntax.
+
+**This criterion serves the first three — it does not override them.** Grammar helps us *find* where atomic thoughts, images, and breath units naturally break. If a grammatical rule produces a line that isn't an atomic thought, the rule is wrong, not the criteria. Grammar reveals structure that already exists in the text; it doesn't create structure.
 
 ## Greek-Specific Break Points
 
