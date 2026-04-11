@@ -509,6 +509,46 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   }
 
+  /* === CORPUS FILTER CHIPS === */
+  .corpus-filters {
+    display: flex;
+    gap: 5px;
+    padding: 6px 14px;
+    background: #2a2a2a;
+    border-bottom: 1px solid #444;
+    flex-wrap: wrap;
+  }
+  .corpus-chip {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    color: var(--text-faint);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.7em;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .corpus-chip:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-dim);
+  }
+  .corpus-chip.active {
+    background: rgba(124,175,194,0.2);
+    color: var(--accent);
+    border-color: rgba(124,175,194,0.4);
+  }
+  .corpus-chip.sub-filter {
+    display: none;
+    font-size: 0.65em;
+    padding: 1px 8px;
+  }
+  .corpus-chip.sub-filter.visible {
+    display: inline-block;
+  }
+
   .lemma-info {
     font-size: 0.78em;
     color: var(--accent);
@@ -933,6 +973,16 @@
     <span class="search-op" onclick="insertSearchOp('(', ')')">( )</span>
     <span class="search-op" onclick="insertSearchOp('&quot;', '&quot;')">&quot; &quot;</span>
     <span class="search-op" onclick="insertSearchOp(' NEAR5 ')">NEAR</span>
+  </div>
+  <div class="corpus-filters" id="corpus-filters">
+    <span class="corpus-chip" data-corpus="synoptics" onclick="toggleCorpusFilter(this)">Synoptics</span>
+    <span class="corpus-chip" data-corpus="john" onclick="toggleCorpusFilter(this)">John</span>
+    <span class="corpus-chip" data-corpus="luke-acts" onclick="toggleCorpusFilter(this)">Luke-Acts</span>
+    <span class="corpus-chip" data-corpus="pauline" onclick="toggleCorpusFilter(this)">Pauline</span>
+    <span class="corpus-chip sub-filter" data-corpus="disputed" onclick="toggleCorpusFilter(this)">Disputed</span>
+    <span class="corpus-chip" data-corpus="general" onclick="toggleCorpusFilter(this)">General</span>
+    <span class="corpus-chip" data-corpus="johannine" onclick="toggleCorpusFilter(this)">Johannine</span>
+    <span class="corpus-chip" data-corpus="revelation" onclick="toggleCorpusFilter(this)">Revelation</span>
   </div>
   <div class="lemma-info" id="lemma-info"></div>
   <div class="search-body">
@@ -1469,6 +1519,84 @@ let lastSearchTerms = [];  // for highlighting
 let lemmaIndex = null;     // { lemma_to_forms, form_to_lemma }
 let lemmaIndexLoading = false;
 
+// --- Corpus filter groups ---
+const CORPUS_GROUPS = {
+  'synoptics': ['matt', 'mark', 'luke'],
+  'john': ['john'],
+  'luke-acts': ['luke', 'acts'],
+  'pauline': ['rom', '1cor', '2cor', 'gal', 'eph', 'phil', 'col', '1thess', '2thess', '1tim', '2tim', 'titus', 'phlm'],
+  'disputed': ['eph', 'col', '2thess', '1tim', '2tim', 'titus'],
+  'general': ['heb', 'jas', '1pet', '2pet', 'jude'],
+  'johannine': ['john', '1john', '2john', '3john', 'rev'],
+  'revelation': ['rev']
+};
+let activeCorpusFilters = new Set();
+
+function toggleCorpusFilter(el) {
+  const corpus = el.dataset.corpus;
+  if (activeCorpusFilters.has(corpus)) {
+    activeCorpusFilters.delete(corpus);
+    el.classList.remove('active');
+    // If deactivating Pauline, also deactivate Disputed
+    if (corpus === 'pauline') {
+      activeCorpusFilters.delete('disputed');
+      const disputedChip = document.querySelector('.corpus-chip[data-corpus="disputed"]');
+      if (disputedChip) {
+        disputedChip.classList.remove('active', 'visible');
+      }
+    }
+  } else {
+    activeCorpusFilters.add(corpus);
+    el.classList.add('active');
+  }
+  // Show/hide Disputed sub-filter based on Pauline state
+  const disputedChip = document.querySelector('.corpus-chip[data-corpus="disputed"]');
+  if (disputedChip) {
+    if (activeCorpusFilters.has('pauline')) {
+      disputedChip.classList.add('visible');
+    } else {
+      disputedChip.classList.remove('visible');
+    }
+  }
+  // Re-run search with current query
+  const input = document.getElementById('search-input');
+  if (input && input.value.trim().length >= 2) {
+    performSearch(input.value);
+  }
+}
+
+function getCorpusAllowedBooks() {
+  if (activeCorpusFilters.size === 0) return null; // null = no filter, allow all
+  const allowed = new Set();
+  for (const corpus of activeCorpusFilters) {
+    if (CORPUS_GROUPS[corpus]) {
+      for (const slug of CORPUS_GROUPS[corpus]) {
+        allowed.add(slug);
+      }
+    }
+  }
+  // If Disputed is active (sub-filter of Pauline), restrict Pauline books to disputed only
+  if (activeCorpusFilters.has('disputed') && activeCorpusFilters.has('pauline')) {
+    const paulineAll = CORPUS_GROUPS['pauline'];
+    const disputedSet = new Set(CORPUS_GROUPS['disputed']);
+    // Remove undisputed Pauline books (keep disputed ones + any from other active filters)
+    for (const slug of paulineAll) {
+      if (!disputedSet.has(slug)) {
+        // Only remove if no OTHER active filter includes this book
+        let keptByOther = false;
+        for (const corpus of activeCorpusFilters) {
+          if (corpus !== 'pauline' && corpus !== 'disputed' && CORPUS_GROUPS[corpus] && CORPUS_GROUPS[corpus].includes(slug)) {
+            keptByOther = true;
+            break;
+          }
+        }
+        if (!keptByOther) allowed.delete(slug);
+      }
+    }
+  }
+  return allowed;
+}
+
 function stripDiacritics(str) {
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
@@ -1919,8 +2047,12 @@ function performSearch(query) {
   const hits = [];
   const displayMode = localStorage.getItem('gnt-display-mode') || 'greek';
   const searchEnglish = (displayMode === 'english');
+  const corpusAllowed = getCorpusAllowedBooks();
 
   for (const entry of searchIndex) {
+    // Corpus filter: skip books not in any active filter group
+    if (corpusAllowed && !corpusAllowed.has(entry.book)) continue;
+
     let matched = false;
 
     if (searchEnglish) {
@@ -1969,7 +2101,12 @@ function performSearch(query) {
     return;
   }
 
-  statusEl.textContent = totalCount + ' verse' + (totalCount !== 1 ? 's' : '') + ' found';
+  let filterLabel = '';
+  if (corpusAllowed) {
+    const names = [...activeCorpusFilters].map(f => f.charAt(0).toUpperCase() + f.slice(1));
+    filterLabel = ' in ' + names.join(', ');
+  }
+  statusEl.textContent = totalCount + ' verse' + (totalCount !== 1 ? 's' : '') + ' found' + filterLabel;
 
   const shown = Math.min(totalCount, displayLimit);
   for (let i = 0; i < shown; i++) {
