@@ -12,7 +12,8 @@
       "Bash(git commit -m ':*)"
     ],
     "additionalDirectories": [
-      "C:\\Users\\bibleman\\.claude\\projects\\c--Users-bibleman-repos-readers-nt"
+      "C:\\Users\\bibleman\\.claude\\projects\\c--Users-bibleman-repos-readers-nt",
+      "c:\\Users\\bibleman\\repos\\readers-gnt\\.git"
     ]
   }
 }
