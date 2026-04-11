@@ -337,23 +337,42 @@ def parse_v3_chapter(filepath):
 def load_v3_book(book_prefix, chapter_filter=None, input_dir=None):
     """Load all colometric chapters for a book from a given tier directory.
 
+    For v4-editorial, falls back to v3-colometric for chapters not yet in v4.
+
     Returns:
         dict: {(chapter, verse): [line_words_list, ...]}
     """
     src_dir = input_dir or V3_DIR
+    fallback_dir = TIER_DIRS["v3"] if src_dir == TIER_DIRS["v4"] else None
     all_verses = {}
     pattern = f"{book_prefix}-*.txt"
+
+    # Collect chapter files from primary dir
+    found_chapters = set()
     for filepath in sorted(src_dir.glob(pattern)):
-        # Extract chapter number from filename: mark-04.txt -> 4
         ch_match = re.search(r"-(\d+)\.txt$", filepath.name)
         if not ch_match:
             continue
         ch_num = int(ch_match.group(1))
         if chapter_filter is not None and ch_num != chapter_filter:
             continue
-
+        found_chapters.add(ch_num)
         chapter_verses = parse_v3_chapter(filepath)
         all_verses.update(chapter_verses)
+
+    # Fallback: load missing chapters from v3 if using v4
+    if fallback_dir:
+        for filepath in sorted(fallback_dir.glob(pattern)):
+            ch_match = re.search(r"-(\d+)\.txt$", filepath.name)
+            if not ch_match:
+                continue
+            ch_num = int(ch_match.group(1))
+            if ch_num in found_chapters:
+                continue  # already loaded from v4
+            if chapter_filter is not None and ch_num != chapter_filter:
+                continue
+            chapter_verses = parse_v3_chapter(filepath)
+            all_verses.update(chapter_verses)
 
     return all_verses
 
