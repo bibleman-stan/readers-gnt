@@ -126,7 +126,7 @@ Full methodology in `handoffs/02-colometry-method.md`. Key points:
 - **Gospel vault:** `C:\vaults-nano\gospel\` — devotional scripture notes
 - **Key scholarly references:**
   - Lee & Scott, *Sound Mapping the New Testament* (2009, 2nd ed.)
-  - Marschall, *Colometric Analysis of Paul's Letters* (2024, WUNT II)
+  - Priscille Marschall, *Colometric Analysis of Paul's Letters* (2024, WUNT II)
   - Runge, *Discourse Grammar of the Greek New Testament* (2010)
   - Levinsohn, *Discourse Features of New Testament Greek* (2000)
 - **Domain registrar:** Cloudflare (same account as other domains)

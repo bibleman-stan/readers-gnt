@@ -303,8 +303,8 @@ Stan's hand editing. Makes final decisions on:
 | Source | Contribution to this project |
 |--------|------------------------------|
 | **Wallace, *GGBB* (1996)** ch. 23–25 | Conjunction/clause classification informing v1 break-point inventory |
-| **Marschall (2023)** "Refining the Criteria for Delineating Côla and Periods" | Cola ≠ clause; prepositional phrases can be cola; syllable length criteria; periodic vs. continuous style |
-| **Marschall (2024)** *Colometric Analysis of Paul's Letters* (WUNT II) | Methodological foundations for colometric analysis of Pauline letters |
+| **Priscille Marschall (2023)** "Refining the Criteria for Delineating Côla and Periods" | Cola ≠ clause; prepositional phrases can be cola; syllable length criteria; periodic vs. continuous style |
+| **Priscille Marschall (2024)** *Colometric Analysis of Paul's Letters* (WUNT II) | Methodological foundations for colometric analysis of Pauline letters |
 | **Lee & Scott (2009/2022)** *Sound Mapping the New Testament* | Cola as breath/sense units; sound mapping as exegetical method |
 | **Nässelqvist (2015)** *Public Reading in Early Christianity* | Refined syllable criteria; comma (κόμμα) vs. colon distinction |
 | **Macula Greek / Clear Bible** (CC-BY 4.0) | SBLGNT syntax trees providing clause boundaries for tier 2 |
