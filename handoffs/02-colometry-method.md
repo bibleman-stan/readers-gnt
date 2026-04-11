@@ -489,3 +489,168 @@ The YLT English layer (99.8% gloss-matched to the Greek) provides a third valida
 | Dangling function words | many | **~14** |
 | Bezae agreement | 60.7% | **61.3%** |
 
+---
+
+### Update — 2026-04-11 (cross-pollination from BOM Reader project)
+
+The following principles were developed and tested in the BOM Reader colometry work (documented in `readers-bofm/handoffs/10-colometry.md`) and are here adapted for Greek New Testament colometry. Each has been translated from its English/BOM context into Greek-specific terms with GNT examples.
+
+#### 1. Front-End Frames (FEFs)
+
+**Principle:** A Front-End Frame is a line that (1) opens a verse or verse-block, (2) begins with a discourse marker, (3) binds syntactically to dependent elements such that no internal break exists without orphaning either frame or content, and (4) is followed by expansion lines that unpack the frame's content. The frame *suspends resolution* until the main verb arrives; everything between the discourse marker and the main verb is part of the suspension.
+
+**Greek adaptation:** The Greek equivalent of the BOM's wayyehi protasis is the **periodic sentence with participial suspension before the main verb resolves**. Lukan prose is the densest carrier: extended genitive absolutes, participial chains, and temporal clauses stack between an opening marker and the finite verb that resolves them. Pauline embedded subordination (relative clauses within purpose clauses within participial frames) produces the same irreducibility at clause level.
+
+**Examples:**
+- **Luke 3:1-2** — Ἐν ἔτει δὲ πεντεκαιδεκάτῳ τῆς ἡγεμονίας Τιβερίου Καίσαρος... ἐγένετο ῥῆμα θεοῦ — a temporal FEF that suspends through five genitive absolute participial phrases before the main verb ἐγένετο lands. The entire frame is irreducible.
+- **Acts 1:1-4** — Τὸν μὲν πρῶτον λόγον ἐποιησάμην... ἄχρι ἧς ἡμέρας... ἐντειλάμενος... παρήγγειλεν — periodic sentence with participial chain suspending resolution across multiple clauses. No internal break produces a complete thought.
+- **Ephesians 1:3-6** — Εὐλογητὸς ὁ θεὸς... ὁ εὐλογήσας ἡμᾶς... καθὼς ἐξελέξατο ἡμᾶς... εἰς τὸ εἶναι ἡμᾶς... προορίσας ἡμᾶς — Pauline periodic suspension with embedded purpose and result clauses; the FEF frame does not resolve until the main predication completes.
+
+**Connection to open question:** The "ἐγένετο patterns" item in "Decisions Still Open" is now subsumed by the FEF framework. Lukan ἐγένετο + infinitive/ὅτι constructions are FEFs — the ἐγένετο is a discourse marker (not a semantically heavy verb), and the temporal/circumstantial material between it and the content clause is the frame. Treat as irreducible.
+
+#### 2. Three-Category Framework (A/B/C)
+
+**Principle:** When reviewing sense-lines, proposed changes fall into three categories:
+- **Category A — Editorial slippage:** Break placement is suboptimal by our own principles. No theological or rhetorical stakes. Safe to revise with review.
+- **Category B — Rhetorical shape:** The arrangement reflects how a speaker builds argument or emphasis. Changing the break changes the rhetoric. Requires judgment about what the speaker is doing.
+- **Category C — Theological weight:** Break placement makes a doctrinal point, or a proposed change would flatten something intentional. Flag and discuss before touching.
+
+**Greek adaptation:** Already referenced in `04-editorial-workflow.md` but not formalized in the methodology. Greek-specific instances:
+
+- **Category A example:** A dangling article (τόν at line end) or a verb split from its direct object — mechanical error, fix confidently.
+- **Category B example:** Phil 2:6-8 kenosis hymn — whether θανάτου δὲ σταυροῦ gets its own line or stays with the preceding line changes how the descent structure reads. The δέ break is rhetorically motivated.
+- **Category C example:** Rom 9:5 — whether ὁ ὤν ἐπὶ πάντων θεὸς εὐλογητός attaches to ὁ Χριστός (Christological reading) or begins a new doxology (theistic reading). Break placement is a doctrinal decision.
+
+Category A gets a confident proposal. B and C get a question first.
+
+#### 3. Framing Devices — Unifying Principle
+
+**Principle:** If a construction's function is to frame, introduce, or pivot to what comes next, it should not be severed from what comes next. A frame without its content is an orphan; content without its frame loses its rhetorical context.
+
+**Greek adaptation:** Several Greek discourse markers already appear individually in our break-point rules (γάρ, ἀλλά, δέ as contrast). The unifying principle behind them all is the framing-device principle. The following are framing devices that attach forward to their content:
+
+| Marker | Function | Example |
+|--------|----------|---------|
+| **ἰδού** | Deictic/mirative pointer | ἰδοὺ ἐγὼ ἀποστέλλω τὸν ἄγγελόν μου (Mark 1:2) |
+| **διό** | Inferential conclusion | διὸ καὶ ὁ θεὸς αὐτὸν ὑπερύψωσεν (Phil 2:9) |
+| **οὖν** | Resumptive/consequential | οὖν as post-positive, attaches to its clause |
+| **νῦν δέ** | Discourse pivot ("but as it is") | νῦν δὲ χωρὶς νόμου δικαιοσύνη θεοῦ πεφανέρωται (Rom 3:21) |
+| **ἀλλά** | Adversative correction | Already in our rules — confirmed as framing device |
+| **γάρ** | Explanatory ground | Already in our rules — confirmed as framing device |
+| **πλήν** | Restrictive adversative | πλὴν ὅτι τὸ πνεῦμα... διαμαρτύρεταί μοι (Acts 20:23) |
+| **τοιγαροῦν** | Strong inference | τοιγαροῦν καὶ ἡμεῖς... τρέχωμεν (Heb 12:1) |
+
+These are not merely "break triggers" — they are framing devices whose function is to introduce what follows. Never orphan them at the end of a line; they lead their content.
+
+#### 4. ἰδού Three-Type Distinction
+
+**Principle (adapted from the BOM "behold" distinction):** ἰδού in the GNT functions in at least three distinct ways, each with potentially different colometric treatment:
+
+1. **Deictic (pointing):** Directs attention to a specific person, object, or scene. Common in narrative: ἰδοὺ ἀστὴρ προῆγεν αὐτούς (Matt 2:9 — "behold, a star went before them"). The ἰδού attaches forward to the thing pointed at.
+
+2. **Mirative (surprise/discovery):** Marks unexpected information. Common in miracle narratives and apocalyptic: καὶ ἰδοὺ σεισμὸς μέγας ἐγένετο (Matt 28:2 — "and behold, a great earthquake occurred"). Often paired with καί. The surprise is the frame for the event.
+
+3. **Logical-connective (discourse pivot):** Introduces an argument, prophecy, or announcement. Especially in prophetic speech: ἰδοὺ ἐγὼ ἀποστέλλω ὑμᾶς ὡς πρόβατα (Matt 10:16 — "behold, I send you out as sheep"). Functions as a discourse marker more than a deictic pointer.
+
+**Status: UNSETTLED.** The three-type distinction is ported from BOM work but not yet tested on GNT material. Open questions:
+- Does type 3 (logical-connective) benefit from merging with its clause rather than standing alone?
+- How does ἰδού interact with καί ἰδού (which may always be mirative)?
+- Does the LXX-influenced ἰδού in Luke-Acts behave differently from the Matthean usage?
+- Should ἰδού be added to the FEF marker inventory?
+
+**Action item:** Test on Matt 1-2 (heavy ἰδού usage), Luke 1-2 (Septuagintal style), and Rev 1-3 (prophetic/apocalyptic).
+
+#### 5. Syntactic Bond Rules — Expanded
+
+Several syntactic bond rules already appear in our Carry-Over Rules section. The following additions ensure completeness, adapted from the BOM audit:
+
+**New rule — Never split periphrastic constructions:** Greek periphrastic constructions (εἰμί + participle, e.g., ἦν διδάσκων "was teaching," ἔσονται... ὑποτασσόμενοι "will be subject") function as single verbal units. The auxiliary and participle must stay on the same line. This is the Greek equivalent of the BOM's "never split auxiliary from main verb" rule.
+- Example: ἦν γὰρ διδάσκων αὐτούς (Mark 1:22) — never split ἦν from διδάσκων.
+- Also applies to μέλλω + infinitive (μέλλει... ἔρχεσθαι), ἄρχομαι + infinitive (ἤρξατο διδάσκειν).
+
+**New rule — Never split negation from negated element:** οὐ/μή and their compounds (οὐδέ, μηδέ, οὐκέτι, μήποτε) must stay with the word they negate. Already implicit in our practice but now explicit.
+- Example: οὐκ ἔστιν ὧδε (Mark 16:6) — never strand οὐκ at line end.
+
+**Confirmed existing rules (now cross-referenced with BOM equivalents):**
+- Never dangle conjunction at line end (Carry-Over Rule 1) — confirmed
+- Never split verb from direct object (Carry-Over Rule 2) — confirmed
+- Never end on article (Carry-Over Rule 6) — confirmed
+- Vocative units indivisible (Carry-Over Rule 7) — confirmed
+- Fixed phrases stay together (Carry-Over Rule 8) — confirmed
+
+#### 6. Qualifying Phrases — Escalation vs. Restriction
+
+**Principle:** A qualifying phrase that **restricts** the preceding claim belongs with it on the same line. A qualifying phrase that **escalates** — pushing the claim to a further extreme — earns its own line, because the escalation is itself a thought that benefits from its own arrest.
+
+**Greek adaptation:**
+
+**Restriction (merge):** Phrases introduced by εἰ μή, πλήν, ἐκτός, μόνον that limit the scope of the preceding statement:
+- πάντα μοι ἔξεστιν ἀλλ᾽ οὐ πάντα συμφέρει (1 Cor 6:12) — the restriction completes the thought on one line.
+
+**Escalation (break):** Phrases that push the preceding claim to its limit, often with εἰ μή + extreme case, or a comparative/superlative intensifier:
+- ἐκενώσεν ἑαυτὸν μορφὴν δούλου λαβών... / γενόμενος ὑπήκοος μέχρι θανάτου, / θανάτου δὲ σταυροῦ. (Phil 2:7-8) — each step is an escalation: death, then *crucifixion-death*. The θανάτου δὲ σταυροῦ escalation earns its own line.
+- ὑπὲρ ἐκ περισσοῦ ὧν αἰτούμεθα ἢ νοοῦμεν (Eph 3:20) — the escalation beyond asking or imagining.
+
+**Test:** Does the qualifying phrase narrow the scope (restriction → merge) or intensify the claim (escalation → break)?
+
+#### 7. Epistolary vs. Narrative Vocative Distinction
+
+**Principle:** Vocatives in the GNT fall into three categories with different colometric behavior:
+
+**A. Epistolary vocatives (genre markers) — can stand alone:**
+Vocatives that function as genre markers or audience identifiers in epistolary/oratorical contexts. They signal a shift in address and can occupy their own line:
+- ὦ Θεόφιλε (Acts 1:1) — epistolary address, genre marker for the Luke-Acts dedication. Can stand alone as its own line.
+- Ἄνδρες Ἀθηναῖοι (Acts 17:22) — oratorical address formula opening a speech. Stands alone.
+- Ἄνδρες Γαλιλαῖοι (Acts 1:11) — compound address formula, a breath unit that can stand alone.
+- Ἄνδρες ἀδελφοί (Acts 2:29) — compound address formula in speech.
+
+**B. Narrative speech vocatives — attach to their speech:**
+Vocatives within narrative that address a character during action or dialogue. They attach to the speech they introduce because the address and the speech are one rhetorical act:
+- Κύριε, σῶσον (Matt 8:25) — the plea is one unit with the address.
+- Διδάσκαλε, οὐ μέλει σοι; (Mark 4:38) — "Teacher, do you not care?" is one cry.
+- Ῥαββί, ἴδε (Mark 11:21) — address + imperative = one breath.
+
+**C. Compound address formulas — breath units:**
+Extended formal addresses in speeches that are themselves complete breath units:
+- Ἄνδρες Ἰσραηλῖται (Acts 2:22) — indivisible formula.
+- Ἄνδρες ἀδελφοὶ καὶ πατέρες (Acts 22:1) — expanded compound formula, still one breath unit.
+
+**The distinction:** Epistolary/oratorical vocatives (A) mark discourse boundaries and can stand alone. Narrative vocatives (B) are embedded in the speech act and attach. Compound formulas (C) are always indivisible regardless of context. This refines Carry-Over Rule 7 (vocative units indivisible) by adding the standalone/attachment distinction.
+
+#### 8. ὅτι Cataphoric/Anaphoric Distinction
+
+**Principle (adapted from BOM Rule 19):** ὅτι clauses function differently depending on whether they point forward (introducing new content) or backward (restating/grounding what was just said).
+
+**Cataphoric ὅτι (new content — break):** The ὅτι introduces information the reader hasn't heard yet. It earns its own line:
+- λέγω ὑμῖν ὅτι... (I say to you that...) — the ὅτι clause is the new content.
+- Content-ὅτι after verbs of perceiving, knowing, saying: breaks at ὅτι.
+
+**Anaphoric ὅτι (restating — merge candidate):** The ὅτι clause restates or grounds what was just said. Common in Johannine style:
+- ἐν τούτῳ γινώσκομεν ὅτι... (by this we know that...) — the ὅτι clause merely unpacks "this." Merge candidate.
+
+**ὅτι recitativum (speech marker — own line):** Functions as a quotation marker introducing direct speech. Treat as speech attribution: the ὅτι-introduction gets its own line, the speech begins on the next.
+
+**Status: UNSETTLED.** The three-way distinction is clear in theory but needs testing against actual GNT material to establish consistent practice.
+
+#### 9. Authorial Style Principle
+
+**Principle:** The same four colometric criteria apply uniformly to all NT authors. Do not adjust thresholds, rules, or sensitivity by author or genre. Let the colometric output reveal authorial differences rather than encoding assumptions about them.
+
+This means: Mark's paratactic short lines and Paul's periodic long lines both emerge from applying the same criteria consistently. The difference in output IS the finding — it reflects genuine compositional differences between authors, not editorial preferences about how each author "should" look.
+
+**Corollary:** Colon-length distributions, FEF density, average words per line, and other quantitative measures derived from the colometric output are valid for stylometric analysis precisely because the criteria are uniform. If we adjusted thresholds for Paul, the Paul-specific measurements would reflect our adjustments, not Paul's style.
+
+**Established by:** The BOM Reader project proved this works — applying one method uniformly across the Book of Mormon produced measurable voice differentiation (oratorical voices averaged 7.7 words/line; narrative voices 9.1) without any author-specific tuning.
+
+#### 10. Future Work — Parallel Diagnostic Scanner
+
+Build a Runge-informed diagnostic script (analogous to the BOM project's `parry_split_candidates.py`) that scans all v3/v4 output for repeated syntactic frames and flags lines where internal parallel boundaries suggest splits. Target patterns:
+- Repeated ὅτι clauses (creedal formulas, Johannine "I am" statements)
+- εἴτε...εἴτε lists (Paul's hypothetical catalogs)
+- οὔτε...οὔτε chains (negation lists)
+- Repeated participial constructions (hymnic passages)
+- μακάριοι chains (Beatitudes, Revelation's seven beatitudes)
+- οὐαί chains (Woe oracles)
+
+This would accelerate the identification of passages where the automated pipeline fails to stack parallel structures consistently — the #3 failure mode identified in the session 4 scope audit.
+
