@@ -152,7 +152,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/ylt_align.py --book Acts --chapter 9  # one
 
 ### build_books.py
 
-Converts v3-colometric and ylt-colometric text files to dual-text HTML fragment files.
+Converts v4-editorial Greek + web-colometric structural glosses to dual-text HTML.
 
 **Usage:**
 ```bash
@@ -160,13 +160,25 @@ PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py               # all books
 PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark    # one book
 ```
 
-**What it does:**
-1. Globs all `.txt` files in `data/text-files/v3-colometric/`
-2. If YLT files exist in `data/text-files/ylt-colometric/`, reads those in parallel
-3. Groups by book prefix (everything before last dash in filename)
-4. Parses each chapter file into verse blocks (verse ref line, then sense-lines, separated by blank lines)
-5. Skips header lines before first verse reference
-6. HTML-escapes Greek and English text
+**Source priority:** v4-editorial (primary) → v3-colometric (fallback) for Greek. web-colometric for English structural glosses.
+
+---
+
+## CRITICAL: The Cascade Rule
+
+**Every change to Greek breaks MUST cascade through the full pipeline:**
+
+```
+Greek edit (v4-editorial) → English regen (web-colometric) → HTML rebuild (books/) → commit → push
+```
+
+This is not optional. Skipping any step means the site serves stale or misaligned content. The cascade is a single atomic operation — if you change Greek, you MUST sync English and rebuild HTML in the SAME work unit. Not "next session." Not "I'll get to it later."
+
+**When dispatching agents to edit Greek:** ALWAYS simultaneously dispatch agents to regenerate the corresponding English. When BOTH complete, rebuild ALL HTML, commit, and push. Never commit Greek changes without syncing English. Never push without rebuilding HTML.
+
+**English structural glosses are NOT an alignment algorithm.** They are purpose-built translations written to match Greek clause order by construction. When Greek lines change, English lines must be REWRITTEN (not redistributed, not script-processed). Each English line is a fresh translation of its corresponding Greek sense-line.
+
+**Verification after every cascade:** Run the line-count checker across all 260 files. Any mismatch means the cascade is incomplete.
 7. Emits dual-text HTML: each line wrapped with language class for CSS show/hide
 8. Writes one HTML fragment per book to `books/{book}.html`
 
