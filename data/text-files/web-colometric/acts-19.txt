@@ -60,11 +60,11 @@ diseases departed from them,
 and the evil spirits went out.
 
 19:13
-
 But some of the itinerant
 Jews, exorcists, took on themselves to invoke over those who had the evil
 spirits the name of the Lord Jesus,
-saying, “We adjure you by Jesus whom Paul preaches.”
+saying, “We adjure you by Jesus
+whom Paul preaches.”
 
 19:14
 There were seven sons of one Sceva, a Jewish chief priest, who did this.
@@ -123,8 +123,8 @@ brought no little business to the craftsmen,
 19:25
 whom he gathered together, with the workmen
 of like occupation, and said,
-
-“Sirs, you know that by this business we have our wealth.
+“Sirs,
+you know that by this business we have our wealth.
 
 19:26
 You see and hear,
@@ -203,5 +203,5 @@ about other matters, it will be settled in the regular assembly.
 For indeed we are in danger of being accused concerning today’s riot,
 there being no cause.
 Concerning it, we wouldn’t be able to give an account of this commotion.”
-
-
+And when he had said these things,
+he dismissed the assembly.
