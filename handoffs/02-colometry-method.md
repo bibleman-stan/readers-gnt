@@ -157,15 +157,23 @@ Note: imperatives (Ἀκούετε, Σιώπα) also stand alone — they are co
 
 **Supersedes** the earlier "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" sections. Those distinctions were explored during the Mark 4 and Acts 1 editorial passes and resolved into this simpler universal rule during the Luke 1:3 discussion.
 
-### Camera Angle Test for Participial Phrases
-A circumstantial participle after the main verb introduces a **new image** (and earns its own line) when it adds concrete spatial, postural, or visual information that the reader must picture separately from the main action. Test: does the participle redirect the reader's visual attention to a new spatial configuration? If yes, split.
+### Participial Phrase Test (Refined Camera Angle + Ellipsis)
 
-A participle stays on the same line when it is: (a) periphrastic (ἦν + participle = one verbal unit), (b) attributive/titular (ὁ παρεστηκώς = identity, not scene), (c) causal/temporal and too short to stand alone (ἰδών), or (d) describes the means of the main verb rather than a separate scene.
+**Default rule:** Circumstantial participles merge with their main verb. The default function of a Greek circumstantial participle is adverbial framing — temporal (when/after), causal (because), concessive (although), conditional (if), manner (by/while). All of these are DEPENDENT: they frame the main verb's action and are not complete thoughts without it.
 
-Examples:
-- Luke 1:11: "ὤφθη δὲ αὐτῷ ἄγγελος κυρίου / ἑστὼς ἐκ δεξιῶν τοῦ θυσιαστηρίου" — the appearing is one image, the standing-at-the-altar is a second image. Camera changes. **Split.**
-- Mark 4:38: "καὶ αὐτὸς ἦν ἐν τῇ πρύμνῃ / ἐπὶ τὸ προσκεφάλαιον καθεύδων" — location + posture = two images. **Split.**
-- Luke 1:19: "Ἐγώ εἰμι Γαβριὴλ ὁ παρεστηκὼς ἐνώπιον τοῦ θεοῦ" — attributive participle as title, not a scene change. **Merge.**
+**Exception — supplementary predication via ellipsis:** A participial phrase earns its own line when it constitutes a **second predication** — that is, when the main verb can be implicitly repeated to reconstruct the participle as an independent thought. This is the ellipsis principle applied to participial supplements.
+
+**The test:** Can you reconstruct the participle as an independent predication by supplying the main verb? If "the angel appeared" is complete thought 1, then "[the angel appeared] standing at the right of the altar" is complete thought 2 via ellipsis. Split. But if "having seen the star" requires "they rejoiced" to become a thought at all — if there's no implicit repeated verb — it's a dependent frame. Merge.
+
+**Split examples (supplementary predication — main verb implicitly repeatable):**
+- Luke 1:11: "ὤφθη δὲ αὐτῷ ἄγγελος κυρίου / ἑστὼς ἐκ δεξιῶν τοῦ θυσιαστηρίου" — "an angel appeared" (thought 1) / "[appeared] standing at the right of the altar" (thought 2 via ellipsis). **Split.**
+- Mark 4:38: "καὶ αὐτὸς ἦν ἐν τῇ πρύμνῃ / ἐπὶ τὸ προσκεφάλαιον καθεύδων" — "he was in the stern" (thought 1) / "[was] sleeping on the cushion" (thought 2 via ellipsis). **Split.**
+
+**Merge examples (dependent frame — no implicit repetition):**
+- Matt 2:10: "ἰδόντες δὲ τὸν ἀστέρα ἐχάρησαν χαρὰν μεγάλην σφόδρα" — "having seen the star" is causal framing for "they rejoiced." You cannot say "[they rejoiced] having seen" as an independent thought. **Merge.**
+- Luke 1:19: "Ἐγώ εἰμι Γαβριὴλ ὁ παρεστηκὼς ἐνώπιον τοῦ θεοῦ" — attributive participle as title/identity. **Merge.**
+
+**Periphrastic constructions** (ἦν + participle, μέλλω + infinitive, ἄρχομαι + infinitive) are always one verbal unit — never split.
 
 ### Paradox Pairs
 Antithetical pairs that form a single paradox merge onto one line: "seeing they may see and not perceive" is one thought — the paradox is the unit, not its halves (Mark 4:12, Isaiah quotation). The same applies to any construction where the second element completes (not extends) the first.
