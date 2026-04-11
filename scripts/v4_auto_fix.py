@@ -663,9 +663,255 @@ def fix_ultra_long(blocks):
     return fixes
 
 
+# ---------- Fix 5: Overlong lines — καί + finite verb split ----------
+
+def fix_kai_finite_verb(blocks, morphgnt_data, chapter_num):
+    """
+    Lines >100 chars: if MorphGNT data shows καί immediately followed by
+    a finite verb (indicative/subjunctive/optative/imperative), split the
+    line before the καί.
+
+    Uses morphological data to avoid splitting at καί that merely joins
+    nouns or adjectives (e.g. "bread and fish" should stay together).
+    """
+    fixes = []
+
+    for block in blocks:
+        verse_ref = block['ref']
+        # Get MorphGNT words for this verse
+        # verse_ref is like "3:4", morphgnt_data keys are "3:4"
+        verse_words = morphgnt_data.get(verse_ref, [])
+        if not verse_words:
+            continue
+
+        # Find which καί forms precede finite verbs
+        kai_fv_indices = get_kai_finite_verb_positions(verse_words)
+        if not kai_fv_indices:
+            continue
+
+        # Collect the actual word forms at those positions (stripped of punctuation)
+        # We need to match these in the text. The key signal is: the form of the
+        # word AFTER the καί (the finite verb form) — since there may be multiple καί.
+        kai_fv_verb_forms = set()
+        for idx in kai_fv_indices:
+            # Find the finite verb that follows
+            for offset in range(1, 4):
+                j = idx + offset
+                if j < len(verse_words) and is_finite_verb(verse_words[j]):
+                    kai_fv_verb_forms.add(verse_words[j]['form'])
+                    break
+
+        lines = block['lines']
+        i = 0
+        while i < len(lines):
+            line = lines[i]
+            stripped = line.strip()
+
+            if len(stripped) <= 100 or not stripped:
+                i += 1
+                continue
+
+            # Find all καί positions in the line text
+            kai_matches = list(re.finditer(r'(?<=\s)καὶ(?=\s)', stripped))
+            if not kai_matches:
+                i += 1
+                continue
+
+            best_split = None
+            for m in kai_matches:
+                # Don't split if καί is in the first 15 chars
+                if m.start() < 15:
+                    continue
+
+                # Check if a finite verb form follows this καί in the text
+                after_kai = stripped[m.end():].strip()
+                after_words = after_kai.split()
+                if not after_words:
+                    continue
+
+                # Check first 1-3 words after καί for a known finite verb form
+                found_fv = False
+                for check_idx in range(min(3, len(after_words))):
+                    clean_word = strip_punctuation(after_words[check_idx])
+                    if clean_word in kai_fv_verb_forms:
+                        found_fv = True
+                        break
+                    # If we hit a conjunction, stop checking
+                    if clean_word in ('καὶ', 'καί', 'ἀλλά', 'ἀλλὰ', 'δέ', 'δὲ'):
+                        break
+
+                if found_fv:
+                    best_split = m.start()
+                    break  # Take the first valid split point
+
+            if best_split is not None:
+                before = stripped[:best_split].rstrip()
+                after = stripped[best_split:]
+                if before and after:
+                    old_line = stripped
+                    lines[i] = before
+                    lines.insert(i + 1, after)
+                    fixes.append({
+                        'ref': verse_ref,
+                        'type': 'kai_finite_verb_split',
+                        'old': old_line,
+                        'new': [before, after],
+                    })
+                    # Re-check the new shorter lines
+                    i += 1
+
+            i += 1
+
+    return fixes
+
+
+# ---------- Fix 6: Parallel list stacker ----------
+
+def fix_parallel_lists(blocks, morphgnt_data, chapter_num):
+    """
+    Stack parallel list items on their own lines when a verse contains
+    3+ instances of the same conjunction pattern (εἴτε...εἴτε...εἴτε,
+    οὔτε...οὔτε...οὔτε, μήτε...μήτε...μήτε, or repeated καί + same-case noun).
+
+    Conservative: only applies when the pattern is unambiguous.
+    """
+    fixes = []
+
+    for block in blocks:
+        verse_ref = block['ref']
+        verse_words = morphgnt_data.get(verse_ref, [])
+
+        lines = block['lines']
+        new_lines = []
+        changed = False
+
+        for line in lines:
+            stripped = line.strip()
+            if not stripped:
+                new_lines.append(line)
+                continue
+
+            line_modified = False
+
+            # --- Pattern A: εἴτε / οὔτε / μήτε repeated 3+ times ---
+            for conj in PARALLEL_CONJUNCTIONS:
+                # Count occurrences as whole words
+                conj_matches = list(re.finditer(
+                    r'(?:^|(?<=\s))' + re.escape(conj) + r'(?=\s|$)', stripped
+                ))
+                if len(conj_matches) < 3:
+                    continue
+
+                # Split before each conjunction occurrence (except possibly the first
+                # if it starts the line)
+                parts = []
+                prev_end = 0
+                for j, cm in enumerate(conj_matches):
+                    if j == 0 and cm.start() <= 2:
+                        # First conjunction is at start of line — don't add empty before
+                        continue
+                    if cm.start() > prev_end:
+                        segment = stripped[prev_end:cm.start()].strip()
+                        if segment:
+                            parts.append(segment)
+                    prev_end = cm.start()
+
+                # Add the final segment
+                final = stripped[prev_end:].strip()
+                if final:
+                    parts.append(final)
+
+                # Only apply if we actually got 3+ parts and they look similar-length
+                if len(parts) >= 3:
+                    # Check that parts are somewhat similar in length (within 3x of each other)
+                    lengths = [len(p) for p in parts]
+                    if max(lengths) <= min(lengths) * 4:
+                        old_line = stripped
+                        new_lines.extend(parts)
+                        changed = True
+                        line_modified = True
+                        fixes.append({
+                            'ref': verse_ref,
+                            'type': 'parallel_list_stack',
+                            'old': old_line,
+                            'new': parts,
+                        })
+                        break
+
+            # --- Pattern B: repeated καί + same-case noun (conservative) ---
+            # Only applies when the line is a flat list: 3+ καί with no other
+            # structural conjunctions (δέ, τε, μή, μηδέ, ἤ) between them.
+            if not line_modified and verse_words:
+                # Count καί in this line
+                kai_line_matches = list(re.finditer(r'(?:^|(?<=\s))καὶ(?=\s)', stripped))
+                if len(kai_line_matches) >= 3:
+                    # Safety: reject if line contains structural disruptions between καί
+                    # These indicate paired structure, not a flat list
+                    disruptors = {'δὲ', 'δέ', 'τε', 'μὴ', 'μή', 'μηδὲ', 'μηδέ', 'ἤ', 'ἢ'}
+                    line_words = [strip_punctuation(w) for w in stripped.split()]
+                    has_disruptor = bool(disruptors & set(line_words))
+
+                    if not has_disruptor:
+                        # Check MorphGNT: are there 3+ καί each followed by a noun in the same case?
+                        kai_noun_cases = []
+                        for w_idx, w in enumerate(verse_words):
+                            if w['lemma'] == 'καί' and w_idx + 1 < len(verse_words):
+                                next_w = verse_words[w_idx + 1]
+                                if next_w['pos'].startswith('N'):
+                                    parse = next_w['parse']
+                                    if len(parse) >= 5:
+                                        case = parse[4]
+                                        kai_noun_cases.append(case)
+
+                        if len(kai_noun_cases) >= 3:
+                            # Check if all same case
+                            case_counts = defaultdict(int)
+                            for c in kai_noun_cases:
+                                case_counts[c] += 1
+                            dominant_case = max(case_counts, key=case_counts.get)
+                            dominant_count = case_counts[dominant_case]
+                            if dominant_count >= 3:
+                                # Split before each καί (except the first if at line start)
+                                parts = []
+                                prev_end = 0
+                                for j, km in enumerate(kai_line_matches):
+                                    if j == 0 and km.start() <= 2:
+                                        continue
+                                    if km.start() > prev_end:
+                                        segment = stripped[prev_end:km.start()].strip()
+                                        if segment:
+                                            parts.append(segment)
+                                    prev_end = km.start()
+                                final = stripped[prev_end:].strip()
+                                if final:
+                                    parts.append(final)
+
+                                if len(parts) >= 3:
+                                    lengths = [len(p) for p in parts]
+                                    if max(lengths) <= min(lengths) * 4:
+                                        old_line = stripped
+                                        new_lines.extend(parts)
+                                        changed = True
+                                        line_modified = True
+                                        fixes.append({
+                                            'ref': verse_ref,
+                                            'type': 'parallel_kai_noun_stack',
+                                            'old': old_line,
+                                            'new': parts,
+                                        })
+
+            if not line_modified:
+                new_lines.append(stripped)
+
+        if changed:
+            block['lines'] = new_lines
+
+    return fixes
+
+
 # ---------- main processing ----------
 
-def process_file(filepath, vocatives, chapter_num, dry_run=False):
+def process_file(filepath, vocatives, chapter_num, morphgnt_data=None, dry_run=False):
     """Process a single v4-editorial file. Returns list of fix records."""
     blocks = parse_v4_file(filepath)
     all_fixes = []
@@ -694,6 +940,20 @@ def process_file(filepath, vocatives, chapter_num, dry_run=False):
     for f in fixes:
         f['file'] = filename
     all_fixes.extend(fixes)
+
+    # Fix 5: Overlong lines — καί + finite verb split (>100 chars)
+    if morphgnt_data:
+        fixes = fix_kai_finite_verb(blocks, morphgnt_data, chapter_num)
+        for f in fixes:
+            f['file'] = filename
+        all_fixes.extend(fixes)
+
+    # Fix 6: Parallel list stacker
+    if morphgnt_data:
+        fixes = fix_parallel_lists(blocks, morphgnt_data, chapter_num)
+        for f in fixes:
+            f['file'] = filename
+        all_fixes.extend(fixes)
 
     # Write back if not dry-run and there were fixes
     if all_fixes and not dry_run:
@@ -738,6 +998,16 @@ def main():
         if voc_count:
             print(f"  {prefix}: {voc_count} vocative words in {len(vocatives)} verses")
 
+    # Pre-load MorphGNT data for all books that have v4-editorial files
+    book_morphgnt = {}
+    print("Loading MorphGNT morphology data...")
+    for prefix in sorted(book_prefixes_seen):
+        mgnt = load_morphgnt_for_book(prefix)
+        book_morphgnt[prefix] = mgnt
+        if mgnt:
+            word_count = sum(len(v) for v in mgnt.values())
+            print(f"  {prefix}: {word_count} words in {len(mgnt)} verses")
+
     print()
 
     # Process each file
@@ -760,7 +1030,16 @@ def main():
             if ch == chapter_num or ch == str(int(chapter_num)):
                 chapter_vocs[ref] = words
 
-        fixes = process_file(filepath, chapter_vocs, chapter_num, dry_run=args.dry_run)
+        # Filter MorphGNT data to this chapter
+        morphgnt_all = book_morphgnt.get(book_prefix, {})
+        chapter_morphgnt = {}
+        for ref, words in morphgnt_all.items():
+            ch, _ = ref.split(':')
+            if ch == chapter_num or ch == str(int(chapter_num)):
+                chapter_morphgnt[ref] = words
+
+        fixes = process_file(filepath, chapter_vocs, chapter_num,
+                             morphgnt_data=chapter_morphgnt, dry_run=args.dry_run)
 
         if fixes:
             print(f"--- {fname}: {len(fixes)} fix(es) ---")

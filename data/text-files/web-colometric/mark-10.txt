@@ -89,7 +89,9 @@ Teacher,
 all these I have kept from my youth.
 
 10:21
-And Jesus, looking at him, loved him and said to him:
+And Jesus, looking at him,
+loved him
+and said to him:
 You lack one thing:
 go, sell all that you have and give to the poor,
 and you will have treasure in heaven;
