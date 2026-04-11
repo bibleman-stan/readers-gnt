@@ -11,10 +11,10 @@ A colometric reading edition of the Greek New Testament. The text is reformatted
 The colometric methodology draws on the scholarly tradition of Lee & Scott (sound mapping), Marschall (colometric analysis of Paul), and ancient manuscript practice.
 
 - **Repo:** github.com/bibleman-stan/readers-gnt (public)
-- **Live site:** bibleman-stan.github.io/readers-gnt/ (GitHub Pages, no custom domain yet)
+- **Live site:** gnt-reader.com (GitHub Pages, custom domain, HTTPS enforced)
 - **Base text:** SBL Greek New Testament (SBLGNT) — CC-BY-4.0
 - **User:** Stan (thebibleman77@gmail.com)
-- **Stage:** v1 complete — all 27 books auto-formatted, web app functional, hand editing not yet begun
+- **Stage:** v4-editorial complete — all 260 chapters hand-edited, structural English glosses for all 260, web app live at gnt-reader.com
 
 ---
 
@@ -36,12 +36,15 @@ Before any substantive work, read the handoffs directory in order:
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Main web app — all CSS/JS inline (~340 lines) |
-| `scripts/auto_colometry.py` | Rule-based sense-line formatter (~490 lines) |
-| `scripts/build_books.py` | Converts text files → HTML fragments |
+| `index.html` | Main web app — all CSS/JS inline (~2,500 lines), search, corpus filters, settings |
+| `scripts/build_books.py` | Converts text files → HTML fragments (reads v4-editorial + web-colometric) |
+| `scripts/auto_colometry.py` | Rule-based sense-line formatter (~620 lines) — generates initial drafts only |
+| `scripts/generate_english_glosses.py` | Generates structural English glosses |
+| `scripts/regenerate_english.py` | Regenerates English glosses after Greek edits |
 | `data/text-files/sblgnt-source/` | 27 raw SBLGNT source files — **NEVER EDIT** |
-| `data/text-files/v1-colometric/` | 260 chapter files — working text, Stan edits here |
-| `books/` | 27 generated HTML fragment files (rebuilt from v1-colometric) |
+| `data/text-files/v4-editorial/` | 260 chapter files — **single source of truth for Greek text** |
+| `data/text-files/web-colometric/` | 260 chapter files — structural English glosses |
+| `books/` | 27 generated HTML fragment files (rebuilt from v4-editorial + web-colometric) |
 
 ---
 
@@ -56,7 +59,7 @@ The SBLGNT source files in `data/text-files/sblgnt-source/` are canonical refere
 - Run auto_colometry.py without checking if hand-edited chapters will be overwritten
 
 **ALWAYS:**
-- Work in `v1-colometric/` — the only editorial tool is where lines break
+- Work in `v4-editorial/` — the only editorial tool is where lines break
 - Present proposed changes for review before finalizing
 - Preserve verse references for alignment with standard editions
 - Use `PYTHONIOENCODING=utf-8` when running Python scripts on Windows
@@ -65,13 +68,24 @@ The SBLGNT source files in `data/text-files/sblgnt-source/` are canonical refere
 
 ## Build Pipeline
 
-After text edits:
+The cascade rule: **Greek edit → English regen → HTML rebuild**.
+
+After editing a Greek chapter in `v4-editorial/`:
+1. Regenerate the English gloss for that chapter
+2. Rebuild the HTML
+
 ```bash
-PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py           # rebuild all
-PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark  # rebuild one
+# Regenerate English for one book
+PYTHONIOENCODING=utf-8 py -3 scripts/regenerate_english.py --book mark
+
+# Rebuild all HTML
+PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py
+
+# Rebuild one book's HTML
+PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark
 ```
 
-No service worker to bump (unlike BOM Reader). Just rebuild HTML and commit.
+Pipeline: `v4-editorial/ → web-colometric/ → books/*.html`
 
 ---
 
@@ -79,10 +93,11 @@ No service worker to bump (unlike BOM Reader). Just rebuild HTML and commit.
 
 Full methodology in `handoffs/02-colometry-method.md`. Key points:
 
-### Three Tests
-1. **Foundational:** each line = atomic thought + atomic breath unit
-2. **Image:** each line paints one image
-3. **Grammar reveals structure** — breaks are descriptive, not interpretive
+### Four Criteria
+1. **Atomic Thought:** each line = one complete thought unit
+2. **Single Image:** each line paints one image
+3. **Breath Unit:** each line = one natural breath for oral delivery
+4. **Source-Language Syntax:** grammar reveals structure — breaks are descriptive, not interpretive
 
 ### Greek Break Points
 - Subordinate clauses: ἵνα, ὥστε, ὅτι, ὅταν, ὅτε, ἐάν, μήποτε
@@ -95,7 +110,7 @@ Full methodology in `handoffs/02-colometry-method.md`. Key points:
 ### Rules
 - Never dangle conjunctions at line end
 - Never split verb from direct object on short phrases
-- Vocative units are indivisible
+- All vocatives get their own line (universal rule — each is an atomic address act)
 - Line length is a signal, not a rule
 
 ---
@@ -110,7 +125,6 @@ Full methodology in `handoffs/02-colometry-method.md`. Key points:
 - Decides which books/chapters to work on next
 
 **Claude Code:**
-- Formats raw SBLGNT text into initial colometric draft
 - Proposes line-break revisions with rationale
 - Builds and maintains tooling (scripts, build pipeline, web app)
 - Maintains documentation and handoffs
