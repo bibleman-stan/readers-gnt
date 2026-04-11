@@ -144,6 +144,8 @@ An elided (gapped) verb is a real predication for colometric purposes. When a ve
 
 The scholarly warrant: this is standard Greek gapping (ellipsis). Each elided clause is semantically complete because the verb is recoverable from context.
 
+**When NOT to stack:** Multiple objects of a single verb do NOT stack — they are one thought, not separate predications. "They offered gifts: gold and frankincense and myrrh" (Matt 2:11) is one offering of three things, not three separate offerings. Contrast with "bore thirtyfold / [bore] sixtyfold / [bore] hundredfold" where each IS a separate bearing. The test: can each member be reconstructed as an independent predication by supplying the verb? If yes, stack. If they are all objects/complements of one verb, keep together.
+
 ### Subordinate Clause Attachment
 - **Adjectival subordinate clauses** (ὅπου, ὅς modifying a noun) merge with their head noun — they describe the thing just mentioned and are not independent thoughts. "Fell on rocky ground where it had not much earth" = one image (Mark 4:5).
 - **Adverbial subordinate clauses** (ὅτε, ἵνα, ὥστε, ὅταν) can stand as scene-setters on their own line — they frame a new temporal, purpose, or result context (Mark 4:6 "καὶ ὅτε ἀνέτειλεν ὁ ἥλιος").
