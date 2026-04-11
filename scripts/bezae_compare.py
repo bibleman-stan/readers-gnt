@@ -29,6 +29,7 @@ TIER_DIRS = {
     "v1": PROJECT_DIR / "data" / "text-files" / "v1-colometric",
     "v2": PROJECT_DIR / "data" / "text-files" / "v2-colometric",
     "v3": PROJECT_DIR / "data" / "text-files" / "v3-colometric",
+    "v4": PROJECT_DIR / "data" / "text-files" / "v4-editorial",
 }
 V3_DIR = TIER_DIRS["v3"]  # default
 
@@ -667,10 +668,10 @@ def main():
                         help="Chapter number (requires --book)")
     parser.add_argument("--side-by-side", action="store_true",
                         help="Show side-by-side comparison (requires --book and --chapter)")
-    parser.add_argument("--tier", type=str, default="v3", choices=["v1", "v2", "v3"],
-                        help="Which colometric tier to compare (default: v3)")
+    parser.add_argument("--tier", type=str, default="v4", choices=["v1", "v2", "v3", "v4"],
+                        help="Which colometric tier to compare (default: v4)")
     parser.add_argument("--all-tiers", action="store_true",
-                        help="Compare all three tiers against Bezae in a summary table")
+                        help="Compare all four tiers against Bezae in a summary table")
     args = parser.parse_args()
 
     if args.chapter and not args.book:
@@ -691,17 +692,20 @@ def main():
         print("\n" + "=" * 80)
         print("  BEZAE AGREEMENT — ALL TIERS COMPARISON")
         print("=" * 80)
-        print(f"\n  {'BOOK':<8} {'v1':>8} {'v2':>8} {'v3':>8}")
-        print(f"  {'----':<8} {'----':>8} {'----':>8} {'----':>8}")
+        all_tier_names = ["v1", "v2", "v3", "v4"]
+        header = f"  {'BOOK':<8}" + "".join(f" {t:>8}" for t in all_tier_names)
+        separator = f"  {'----':<8}" + "".join(f" {'----':>8}" for _ in all_tier_names)
+        print(f"\n{header}")
+        print(separator)
 
-        tier_totals = {t: {"breaks": 0, "agreed": 0} for t in ["v1", "v2", "v3"]}
+        tier_totals = {t: {"breaks": 0, "agreed": 0} for t in all_tier_names}
         books = [args.book] if args.book else list(BOOK_MAP.values())
 
         for book in books:
             if book not in bezae_data:
                 continue
             row = f"  {book.upper():<8}"
-            for tier in ["v1", "v2", "v3"]:
+            for tier in all_tier_names:
                 tier_dir = TIER_DIRS[tier]
                 results = book_summary_report(bezae_data, hang_data, book,
                                               chapter_filter=args.chapter,
@@ -716,11 +720,11 @@ def main():
 
         if len(books) > 1:
             row = f"  {'OVERALL':<8}"
-            for tier in ["v1", "v2", "v3"]:
+            for tier in all_tier_names:
                 t = tier_totals[tier]
                 rate = t["agreed"] / t["breaks"] if t["breaks"] > 0 else 0.0
                 row += f" {rate:>7.1%}"
-            print(f"  {'-------':<8} {'-------':>8} {'-------':>8} {'-------':>8}")
+            print(f"  {'-------':<8}" + "".join(f" {'-------':>8}" for _ in all_tier_names))
             print(row)
 
         print()
