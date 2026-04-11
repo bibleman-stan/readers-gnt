@@ -179,6 +179,24 @@ This is not optional. Skipping any step means the site serves stale or misaligne
 **English structural glosses are NOT an alignment algorithm.** They are purpose-built translations written to match Greek clause order by construction. When Greek lines change, English lines must be REWRITTEN (not redistributed, not script-processed). Each English line is a fresh translation of its corresponding Greek sense-line.
 
 **Verification after every cascade:** Run the line-count checker across all 260 files. Any mismatch means the cascade is incomplete.
+
+## Efficiency Principle: Scripts Before Agents
+
+When fixing violations at scale, ALWAYS ask: "Is this pattern-matchable?" If yes, write a script that fixes it across all 260 files in seconds. Only dispatch agents for judgment calls that require reading comprehension.
+
+Examples of script-fixable violations:
+- Dangling postpositive conjunctions (δέ/γάρ/οὖν orphaned at line start)
+- Vocative-case words not on their own line (detectable via Macula XML case="vocative")
+- Lines >140 characters containing subordinating conjunctions (split at conjunction)
+- Lines >80 characters containing ἵνα/ὅτι/ὥστε/ὅταν/ὅτε/ἐάν (split at conjunction)
+
+Examples that REQUIRE agent judgment:
+- Camera-angle participle splits (requires understanding the image)
+- Parallel stacking decisions (requires recognizing the rhetorical structure)
+- FEF protection (requires understanding periodic sentence architecture)
+- Category B/C editorial decisions (rhetorical shape, theological weight)
+
+One script run replaces hundreds of agent dispatches. Tokens are precious. Use them for judgment, not for mechanical pattern-matching.
 7. Emits dual-text HTML: each line wrapped with language class for CSS show/hide
 8. Writes one HTML fragment per book to `books/{book}.html`
 
