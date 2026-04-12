@@ -127,4 +127,5 @@ nor is circumcision that which is outward in the flesh.
 2:29
 But a person is a Jew who is one inwardly,
 and circumcision is of the heart, by the Spirit, not by the letter,
-whose praise is not from people but from God.
+whose praise is not from people
+but from God.
