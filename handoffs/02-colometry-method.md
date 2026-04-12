@@ -8,6 +8,38 @@ This project applies sense-line (colometric) formatting to the Greek New Testame
 
 Ancient authors composed for oral delivery. The text was heard, not silently read. Modern verse-and-paragraph formatting obscures the original compositional structure. By breaking the text at its natural grammatical joints, we recover the author's own phrasing — the cola (κῶλα) and periods (περίοδοι) that structured the original composition.
 
+## Scope: Presentational, Not Analytical
+
+**This is a presentational layer, not an analytical one.** Our job is to render the text so its grammatical and cognitive structure is visible at the line level. What scholars do on top of that — identify chiasms, mark rhetorical figures, perform discourse analysis, write commentary — is downstream work that our edition *enables* but does not perform.
+
+**The boundary test:** if a feature requires *interpretation* of authorial intent or rhetorical strategy to detect, it is out of scope. If it can be identified by the grammar alone (case, mood, syntactic position, lexical markers), it is in scope.
+
+**In scope (grammatical structure made visible):**
+- Clause boundaries (main, subordinate, participial)
+- Subordinator-introduced breaks (ἵνα, ὅτι, ὅταν, ὅτε, ἐάν, ὅπως, ὥστε, etc.)
+- Discourse markers as signals (καί, δέ, γάρ, οὖν, ἀλλά)
+- Correlative pairs (μέν/δέ, μή/ἀλλά, οὐ/ἀλλά)
+- Genitive and accusative absolutes (grammatically independent constructions)
+- Vocatives (each gets its own line — universal rule)
+- Periphrastic constructions and their elliptical extensions
+- Dative subject of infinitive (chunks with the embedded proposition)
+- Asyndetic lists (each enumerated nominal is its own line)
+- Prepositional catenae (each prep phrase is its own constituent)
+- Parallel stacking, μέν/δέ contrast, καί + finite verb chains
+
+**Out of scope (analytical / interpretive overlay):**
+- Chiasm detection (research-grade rhetorical analysis)
+- Klimax / gradatio identification (rhetorical figure)
+- Diatribe Q-A pair tagging (discourse-pragmatic analysis)
+- Section headers / epistolary form criticism (salutation / thanksgiving / body / paraenesis)
+- Anacolutha tagging (e.g., Eph 3:1→3:14 pause-and-resume)
+- Period anchor + clause-depth indentation (imposes a hierarchy reading; interpretive overlay)
+- Authorial intent inference, theological emphasis marking, parable structure annotation
+
+The colometric grid is **flat by design** — every line has equal visual status. We do not introduce hierarchy via indentation, font weight, color, or spatial offset, because hierarchy is interpretive. A reader can perceive parallelism, antithesis, and stacking from the line layout itself; analytical overlays are the work of commentaries built on top of editions like ours.
+
+This is the **Authorial Style Principle** stated negatively: we do not impose visual structure that the grammar does not directly require.
+
 ## What We Ignore (Deliberately)
 
 These are later additions that do not reflect authorial intent:
