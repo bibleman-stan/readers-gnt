@@ -222,7 +222,9 @@ All vocatives get their own line. A vocative is both an atomic thought (a comple
 
 **One exception: repeated vocatives as a rhetorical unit.** "Κύριε κύριε" (Lord, Lord — Matt 7:21-22) stays together because the doubling is itself the rhetorical device — one speech act, not two. This exception actually confirms the rule: the repetition proves that a single vocative is a complete unit, because doubling it creates emphasis rather than redundancy.
 
-Note: imperatives (Ἀκούετε, Σιώπα) also stand alone — they are complete predications (Mark 4:3, 4:39). Vocatives and imperatives are different grammatically but behave the same colometrically: each is a complete speech act that earns its own line.
+Note: imperatives (Ἀκούετε, Σιώπα) also stand alone — they are complete predications (Mark 4:3). Vocatives and imperatives are different grammatically but behave the same colometrically: each is a complete speech act that earns its own line.
+
+**Exception: synonymous-doublet imperatives stay together.** When two imperatives are uttered as a single rebuke or command with one breath — where the second is not a distinct action but an intensifying re-statement of the first — they merge onto one line, parallel to the repeated-vocative rule. Mark 4:39 `Σιώπα, πεφίμωσο.` ("Be silent, be muzzled!") is the canonical example: πεφίμωσο (perfect imperative, "be in a muzzled state") intensifies σιώπα rather than commanding a second action. One rebuke, one dramatic breath. This is structurally parallel to `Κύριε κύριε`: the doubling is the rhetorical device. Test: if the second imperative is a synonym or intensifier of the first with no new content, merge. If it commands a distinct action, split.
 
 **Supersedes** the earlier "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" sections. Those distinctions were explored during the Mark 4 and Acts 1 editorial passes and resolved into this simpler universal rule during the Luke 1:3 discussion.
 
