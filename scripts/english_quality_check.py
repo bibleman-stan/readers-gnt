@@ -17,7 +17,6 @@ Usage:
 
 import argparse
 import csv
-import os
 import re
 import sys
 from collections import Counter, defaultdict
@@ -41,7 +40,7 @@ MACULA_TSV = REPO_ROOT / "research" / "macula-greek" / "SBLGNT" / "tsv" / "macul
 # ---------------------------------------------------------------------------
 # Book-name mapping  (directory name → Macula 3-letter code)
 # ---------------------------------------------------------------------------
-DIR_TO_MACULA = {
+BOOK_TO_MACULA = {
     "matt": "MAT", "mark": "MRK", "luke": "LUK", "john": "JHN",
     "acts": "ACT", "rom": "ROM",
     "1cor": "1CO", "2cor": "2CO",
@@ -53,6 +52,12 @@ DIR_TO_MACULA = {
     "1john": "1JN", "2john": "2JN", "3john": "3JN",
     "jude": "JUD", "rev": "REV",
 }
+
+def extract_book_short(dir_name):
+    """Extract book short name from directory (handles '05-acts' → 'acts' or plain 'acts')."""
+    if re.match(r"^\d{2}-", dir_name):
+        return dir_name[3:]
+    return dir_name
 
 # Lowercase conjunctions that legitimately start a line after a break
 CONJUNCTIONS = {"and", "but", "for", "or", "nor", "yet", "so", "then",
@@ -376,12 +381,17 @@ def process_file(filepath, book_dir_name, nlp, macula_genders):
 
 
 def get_book_dirs(book_filter=None):
-    """Return list of (dir_path, dir_name) for books to process."""
+    """Return list of (dir_path, dir_name) for books to process.
+
+    --book accepts either the full dir name ('05-acts') or the short name ('acts').
+    """
     dirs = []
     for d in sorted(ENG_DIR.iterdir()):
         if d.is_dir():
-            if book_filter and d.name != book_filter:
-                continue
+            if book_filter:
+                short = extract_book_short(d.name)
+                if d.name != book_filter and short != book_filter:
+                    continue
             dirs.append((d, d.name))
     return dirs
 
@@ -405,7 +415,8 @@ def main():
     type_counts = Counter()
 
     for book_dir, book_name in book_dirs:
-        macula_code = DIR_TO_MACULA.get(book_name)
+        book_short = extract_book_short(book_name)
+        macula_code = BOOK_TO_MACULA.get(book_short)
         print(f"Processing {book_name}...", file=sys.stderr)
 
         # Load Macula gender data for this book
