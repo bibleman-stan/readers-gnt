@@ -8,6 +8,38 @@ This project applies sense-line (colometric) formatting to the Greek New Testame
 
 Ancient authors composed for oral delivery. The text was heard, not silently read. Modern verse-and-paragraph formatting obscures the original compositional structure. By breaking the text at its natural grammatical joints, we recover the author's own phrasing — the cola (κῶλα) and periods (περίοδοι) that structured the original composition.
 
+## Compositional Mode: The Dictation Hypothesis
+
+**The premise that undergirds the entire methodology.** The New Testament was not composed as pre-planned syntactic tree diagrams. It was composed — especially in the epistolary corpus — through **dictation**: the author speaking aloud, one breath at a time, while a scribe captured each utterance in real time. The "sentence" as we think of it today (a planned hierarchical structure with nested subordinate clauses) is a post-hoc editorial reconstruction that has been imposed on the text by 1500+ years of silent-reader conventions. The original text is a *trail* of breath-sized thoughts, not a *diagram* of constituent structure.
+
+**Historical evidence for dictation:**
+- **Rom 16:22** names Tertius, Paul's amanuensis, explicitly.
+- **Gal 6:11, 1 Cor 16:21, Col 4:18, 2 Thess 3:17** all record Paul taking the pen for closings — implying the rest was dictated.
+- **E. Randolph Richards**, *Paul and First-Century Letter Writing* (2004) and *The Secretary in the Letters of Paul* (1991) is the standard scholarly treatment. Dictation was the Hellenistic norm.
+- **Paul J. Achtemeier**, "Omne verbum sonat: The New Testament and the Oral Environment of Late Western Antiquity" (*JBL* 109, 1990) establishes that the ancient world was primarily oral-aural, not text-visual.
+- **Harry Y. Gamble**, *Books and Readers in the Early Church* (1995) on ancient reading practices.
+
+**Textual evidence that Paul's letters in particular show dictation fingerprints:**
+- **Anacolutha** — Paul starts a sentence, gets distracted by his own thought, and never finishes the original construction. Eph 3:1→3:14 is the canonical case: `τούτου χάριν ἐγὼ Παῦλος...` is suspended for thirteen verses before `τούτου χάριν κάμπτω τὰ γόνατά μου` picks up the thread. This is **impossible in pre-planned composition**. It is exactly what happens when you're thinking-and-speaking in real time.
+- **Self-corrections in real time.** 1 Cor 1:14-16: "I thank God I baptized none of you except Crispus and Gaius — oh, and also Stephanas' household — oh, and I don't actually remember if I baptized anyone else." This is a scribe capturing Paul's memory-retrieval as it happens.
+- **Ellipsis.** You can only elide what the hearer can supply in real time. Silent writing allows dense packing because the reader can go back; dictation requires staying within the audience's real-time reconstruction capacity. **Pauline ellipsis proves the audience was assumed to be hearing.**
+- **Marked word order / fronting.** A pre-planned tree would place objects in standard positions. Dictation places words where the speaker's attention lighted first. Fronting is a *dictation fingerprint* — the speaker's mouth following the speaker's thought.
+- **Parataxis in narrative.** Mark's καί-chains are what you get when you dictate events as they come to mind — "and he went, and he said, and he did" is how someone speaks a story, not how someone drafts one.
+
+**Why this premise matters for the methodology:**
+
+Under the **pre-planned tree model**, colometric analysis would be a RECONSTRUCTION — trying to figure out what Paul's intended syntactic structure WAS. That would be interpretive work and our scope-boundary rules would forbid it.
+
+Under the **dictation hypothesis**, colometric analysis is a RECOVERY — restoring the breath-sized thought units that Paul actually spoke and his scribe actually wrote. That is presentational work, and it is the core of what this project does.
+
+**The four criteria only make sense under the dictation hypothesis.** "Breath unit" is literally a dictation concept. "Atomic thought" is what a speaker thinks in one cognitive chunk before moving to the next. "Single image" is what the speaker's mind held before releasing it. "Source-language syntax" is the grammatical shape that emerges from natural speech in the speaker's language. If the New Testament were pre-planned trees, our criteria would be misapplied editorial impositions. They aren't — because the text wasn't planned that way.
+
+**Revolutionary, not evolutionary.** This is the claim that distinguishes our project from previous colometric work. Lee & Scott, Marschall, Runge, Levinsohn, and others have all done valuable colometric analysis *within* the assumed tree model — treating colometric layout as an improved presentation of a pre-planned syntactic structure. Our claim is stronger: **colometric layout is not a better presentation of a tree; it is the recovery of the original compositional mode, which was not a tree at all.** The text was composed in cola. Cola are the atomic units of composition, not decompositions of something else. Everything that looks like a "period" is a post-hoc editorial reconstruction of a sequence of cola.
+
+**The convergence test of the dictation hypothesis:** if our criteria successfully recover coherent breath units across the entire New Testament corpus, and if those units align with the four warrants (Greek grammar, ancient manuscript attestation, cognitive chunking, oral performance evidence), then the dictation hypothesis is confirmed by the coherence of the recovery itself. Each successful colometric recovery is a positive data point. The substrate isn't just consistent with dictation — it's new evidence that dictation is how the text was made.
+
+**The testable consequences:** under the dictation hypothesis, we should expect measurable differences between authors with different compositional modes. Paul (high-dictation, epistolary, extemporaneous) should show breath-unit rhythm that flows cleanly through our criteria. Luke (possibly more controlled, literary, possibly reflective rather than extemporaneous) should show slightly different patterns. Revelation (visionary speech with its own oral conventions) should show a third pattern. If colometric criteria work uniformly well, that validates the hypothesis. If certain books resist in patterned ways, the resistance is itself new stylometric data.
+
 ## Scope: Presentational, Not Analytical
 
 **This is a presentational layer, not an analytical one.** Our job is to render the text so its grammatical and cognitive structure is visible at the line level. What scholars do on top of that — identify chiasms, mark rhetorical figures, perform discourse analysis, write commentary — is downstream work that our edition *enables* but does not perform.
