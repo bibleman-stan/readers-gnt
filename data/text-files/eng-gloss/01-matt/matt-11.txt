@@ -95,10 +95,8 @@ Then he began to denounce the cities in which most of his miracles had been done
 because they did not repent:
 
 11:21
-Woe to you,
-Chorazin;
-woe to you,
-Bethsaida;
+Woe to you, Chorazin;
+woe to you, Bethsaida;
 for if the miracles done in you had been done in Tyre and Sidon,
 they would have repented long ago in sackcloth and ashes.
 
@@ -107,8 +105,7 @@ But I say to you,
 it will be more bearable for Tyre and Sidon on the day of judgment than for you.
 
 11:23
-And you,
-Capernaum,
+And you, Capernaum,
 will you be exalted to heaven?
 You will be brought down to Hades;
 for if the miracles done in you had been done in Sodom,
@@ -120,8 +117,7 @@ that it will be more bearable for the land of Sodom on the day of judgment than 
 
 11:25
 At that time Jesus responded and said:
-I praise you,
-father,
+I praise you, father,
 Lord of heaven and earth,
 that you have hidden these things from the wise and understanding,
 and revealed them to infants;

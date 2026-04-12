@@ -102,6 +102,30 @@ We preserve verse references for alignment with standard editions, but they do n
 
 ## The Four Criteria
 
+### Framing Principle: Container, Not Originator
+
+Before the criteria themselves, the relationship between *thought* and *syntax* has to be stated precisely, because it determines how the criteria stack.
+
+**The atomic thought is the primary, originating reality.** It is what the author wants to say, prior to and independent of any particular language. Greek, Hebrew, Aramaic, English, and Chinese speakers all compose in thought units. The atomic-thought criterion is *language-invariant*.
+
+**Syntax is the container, not the originator.** Every atomic thought is *always already* shaped by the grammatical framework of the language it was born in — there is no unclothed "pure thought" underneath waiting to be extracted. The container constrains: Paul could not express his thought without choosing Greek syntactic patterns, and those patterns imposed fixed structural commitments (word-order possibilities, correlative pairs, conditional shapes, case government). But the container does not *originate* the thought. The thought exists first and fits itself into whatever vessel is available.
+
+This is the classical distinction between **λόγος ἐνδιάθετος** (the thought in the mind) and **λόγος προφορικός** (the thought as uttered). Colometric recovery targets the ἐνδιάθετος through the προφορικός because the προφορικός is all we have.
+
+**Consequences for the criterion hierarchy:**
+
+1. **Atomic thought is criterion #1 because it is what we are recovering.** The thought is the target.
+2. **Syntax (criterion #4) is the evidence we read the thought off of.** Not a separate check; not a lesser concern. It is the surface through which criterion #1 becomes visible in this particular language.
+3. **Grammar is bigger than syntax** — it includes lexicon, morphology, pragmatics, phonology. Most of these do not affect colometric decisions. **"Syntactic" is more precise than "grammatical"** when we describe the evidence we use. Morphology (case, mood, person, tense) is the surface we read syntax *off of* — vocative case tells us a word is in an address relation; 2p verb inflection tells us there is an implicit "you" subject that a vocative can name. But the thing we care about is the *relationship* morphology reveals, not the morphology itself.
+4. **Cross-linguistic invariance is preserved.** Paul's atomic thought units in Romans are the same units whether read in Greek, English, or Chinese. Only the container changes. We are not imposing Greek syntax on English readers; we are recovering the shape Paul's thoughts actually had when he dictated them.
+
+**Two kinds of syntactic features, only one tracks atomic thought:**
+
+- **Thought-marking syntax** reveals where one atomic unit ends and the next begins: main-verb shifts, clause boundaries, subject changes, verb-subject binding (including vocative-as-subject), appositive coreference, camera-angle turns (new addressee, new speaker, new POV).
+- **Structural syntax** is fixed Greek patterns that do *not* automatically map to thought boundaries: conditionals (εἰ...X, [then] Y), correlatives (καί...καί, μέν...δέ, οὔτε...οὔτε), comparatives (μᾶλλον...ἤ), result clauses tightly bound to their head. These have fixed shapes Paul had to use, but the thought may be atomic across them *or* may resolve into multiple units depending on what the clauses are doing.
+
+**The defense against the obvious objection** ("you're just breaking at every grammatical feature"): no — we break at the features that *mark thought boundaries*, not at features that are merely fixed Greek constructions. A μέν/δέ contrast earns a break when each limb is its own atomic claim; it does not earn a break just because μέν/δέ is there.
+
 ### 1. Atomic Thought
 Each line must contain one complete thought — a predication that can stand on its own as a unit of meaning. A line that requires the next line to resolve its subject, verb, or complement is incomplete.
 
@@ -268,9 +292,35 @@ The scholarly warrant: this is standard Greek gapping (ellipsis). Each elided cl
 - **Adverbial subordinate clauses** (ὅτε, ἵνα, ὥστε, ὅταν) can stand as scene-setters on their own line — they frame a new temporal, purpose, or result context (Mark 4:6 "καὶ ὅτε ἀνέτειλεν ὁ ἥλιος").
 
 ### Vocative Rule
-All vocatives get their own line. A vocative is both an atomic thought (a complete address act — "I am speaking to you") and a breath unit (oral delivery naturally pauses after an address before the speech content follows). This applies universally regardless of word count, formality, or syntactic position: Κύριε, Διδάσκαλε, κράτιστε Θεόφιλε, Ἄνδρες Γαλιλαῖοι — all standalone.
 
-**One exception: repeated vocatives as a rhetorical unit.** "Κύριε κύριε" (Lord, Lord — Matt 7:21-22) stays together because the doubling is itself the rhetorical device — one speech act, not two. This exception actually confirms the rule: the repetition proves that a single vocative is a complete unit, because doubling it creates emphasis rather than redundancy.
+**Default: vocatives get their own line** when they initiate or resume direct address. A vocative at the start of a verse or after a speech-introducing boundary is opening a camera-angle turn — the speaker is now turning toward an addressee — and earns its own line as a complete address act.
+
+**Apposition exception: a vocative merges into the preceding line when it is grammatically appositive to an already-established second-person address in the same clause.** The grammatical signature: somewhere in the preceding line(s) of the same verse, *not separated from the vocative by a speech-introducing boundary* (`·` or `:`), there is either a second-person pronoun (any form of σύ / ὑμεῖς, lemma `σύ`) or a second-person finite verb. In that case:
+
+- The vocative is *not* initiating a new camera angle — the camera is already pointed at the addressee.
+- The vocative is either **naming the implicit subject** of a 2p finite verb (`Ὕπαγε, Σατανᾶ·` — "Satan" is the implicit subject of ὕπαγε) or **appositively restating** a 2p pronoun (`Παρακαλῶ ὑμᾶς, ἀδελφοί` — "brothers" restates ὑμᾶς).
+- Fragmenting it to its own line breaks a single atomic thought for no rhetorical gain.
+
+**Why this is reflection, not imposition.** The merge is justified by a *traceable* grammatical fact in the preceding line(s): a specific pronoun or finite verb that the vocative is bound to. Container-not-originator applies: the vocative is inside the same atomic thought as the verb-subject predication, and Greek syntax *reveals* this via the verb-subject binding or pronoun apposition. We are not interpreting rhetorical weight; we are reading the binding off the morphology.
+
+**Two justifications, not one.** The apposition exception is stronger because it has two independent grammatical grounds:
+
+1. **Subject-appositive rule** — when the vocative names the implicit subject of a 2p finite verb (`Ὕπαγε, Σατανᾶ`, `Ἀγνοεῖτε, ἀδελφοί`, `Θάρσει, τέκνον`, `Οὐαὶ ὑμῖν, γραμματεῖς καὶ Φαρισαῖοι ὑποκριταί`). The verb and vocative form *one atomic predication*: the verb asserts the action, the vocative identifies the actor. You cannot have the command without knowing who is commanded.
+2. **Object-appositive rule** — when the vocative restates an explicit 2p pronoun already in the clause (`Παρακαλῶ ὑμᾶς, ἀδελφοί`, `Γνωρίζω ὑμῖν, ἀδελφοί`). The address is already fully established in the grammar; the vocative is affective restatement inside the same speech act.
+
+Any critic has to refute two independent structural claims to argue against a merge, not one.
+
+**Boundary cases that stay on their own line:**
+- **Verse-initial vocative** — initiating a new address turn, no preceding grammar to lean on. `Ἀδελφοί, γνωρίζω δὲ ὑμῖν...` (1 Cor 15:1 style *if* the vocative is verse-first).
+- **Verse-final vocative** — tail address, distinct act.
+- **Vocative after speech-intro `·`/`:`** — the punctuation marks that a new quoted layer has begun (e.g., narrator says "praying, say:" and then "Father," opens the prayer). The prior 2p markers belong to the outer layer, not the inner address.
+- **Stacked parallel vocatives that don't have 2p markers preceding them** — treated as a parallel address structure (`πατέρες / νεανίσκοι / παιδία` in 1 John 2:12-14 each merge into their own `γράφω ὑμῖν` frame but the parallel structure remains visible).
+
+**Repeated vocatives as a rhetorical unit still stay together.** `Κύριε κύριε` (Matt 7:21-22) is one speech act — the doubling is itself the rhetorical device. The same logic applies to any intensifying doublet.
+
+**How to detect candidates mechanically.** `scripts/scan_vocative_apposition.py` implements the rule: it finds every vocative-only line in the corpus, classifies each as INITIATING / TRAILING / APPOSITION-CANDIDATE / INITIATING-QUOTED-SPEECH / MID-NO-2P, and prints the specific preceding pronoun or verb that licenses each merge. The scan is idempotent and bullet-proof: every merge cites its grammatical evidence. `scripts/apply_vocative_merges.py` applies the merges to both v4-editorial Greek and eng-gloss English in a single structural operation.
+
+**This supersedes** the earlier "all vocatives get their own line — universal rule" statement and the "Vocative Attachment" / "Epistolary vs. Narrative Vocative Distinction" explorations. The refinement is rooted in the container-not-originator principle: we are recovering atomic thought units, and a vocative bound to a 2p verb or pronoun in the same clause is *inside* one atomic thought, not beside it.
 
 Note: imperatives (Ἀκούετε, Σιώπα) also stand alone — they are complete predications (Mark 4:3). Vocatives and imperatives are different grammatically but behave the same colometrically: each is a complete speech act that earns its own line.
 
