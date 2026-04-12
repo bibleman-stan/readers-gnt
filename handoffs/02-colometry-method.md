@@ -40,6 +40,8 @@ The colometric grid is **flat by design** — every line has equal visual status
 
 This is the **Authorial Style Principle** stated negatively: we do not impose visual structure that the grammar does not directly require.
 
+**Corollary — the "reaching-for-split" warning.** When the grammatical case for a split is borderline and you find yourself reaching for rhetorical-motif, image-analysis, cognitive-predictive-processing, or oral-rhythm arguments as tiebreakers, **that is the signal that scope creep is happening**. Those are all analytical moves that a commentator would make. The scope-disciplined default in a borderline case is to keep the grammatical constituent intact — i.e., **prefer merge to split** when the grammar is ambiguous. Splitting on non-grammatical grounds imposes an interpretive layer that the presentational edition is explicitly not supposed to add. Verb + its required-case object (e.g., μνημονεύω + genitive) is the kind of tight grammatical unit that should not be split even when a fronted element looks rhetorically emphatic. The reader can hear the emphasis from the word order alone; we do not need to mechanize it with a line break. *Case studies: Gal 2:9 (pillars characterization kept with names) and Gal 2:10 (fronted τῶν πτωχῶν kept with μνημονεύωμεν).*
+
 ## What We Ignore (Deliberately)
 
 These are later additions that do not reflect authorial intent:
