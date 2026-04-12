@@ -146,6 +146,14 @@ This is especially powerful for triadic yield patterns:
 καὶ ἓν ἑκατόν.
 ```
 
+**The ≤3 qualifier rule — triadic co-referential modifiers stay together.** The stacking rule applies to **separate predications, outcomes, or actions**, not to co-referential qualifiers of a single head noun. Humans can hold three facets of one image as one thought unit — working memory chunks 3-or-fewer items as one composite. When a triad is three descriptors of ONE thing, they form a "three-in-one" thought and belong on one line:
+
+- `θυσίαν ζῶσαν ἁγίαν εὐάρεστον τῷ θεῷ` (Rom 12:1) — three adjectives on ONE sacrifice. One line.
+- `τὸ ἀγαθὸν καὶ εὐάρεστον καὶ τέλειον` (Rom 12:2) — three qualities of ONE will. One line.
+- `χρυσὸν καὶ λίβανον καὶ σμύρναν` (Matt 2:11) — three objects of ONE verb. One line.
+
+Contrast with the stacked triads above (thirtyfold/sixtyfold/hundredfold; worries/deceit/desires): those are **three separate outcomes or subjects**, each contributing its own predication via ellipsis. **The test:** can each member stand on its own with an implied verb? If yes, stack. If the members only make sense as co-referential descriptors of the same head, merge. This is the stacking-refinement counterpart to the ellipsis principle.
+
 ### 6. μέν/δέ Contrast
 Greek's built-in contrast structure becomes spatially visible:
 
