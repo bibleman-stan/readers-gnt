@@ -285,23 +285,50 @@ def check_repeated_words(line, doc, verse_ref, issues_out, file_rel, line_num):
             ))
 
 
-def check_mid_word_split(line, verse_ref, issues_out, file_rel, line_num):
-    """Flag lines starting lowercase that aren't conjunctions."""
+def check_mid_word_split(line, verse_ref, nlp, issues_out, file_rel, line_num):
+    """Flag lines that appear to start with a word fragment from a bad split.
+
+    In colometric text, lowercase-starting lines are normal (participial phrases,
+    pronouns, articles, etc.). We only flag lines where the first word:
+      - Is not recognized by spaCy as a real English word (OOV and short)
+      - Looks like a suffix fragment (e.g. 'tion', 'ing' without a stem)
+    OR the line starts with a character pattern that looks broken.
+    """
     stripped = line.strip()
     if not stripped:
         return
     first_char = stripped[0]
+    # Only check lowercase starts
     if not first_char.islower():
         return
     first_word = stripped.split()[0].rstrip(",.;:!?")
-    if first_word.lower() in CONJUNCTIONS:
+    if not first_word:
         return
-    # Could be a legitimate continuation — check if it's a common pattern
-    # Flag it
-    issues_out.append(Issue(
-        file_rel, verse_ref, line_num, line,
-        "MID_SPLIT", f"Line starts lowercase ('{first_word}') — possible mid-sentence split"
-    ))
+
+    # Quick spaCy check: is the first word a known token?
+    doc = nlp(first_word)
+    token = doc[0] if doc else None
+
+    # If it's a real POS (not X=unknown), it's fine
+    if token and token.pos_ != "X":
+        return
+
+    # Even if POS is X, many proper names / transliterations are fine
+    # Only flag very short fragments that look broken
+    if len(first_word) <= 3 and token and token.is_oov:
+        issues_out.append(Issue(
+            file_rel, verse_ref, line_num, line,
+            "MID_SPLIT", f"Line starts with possible word fragment: '{first_word}'"
+        ))
+    elif token and token.is_oov and not first_word[0].isupper():
+        # OOV lowercase word — could be a fragment or transliteration
+        # Only flag if it really looks like a suffix
+        suffix_patterns = re.compile(r"^(tion|sion|ment|ness|ance|ence|ible|able|ious|eous|ting|ning|ling|ling|ght)s?$", re.I)
+        if suffix_patterns.match(first_word):
+            issues_out.append(Issue(
+                file_rel, verse_ref, line_num, line,
+                "MID_SPLIT", f"Line starts with possible word fragment: '{first_word}'"
+            ))
 
 
 # ---------------------------------------------------------------------------
@@ -343,7 +370,7 @@ def process_file(filepath, book_dir_name, nlp, macula_genders):
         check_missing_verb(doc, line_text, verse_ref, issues, file_rel, line_num, context)
         check_fragment(line_text, doc, verse_ref, issues, file_rel, line_num)
         check_repeated_words(line_text, doc, verse_ref, issues, file_rel, line_num)
-        check_mid_word_split(line_text, verse_ref, issues, file_rel, line_num)
+        check_mid_word_split(line_text, verse_ref, nlp, issues, file_rel, line_num)
 
     return issues
 

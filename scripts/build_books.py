@@ -174,13 +174,33 @@ def _book_prefix(fpath):
     return stem[:dash_idx] if dash_idx != -1 else stem
 
 
+def _find_book_subdir(base_dir, prefix):
+    """Find the numbered subdirectory for a book prefix.
+    e.g., prefix='matt' finds '01-matt' in base_dir.
+    Falls back to plain prefix if numbered dir doesn't exist.
+    """
+    # Try numbered pattern first (e.g., 01-matt, 02-mark)
+    for entry in os.listdir(base_dir):
+        if os.path.isdir(os.path.join(base_dir, entry)):
+            # Strip the number prefix to match: '01-matt' -> 'matt'
+            parts = entry.split('-', 1)
+            if len(parts) == 2 and parts[0].isdigit() and parts[1] == prefix:
+                return entry
+    # Fall back to plain prefix
+    if os.path.isdir(os.path.join(base_dir, prefix)):
+        return prefix
+    return None
+
+
 def resolve_greek_path(fpath):
     """Return the best Greek source: v4-editorial if it exists, else v3-colometric."""
     basename = os.path.basename(fpath)
     prefix = _book_prefix(fpath)
-    v4_path = os.path.join(GK_PRIMARY_DIR, prefix, basename)
-    if os.path.isfile(v4_path):
-        return v4_path, "v4"
+    subdir = _find_book_subdir(GK_PRIMARY_DIR, prefix)
+    if subdir:
+        v4_path = os.path.join(GK_PRIMARY_DIR, subdir, basename)
+        if os.path.isfile(v4_path):
+            return v4_path, "v4"
     # Fallback to v3-colometric (flat directory)
     v3_path = os.path.join(GK_FALLBACK_DIR, basename)
     if os.path.isfile(v3_path):
@@ -195,9 +215,11 @@ def resolve_english_path(fpath):
     """
     basename = os.path.basename(fpath)
     prefix = _book_prefix(fpath)
-    en_path = os.path.join(EN_DIR, prefix, basename)
-    if os.path.isfile(en_path):
-        return en_path, "EN"
+    subdir = _find_book_subdir(EN_DIR, prefix)
+    if subdir:
+        en_path = os.path.join(EN_DIR, subdir, basename)
+        if os.path.isfile(en_path):
+            return en_path, "EN"
     return None, None
 
 
