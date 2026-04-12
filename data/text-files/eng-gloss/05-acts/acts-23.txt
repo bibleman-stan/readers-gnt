@@ -102,7 +102,9 @@ as though they were going to inquire somewhat more closely about him;
 23:21
 but do not be persuaded by them,
 for more than forty of their men are lying in ambush for him,
-who have bound themselves by an oath neither to eat nor drink
+who have bound themselves by an oath
+neither to eat,
+nor drink,
 until they have killed him,
 and now they are ready, waiting for your consent.
 
