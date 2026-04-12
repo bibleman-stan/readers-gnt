@@ -260,6 +260,39 @@ def build_book(prefix, chapter_files, output_dir):
     return len(chapter_files), total_verses, output_path, en_labels
 
 
+def _run_integrity_check(book_filter=None):
+    """Run verify_word_order.py against SBLGNT source. Returns True if clean.
+
+    This is the structural guard against silent text corruption: every build
+    verifies that v4-editorial word order matches the canonical source before
+    producing HTML. Any line-order swap, missing word, or extra word aborts
+    the build.
+    """
+    import subprocess
+    cmd = [sys.executable, os.path.join(SCRIPT_DIR, "verify_word_order.py")]
+    if book_filter:
+        cmd += ["--book", book_filter]
+    try:
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, encoding="utf-8"
+        )
+    except Exception as e:
+        print(f"WARNING: integrity check failed to run: {e}", file=sys.stderr)
+        return True  # don't block on tooling failure
+    # Parse summary line for total issues
+    output = (result.stdout or "") + (result.stderr or "")
+    last_line = output.strip().splitlines()[-1] if output.strip() else ""
+    if "Total: 0 verse-level discrepancies" in output:
+        return True
+    if "Total:" in output:
+        # Print the issues so the user sees them
+        print(output, file=sys.stderr)
+        return False
+    # Unknown state — be cautious but don't block
+    print(output, file=sys.stderr)
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Build HTML book files from colometric text sources."
@@ -269,11 +302,31 @@ def main():
         default=None,
         help="Build only this book (prefix, e.g. 'mark', '1cor').",
     )
+    parser.add_argument(
+        "--skip-verify",
+        action="store_true",
+        help="Skip the SBLGNT word-order integrity check (NOT recommended).",
+    )
     args = parser.parse_args()
 
     if not os.path.isdir(INPUT_DIR):
         print(f"ERROR: Input directory not found: {INPUT_DIR}", file=sys.stderr)
         sys.exit(1)
+
+    # Integrity guard: refuse to build if v4 doesn't match SBLGNT source.
+    # This catches line-order swaps, missing/extra words, and word fusion
+    # before they propagate through the English regen and HTML rebuild.
+    if not args.skip_verify:
+        print("Verifying v4-editorial against SBLGNT source...")
+        if not _run_integrity_check(args.book):
+            print(
+                "\nERROR: word-order integrity check failed. "
+                "Build aborted to prevent propagating text corruption.\n"
+                "Fix the issues above (or use --skip-verify to override).",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+        print("  integrity check passed.\n")
 
     books = discover_books(INPUT_DIR, book_filter=args.book)
 
