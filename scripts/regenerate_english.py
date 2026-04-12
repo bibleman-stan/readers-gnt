@@ -172,18 +172,23 @@ def parse_file_structure(path):
     return structure, le
 
 
-def redistribute_verse(greek_lines, english_lines):
+def redistribute_verse(greek_lines, english_lines, force=False):
     """Redistribute English text to match the Greek line count.
 
     Strategy:
     1. Identify vocative-only Greek lines and assign known translations.
     2. Identify which existing English lines are vocative translations to exclude.
     3. Merge remaining English and distribute proportionally across non-vocative lines.
+
+    When force=True, always redistribute proportionally — even when Greek and
+    English line counts match. This is necessary when line-order was changed
+    without changing line count (proportional redistribution at least gives
+    the right starting point; the English may need manual polish afterward).
     """
     n_greek = len(greek_lines)
     n_english = len(english_lines)
 
-    if n_greek == n_english:
+    if n_greek == n_english and not force:
         # Even when counts match, fix vocative-only lines to use canonical translations
         result = list(english_lines)
         for i, gl in enumerate(greek_lines):
@@ -285,7 +290,7 @@ def process_file(v4_file, book_prefix, force=False):
 
     for verse_ref, greek_lines in v4_verses.items():
         existing = web_verses.get(verse_ref, [])
-        new_lines = redistribute_verse(greek_lines, existing)
+        new_lines = redistribute_verse(greek_lines, existing, force=force)
         if new_lines != existing:
             changes += 1
         new_english[verse_ref] = new_lines
@@ -318,8 +323,36 @@ def process_file(v4_file, book_prefix, force=False):
     return changes
 
 
+def _book_matches(dir_name, book_filter):
+    """Match a v4-editorial subdirectory against a --book filter.
+
+    Accepts either the full dir name ('21-1pet') or the short prefix ('1pet').
+    """
+    if dir_name == book_filter:
+        return True
+    parts = dir_name.split('-', 1)
+    if len(parts) == 2 and parts[0].isdigit() and parts[1] == book_filter:
+        return True
+    return False
+
+
 def main():
-    force = '--force' in sys.argv
+    import argparse
+    parser = argparse.ArgumentParser(
+        description="Regenerate English structural glosses for v4-editorial."
+    )
+    parser.add_argument(
+        "--book",
+        default=None,
+        help="Process only this book (e.g. 'mark', '1cor'). Default: all books.",
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Force regeneration even when verse line counts match.",
+    )
+    args = parser.parse_args()
+
     total_changes = 0
     files_changed = 0
 
@@ -327,10 +360,12 @@ def main():
         book_path = os.path.join(V4_DIR, book_dir)
         if not os.path.isdir(book_path):
             continue
+        if args.book and not _book_matches(book_dir, args.book):
+            continue
         for v4_file in sorted(os.listdir(book_path)):
             if not v4_file.endswith('.txt'):
                 continue
-            changes = process_file(v4_file, book_dir, force=force)
+            changes = process_file(v4_file, book_dir, force=args.force)
             if changes > 0:
                 files_changed += 1
                 total_changes += changes
