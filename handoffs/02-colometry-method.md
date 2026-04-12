@@ -31,6 +31,17 @@ We preserve verse references for alignment with standard editions, but they do n
 ### 1. Atomic Thought
 Each line must contain one complete thought — a predication that can stand on its own as a unit of meaning. A line that requires the next line to resolve its subject, verb, or complement is incomplete.
 
+**Atomic thought is relative to the author's resolution.** "Atomic" is not a fixed unit size; it is the smallest chunk the author intended to be processed as one. For plainer narrative (Mark's simpler scenes), atomic = complete sentence-level predication. For more literary authors (Luke, Paul, John at their most crafted), atomic can include grammatically-independent sub-units — most notably **genitive absolutes used as interjectory frames**. A gen abs passes the atomic-thought test on its own because it is grammatically complete (its own subject + its own predicate, hence "absolute"); the "dependency" on the main clause is narrative, not grammatical. Sophisticated authors build at a finer resolution because their audiences could track it — the colometric grid must track *their* sophistication, not impose a lowest-common-denominator rule. This is an instance of the cognitive-chunking hierarchy (chunking > oral > rhetorical): finer-grained atomic units are possible when the intended audience has higher processing capacity.
+
+**Showcase — Acts 1:9:**
+```
+καὶ ταῦτα εἰπὼν         ← aorist nominative ptc (FEF frame; subject = Jesus)
+βλεπόντων αὐτῶν         ← GENITIVE ABSOLUTE (subject = disciples); interjectory
+ἐπήρθη                  ← main verb resolving εἰπών
+καὶ νεφέλη ὑπέλαβεν αὐτὸν ἀπὸ τῶν ὀφθαλμῶν αὐτῶν.
+```
+The gen abs interrupts the FEF suspension with a camera shift to the disciples' perspective, then the main verb drops the resolution. Merging all three into one line (as an earlier "double FEF" pass did) destroys Luke's three-beat rhythm and flattens his voice. **A gen abs embedded within an FEF should remain on its own line.**
+
 ### 2. Single Image
 Each line should paint a single image or picture in the mind. If a line contains two distinct images, it's a candidate for splitting. If a line contains no complete image, it may need merging.
 
@@ -74,6 +85,8 @@ When participial chains describe the same action, they may stay together:
 ```
 διερχόμενος γὰρ καὶ ἀναθεωρῶν τὰ σεβάσματα ὑμῶν
 ```
+
+**Genitive absolutes are grammatically independent and ALWAYS get their own line, even when embedded inside a larger periodic sentence or an FEF suspension.** A gen abs has its own subject (in genitive) and its own predicate (a genitive participle) — the literal meaning of "absolute" is "set apart" from the main clause. It functions as an interjectory frame: a camera shift, a scene-setter, an aside. Merging a gen abs into adjacent material absorbs an independent beat into something it is not. See the "Atomic Thought" section (§1) for the theoretical foundation — gen abs as its own line is an application of "atomic thought is relative to the author's resolution": a gen abs passes the atomic-thought test on its own because it is grammatically complete. Acts 1:9 is the showcase.
 
 ### 4. Direct Speech
 Speech introductions (ἔλεγεν, εἶπεν, ἔφη + dative) get their own line. The speech content begins on the next line:
@@ -232,7 +245,7 @@ These examples from the hand-crafted test chapters show what the project reveals
 ## Decisions Still Open
 
 - **How short is too short?** Single-word lines (e.g., ἐκαυματίσθη) — dramatic emphasis or fragmentation?
-- **Genitive absolute attachment:** always its own line, or sometimes attached to main clause?
+- ~~**Genitive absolute attachment:** always its own line, or sometimes attached to main clause?~~ **RESOLVED (2026-04-12):** Always its own line. Gen abs is grammatically independent (its own subject + its own predicate), so it passes the atomic-thought test on its own. The appearance of "dependency" is narrative, not grammatical. Showcase: Acts 1:9 (gen abs embedded within an FEF).
 - **ὅτι recitativum:** stays with speech intro, or breaks?
 - **Cross-verse continuity:** when a sentence spans verses, should we visually indicate the continuation?
 - **Indentation:** should subordinate clauses be indented? Currently flat.
