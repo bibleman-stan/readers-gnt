@@ -18,7 +18,7 @@ from collections import OrderedDict, defaultdict
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 V4_DIR = os.path.join(BASE, "data", "text-files", "v4-editorial")
-WEB_DIR = os.path.join(BASE, "data", "text-files", "web-colometric")
+WEB_DIR = os.path.join(BASE, "data", "text-files", "eng-gloss")
 
 
 def strip_punct(word):
@@ -270,9 +270,9 @@ def check_vocative_quality(greek_lines, english_lines):
     return False
 
 
-def process_file(v4_file, force=False):
-    v4_path = os.path.join(V4_DIR, v4_file)
-    web_path = os.path.join(WEB_DIR, v4_file)
+def process_file(v4_file, book_prefix, force=False):
+    v4_path = os.path.join(V4_DIR, book_prefix, v4_file)
+    web_path = os.path.join(WEB_DIR, book_prefix, v4_file)
     if not os.path.exists(web_path):
         return 0
 
@@ -323,14 +323,18 @@ def main():
     total_changes = 0
     files_changed = 0
 
-    for v4_file in sorted(os.listdir(V4_DIR)):
-        if not v4_file.endswith('.txt'):
+    for book_dir in sorted(os.listdir(V4_DIR)):
+        book_path = os.path.join(V4_DIR, book_dir)
+        if not os.path.isdir(book_path):
             continue
-        changes = process_file(v4_file, force=force)
-        if changes > 0:
-            files_changed += 1
-            total_changes += changes
-            print(f"{v4_file}: {changes} verses redistributed")
+        for v4_file in sorted(os.listdir(book_path)):
+            if not v4_file.endswith('.txt'):
+                continue
+            changes = process_file(v4_file, book_dir, force=force)
+            if changes > 0:
+                files_changed += 1
+                total_changes += changes
+                print(f"{v4_file}: {changes} verses redistributed")
 
     print(f"\n{'='*60}")
     print(f"Files changed: {files_changed}")

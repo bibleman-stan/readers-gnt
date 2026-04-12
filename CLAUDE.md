@@ -37,14 +37,14 @@ Before any substantive work, read the handoffs directory in order:
 | File | Purpose |
 |------|---------|
 | `index.html` | Main web app — all CSS/JS inline (~2,500 lines), search, corpus filters, settings |
-| `scripts/build_books.py` | Converts text files → HTML fragments (reads v4-editorial + web-colometric) |
+| `scripts/build_books.py` | Converts text files → HTML fragments (reads v4-editorial + eng-gloss) |
 | `scripts/auto_colometry.py` | Rule-based sense-line formatter (~620 lines) — generates initial drafts only |
 | `scripts/generate_english_glosses.py` | Generates structural English glosses |
 | `scripts/regenerate_english.py` | Regenerates English glosses after Greek edits |
 | `data/text-files/sblgnt-source/` | 27 raw SBLGNT source files — **NEVER EDIT** |
-| `data/text-files/v4-editorial/` | 260 chapter files — **single source of truth for Greek text** |
-| `data/text-files/web-colometric/` | 260 chapter files — structural English glosses |
-| `books/` | 27 generated HTML fragment files (rebuilt from v4-editorial + web-colometric) |
+| `data/text-files/v4-editorial/*/` | 260 chapter files in book subfolders — **single source of truth for Greek text** |
+| `data/text-files/eng-gloss/*/` | 260 chapter files in book subfolders — structural English glosses |
+| `books/` | 27 generated HTML fragment files (rebuilt from v4-editorial + eng-gloss) |
 
 ---
 
@@ -85,7 +85,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py
 PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark
 ```
 
-Pipeline: `v4-editorial/ → web-colometric/ → books/*.html`
+Pipeline: `v4-editorial/*/ → eng-gloss/*/ → books/*.html`
 
 ---
 

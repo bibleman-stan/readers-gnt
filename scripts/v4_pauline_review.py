@@ -989,8 +989,9 @@ def process_all():
     fix_type_counts = {}
 
     for filename in PAULINE_FILES:
+        book_prefix = filename.rsplit('-', 1)[0]
         v3_path = os.path.join(V3_DIR, filename)
-        v4_path = os.path.join(V4_DIR, filename)
+        v4_path = os.path.join(V4_DIR, book_prefix, filename)
 
         if not os.path.exists(v3_path):
             print(f"WARNING: {filename} not found in v3")
@@ -1024,6 +1025,7 @@ def process_all():
             all_changes.append((filename, changes))
             changed_files.append(filename)
 
+            os.makedirs(os.path.dirname(v4_path), exist_ok=True)
             with open(v4_path, "w", encoding="utf-8") as f:
                 f.write(new_text)
 

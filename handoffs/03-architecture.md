@@ -152,7 +152,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/ylt_align.py --book Acts --chapter 9  # one
 
 ### build_books.py
 
-Converts v4-editorial Greek + web-colometric structural glosses to dual-text HTML.
+Converts v4-editorial Greek + eng-gloss structural glosses to dual-text HTML.
 
 **Usage:**
 ```bash
@@ -160,7 +160,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py               # all books
 PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark    # one book
 ```
 
-**Source priority:** v4-editorial (primary) → v3-colometric (fallback) for Greek. web-colometric for English structural glosses.
+**Source priority:** v4-editorial (primary) → v3-colometric (fallback) for Greek. eng-gloss for English structural glosses.
 
 ---
 
@@ -169,7 +169,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark    # one book
 **Every change to Greek breaks MUST cascade through the full pipeline:**
 
 ```
-Greek edit (v4-editorial) → English regen (web-colometric) → HTML rebuild (books/) → commit → push
+Greek edit (v4-editorial) → English regen (eng-gloss) → HTML rebuild (books/) → commit → push
 ```
 
 This is not optional. Skipping any step means the site serves stale or misaligned content. The cascade is a single atomic operation — if you change Greek, you MUST sync English and rebuild HTML in the SAME work unit. Not "next session." Not "I'll get to it later."
@@ -445,14 +445,14 @@ build_books.py        (reads v3-colometric/ + ylt-colometric/ -> dual-text books
 
 New directories:
 - `data/text-files/v4-editorial/` — Tier 4 editorial hand output (Stan's hand-edited chapters)
-- `data/text-files/web-colometric/` — WEB (World English Bible) aligned to colometric breaks (replaces ylt-colometric as active English layer)
+- `data/text-files/eng-gloss/` — WEB (World English Bible) aligned to colometric breaks (replaces ylt-colometric as active English layer)
 
 New and updated scripts:
 - **web_align.py** (new): Double-wire WEB alignment with spaCy dependency parsing validation. Approach: Greek to Macula English (perfect by construction) to WEB (LCS alignment). spaCy validates cut points to prevent splitting inside English phrases.
 - **diagnostic_scanner.py** (new): Criteria-based line auditing tool. Applies the three core colometric criteria to flag lines that fail atomic thought, single image, or breath unit tests.
 - **ylt_align_lcs.py** (new): Experimental LCS-based YLT alignment (R&D, superseded by web_align.py).
 - **ylt_align_double.py** (new): Experimental double-wire YLT alignment (R&D, superseded by web_align.py).
-- **build_books.py** (updated): Now checks v4-editorial before v3-colometric for Greek source (editorial hand takes priority). Checks web-colometric before ylt-colometric for English source.
+- **build_books.py** (updated): Now checks v4-editorial before v3-colometric for Greek source (editorial hand takes priority). Checks eng-gloss before ylt-colometric for English source.
 - **index.html** (updated): UI updated for WEB display, English punctuation hideable via toggle, landing page verse navigation popover.
 
 #### Updated Build Pipeline
@@ -472,10 +472,10 @@ web_align.py          (align WEB English to Greek colometric breaks via double-w
        |
        v
 build_books.py        (reads v4-editorial > v3-colometric for Greek,
-                       web-colometric > ylt-colometric for English -> books/*.html)
+                       eng-gloss > ylt-colometric for English -> books/*.html)
 ```
 
-build_books.py priority chain: v4-editorial (if exists) > v3-colometric for Greek; web-colometric (if exists) > ylt-colometric for English.
+build_books.py priority chain: v4-editorial (if exists) > v3-colometric for Greek; eng-gloss (if exists) > ylt-colometric for English.
 
 #### Domain and Deployment
 
@@ -492,7 +492,7 @@ build_books.py priority chain: v4-editorial (if exists) > v3-colometric for Gree
 
 The build pipeline now operates with the following priority:
 - **Greek:** v4-editorial (if exists) > v3-colometric
-- **English:** web-colometric (structural glosses, purpose-built per line — no alignment algorithm)
+- **English:** eng-gloss (structural glosses, purpose-built per line — no alignment algorithm)
 
 The English layer is no longer an aligned translation. Each structural gloss was written to match its Greek line, so alignment is guaranteed by construction. `web_align.py` and `ylt_align.py` are no longer in the active pipeline.
 

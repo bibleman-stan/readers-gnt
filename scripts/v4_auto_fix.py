@@ -973,8 +973,15 @@ def main():
         print(f"ERROR: v4-editorial directory not found: {V4_DIR}", file=sys.stderr)
         sys.exit(1)
 
-    # Gather all v4-editorial files
-    files = sorted([f for f in os.listdir(V4_DIR) if f.endswith('.txt')])
+    # Gather all v4-editorial files from book subfolders
+    files = []
+    for book_dir in sorted(os.listdir(V4_DIR)):
+        book_path = os.path.join(V4_DIR, book_dir)
+        if not os.path.isdir(book_path):
+            continue
+        for fname in sorted(os.listdir(book_path)):
+            if fname.endswith('.txt'):
+                files.append(fname)
     print(f"Found {len(files)} v4-editorial files")
     if args.dry_run:
         print("DRY RUN — no files will be modified\n")
@@ -1015,11 +1022,11 @@ def main():
     counts = defaultdict(int)
 
     for fname in files:
-        filepath = os.path.join(V4_DIR, fname)
         m = re.match(r'^([a-z0-9]+)-(\d+)\.txt$', fname)
         if not m:
             continue
         book_prefix = m.group(1)
+        filepath = os.path.join(V4_DIR, book_prefix, fname)
         chapter_num = m.group(2)
 
         vocatives = book_vocatives.get(book_prefix, {})

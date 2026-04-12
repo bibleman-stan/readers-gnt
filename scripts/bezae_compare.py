@@ -346,10 +346,12 @@ def load_v3_book(book_prefix, chapter_filter=None, input_dir=None):
     fallback_dir = TIER_DIRS["v3"] if src_dir == TIER_DIRS["v4"] else None
     all_verses = {}
     pattern = f"{book_prefix}-*.txt"
+    # v4-editorial uses book subfolders; other tiers are flat
+    glob_pattern = f"{book_prefix}/{pattern}" if src_dir == TIER_DIRS["v4"] else pattern
 
     # Collect chapter files from primary dir
     found_chapters = set()
-    for filepath in sorted(src_dir.glob(pattern)):
+    for filepath in sorted(src_dir.glob(glob_pattern)):
         ch_match = re.search(r"-(\d+)\.txt$", filepath.name)
         if not ch_match:
             continue

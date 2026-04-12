@@ -306,11 +306,16 @@ def main():
     files_changed = 0
     xml_cache = {}
 
-    v4_files = sorted(os.listdir(V4_DIR))
+    v4_files = []
+    for book_dir in sorted(os.listdir(V4_DIR)):
+        book_path = os.path.join(V4_DIR, book_dir)
+        if not os.path.isdir(book_path):
+            continue
+        for fname in sorted(os.listdir(book_path)):
+            if fname.endswith('.txt'):
+                v4_files.append(fname)
 
     for v4_file in v4_files:
-        if not v4_file.endswith('.txt'):
-            continue
 
         book_prefix = v4_file.rsplit('-', 1)[0]
         chapter_str = v4_file.rsplit('-', 1)[1].replace('.txt', '')
@@ -344,7 +349,7 @@ def main():
         if not chapter_vocs and not has_overrides:
             continue
 
-        v4_path = os.path.join(V4_DIR, v4_file)
+        v4_path = os.path.join(V4_DIR, book_prefix, v4_file)
         new_content, changes = process_file(v4_path, book_abbrev, chapter_vocs, chapter_num)
 
         if changes:

@@ -15,7 +15,7 @@ BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 V4_DIR = os.path.join(BASE, "data", "text-files", "v4-editorial")
 V3_DIR = os.path.join(BASE, "data", "text-files", "v3-colometric")
 V1_DIR = os.path.join(BASE, "data", "text-files", "v1-colometric")
-WEB_DIR = os.path.join(BASE, "data", "text-files", "web-colometric")
+WEB_DIR = os.path.join(BASE, "data", "text-files", "eng-gloss")
 MACULA_DIR = os.path.join(BASE, "research", "macula-greek", "SBLGNT", "lowfat")
 
 BOOK_MAP = {
@@ -330,7 +330,10 @@ def write_english_file(output_path, greek_file_path, english_verses):
 def get_source_path(book_prefix, chapter_num):
     fname = f"{book_prefix}-{chapter_num:02d}.txt"
     for d, label in [(V4_DIR, 'v4'), (V3_DIR, 'v3'), (V1_DIR, 'v1')]:
-        p = os.path.join(d, fname)
+        if label == 'v4':
+            p = os.path.join(d, book_prefix, fname)
+        else:
+            p = os.path.join(d, fname)
         if os.path.exists(p):
             return p, label
     return None, None
@@ -362,7 +365,9 @@ def main():
                 elines = english_verses.get(vref, [])
                 if len(glines) != len(elines):
                     mismatches.append(f"{book_prefix}-{ch:02d} {vref}: G={len(glines)} E={len(elines)}")
-            out_path = os.path.join(WEB_DIR, f"{book_prefix}-{ch:02d}.txt")
+            out_dir = os.path.join(WEB_DIR, book_prefix)
+            os.makedirs(out_dir, exist_ok=True)
+            out_path = os.path.join(out_dir, f"{book_prefix}-{ch:02d}.txt")
             write_english_file(out_path, src_path, english_verses)
             ch_lines = sum(len(v) for v in english_verses.values())
             total_lines += ch_lines

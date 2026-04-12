@@ -1,8 +1,8 @@
 """
 build_books.py — Generate HTML book files from colometric text sources.
 
-Reads chapter files from v4-editorial/ (preferred) or v3-colometric/ (Greek)
-and optionally from web-colometric/ (preferred) or ylt-colometric/ (English),
+Reads chapter files from v4-editorial/*/ (preferred) or v3-colometric/ (Greek)
+and optionally from eng-gloss/*/ (preferred) or ylt-colometric/ (English),
 and writes one HTML fragment per book into books/.
 
 Each .line span contains a .gk span (Greek) and optionally a .en span
@@ -26,8 +26,8 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPT_DIR)
 GK_PRIMARY_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4-editorial")
 GK_FALLBACK_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v3-colometric")
-INPUT_DIR = GK_FALLBACK_DIR  # used by discover_books for globbing all chapters
-EN_DIR = os.path.join(REPO_ROOT, "data", "text-files", "web-colometric")
+INPUT_DIR = GK_PRIMARY_DIR  # used by discover_books for globbing all chapters (subfoldered)
+EN_DIR = os.path.join(REPO_ROOT, "data", "text-files", "eng-gloss")
 OUTPUT_DIR = os.path.join(REPO_ROOT, "books")
 
 # Verse reference pattern: digits, colon, digits (e.g. "4:1", "17:33")
@@ -137,7 +137,7 @@ def discover_books(input_dir, book_filter=None):
         dict: {book_prefix: [(chapter_num_from_filename, filepath), ...]}
               sorted by chapter number.
     """
-    pattern = os.path.join(input_dir, "*.txt")
+    pattern = os.path.join(input_dir, "*", "*.txt")
     files = glob.glob(pattern)
 
     books = defaultdict(list)
@@ -167,12 +167,24 @@ def discover_books(input_dir, book_filter=None):
     return dict(books)
 
 
+def _book_prefix(fpath):
+    """Extract book prefix from a chapter filepath, e.g. 'mark' from 'mark-05.txt'."""
+    stem = os.path.splitext(os.path.basename(fpath))[0]
+    dash_idx = stem.rfind("-")
+    return stem[:dash_idx] if dash_idx != -1 else stem
+
+
 def resolve_greek_path(fpath):
     """Return the best Greek source: v4-editorial if it exists, else v3-colometric."""
     basename = os.path.basename(fpath)
-    v4_path = os.path.join(GK_PRIMARY_DIR, basename)
+    prefix = _book_prefix(fpath)
+    v4_path = os.path.join(GK_PRIMARY_DIR, prefix, basename)
     if os.path.isfile(v4_path):
         return v4_path, "v4"
+    # Fallback to v3-colometric (flat directory)
+    v3_path = os.path.join(GK_FALLBACK_DIR, basename)
+    if os.path.isfile(v3_path):
+        return v3_path, "v3"
     return fpath, "v3"
 
 
@@ -182,7 +194,8 @@ def resolve_english_path(fpath):
     Returns (path, label) or (None, None) if not found.
     """
     basename = os.path.basename(fpath)
-    en_path = os.path.join(EN_DIR, basename)
+    prefix = _book_prefix(fpath)
+    en_path = os.path.join(EN_DIR, prefix, basename)
     if os.path.isfile(en_path):
         return en_path, "EN"
     return None, None

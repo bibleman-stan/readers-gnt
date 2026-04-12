@@ -579,12 +579,18 @@ def get_book_slug(filename):
 def discover_files(book_filter=None):
     """Discover all v4-editorial files, optionally filtered by book."""
     files = []
-    for f in sorted(os.listdir(V4_DIR)):
-        if not f.endswith('.txt'):
+    for book_dir in sorted(os.listdir(V4_DIR)):
+        book_path = os.path.join(V4_DIR, book_dir)
+        if not os.path.isdir(book_path):
             continue
-        slug = get_book_slug(f)
-        if slug and (book_filter is None or slug == book_filter):
-            files.append((os.path.join(V4_DIR, f), slug))
+        if book_filter and book_dir != book_filter:
+            continue
+        for f in sorted(os.listdir(book_path)):
+            if not f.endswith('.txt'):
+                continue
+            slug = get_book_slug(f)
+            if slug:
+                files.append((os.path.join(book_path, f), slug))
     return files
 
 

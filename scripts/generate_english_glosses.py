@@ -17,7 +17,7 @@ import unicodedata
 BASE = r"C:\Users\bibleman\repos\readers-gnt"
 V4_DIR = os.path.join(BASE, "data", "text-files", "v4-editorial")
 V3_DIR = os.path.join(BASE, "data", "text-files", "v3-colometric")
-OUT_DIR = os.path.join(BASE, "data", "text-files", "web-colometric")
+OUT_DIR = os.path.join(BASE, "data", "text-files", "eng-gloss")
 MACULA_DIR = os.path.join(BASE, "research", "macula-greek", "SBLGNT", "lowfat")
 
 os.makedirs(OUT_DIR, exist_ok=True)
@@ -240,7 +240,7 @@ def process_chapter(book_prefix, chapter_num, words_by_verse):
     ch_str = f"{chapter_num:02d}"
 
     # Determine source file
-    v4_path = os.path.join(V4_DIR, f"{book_prefix}-{ch_str}.txt")
+    v4_path = os.path.join(V4_DIR, book_prefix, f"{book_prefix}-{ch_str}.txt")
     v3_path = os.path.join(V3_DIR, f"{book_prefix}-{ch_str}.txt")
 
     if os.path.exists(v4_path):
@@ -313,7 +313,9 @@ def process_book(book_prefix):
 
         output_lines, src_path = result
 
-        out_path = os.path.join(OUT_DIR, f"{book_prefix}-{ch_str}.txt")
+        out_dir = os.path.join(OUT_DIR, book_prefix)
+        os.makedirs(out_dir, exist_ok=True)
+        out_path = os.path.join(out_dir, f"{book_prefix}-{ch_str}.txt")
         with open(out_path, 'w', encoding='utf-8', newline='\n') as f:
             f.write('\n'.join(output_lines))
             f.write('\n')  # always end with newline to match source

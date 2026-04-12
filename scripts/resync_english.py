@@ -52,41 +52,44 @@ dry_run = '--dry-run' in sys.argv
 total_fixes = 0
 files_fixed = 0
 
-for f in sorted(os.listdir('data/text-files/v4-editorial')):
-    if not f.endswith('.txt'): continue
-    gk_path = f'data/text-files/v4-editorial/{f}'
-    en_path = f'data/text-files/web-colometric/{f}'
-    if not os.path.exists(en_path): continue
-    
-    gk_verses, gk_order = get_verses(gk_path)
-    en_verses, en_order = get_verses(en_path)
-    
-    changed = False
-    for v in gk_order:
-        gk_count = len(gk_verses.get(v, []))
-        en_count = len(en_verses.get(v, []))
-        if gk_count != en_count and gk_count > 0:
-            old_en = en_verses.get(v, [])
-            if not old_en:
-                en_verses[v] = ['[translation needed]'] * gk_count
-            else:
-                en_verses[v] = redistribute(old_en, gk_count)
-            changed = True
-            total_fixes += 1
-            if dry_run:
-                print(f'  {f} {v}: EN {en_count}->{gk_count}')
-    
-    if changed:
-        files_fixed += 1
-        if not dry_run:
-            # Rebuild the file
-            out = []
-            for v in gk_order:
-                out.append(v)
-                for line in en_verses.get(v, []):
-                    out.append(line)
-                out.append('')
-            open(en_path, 'w', encoding='utf-8').write('\n'.join(out))
+for book_dir in sorted(os.listdir('data/text-files/v4-editorial')):
+    book_path = os.path.join('data/text-files/v4-editorial', book_dir)
+    if not os.path.isdir(book_path): continue
+    for f in sorted(os.listdir(book_path)):
+        if not f.endswith('.txt'): continue
+        gk_path = os.path.join('data/text-files/v4-editorial', book_dir, f)
+        en_path = os.path.join('data/text-files/eng-gloss', book_dir, f)
+        if not os.path.exists(en_path): continue
+
+        gk_verses, gk_order = get_verses(gk_path)
+        en_verses, en_order = get_verses(en_path)
+
+        changed = False
+        for v in gk_order:
+            gk_count = len(gk_verses.get(v, []))
+            en_count = len(en_verses.get(v, []))
+            if gk_count != en_count and gk_count > 0:
+                old_en = en_verses.get(v, [])
+                if not old_en:
+                    en_verses[v] = ['[translation needed]'] * gk_count
+                else:
+                    en_verses[v] = redistribute(old_en, gk_count)
+                changed = True
+                total_fixes += 1
+                if dry_run:
+                    print(f'  {f} {v}: EN {en_count}->{gk_count}')
+
+        if changed:
+            files_fixed += 1
+            if not dry_run:
+                # Rebuild the file
+                out = []
+                for v in gk_order:
+                    out.append(v)
+                    for line in en_verses.get(v, []):
+                        out.append(line)
+                    out.append('')
+                open(en_path, 'w', encoding='utf-8').write('\n'.join(out))
 
 mode = 'DRY RUN' if dry_run else 'APPLIED'
 print(f'\n{mode}: {total_fixes} verse fixes across {files_fixed} files')
