@@ -128,6 +128,28 @@ Also:
 ἐκείνοις δὲ τοῖς ἔξω ἐν παραβολαῖς τὰ πάντα γίνεται,
 ```
 
+### 6a. μή/ἀλλά and οὐ/ἀλλά Antithesis
+Paul's signature corrective rhetoric — "not X but Y" — uses negation + ἀλλά to set up an explicit contrast. This is a standard colometric break point: ἀλλά introduces the corrective positive on its own line, parallel to the negative line above it. **The visual parallelism makes the rhetorical move legible.**
+
+```
+μὴ ὑπερφρονεῖν παρʼ ὃ δεῖ φρονεῖν,
+ἀλλὰ φρονεῖν εἰς τὸ σωφρονεῖν,
+```
+(Rom 12:3 — not to think too highly / but to think with sober judgment)
+
+The same applies to οὐ/ἀλλά and οὐχ/ἀλλά antitheses (especially common in Pauline corrective passages and the Johannine moral antitheses). Detect: any line containing ἀλλά mid-line where the preceding content has μή/μὴ/οὐ/οὐχ/οὐκ/μηδέ/οὐδέ. The break goes before ἀλλά (or before whatever conjunction immediately attaches to it).
+
+### 6b. Dative Subject of Infinitive
+When a Greek speech or command verb (Λέγω, παραγγέλλω, παρακαλέω, κελεύω, etc.) takes a dative indirect object that is ALSO the semantic subject of an infinitive complement, the dative is doing double duty: indirect object of the speech verb AND subject of the embedded infinitive proposition. **The dative chunks with the infinitive content, not with the speech verb frame.**
+
+```
+Λέγω γὰρ διὰ τῆς χάριτος τῆς δοθείσης μοι
+παντὶ τῷ ὄντι ἐν ὑμῖν μὴ ὑπερφρονεῖν παρʼ ὃ δεῖ φρονεῖν,
+```
+(Rom 12:3 — `παντὶ τῷ ὄντι ἐν ὑμῖν` belongs with `μὴ ὑπερφρονεῖν` because it is grammatically the subject of the infinitive, not just an addressee tag floated in passing.)
+
+This is the dative analogue of accusative-subject-of-infinitive in indirect discourse. It's especially common in Pauline exhortation and pastoral instruction. Floating the dative on its own line treats it like a vocative — it isn't one. A vocative is a second-person address; a dative subject of an infinitive is a third-person grammatical role inside an embedded proposition.
+
 ### 7. Explanatory γάρ
 Often introduces a new line, since it signals a shift to explanation:
 
@@ -189,6 +211,14 @@ Note: imperatives (Ἀκούετε, Σιώπα) also stand alone — they are co
 - Luke 1:19: "Ἐγώ εἰμι Γαβριὴλ ὁ παρεστηκὼς ἐνώπιον τοῦ θεοῦ" — attributive participle as title/identity. **Merge.**
 
 **Periphrastic constructions** (ἦν + participle, μέλλω + infinitive, ἄρχομαι + infinitive) are always one verbal unit — never split.
+
+**Periphrastic with elided auxiliary (Acts 8:28 showcase):** When a periphrastic chain extends across multiple imperfective actions sharing one auxiliary, the auxiliary can be elided for subsequent elements. Each "ellipsized periphrastic" is a complete predication via ellipsis of εἰμί and stacks as its own colometric line. This is the periphrastic-aspect application of the ellipsis principle (predications via ellipsis stack — same as the threefold/sixtyfold/hundredfold triad).
+```
+ἦν τε ὑποστρέφων              ← explicit periphrastic ("he was returning")
+καὶ καθήμενος ἐπὶ τοῦ ἅρματος αὐτοῦ   ← elliptical periphrastic ([ἦν] sitting)
+καὶ ἀνεγίνωσκεν τὸν προφήτην Ἠσαΐαν.  ← imperfect equivalent, stacks as parallel ongoing action
+```
+All three are imperfective/ongoing, each a distinct simultaneous action, each its own image. **Keep stacked** as three parallel lines. The third element doesn't need to be a participle — a plain imperfect indicative continues the aspectual rhythm and stacks naturally.
 
 ### Paradox Pairs
 Antithetical pairs that form a single paradox merge onto one line: "seeing they may see and not perceive" is one thought — the paradox is the unit, not its halves (Mark 4:12, Isaiah quotation). The same applies to any construction where the second element completes (not extends) the first.
