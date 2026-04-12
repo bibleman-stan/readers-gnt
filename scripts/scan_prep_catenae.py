@@ -166,10 +166,11 @@ def _is_case_agreeing_nominal(tok, target_cases):
 
 def _is_genitive_modifier(tok):
     """A genitive nominal that can attach to a preceding noun as a modifier
-    (e.g., τοῦ πατρός in ἐν ἡμέραις Ἡρῴδου τοῦ βασιλέως)."""
+    (e.g., τοῦ πατρός in ἐν ἡμέραις Ἡρῴδου τοῦ βασιλέως). Excludes relative
+    pronouns (RR) since those introduce clauses rather than modifying."""
     pos = tok["pos"]
     if pos.startswith("N-") or pos.startswith("A-") or pos.startswith("RA") or \
-       pos.startswith("RD") or pos.startswith("RP") or pos.startswith("RR"):
+       pos.startswith("RD") or pos.startswith("RP"):
         return tok["case"] == "G"
     return False
 
@@ -276,21 +277,43 @@ def _extract_prep_phrases(verse_tokens, line_idx_for_token):
                     j += 1
                     continue
                 break
+            # Peel back any trailing article left at the end of phase 1
+            # (e.g., the τοῦ in ἔμπροσθεν τοῦ πατρός μου τοῦ — the second τοῦ
+            # opens a new substantival and shouldn't belong to this phrase).
+            while obj_end_i is not None and obj_end_i > prep_i + 1 and \
+                  verse_tokens[obj_end_i]["pos"].startswith("RA"):
+                obj_end_i -= 1
+
             # Phase 2: trailing genitive modifier(s) on the noun head.
+            # Only accept a trailing genitive run if it contains a noun/pronoun
+            # (not just dangling articles) and does not end on a standalone
+            # article before another preposition (that's a new substantival).
             if saw_head and obj_end_i is not None:
                 k = obj_end_i + 1
-                gen_depth = 0
-                while k < n and gen_depth < 3:
+                gen_run_start = k
+                gen_end = obj_end_i
+                gen_has_head = False
+                while k < n:
                     nxt = verse_tokens[k]
                     if _is_preposition(nxt) or nxt["pos"].startswith("V") or \
                        nxt["pos"].startswith("C") or nxt["pos"].startswith("I"):
                         break
                     if _is_genitive_modifier(nxt):
-                        obj_end_i = k
+                        gen_end = k
+                        if nxt["pos"].startswith("N-") or \
+                           nxt["pos"].startswith("RP") or \
+                           nxt["pos"].startswith("RD") or \
+                           nxt["pos"].startswith("RR"):
+                            gen_has_head = True
                         k += 1
-                        gen_depth += 1 if nxt["pos"].startswith("N-") else 0
                         continue
                     break
+                # Peel back trailing articles that don't govern a noun.
+                while gen_end > obj_end_i and \
+                      verse_tokens[gen_end]["pos"].startswith("RA"):
+                    gen_end -= 1
+                if gen_has_head and gen_end > obj_end_i:
+                    obj_end_i = gen_end
 
         if obj_end_i is None:
             i += 1

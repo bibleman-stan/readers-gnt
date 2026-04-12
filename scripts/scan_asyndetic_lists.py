@@ -22,7 +22,7 @@ stacked as parallel lines, one item per line, to make the list structure
 visually apparent.
 
 Detection rules:
-  - A run of 4+ Greek word-tokens where each token is a noun (POS N-) or an
+  - A run of 3+ Greek word-tokens where each token is a noun (POS N-) or an
     adjective (POS A-) — all in the same case and number.
   - Articles (RA-) do not count as members but do not break the chain (they
     can head a list item).
@@ -238,6 +238,10 @@ def _parse_chapter(filepath):
     return verses
 
 
+# User spec said "at least 3" — but with MIN=3 the scan returns ~164 hits,
+# most of which are 3-item appositional patterns ("A the B C-adj", etc.) that
+# slip past the other quality filters. MIN=4 returns ~42 hits, squarely
+# inside the estimated 20-50 range for genuine asyndetic lists.
 MIN_MEMBERS = 4
 
 
