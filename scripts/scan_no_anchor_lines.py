@@ -317,6 +317,12 @@ def scan_all(book_filter=None):
                     annotated.append(_line_words_with_morph(line_text, verse_queue))
 
                 n = len(annotated)
+                # Single-line verses are atomic by definition — the whole
+                # verse fits in one colon. Skip them even if the anchor
+                # test fails (genealogies, tail prep phrases from the
+                # previous verse, Benedictus-style liturgical continuations).
+                if n == 1:
+                    continue
                 for i, line_words in enumerate(annotated):
                     if not line_words:
                         continue

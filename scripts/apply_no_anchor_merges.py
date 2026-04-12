@@ -36,8 +36,17 @@ sys.path.insert(0, SCRIPT_DIR)
 from scan_no_anchor_lines import scan_all  # noqa: E402
 
 
-def apply_merge_in_memory(content, ref, line_idx_in_verse):
-    """Merge verse line[line_idx_in_verse] into verse line[line_idx_in_verse - 1].
+def apply_merge_in_memory(content, ref, line_idx_in_verse, allow_downward=True):
+    """Merge the unanchored verse line at line_idx_in_verse.
+
+    Default: upward merge — append the unanchored line's content to the
+    preceding line, delete the unanchored line.
+
+    If allow_downward and the unanchored line is the first content line
+    of the verse (no upward target), fall back to downward merge —
+    prepend the unanchored line's content to the next line, delete the
+    unanchored line.
+
     Returns new content on success, None on failure.
     """
     lines = content.split("\n")
@@ -52,12 +61,31 @@ def apply_merge_in_memory(content, ref, line_idx_in_verse):
     target_line_abs = ref_idx + line_idx_in_verse + 1
     if target_line_abs >= len(lines):
         return None
-    if target_line_abs - 1 <= ref_idx:
-        return None  # can't merge the first content line into the ref
 
-    merged = lines[target_line_abs - 1].rstrip() + " " + lines[target_line_abs].lstrip()
-    lines[target_line_abs - 1] = merged
-    del lines[target_line_abs]
+    can_upward = (target_line_abs - 1 > ref_idx)
+    if can_upward:
+        merged = lines[target_line_abs - 1].rstrip() + " " + lines[target_line_abs].lstrip()
+        lines[target_line_abs - 1] = merged
+        del lines[target_line_abs]
+        return "\n".join(lines)
+
+    # Upward not possible — try downward
+    if not allow_downward:
+        return None
+    # Need a next line within the same verse
+    next_abs = target_line_abs + 1
+    if next_abs >= len(lines):
+        return None
+    next_stripped = lines[next_abs].strip()
+    if not next_stripped:
+        return None  # blank line — verse ended
+    import re
+    # Don't merge into another verse ref
+    if re.match(r'^\d+:\d+$', next_stripped):
+        return None
+    merged = lines[target_line_abs].rstrip() + " " + lines[next_abs].lstrip()
+    lines[target_line_abs] = merged
+    del lines[next_abs]
     return "\n".join(lines)
 
 
