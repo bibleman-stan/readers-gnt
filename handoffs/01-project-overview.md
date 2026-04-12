@@ -104,6 +104,23 @@ The same analytical substrate serves every NT author, though the phenomena diffe
 
 None of these analyses require new theory. They require the formatted dataset that this project provides.
 
+### Colometric Structure as a Translation-Critical Concern
+
+A further scholarly implication reaches beyond text-internal analysis and into translation theory itself: **if translators have misunderstood which units belong together, they have quite possibly mistranslated important passages.** A line break is not a neutral presentation choice — it encodes an implicit claim about where one thought ends and the next begins. When a translator reads a paragraph-formatted Greek text and renders it in English, the translator's (often unconscious) segmentation of that text becomes the load-bearing assumption underneath every choice of verb, preposition, subject binding, and clause nesting.
+
+Concrete consequences when the segmentation is wrong:
+- **Subject-verb mis-attribution:** when a participle is absorbed into the wrong frame, its implied subject can be assigned to the wrong referent (the Acts 1:9 class: merging `βλεπόντων αὐτῶν` into the main clause makes "they" look like the subject of ἐπήρθη rather than Jesus). Translators who inherit the wrong break make downstream binding errors.
+- **Antithesis flattening:** μή/ἀλλά pairs compressed into one colon lose their corrective force and get smoothed into single assertions. Rom 12:3 is the case in point — "not to think too highly but to think soberly" becomes "to think soberly" because the antithesis is invisible in the source segmentation.
+- **Dative-subject-of-infinitive mis-binding:** when a dative IO is floated as a vocative-style apostrophe, translators treat it as "addressees" rather than "semantic subject of the infinitive." This changes what the command is *about*.
+- **Qualifier chain misgrouping:** three adjectives on one noun vs. three separate predications — getting this wrong changes whether a passage reads as one composite image or a sequence of escalating claims.
+- **Attributive participle splits:** splitting ὁ τεχθεὶς from βασιλεύς (Matt 2:2) can lead translators to render "the born one" as a substantival phrase ("the one born") rather than an attributive ("the born king"). Same words, different English syntax, different theological emphasis.
+
+The testable claim: **every class of colometric error we have identified in v4 had an empirically verifiable impact on downstream translation choices in one or more major English versions.** A comparative pass across NA28, NIV, NRSV, ESV, NASB, and YLT against corrected colometric structure would yield a map of places where segmentation disagreements correspond to translation disagreements. Where they correlate, the colometric analysis provides a *grammatical warrant* for preferring one translation over another — not on theological grounds, but on the grounds that the author's own breath units are best preserved by the translation that matches the segmentation.
+
+This moves colometric methodology from being a *reading aid* to being a *translation-critical discipline*. It provides translators, exegetes, and commentary writers with a structured substrate for discovering where their paragraph-inherited assumptions may be flattening the source. It also offers a mechanism for adjudicating certain translation disputes — not all, but the subset where the dispute traces back to unclear clause-unit boundaries in the editor's (or translator's) mental segmentation of the Greek.
+
+**For the PhD prospectus:** this is one of the strongest "why does this matter" arguments for the project's scholarly contribution. The edition is not merely a pedagogical tool; it is a text-critical and translation-critical resource that makes a specific kind of error newly detectable and correctable.
+
 ## Project Siloing
 
 Stan explicitly decided that this project should be **publicly siloed** from the BOM Reader project. No cross-references in README, CLAUDE.md, or any public-facing files. The connection exists in Stan's private memory files and internal knowledge, but the two projects present as independent efforts to the public.
