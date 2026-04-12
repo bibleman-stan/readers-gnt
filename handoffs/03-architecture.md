@@ -37,7 +37,50 @@ readers-gnt/
     morphgnt-sblgnt/                     # MorphGNT SBLGNT morphological tagging
     macula-greek/                        # Macula Greek syntax trees (Clear Bible)
     ylt/                                 # YLT source files (USFM from eBible.org)
+  private/                               # Gitignored — Stan's strategic research workspace
+                                         # (Windows junction → Dropbox, see note below)
 ```
+
+## Private Research Workspace (`private/`)
+
+The `private/` folder contains Stan's strategic research materials that are intentionally kept out of the public repo: the PhD prospectus draft, the scholarly impact opportunity space document, the annotated bibliography, paper outlines, session observations, adversarial audit reports, triage documents, scan outputs, and all strategic planning work. The folder is excluded via `.gitignore` per the project-siloing decision (see `handoffs/01-project-overview.md` on siloing) — nothing in `private/` ever reaches the public GitHub repo.
+
+**Physical location (as of 2026-04-12):** The actual files live in **`C:\Users\bibleman\Dropbox\gnt-reader-private\`**. The `private/` path in the repo root is a **Windows directory junction** pointing at the Dropbox folder:
+
+```
+C:\Users\bibleman\repos\readers-gnt\private  →  C:\Users\bibleman\Dropbox\gnt-reader-private
+```
+
+**Why the junction:** Dropbox auto-syncs the folder to the cloud, provides automatic version history, and enables cross-machine access without interfering with the repo's `.gitignore` rule or any local read/write workflows. Every edit Claude Code makes to `private/` is automatically backed up within seconds.
+
+**How it was created** (one-time setup, already done):
+```batch
+mkdir "C:\Users\bibleman\Dropbox\gnt-reader-private"
+robocopy "C:\Users\bibleman\repos\readers-gnt\private" "C:\Users\bibleman\Dropbox\gnt-reader-private" /E
+rmdir /S /Q "C:\Users\bibleman\repos\readers-gnt\private"
+mklink /J "C:\Users\bibleman\repos\readers-gnt\private" "C:\Users\bibleman\Dropbox\gnt-reader-private"
+```
+
+**How to verify the junction is in place:**
+```bash
+# Unix-style (git bash):
+ls -la private  # should show "private -> /c/Users/bibleman/Dropbox/gnt-reader-private"
+
+# Windows cmd:
+dir /AL | findstr private  # should show "<JUNCTION>     private [C:\Users\bibleman\Dropbox\gnt-reader-private]"
+```
+
+**Read/write transparency:** All normal file operations work exactly as if `private/` were a regular local folder. Claude Code reads and writes to `private/` without needing to know about the junction. The Read, Write, Edit, Bash, and Grep tools all operate on `private/` normally.
+
+**One caveat for `find`:** the Unix `find` command does NOT follow junctions by default. If you need to traverse `private/` with find, use `find -L private/` (the `-L` flag follows symbolic links and junctions). Bare `ls private/`, `wc -l private/*.md`, Read tool, and grep-via-Grep-tool all work fine without `-L`.
+
+**If the junction ever needs to be recreated** (e.g., after cloning the repo to a new machine that already has the Dropbox folder synced):
+```batch
+rmdir "C:\Users\bibleman\repos\readers-gnt\private"  REM only if an empty private/ exists
+mklink /J "C:\Users\bibleman\repos\readers-gnt\private" "C:\Users\bibleman\Dropbox\gnt-reader-private"
+```
+
+**Cross-machine implications:** if Stan wants to work with Claude Code on a second machine, that machine needs: (a) Dropbox installed with the `gnt-reader-private` folder synced locally, and (b) the junction recreated from the repo's `private/` to the local Dropbox path. The repo itself is still cloned from GitHub normally; only the `private/` junction is machine-specific.
 
 ## Base Text: SBLGNT
 
