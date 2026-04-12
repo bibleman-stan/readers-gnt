@@ -3,7 +3,8 @@ After these things Jesus went away across the Sea of Galilee, of Tiberias.
 
 
 6:2
-And a large crowd was following him, because they were seeing the signs
+And a large crowd was following him,
+because they were seeing the signs
 that he was performing on the sick.
 
 
@@ -139,13 +140,15 @@ sea, they said to him: Rabbi, when did you come here?
 
 
 6:26
-Jesus answered them
-and said:
-Truly, truly, I say to you,
-you are seeking me
-not because you saw signs
-but because you ate of the loaves
-and were filled.
+Jesus answered them and said:
+Truly, truly,
+I say to you, you
+are seeking
+me
+not because you saw
+signs
+but because you ate of the
+loaves and were filled.
 
 
 6:27
@@ -267,7 +270,8 @@ Everyone who has heard from the Father and learned comes to me.
 
 
 6:46
-Not that anyone has seen the Father,
+Not
+that anyone has seen the Father,
 except the one who is from God—this one has seen the Father.
 
 
