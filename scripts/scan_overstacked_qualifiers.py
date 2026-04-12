@@ -459,155 +459,6 @@ def _line_is_bare_modifier_run(line_words):
     return True
 
 
-def analyze_verse(verse_lines, annotated, ref, chapter_file):
-    """Look through adjacent-line runs within a verse and flag potential
-    over-stacked qualifier runs.
-
-    Returns a list of candidates.
-    """
-    candidates = []
-    n = len(verse_lines)
-
-    # Consider starting positions where the head noun is on line[start] and
-    # the modifier run is lines[start+1..start+k] (k in 2..3). Also consider
-    # runs where the head is on a preceding line (start-1).
-
-    for start in range(n):
-        head_line_text = verse_lines[start]
-        # Skip rhetorical-question heads — stacked answers aren't qualifier
-        # merges (Rom 3:29 "ἢ Ἰουδαίων ὁ θεὸς μόνον;")
-        if ";" in head_line_text:
-            continue
-        head_words = annotated[start]
-        if _line_has_finite(head_words) and not _is_speech_line(head_words):
-            # A line with a finite verb can still serve as a head-bearing
-            # line (e.g. "καὶ ἔδωκεν αὐτοῖς ἐξουσίαν" — ἐξουσίαν is the
-            # head and a modifier chain could follow). So don't skip.
-            pass
-
-        head, head_idx = _find_head_on_line(head_words)
-        if not head:
-            continue
-        head_parsing = head["parsing"]
-
-        # Try run lengths 2 and 3
-        for run_len in (2, 3):
-            end = start + run_len
-            if end >= n:
-                continue
-            run_lines = annotated[start + 1:end + 1]
-            raw_run = verse_lines[start + 1:end + 1]
-
-            # Reject runs whose raw lines contain μέν/δέ contrasts, question
-            # marks, or other "separate predication" signals
-            reject_markers = False
-            for rl in raw_run:
-                # Greek question mark
-                if ";" in rl:
-                    reject_markers = True
-                    break
-                tokens = rl.split()
-                toks_clean = [_clean(t) for t in tokens]
-                if "μὲν" in toks_clean or "μέν" in toks_clean:
-                    reject_markers = True
-                    break
-                if "δὲ" in toks_clean or "δέ" in toks_clean:
-                    reject_markers = True
-                    break
-            if reject_markers:
-                continue
-
-            # Bare-modifier check and no finite verbs in the whole run
-            ok_run = True
-            modifier_classes = []
-            for rw in run_lines:
-                if not _line_is_bare_modifier_run(rw):
-                    ok_run = False
-                    break
-                cls = _classify_run_line(rw, head_parsing)
-                if cls is None:
-                    ok_run = False
-                    break
-                modifier_classes.append(cls)
-
-            if not ok_run:
-                continue
-
-            # All run lines must be same class (don't mix adj-chain and
-            # genitive in the same three-in-one flag)
-            if len(set(modifier_classes)) > 1:
-                continue
-
-            # Bounded-triad check: if the line AFTER the run looks like it
-            # could extend the modifier chain (i.e., has any word agreeing
-            # with the head and is a bare modifier run), the run is a
-            # sub-chunk of a longer list and should NOT be flagged.
-            if end + 1 < n:
-                next_line_words = annotated[end + 1]
-                if _line_extends_chain(next_line_words, head_parsing):
-                    continue
-
-            # Similarly, if the line BEFORE the head-bearing line extends
-            # backward (has a word agreeing with the head and is a bare
-            # modifier run), then the head line is a sub-chunk of a longer
-            # list and we skip.
-            if start - 1 >= 0:
-                prev_line_words = annotated[start - 1]
-                if _line_extends_chain(prev_line_words, head_parsing):
-                    continue
-
-            # Require each run line to be reasonably short (a chain of
-            # bare modifiers is typically short). Avoid long clauses
-            # with lots of words.
-            max_tokens = max(
-                len(_content_words(rw)) for rw in run_lines
-            )
-            if max_tokens > 6:
-                continue
-
-            # Confidence heuristic:
-            #  - all-agreement + short lines = high
-            #  - mix of agreement + genitive = medium
-            #  - any genitive-only = medium/low
-            classes = set(modifier_classes)
-            if classes == {"agreement"} and max_tokens <= 3:
-                confidence = "high"
-            elif classes == {"agreement"}:
-                confidence = "medium"
-            elif "agreement" in classes:
-                confidence = "medium"
-            else:
-                confidence = "low"
-
-            # Bump confidence down if the head line is verbose (unlikely
-            # a pure modifier run is dangling off a busy predication).
-            if len(_content_words(head_words)) > 7 and confidence == "high":
-                confidence = "medium"
-
-            candidates.append({
-                "file": os.path.basename(chapter_file),
-                "dir": os.path.basename(os.path.dirname(chapter_file)),
-                "ref": ref,
-                "head_line_idx": start,
-                "run_start_idx": start + 1,
-                "run_end_idx": end,
-                "run_len": run_len,
-                "head_line_text": verse_lines[start],
-                "run_lines": raw_run,
-                "head_word": head["text"],
-                "head_lemma": head["lemma"],
-                "head_case": _case(head_parsing),
-                "head_number": _number(head_parsing),
-                "head_gender": _gender(head_parsing),
-                "modifier_classes": modifier_classes,
-                "confidence": confidence,
-            })
-            # Don't double-report: if run_len=3 matched, skip run_len=2 from
-            # same start by preferring the longer. We report both and let
-            # dedup after.
-    return candidates
-
-
 def _is_speech_line(words):
     """Cheap check: a line containing a speech-introducing verb."""
     for w in words:
@@ -716,17 +567,23 @@ def analyze_chapter(records, chapter_file):
             if len(set(modifier_classes)) > 1:
                 continue
 
-            # Bounded-triad check against next chapter line
+            # Bounded-triad check against next line (can cross verse
+            # boundaries — vice lists like 2Tim 3:2-4 span verses)
             if end + 1 < n:
                 next_line_ann = records[end + 1]["annotated"]
                 if next_line_ann and _line_extends_chain(next_line_ann, head_parsing):
                     continue
 
-            # Bounded-triad check against previous chapter line
+            # Bounded-triad check against previous line — only within the
+            # SAME verse as the head line. Across a verse boundary we have
+            # too many false matches from unrelated nouns that happen to
+            # share case/gender/number with the head.
             if start - 1 >= 0:
-                prev_line_ann = records[start - 1]["annotated"]
-                if prev_line_ann and _line_extends_chain(prev_line_ann, head_parsing):
-                    continue
+                prev_rec = records[start - 1]
+                if prev_rec["ref"] == records[start]["ref"]:
+                    prev_line_ann = prev_rec["annotated"]
+                    if prev_line_ann and _line_extends_chain(prev_line_ann, head_parsing):
+                        continue
 
             max_tokens = max(
                 len(_content_words(rw)) for rw in run_lines_ann
@@ -735,17 +592,18 @@ def analyze_chapter(records, chapter_file):
                 continue
 
             classes = set(modifier_classes)
+            # adj-chain with short run lines = high confidence: textbook
+            # three-in-one qualifier pattern.
             if classes == {"adj-chain"} and max_tokens <= 3:
                 confidence = "high"
             elif classes == {"adj-chain"}:
                 confidence = "medium"
+            elif classes == {"genitive"} and max_tokens <= 2:
+                confidence = "high"
             elif classes == {"genitive"}:
                 confidence = "medium"
             else:
                 confidence = "low"
-
-            if len(_content_words(head_words)) > 7 and confidence == "high":
-                confidence = "medium"
 
             candidates.append({
                 "file": os.path.basename(chapter_file),
