@@ -456,7 +456,25 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-size: 0.8em;
     margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
   }
+  .search-status-text { flex: 1; }
+  .search-clear-filters {
+    display: none;
+    color: var(--accent);
+    font-size: 0.9em;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: background 0.12s;
+  }
+  .search-clear-filters:hover { background: rgba(124, 175, 194, 0.12); }
+  .search-clear-filters.visible { display: inline-block; }
 
   .search-result {
     display: block;
@@ -1103,7 +1121,10 @@
   </div>
   <div class="lemma-info" id="lemma-info"></div>
   <div class="search-body">
-    <div class="search-status" id="search-status"></div>
+    <div class="search-status">
+      <span class="search-status-text" id="search-status"></span>
+      <span class="search-clear-filters" id="search-clear-filters" onclick="clearAllFilters()">Clear filters ×</span>
+    </div>
     <div id="search-book-chart"></div>
     <div id="search-results"></div>
   </div>
@@ -1691,6 +1712,8 @@ function toggleCorpusFilter(el) {
   const input = document.getElementById('search-input');
   if (input && input.value.trim().length >= 2) {
     performSearch(input.value);
+  } else {
+    updateClearFiltersVisibility();
   }
 }
 
@@ -2196,6 +2219,7 @@ function performSearch(query) {
     activeBook = null;
     lastSearchTerms = [];
     document.getElementById('lemma-info').textContent = '';
+    updateClearFiltersVisibility();
     // When the input is fully empty, show the recent searches cache
     if (!query || query.length === 0) renderRecentSearches();
     return;
@@ -2333,6 +2357,9 @@ function performSearch(query) {
 
   // Render the (possibly book-filtered) results
   renderFilteredResults();
+
+  // Update the Clear-filters link visibility
+  updateClearFiltersVisibility();
 }
 
 // --- Per-book bar chart (second-tier filter within corpus) ---
@@ -2424,6 +2451,43 @@ function toggleBookFilter(slug) {
   }
   renderBookChart();
   renderFilteredResults();
+  updateClearFiltersVisibility();
+}
+
+// Show or hide the "Clear filters ×" link based on whether any
+// corpus chip or the per-book bar-chart filter is active.
+function updateClearFiltersVisibility() {
+  const el = document.getElementById('search-clear-filters');
+  if (!el) return;
+  const hasFilter = activeCorpusFilters.size > 0 || activeBook !== null;
+  if (hasFilter) {
+    el.classList.add('visible');
+  } else {
+    el.classList.remove('visible');
+  }
+}
+
+// Clear all active filters (both corpus chips and the per-book
+// bar-chart filter) and re-run the current search to refresh results.
+function clearAllFilters() {
+  // Deselect every corpus chip
+  activeCorpusFilters.clear();
+  document.querySelectorAll('.corpus-chip.active').forEach(chip => {
+    chip.classList.remove('active');
+  });
+  // Hide the Disputed sub-filter (it's only visible when Pauline is active)
+  const disputedChip = document.querySelector('.corpus-chip[data-corpus="disputed"]');
+  if (disputedChip) disputedChip.classList.remove('visible');
+  // Clear the per-book filter
+  activeBook = null;
+  // Re-run the current search so results reflect the unfiltered state
+  const input = document.getElementById('search-input');
+  if (input && input.value.trim().length >= 2) {
+    performSearch(input.value);
+  } else {
+    // No active query — just hide the clear-filters chip
+    updateClearFiltersVisibility();
+  }
 }
 
 // --- Render results list from lastHits + activeBook filter ---
