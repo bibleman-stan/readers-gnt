@@ -532,6 +532,65 @@
   .recent-row:hover .recent-clear { opacity: 0.6; }
   .recent-row .recent-clear:hover { opacity: 1; color: var(--text); }
 
+  /* Per-book bar chart (secondary filter after corpus) */
+  #search-book-chart {
+    padding: 6px 0 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 8px;
+  }
+  #search-book-chart:empty { display: none; }
+  body.light-mode #search-book-chart { border-color: rgba(0,0,0,0.1); }
+  .search-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 0;
+    cursor: pointer;
+    font-size: 0.82em;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+  .search-bar-row:hover .search-bar-fill { opacity: 0.8; }
+  .search-bar-label {
+    min-width: 95px;
+    width: 95px;
+    text-align: right;
+    color: var(--text-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
+  }
+  .search-bar-row.active-filter .search-bar-label {
+    color: var(--text);
+    font-weight: 700;
+  }
+  .search-bar-track {
+    flex: 1;
+    height: 10px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  body.light-mode .search-bar-track { background: rgba(0,0,0,0.1); }
+  .search-bar-fill {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    min-width: 2px;
+    opacity: 0.55;
+    transition: width 0.2s ease, opacity 0.15s;
+  }
+  .search-bar-row.active-filter .search-bar-fill { opacity: 1; }
+  .search-bar-num {
+    min-width: 32px;
+    text-align: left;
+    color: var(--text-faint);
+    font-size: 0.82em;
+    flex-shrink: 0;
+  }
+  .search-bar-row.active-filter .search-bar-num { color: var(--text); }
+
   /* === SEARCH OPERATOR BUTTONS === */
   .search-ops {
     display: flex;
@@ -1045,6 +1104,7 @@
   <div class="lemma-info" id="lemma-info"></div>
   <div class="search-body">
     <div class="search-status" id="search-status"></div>
+    <div id="search-book-chart"></div>
     <div id="search-results"></div>
   </div>
 </div>
@@ -1578,6 +1638,13 @@ let lastSearchTerms = [];  // for highlighting
 let lemmaIndex = null;     // { lemma_to_forms, form_to_lemma }
 let lemmaIndexLoading = false;
 
+// --- Search state: last hits + per-book chart filter ---
+// lastHits is populated by performSearch so the book-chart and corpus
+// filter click handlers can re-filter without re-running the query.
+let lastHits = [];
+let lastSearchQuery = '';
+let activeBook = null; // book slug (e.g. 'rom') or null for all books
+
 // --- Corpus filter groups ---
 const CORPUS_GROUPS = {
   'synoptics': ['matt', 'mark', 'luke'],
@@ -1617,6 +1684,9 @@ function toggleCorpusFilter(el) {
       disputedChip.classList.remove('visible');
     }
   }
+  // Corpus change: the active book may no longer be in the allowed set.
+  // Reset it so the user isn't stuck filtered to a book outside the corpus.
+  activeBook = null;
   // Re-run search with current query
   const input = document.getElementById('search-input');
   if (input && input.value.trim().length >= 2) {
@@ -1843,6 +1913,11 @@ function openSearch() {
   input.focus();
   document.getElementById('search-status').textContent = '';
   document.getElementById('search-results').innerHTML = '';
+  const chartEl = document.getElementById('search-book-chart');
+  if (chartEl) chartEl.innerHTML = '';
+  lastHits = [];
+  lastSearchQuery = '';
+  activeBook = null;
   // Build index on first open
   if (!searchIndex && !searchIndexLoading) {
     buildSearchIndex();
@@ -2110,16 +2185,27 @@ function parseBooleanQuery(query) {
 function performSearch(query) {
   const statusEl = document.getElementById('search-status');
   const resultsEl = document.getElementById('search-results');
+  const chartEl = document.getElementById('search-book-chart');
 
   if (!query || query.trim().length < 2) {
     statusEl.textContent = '';
     resultsEl.innerHTML = '';
+    if (chartEl) chartEl.innerHTML = '';
+    lastHits = [];
+    lastSearchQuery = '';
+    activeBook = null;
     lastSearchTerms = [];
     document.getElementById('lemma-info').textContent = '';
     // When the input is fully empty, show the recent searches cache
     if (!query || query.length === 0) renderRecentSearches();
     return;
   }
+
+  // New query: clear per-book filter (but allow corpus filter to persist)
+  if (query !== lastSearchQuery) {
+    activeBook = null;
+  }
+  lastSearchQuery = query;
 
   // Persist this query to the recent-searches cache
   saveRecentSearch(query);
@@ -2238,8 +2324,119 @@ function performSearch(query) {
     }
   }
 
-  // Display results
-  const totalCount = hits.length;
+  // Store hits at module level so the book-chart click handlers can
+  // re-filter the display without re-running the query.
+  lastHits = hits;
+
+  // Render the per-book bar chart (second-tier filter)
+  renderBookChart();
+
+  // Render the (possibly book-filtered) results
+  renderFilteredResults();
+}
+
+// --- Per-book bar chart (second-tier filter within corpus) ---
+// Imitates the BOM reader's group-then-book bar-chart pattern. The GNT
+// already has corpus chips for top-tier filtering (Pauline, Synoptics,
+// etc.); this adds the second tier — individual books within the hit set
+// — as a click-to-filter bar chart below the search status line.
+function renderBookChart() {
+  const container = document.getElementById('search-book-chart');
+  if (!container) return;
+  container.innerHTML = '';
+  if (!lastHits || lastHits.length === 0) return;
+
+  // Count hits per book slug
+  const bookCounts = {};
+  for (const entry of lastHits) {
+    bookCounts[entry.book] = (bookCounts[entry.book] || 0) + 1;
+  }
+  const bookSlugs = Object.keys(bookCounts);
+  // Don't render a chart if only one book has hits — there's nothing to filter
+  if (bookSlugs.length < 2) return;
+
+  // Maintain canonical NT book order for display
+  const orderedBooks = [
+    'matt','mark','luke','john','acts',
+    'rom','1cor','2cor','gal','eph','phil','col','1thess','2thess','1tim','2tim','titus','phlm',
+    'heb','jas','1pet','2pet','1john','2john','3john','jude','rev'
+  ];
+  const sortedSlugs = orderedBooks.filter(s => bookCounts[s] > 0);
+
+  let maxCount = 0;
+  for (const slug of sortedSlugs) {
+    if (bookCounts[slug] > maxCount) maxCount = bookCounts[slug];
+  }
+
+  for (const slug of sortedSlugs) {
+    const count = bookCounts[slug];
+    const row = makeBarRow(
+      getBookDisplayName(slug),
+      count,
+      maxCount,
+      slug === activeBook,
+      () => toggleBookFilter(slug)
+    );
+    container.appendChild(row);
+  }
+}
+
+function getBookDisplayName(slug) {
+  // Find any hit from this book to retrieve its proper display name
+  for (const h of lastHits) {
+    if (h.book === slug) return h.bookName;
+  }
+  return slug;
+}
+
+function makeBarRow(label, count, maxCount, isActive, clickFn) {
+  const row = document.createElement('div');
+  row.className = 'search-bar-row' + (isActive ? ' active-filter' : '');
+
+  const lbl = document.createElement('span');
+  lbl.className = 'search-bar-label';
+  lbl.textContent = label;
+
+  const track = document.createElement('span');
+  track.className = 'search-bar-track';
+  const fill = document.createElement('span');
+  fill.className = 'search-bar-fill';
+  const pct = maxCount > 0 ? Math.max(2, Math.round((count / maxCount) * 100)) : 0;
+  fill.style.width = pct + '%';
+  track.appendChild(fill);
+
+  const num = document.createElement('span');
+  num.className = 'search-bar-num';
+  num.textContent = count;
+
+  row.appendChild(lbl);
+  row.appendChild(track);
+  row.appendChild(num);
+  row.addEventListener('click', clickFn);
+  return row;
+}
+
+function toggleBookFilter(slug) {
+  if (activeBook === slug) {
+    activeBook = null; // deselect → show all
+  } else {
+    activeBook = slug;
+  }
+  renderBookChart();
+  renderFilteredResults();
+}
+
+// --- Render results list from lastHits + activeBook filter ---
+function renderFilteredResults() {
+  const statusEl = document.getElementById('search-status');
+  const resultsEl = document.getElementById('search-results');
+  resultsEl.innerHTML = '';
+
+  const filteredHits = activeBook
+    ? lastHits.filter(h => h.book === activeBook)
+    : lastHits;
+
+  const totalCount = filteredHits.length;
   const displayLimit = 100;
 
   if (totalCount === 0) {
@@ -2247,16 +2444,29 @@ function performSearch(query) {
     return;
   }
 
+  // Status line with corpus + book filter annotation
   let filterLabel = '';
-  if (corpusAllowed) {
+  if (activeCorpusFilters.size > 0) {
     const names = [...activeCorpusFilters].map(f => f.charAt(0).toUpperCase() + f.slice(1));
     filterLabel = ' in ' + names.join(', ');
   }
-  statusEl.textContent = totalCount + ' verse' + (totalCount !== 1 ? 's' : '') + ' found' + filterLabel;
+  if (activeBook) {
+    const bookName = getBookDisplayName(activeBook);
+    filterLabel += ' · ' + bookName;
+  }
+  // If we had to filter down from lastHits, mention both numbers
+  if (activeBook && lastHits.length !== totalCount) {
+    statusEl.textContent = 'Showing ' + totalCount + ' of ' + lastHits.length + ' verses' + filterLabel;
+  } else {
+    statusEl.textContent = totalCount + ' verse' + (totalCount !== 1 ? 's' : '') + ' found' + filterLabel;
+  }
+
+  const displayMode = localStorage.getItem('gnt-display-mode') || 'greek';
+  const searchEnglish = (displayMode === 'english');
 
   const shown = Math.min(totalCount, displayLimit);
   for (let i = 0; i < shown; i++) {
-    const entry = hits[i];
+    const entry = filteredHits[i];
     const ref = entry.bookName + ' ' + entry.chapter + ':' + entry.verse;
 
     const card = document.createElement('div');
@@ -2269,7 +2479,7 @@ function performSearch(query) {
     const textDiv = document.createElement('div');
     textDiv.className = 'search-result-text';
     if (searchEnglish) {
-      const qw = query.trim().toLowerCase().split(/\s+/).filter(w => w.length > 0);
+      const qw = lastSearchQuery.trim().toLowerCase().split(/\s+/).filter(w => w.length > 0);
       textDiv.innerHTML = highlightSearchResult(entry.enText, qw);
     } else {
       textDiv.innerHTML = highlightSearchResult(entry.text, lastSearchTerms);
