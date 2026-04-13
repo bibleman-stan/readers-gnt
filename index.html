@@ -238,6 +238,21 @@
     letter-spacing: 0.02em;
   }
 
+  /* Inline verse markers for cross-verse continuation (e.g. Matt 3:1-2
+     where κηρύσσων and λέγων are parallel participles crossing the
+     Stephanus 1551 verse boundary). Rendered as superscript markers
+     inside the merged colometric line. */
+  .verse-marker {
+    font-size: 0.7em;
+    color: var(--text-faint);
+    vertical-align: super;
+    line-height: 0;
+    user-select: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    padding: 0 0.15em;
+  }
+  body.hide-verse-nums .verse-marker { display: none; }
+
   .line {
     display: block;
     text-indent: calc(-1 * var(--wrap-indent));

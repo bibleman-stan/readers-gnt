@@ -96,6 +96,32 @@ def build_ylt_lookup(ylt_verses):
     return lookup
 
 
+# Superscript digit map for inline verse markers (cross-verse continuation)
+_SUPERSCRIPT_TO_DIGIT = {
+    "\u00B2": "2", "\u00B3": "3",
+    "\u2070": "0", "\u00B9": "1",
+    "\u2074": "4", "\u2075": "5", "\u2076": "6", "\u2077": "7",
+    "\u2078": "8", "\u2079": "9",
+}
+_SUPERSCRIPT_RE = re.compile(
+    "[" + "".join(_SUPERSCRIPT_TO_DIGIT.keys()) + "]+"
+)
+
+
+def _wrap_verse_markers(escaped_line, chapter_num):
+    """Replace inline verse markers (²³⁴...) with HTML superscript elements.
+
+    Each marker becomes <sup class="verse-marker" id="v-{chapter}-{verse}">N</sup>
+    so that a click on a TOC entry for the inline verse lands at this marker.
+    """
+    def repl(m):
+        marker_text = m.group(0)
+        digits = "".join(_SUPERSCRIPT_TO_DIGIT[c] for c in marker_text)
+        inline_id = f"v-{chapter_num}-{digits}-inline"
+        return f'<sup class="verse-marker" id="{inline_id}">{marker_text}</sup>'
+    return _SUPERSCRIPT_RE.sub(repl, escaped_line)
+
+
 def build_chapter_html(chapter_num, gk_verses, en_lookup=None):
     """Build HTML for one chapter with paired Greek/English lines."""
     parts = []
@@ -114,14 +140,19 @@ def build_chapter_html(chapter_num, gk_verses, en_lookup=None):
 
         for i, gk_line in enumerate(verse["lines"]):
             gk_escaped = html.escape(gk_line)
-            # Wrap punctuation in spans for toggle visibility
+            # Wrap punctuation in spans for toggle visibility (must run
+            # BEFORE verse-marker wrapping so the punct regex doesn't
+            # corrupt the sup HTML tag attributes)
             gk_escaped = re.sub(r'([,.\;·—])', r'<span class="punct">\1</span>', gk_escaped)
+            # Render inline verse markers as superscript anchors (cross-verse)
+            gk_escaped = _wrap_verse_markers(gk_escaped, chapter_num)
 
             # Get corresponding English line (or empty string)
             en_text = en_lines[i] if i < len(en_lines) else ""
             en_escaped = html.escape(en_text)
-            # Wrap English punctuation in spans for toggle visibility (same as Greek)
+            # Punct wrap first (same ordering reason as Greek above)
             en_escaped = re.sub(r'([,.\;:!?\'"—\-])', r'<span class="punct">\1</span>', en_escaped)
+            en_escaped = _wrap_verse_markers(en_escaped, chapter_num)
 
             parts.append(f'    <span class="line"><span class="gk">{gk_escaped}</span><span class="en">{en_escaped}</span></span>')
         parts.append("  </div>")

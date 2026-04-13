@@ -483,3 +483,81 @@ Established ordering: **chunking > oral > rhetorical**. Colometry first aids com
 #### Skousen Intellectual Genealogy
 
 The project's relationship to Royal Skousen's textual criticism methodology has been documented, connecting colometric editing to established traditions in critical text work.
+
+---
+
+### Update — 2026-04-12 (session 9: mechanical-merge workflow as default)
+
+#### Default editorial workflow is now scan-and-apply, not agent-dispatch
+
+Session 9 crystallized the **mechanical-merge pattern** as the default workflow for any error class that can be described structurally. The previous pattern — "dispatch parallel agents to do mass editorial work" — remains available, but should only be used when the error class requires per-verse judgment (e.g., translation quality, semantic alignment cleanup).
+
+**Mechanical-merge pattern:**
+
+1. **Describe the error class structurally** — what grammatical / syntactic signature identifies the problem?
+2. **Build a scanner** (`scripts/scan_*.py`) that finds the signature and cites the evidence
+3. **Build an apply tool** (`scripts/apply_*.py`) that mirrors the operation on both Greek and English files in lockstep
+4. **Pilot on 2-3 books** representing different genres; verify 0 residual
+5. **Run corpus-wide** with `--save-candidates` for Greek+English lockstep
+6. **Rebuild and confirm integrity** (`build_books.py` runs `verify_word_order.py` automatically)
+7. **Commit atomically** with a message that includes the merge count per book
+
+**Session 9 applied this pattern to three error classes:**
+
+- **Vocative apposition** (125 merges) — vocatives appositive to 2p pronouns/verbs in the same clause. Scanner + apply in `scan_vocative_apposition.py` / `apply_vocative_merges.py`.
+- **No-anchor lines** (860 merges) — lines lacking a thought-marking anchor (finite verb, infinitive, participle, or head substantive in N/A/D/V). Scanner + apply in `scan_no_anchor_lines.py` / `apply_no_anchor_merges.py`. Pilot: Rom (118 → 0), Mark (62 → 0), Rev (83 → 0). Corpus-wide: 977 flagged → 0 residual after upward merge + downward-merge fallback + 3 manual edge cases.
+- **English alignment drift** (47 + 61 in two waves) — heuristic detection via `scan_english_drift.py`. First wave used cleanup via a dispatched agent (the drift class doesn't reduce to a mechanical apply since each case requires rearranging words across a specific boundary). Second wave tightened the scanner to catch participle-NP splits and proper-noun appositive splits.
+
+#### When to use mechanical vs. agent-dispatch
+
+| Use mechanical (scan+apply) when... | Use agent-dispatch when... |
+|---|---|
+| The error class has a grammatical signature | The error requires per-verse judgment |
+| Every merge can cite a specific evidence token | Semantic quality matters more than position |
+| The fix is always "merge line N into line N-1" (or similar) | The fix requires reading context and rewriting |
+| You can verify success by re-running the scanner | You need a human-like review of the output |
+
+Bridge finite-verb scanning, vocative apposition, no-anchor lines, three-in-one qualifier merging → mechanical.
+
+Translation quality, LLM-generated book cleanup, English drift correction within existing line boundaries, cross-verse atomic-thought detection → agent-dispatch (for now).
+
+#### Cross-verse continuation workflow
+
+When a single atomic thought crosses a Stephanus 1551 verse boundary (e.g., Matt 3:1-2, Eph 1:3-14), the editorial procedure is:
+
+1. **Identify the boundary:** grammatical continuity indicator — participle chain, suspended main verb, subject/verb straddle, speech-intro straddle
+2. **Edit in place:** merge the grammatically-continuous content from verse N+1 into verse N's last line, with an inline superscript digit (`²`/`³`/...) marking where verse N+1 visually begins
+3. **Update the corresponding English gloss** with the same merge and the same superscript marker
+4. **Rebuild** — the integrity checker recognizes superscripts and splits the merged line at markers for per-verse word-order comparison. HTML renders superscripts as `<sup class="verse-marker">` anchors.
+5. **Cite using verse N's ref** when referring to the merged colometric line
+
+This is a low-frequency editorial act (~30-80 cases estimated corpus-wide). Candidates should be identified and applied case-by-case with review; no mechanical scanner for cross-verse continuation exists yet.
+
+#### Drift scanner in the cascade
+
+Every Greek edit cascade now ends with two checks, not one:
+
+1. **`verify_word_order.py`** (automatic, runs inside `build_books.py`) — catches word-order bugs
+2. **`scan_english_drift.py --summary-only`** (manual, run after any regen) — catches English alignment drift
+
+Both should return 0 before committing a pass. The drift scanner has three confidence tiers; the cascade check should use `--min-confidence high` to avoid false positives from narrative English conventions.
+
+#### Commit message conventions for mechanical passes
+
+```
+<pass name>: <scope> (<count> edits, <residual> residual)
+
+<one-sentence problem statement>
+
+<how the scanner identifies the class>
+
+<per-book counts or per-class breakdown>
+
+<any manual residual noted>
+
+<rebuild / integrity status>
+
+Co-Authored-By: ...
+```
+
+See commits fa5725d (vocative), 48df980 (no-anchor pilot), 5847940 (no-anchor corpus-wide) for examples.

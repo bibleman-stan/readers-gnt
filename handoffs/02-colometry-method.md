@@ -4,6 +4,32 @@
 
 This project applies sense-line (colometric) formatting to the Greek New Testament. The method is grounded in the scholarly tradition of Lee & Scott (sound mapping), Marschall (colometric analysis), and ancient manuscript practice (Codex Bezae, Codex Claromontanus).
 
+## Comparanda — who we're positioned against
+
+Precise positioning matters for a prospectus and for collaborator onboarding. There's a lot of adjacent scholarship, and most of it is *not* doing what we're doing. Mapping the landscape explicitly:
+
+**Methodological parents (we stand in this lineage):**
+
+- **Codex Bezae (D 05), 5th c.** — the closest ancient analogue. Its Luke/Acts text is laid out colometrically; each line is a sense unit. **This is not metaphor** — Bezae's scribe broke the text at what we would call cola. Direct empirical comparison of our breaks against Bezae's is both feasible (Bezae exists in IGNTP digital and Scrivener 1864 transcription) and methodologically load-bearing. If our independently-derived criteria recover ~70-80% of Bezae's breaks, that's a strong empirical warrant. Where we disagree, the disagreements become data points for "we refine the tradition."
+- **Codex Claromontanus (Dp 06), 6th c.** — colometric Paul. Same logic as Bezae but for the Pauline corpus. Closest ancient parallel to our Romans/1-2 Corinthians/Galatians work.
+- **Jerome's Latin Vulgate *per cola et commata*, 4th c.** — Jerome's preface to Isaiah explicitly says he laid out the prophetic books "by cola and commas" for ease of reading. **This is our methodology articulated in Latin, 1600 years ago.** Cassiodorus wrote admiringly about the practice in the 6th century. We are not inventing; we are **recovering** a scribal practice that the medieval and early modern periods abandoned when prose-paragraph presentation took over. This should be a foundational citation in any prospectus — Jerome is *saying we're right*.
+- **Priscille Marschall, *Colometric Analysis of Paul's Letters* (WUNT II, 2024)** — the closest contemporary scholarly work. She does Pauline colometry within the assumed syntactic-tree model. We diverge from her on the tree question (container-not-originator says cola are not decompositions of a pre-existing tree) but share the empirical practice. Her specific analyses of 2 Cor and Galatians are the best test material we have for defending our refinements — when we disagree with Marschall we owe an argument.
+- **Lee & Scott, *Sound Mapping the New Testament* (2009, 2nd ed.)** — sibling rather than parent. They use sound/acoustic analysis to derive line divisions; we use syntactic evidence of atomic thought. Adjacent criteria, related impulse. Worth citing as a parallel approach whose breaks we often agree with but for different reasons.
+
+**Adjacent but different playground (text-critical, not colometric):**
+
+- **Nestle-Aland (NA27/28), United Bible Societies (UBS4/5), Tyndale House GNT, SBLGNT** — these are text-critical editions. Their mission is establishing the best reading of each variant, with apparatus. Their *presentation* decisions are paragraph-level (pericopes + inline verse superscripts) and they make no sub-paragraph colometric decisions. **We rely on NA/UBS/SBLGNT for the *text* we re-present.** Our text source is SBLGNT. But their line breaks are not our line breaks, because they aren't doing colometry at all — they're paginating. The overlap between their methodology and ours is essentially zero at the sub-paragraph level.
+- We **mirror NA's typographic convention of inline superscript verse numbers** (see "Cross-Verse Continuation" below). That's the one piece of NA's layout practice we inherit. Everything else about layout is ours.
+
+**Not comparanda (different projects entirely):**
+
+- **Swanson's NT Greek Manuscripts (horizontal MS comparison)** — presents individual witnesses side-by-side for text-critical work. Useful as a reference for what Bezae/Vaticanus/Sinaiticus actually look like per verse, but not methodologically parallel.
+- **Discourse Grammar (Runge 2010; Levinsohn 2000)** — analyzes Greek discourse features at the pragmatic level. Useful for understanding what μέν/δέ or γάρ is *doing* rhetorically, but these books don't prescribe line-break decisions. We read them to understand our criteria #4 (syntactic evidence) better, not to replicate their output.
+- **Chiasm scholarship (Lund 1942; and many since)** — identifies large-scale rhetorical structures. Downstream work our edition *enables* but does not perform.
+- **Reader's Greek NT (UBS, Zondervan)** — simplified text for reading. Different audience, paragraph-based, no colometric layer.
+
+**The positioning move in one sentence:** *We use NA's critical text, inherit Jerome and Bezae's colometric practice, extend Marschall's contemporary analysis through the container-not-originator refinement, and enable the downstream work of discourse and rhetorical-structure scholars by making the sub-paragraph atomic structure visible at the line level for the first time in a complete edition of the Greek New Testament.*
+
 ## Core Premise
 
 Ancient authors composed for oral delivery. The text was heard, not silently read. Modern verse-and-paragraph formatting obscures the original compositional structure. By breaking the text at its natural grammatical joints, we recover the author's own phrasing — the cola (κῶλα) and periods (περίοδοι) that structured the original composition.
@@ -859,4 +885,97 @@ Insights confirmed or discovered during the Acts 1 v4 editorial work:
 - **Geographic expansion stacking:** Acts 1:8 stacks "Jerusalem / all Judea / Samaria / the ends of the earth" as expanding concentric circles — each an implied "[you will be my witnesses] in X." This is the ellipsis principle applied to geographic lists.
 
 - **Short genitive absolute merging confirmed:** Acts 1:4 "συναλιζόμενος" (while eating together) merges with its main verb as adverbial framing, consistent with Mark 4:35 "ὀψίας γενομένης" merge. Short circumstantial participles functioning as scene-setting frame merge with the clause they modify.
+
+---
+
+### Update — 2026-04-12 (session 9: container-not-originator, vocative refinement, no-anchor pass)
+
+This session added the biggest *theoretical* lock of the project to date — **container-not-originator as the unifying principle behind the four criteria** — and applied it mechanically in two large corpus-wide merge passes.
+
+#### The framing principle: container, not originator
+
+Previously the four criteria looked like a flat list. They are not: they are hierarchical, and the ordering is load-bearing.
+
+- **The atomic thought is the primary, originating reality.** Language-invariant. The thing we are recovering.
+- **Syntax is the container, not the originator.** The vessel in which Paul's thought takes shape when it is born in Greek. It constrains but does not create.
+- **Grammar as a whole > syntax.** "Syntactic" is the precise term for the thought-revealing surface. Morphology is the evidence syntax is read off of.
+- **Cross-linguistic invariance of thought is preserved.** Colometric recovery targets Paul's λόγος ἐνδιάθετος through the λόγος προφορικός — we read the thought *through* the container, not by discarding it.
+
+This answers the standing objection "you're just doing Greek grammar" — we are not. We are using Greek syntax as evidence for Paul's thought, which is prior to Greek and translatable out of it. The colometric recovery is of the thought, not of the grammar.
+
+#### Thought-marking vs. structural syntax
+
+Two kinds of syntactic features, only one tracks atomic thought:
+
+- **Thought-marking syntax** reveals where one atomic unit ends and the next begins: main-verb shifts, clause boundaries, subject changes, verb-subject binding (including vocative-as-subject), appositive coreference, camera-angle turns.
+- **Structural syntax** is fixed Greek patterns that do NOT automatically map to thought boundaries: conditionals (εἰ...X, Y), correlatives (καί...καί, μέν...δέ, οὔτε...οὔτε), comparatives (μᾶλλον...ἤ), result clauses tightly bound to their head, μή/ἀλλά antitheses operating as a single rhetorical unit.
+
+**The defense against the obvious objection** ("you're just breaking at every grammatical feature") is this: we break at features that *mark thought boundaries*, not at features that are merely fixed Greek constructions. A μέν/δέ contrast earns a break when each limb is its own atomic claim; it does not earn a break just because μέν/δέ is there.
+
+This principle lets us distinguish between rules that *reveal* atomic structure and rules that *fragment* it. The vocative refinement and the no-anchor pass below are both applications of the same principle.
+
+#### Vocative rule — refined from universal to apposition-aware
+
+**Previous rule:** all vocatives get their own line (universal).
+
+**Refined rule:** vocatives default to their own line, BUT merge into the preceding line when grammatically appositive to an already-established second-person address.
+
+Two independent grammatical grounds for the merge:
+
+1. **Subject-appositive.** The vocative names the implicit subject of a 2p finite verb in the same clause (`Ὕπαγε, Σατανᾶ` / `Ἀγνοεῖτε, ἀδελφοί` / `Οὐαὶ ὑμῖν, γραμματεῖς καὶ Φαρισαῖοι ὑποκριταί`). The verb and vocative form one atomic predication.
+2. **Object-appositive.** The vocative restates an explicit 2p pronoun already in the clause (`Παρακαλῶ ὑμᾶς, ἀδελφοί` / `Γνωρίζω ὑμῖν, ἀδελφοί`). The address is already established; the vocative is affective restatement.
+
+**Preserved exceptions (still own-line):** verse-initial initiating vocatives, verse-final tail addresses, vocatives after speech-intro `·`/`:` punctuation (the prior 2p markers belong to a different discourse layer), repeated vocatives as a rhetorical unit (`Κύριε κύριε`).
+
+**Mechanical enforcement:** `scripts/scan_vocative_apposition.py` classifies every vocative-only line as INITIATING / TRAILING / APPOSITION-CANDIDATE / INITIATING-QUOTED-SPEECH / MID-NO-2P, citing the specific preceding pronoun or verb that licenses each merge. `scripts/apply_vocative_merges.py` applies the merges to both v4-editorial Greek and eng-gloss English in a single structural operation.
+
+**125 vocative merges landed** across 21 books.
+
+#### The no-anchor rule — every line must carry a thought-marking anchor
+
+The diagnostic question Stan posed: **why did we still have over-fragmented lines after multiple editorial passes?** The answer: our scanners had all been *targeted* (find a specific error class), not *holistic* (evaluate every line against the four criteria). Specifically, we had no rule saying "every line must carry a thought-marking element." Auto-colometry's split-bias was never corrected on the positive side.
+
+**The rule:** a valid colometric line must have at least one of:
+
+1. A finite verb (main, subordinate, imperative, subjunctive)
+2. An infinitive (the predication of its clause)
+3. A participle (circumstantial, supplementary, or adjectival)
+4. A substantive (noun, adjective, article, pronoun) in N/A/D/V case that is NOT the object of a preposition on the same line AND functions as the head of its phrase
+
+Lines that have none of the above are **containers without originators** — pure modifier fragments (prep phrases, bare genitive/dative modifiers, particle/article-only lines). They belong *inside* a neighboring anchored line's atomic thought.
+
+**Exemptions (legitimately atomic despite lacking anchor):**
+- Single-line verses — if the whole verse fits in one colon, it is atomic by definition. Catches Luke 3:23-38 genealogy lists, Luke 1:75 Benedictus tail, Rom 5:18 elliptical nominal claims.
+- Speech-intro prefixes ending with `·` (καὶ πάλιν·, καὶ εἶπεν·) — the `·` boundary marks a new discourse layer.
+- Standalone sentence connectives (Ὥστε, Ἄρα οὖν, Διὰ τοῦτο) — these are hinge markers that license a merge with the *next* line, not a failure.
+
+**Mechanical enforcement:** `scripts/scan_no_anchor_lines.py` + `scripts/apply_no_anchor_merges.py` with upward-merge default and downward-merge fallback for verse-initial unanchored lines.
+
+**860 no-anchor merges landed** across 26 books (pilot: Rom 110, Mark 61, Rev 83; corpus-wide upward: 752; downward fallback: 106; manual residual: 3). Final scan: **0 unanchored lines remaining corpus-wide.**
+
+#### Rom 7:14-8:8 — the Pauline metaphorical-νόμος stack
+
+A harmonization decision worth recording: when Paul extends a single metaphorical play on a word across multiple verses, all instances of that word should be rendered consistently even when one verse has an articular use that would normally trigger a different rendering.
+
+Specific case: the νόμος-stack of Rom 7:14-8:8 plays on the word's double sense (concrete Torah vs. abstract principle) across ~12 instances. Within this stack, `νόμῳ θεοῦ / νόμῳ ἁμαρτίας` (7:25) should *both* be rendered as "law of God / law of sin" (keeping the metaphorical play). Rom 8:7 `τῷ νόμῳ τοῦ θεοῦ`, though articular and looking concrete on its own, is the tail end of the same stack and should harmonize with 7:25 — "law of God," not "Torah of God."
+
+**Principle:** rhetorical continuity supersedes verse-by-verse articulation tests when the rhetorical move is demonstrably extended.
+
+#### What this session locked down
+
+| Item | Mechanically enforced? |
+|---|---|
+| SBLGNT word-order integrity | yes (build-time guard) |
+| Atomic thought via syntactic evidence | yes (no-anchor scanner) |
+| Vocative apposition | yes (scanner + apply) |
+| Container-not-originator principle | codified in methodology |
+| Thought-marking vs structural syntax | codified in methodology |
+
+**What remains leaky:**
+
+- **Breath unit (criterion #3)** — no scanner yet. Today's aggressive no-anchor pass produced some long lines (Rom 1:4-5, 15:19, 15:30) that satisfy atomic thought but may violate breath. The next natural scanner is a per-author breath hotspot auditor.
+- **Cross-verse dependencies** — within-verse scanners miss cases like Luke 1:75 (tail phrase modifying 1:74's verb). Exempted via the single-line-verse rule, which hides rather than solves the issue.
+- **Structural-syntax enforcement** — conditionals, correlatives, comparatives are codified as non-thought-marking but no scanner rejects over-splitting at them.
+- **English gloss drift** — mechanical proportional regen still runs when Greek line counts change. Every major Greek pass requires manual English cleanup. Needs a dedicated English-alignment drift auditor.
+- **Three-in-one qualifier rule** — has no dedicated scanner. Some compliance comes automatically from the no-anchor pass (which catches modifier stacks), but edge cases persist.
 

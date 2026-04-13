@@ -54,6 +54,28 @@ REPO_ROOT = os.path.dirname(SCRIPT_DIR)
 ENG_DIR = os.path.join(REPO_ROOT, "data", "text-files", "eng-gloss")
 V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4-editorial")
 
+# Greek subordinators — if the Greek line N+1 starts with one of these
+# (after any leading καί / δέ / γάρ), the English break at line N is
+# legitimate and not drift. Suppresses false positives where an English
+# -ing form sits at line end before a subordinate clause.
+_GREEK_SUBORDINATOR_STARTS = {
+    "ὅτι", "ἵνα", "ὅταν", "ὅτε", "ἐάν", "ἂν", "εἰ",
+    "ὅπως", "ὥστε", "ὡς", "καθώς", "ὥσπερ", "μήποτε",
+    "ἕως", "ὅπου", "ἡνίκα", "ἐπεί", "ἐπειδή", "πρίν",
+    "καθάπερ", "ἀφʼ",
+}
+
+# Greek relative pronoun starts (case-insensitive, any form)
+_GREEK_RELATIVE_STARTS = {
+    "ὅς", "ἥ", "ὅ", "οὗ", "ἧς", "ᾧ", "ᾗ", "ὅν", "ἥν",
+    "οἷς", "αἷς", "ὧν", "ἅ", "ἅς", "ὅστις", "ἥτις",
+    "οἵτινες", "αἵτινες", "ἅτινα", "ὃν", "οἳ", "αἱ",
+    "ἐφʼ",
+}
+
+# Leading connectives we skip before testing the "real" first word
+_GREEK_LEADING_SKIP = {"καὶ", "δὲ", "γὰρ", "οὖν", "τε", "μὲν"}
+
 # Articles — never legitimately end an English line
 ARTICLES = {"the", "a", "an"}
 
@@ -120,6 +142,80 @@ def _first_word(line):
 VERSE_REF_RE = re.compile(r"^(\d+):(\d+)")
 
 
+_CLEAN_GREEK_RE = re.compile(r'[,.\;\·!?\'\"()\[\]—–\u037E\u0387\u00B7⸀⸁⸂⸃⸄⸅⟦⟧]+')
+
+import unicodedata as _ud
+
+
+def _strip_accents(w):
+    """NFD-decompose and remove combining marks so grave/acute variants
+    compare equal (ὃ == ὅ, ἣν == ἥν, etc.)."""
+    decomposed = _ud.normalize("NFD", w)
+    no_marks = "".join(c for c in decomposed if not _ud.combining(c))
+    return _ud.normalize("NFC", no_marks).lower()
+
+
+_GREEK_SUBORDINATOR_NOACCENT = {_strip_accents(w) for w in _GREEK_SUBORDINATOR_STARTS}
+_GREEK_RELATIVE_NOACCENT = {_strip_accents(w) for w in _GREEK_RELATIVE_STARTS}
+_GREEK_LEADING_NOACCENT = {_strip_accents(w) for w in _GREEK_LEADING_SKIP}
+
+
+def _greek_first_significant(line):
+    """Return the first Greek content word on a line (accent-stripped,
+    lowercase), skipping leading connectives."""
+    words = [_CLEAN_GREEK_RE.sub("", w) for w in line.strip().split()]
+    words = [_strip_accents(w) for w in words if w]
+    for w in words:
+        if w in _GREEK_LEADING_NOACCENT:
+            continue
+        return w
+    return ""
+
+
+def _greek_line_starts_subordinate(line):
+    """True if the Greek line begins with a subordinator or relative
+    pronoun (after any leading connective). Accent-insensitive."""
+    first = _greek_first_significant(line)
+    if not first:
+        return False
+    return first in _GREEK_SUBORDINATOR_NOACCENT or first in _GREEK_RELATIVE_NOACCENT
+
+
+# English temporal / causal connectives that, when at the start of a
+# line, indicate the line is a temporal-frame clause whose participle
+# legitimately ends without an object (because it's intransitive or
+# the main clause that follows has its own independent subject).
+_ENGLISH_TEMPORAL_STARTS = {
+    "while", "when", "as", "after", "before", "since", "until",
+    "once", "now", "then", "meanwhile", "where", "whenever",
+}
+
+
+def _load_greek_chapter(eng_file_rel):
+    """Given an eng-gloss relative path ('06-rom/rom-02.txt'), load the
+    corresponding Greek chapter. Returns dict: verse_ref -> list of lines."""
+    greek_path = os.path.join(V4_DIR, *eng_file_rel.split("/"))
+    if not os.path.exists(greek_path):
+        return {}
+    result = {}
+    current = None
+    with open(greek_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.rstrip("\n").rstrip("\r")
+            stripped = line.strip()
+            if not stripped:
+                continue
+            m = VERSE_REF_RE.match(stripped)
+            if m and stripped == m.group(0):
+                current = stripped
+                result[current] = []
+                continue
+            if current is None:
+                continue
+            result[current].append(line)
+    return result
+
+
 def _parse_chapter(filepath):
     """Return list of verses, each {ref, chapter, verse, lines}."""
     verses = []
@@ -183,14 +279,15 @@ def _classify_drift(last, last_raw, next_first, next_first_raw):
     # Narrative Greek participles translate as English -ing forms that
     # take direct objects; splitting the participle from its object
     # breaks the clause (Matt 2:11 "opening / their treasures").
-    # Only flag if the last word isn't a common adjectival -ing/-ed word
-    # that can legitimately end a line.
-    if (last.endswith("ing") or last.endswith("ed")) and next_first in NEXT_NP_STARTERS:
-        # Exclude very short -ing words that are usually adjectival
+    # NP-starter test excludes "that" (which is almost always a
+    # complementizer after a verb-of-thinking or a relative pronoun after
+    # a head noun, not an article split — "convinced / that", "surprised
+    # / that", "testing / that").
+    _PTC_NP_STARTERS = NEXT_NP_STARTERS - {"that"}
+    if (last.endswith("ing") or last.endswith("ed")) and next_first in _PTC_NP_STARTERS:
         if len(last) > 4 and last not in {"being", "having", "doing"}:
             return ("PTC-NP-SPLIT", "high")
-        if last in {"being", "having", "doing"} and next_first in NEXT_NP_STARTERS:
-            # "having" / "being" + NP-starter is almost always drift
+        if last in {"being", "having", "doing"}:
             return ("PTC-NP-SPLIT", "high")
 
     # Proper noun at line end + possessive on next line — appositive split
@@ -225,10 +322,13 @@ def scan_all(book_filter=None, min_confidence="med"):
                 continue
             filepath = os.path.join(book_path, fname)
             verses = _parse_chapter(filepath)
+            file_rel = f"{book_entry}/{fname}"
+            greek_chapter = _load_greek_chapter(file_rel)
             for v in verses:
                 n = len(v["lines"])
                 if n < 2:
                     continue
+                greek_lines = greek_chapter.get(v["ref"], [])
                 for i in range(n - 1):
                     line = v["lines"][i]
                     if line.rstrip().endswith((",", ".", ";", ":", "!", "?", "—", "–", "·")):
@@ -241,8 +341,41 @@ def scan_all(book_filter=None, min_confidence="med"):
                     flag, confidence = classification
                     if conf_rank[confidence] < threshold:
                         continue
+                    # Greek cross-check: if the corresponding Greek line N+1
+                    # starts with a subordinator or relative pronoun (after
+                    # any leading καί/δέ/γάρ), the English break at this
+                    # point mirrors a legitimate Greek subordinate-clause
+                    # boundary. Not drift.
+                    if i + 1 < len(greek_lines):
+                        if _greek_line_starts_subordinate(greek_lines[i + 1]):
+                            continue
+                    # English temporal-frame suppression: if the line begins
+                    # with a temporal connective (while / when / as / after /
+                    # before), it's a temporal/causal frame clause whose
+                    # participle legitimately ends without an object, and
+                    # the main clause on the next line has its own subject.
+                    # Luke 8:40 "Now when Jesus returned / the crowd welcomed
+                    # him" — not drift.
+                    if flag == "PTC-NP-SPLIT":
+                        line_first, _ = _first_word(line)
+                        if line_first in _ENGLISH_TEMPORAL_STARTS:
+                            continue
+                        # Also suppress if the participle is a temporal
+                        # intransitive at line end of a short opening clause
+                        # AND the next line has a main-clause subject
+                        # pattern ("the X" / "his X" as the subject of a new
+                        # verb — common narrative pattern).
+                        intransitive_temporals = {
+                            "returned", "arrived", "came", "went",
+                            "departed", "approached", "entered", "rose",
+                            "stood", "sat", "slept", "sleeping", "praying",
+                            "sowing", "sowed", "finished", "coming",
+                            "happened", "occurred",
+                        }
+                        if last in intransitive_temporals:
+                            continue
                     results.append({
-                        "file": f"{book_entry}/{fname}",
+                        "file": file_rel,
                         "ref": v["ref"],
                         "line_idx": i,
                         "total_lines": n,

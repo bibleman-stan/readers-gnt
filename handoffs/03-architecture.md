@@ -546,3 +546,101 @@ The English layer is no longer an aligned translation. Each structural gloss was
 #### v4 Editorial Coverage
 
 120 of 260 chapters now have v4-editorial files produced by the system-wide editorial review. Approximately 52 chapters flagged for second-pass work. The v4-editorial directory is the authoritative Greek source wherever it exists; v3-colometric remains the fallback for chapters not yet editorially reviewed.
+
+---
+
+### Update — 2026-04-12 (session 9: mechanical-merge infrastructure + cross-verse support)
+
+#### New scanners + appliers (scan-and-apply pattern)
+
+Session 9 introduced two new pairs of scanner+apply scripts that implement the "scan-then-mechanically-apply" pattern corpus-wide. Both operate on v4-editorial Greek and eng-gloss English in lockstep, avoiding the English-alignment drift that proportional regen introduces. This is a departure from the earlier "dispatch agents for mass editorial work" pattern, and should be preferred whenever a class of errors can be described structurally.
+
+**`scripts/scan_vocative_apposition.py`** — classifies every vocative-only line in the corpus and emits merge candidates with grammatical justification:
+
+- `INITIATING` — verse-initial, own line (atomic address act)
+- `TRAILING` — verse-final, own line (tail address)
+- `APPOSITION-CANDIDATE` — mid-verse with a preceding 2p pronoun or 2p finite verb in the same verse (not separated by a `·`/`:` speech-intro boundary) → merge candidate
+- `INITIATING-QUOTED-SPEECH` — immediately after a `·`/`:` speech-intro → own line, initiating quoted discourse
+- `MID-NO-2P` — mid-verse with no preceding 2p marker → own line
+
+Every APPOSITION-CANDIDATE cites the specific preceding pronoun or verb that licenses the merge. Reflect-not-impose: the grammatical justification is in the scan output.
+
+**`scripts/apply_vocative_merges.py`** — applies the APPOSITION-CANDIDATE merges. Supports `--english` (to apply to eng-gloss), `--save-candidates` / `--load-candidates` (to share the candidate list between Greek and English passes without re-scanning), and `--dry-run`. Processes merges within a verse in reverse order so that deletions don't shift earlier line indices.
+
+**`scripts/scan_no_anchor_lines.py`** — finds every line in the corpus that lacks a thought-marking anchor (finite verb, infinitive, participle, or head substantive in N/A/D/V case). Features:
+
+- Conjunction/particle skip when finding the head word (catches `Καὶ τῇ πρώτῃ ἡμέρᾳ...` as anchored by `τῇ`)
+- Single-line verse exemption (atomic by definition — catches Luke 3:23-38 genealogy, Benedictus tails, elliptical nominal claims)
+- First-content-word head-substantive test in N/A/D/V (catches epistolary addressee datives like Col 1:2)
+
+Emits for each flagged line: file, ref, line index, full verse context, and the reason (why it fails) plus the nearest preceding anchored line as merge target.
+
+**`scripts/apply_no_anchor_merges.py`** — applies the no-anchor merges. Default is upward merge (flagged line → line directly above). **Downward-merge fallback** for verse-initial unanchored lines: if the upward target doesn't exist, the flagged line merges with the next content line instead. Handles verse-opening prep catenae and connective hinges that frame a following main verb (Mark 3:8, Rev 10:7, Rom 5:12, Rom 12:1).
+
+**`scripts/scan_english_drift.py`** — heuristic detector for probable English-gloss alignment drift. Classifies flags at three confidence tiers (high / med / low). Detects:
+
+- `ARTICLE-SPLIT` — article dangling at line end
+- `PREP-NP-SPLIT` — preposition followed by article/possessive/demonstrative
+- `AUX-VERB-SPLIT` — auxiliary + verb form split
+- `PTC-NP-SPLIT` — participle (-ing/-ed) split from direct object NP
+- `APPOSITIVE-SPLIT` — proper noun at line end + possessive on next line
+- `DANGLING-CONJ` — coordinating conjunction dangling (low confidence)
+
+Punctuation-boundary filter skips lines ending with sentence-terminating marks. Default `--min-confidence high`; med/low available for tighter audits.
+
+#### Cross-verse continuation support
+
+The Stephanus 1551 verse divisions occasionally cut through grammatically-continuous thought units (e.g., Matt 3:1-2 where `κηρύσσων` in 3:1 and `λέγων` in 3:2 are parallel participles modifying `παραγίνεται`). Session 9 added infrastructure for inline-verse-marker cross-verse merging:
+
+**Source format convention.** A merged colometric line that crosses a verse boundary lives in the *earlier* verse's block, with an inline superscript digit (`²`/`³`/`⁴`/...) marking where the next verse begins visually:
+
+```
+3:1
+Ἐν δὲ ταῖς ἡμέραις ἐκείναις παραγίνεται Ἰωάννης ὁ βαπτιστὴς
+κηρύσσων ἐν τῇ ἐρήμῳ τῆς Ἰουδαίας ²καὶ λέγων·
+
+3:2
+Μετανοεῖτε,
+ἤγγικεν γὰρ ἡ βασιλεία τῶν οὐρανῶν.
+```
+
+**`scripts/verify_word_order.py`** recognizes these markers. The loader splits a line at each superscript digit and assigns the post-marker content to the indicated verse for word-order comparison. This preserves the SBLGNT integrity guard: the per-verse word list still matches the source even when the colometric file has merged visual lines across verse boundaries.
+
+**`scripts/build_books.py`** renders inline superscripts as `<sup class="verse-marker" id="v-{chapter}-{verse}-inline">N</sup>` HTML elements. The verse-marker is visible inline in the flowing colometric text; the anchor id lets TOC/search functionality jump to the exact inline location where the subsequent verse begins. Verse `div` blocks still carry their primary `id="v-{chapter}-{verse}"` anchors so citation targeting works unchanged.
+
+This mirrors the Nestle-Aland typographic convention for inline verse numbering, ported down to the colometric-line level.
+
+#### The scan-and-apply workflow
+
+```bash
+# 1. Save candidates from a fresh scan (Greek files)
+PYTHONIOENCODING=utf-8 py -3 scripts/apply_no_anchor_merges.py --save-candidates /tmp/merges.json
+
+# 2. Apply to Greek
+PYTHONIOENCODING=utf-8 py -3 scripts/apply_no_anchor_merges.py --load-candidates /tmp/merges.json
+
+# 3. Apply same candidates to English
+PYTHONIOENCODING=utf-8 py -3 scripts/apply_no_anchor_merges.py --load-candidates /tmp/merges.json --english
+
+# 4. Rebuild
+PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py
+
+# 5. Re-scan to confirm residual
+PYTHONIOENCODING=utf-8 py -3 scripts/scan_no_anchor_lines.py --summary-only
+```
+
+The `--save-candidates` step is essential when running Greek-then-English: the English scan after the Greek merge would find a different (stale) set of candidates because the Greek line structure has changed. Using the saved JSON guarantees the English merge mirrors the Greek merge exactly.
+
+#### Lesson learned: `regenerate_english.py --force` is destructive
+
+The `--force` flag bypasses the "skip if line counts match" guard and mechanically redistributes every verse's English content proportionally. When applied to already-aligned content, it reliably worsens alignment quality. **Never use `--force` on already-aligned content.** Plain `regenerate_english.py --book X` is the correct invocation — it only touches verses where Greek and English line counts differ.
+
+#### The mechanical-merge pattern as future-standard
+
+The vocative pass (125 merges) and the no-anchor pass (860 merges) both demonstrate the same pattern:
+
+1. Build a scanner that finds a specific structural class of errors and cites its grammatical evidence
+2. Build an apply tool that mirrors the operation on both Greek and English files in lockstep
+3. Run corpus-wide, commit atomically, re-scan to confirm zero residual
+
+This is the replacement for the "dispatch agents to do mass editorial work" approach. It's faster, cheaper, more auditable, and — critically — deterministic. Every merge in a mechanical pass can be traced to a specific grammatical signature in the source. No agent hallucination, no selective application, no author-style variance. Future editorial passes should default to the mechanical pattern whenever a class of errors can be described structurally.

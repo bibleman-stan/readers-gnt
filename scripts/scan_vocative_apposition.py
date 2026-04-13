@@ -171,13 +171,35 @@ def _is_vocative_only_line(words):
         if w["pos"] and w["pos"].startswith("V"):
             if len(w["parsing"]) >= 4 and w["parsing"][3] in ("I", "S", "D", "O"):
                 return False
-    # Any non-vocative noun/adjective (not modifying the vocative) disqualifies
-    # Approximation: if a noun/adj/article is not vocative, it's probably not part of the vocative phrase
+    # A "vocative-only line" should contain only the vocative phrase
+    # (the vocative + its agreeing article/adjective + possible
+    # possessive modifier) plus particles/conjunctions. Anything else
+    # (interrogatives, demonstratives, non-possessive personal pronouns,
+    # non-vocative nouns/adjectives) means the line has other clause
+    # content and isn't a bare address.
     for w in words:
-        if w["pos"] and (w["pos"].startswith("N") or w["pos"].startswith("A")):
+        if not w["pos"]:
+            continue
+        if w["is_voc"]:
+            continue
+        pos = w["pos"]
+        if pos == "RA":  # article
+            continue
+        if pos.startswith("A-"):  # adjective (agrees with vocative)
+            continue
+        if pos.startswith("C") or pos == "X-" or pos == "I-":  # conj/particle/interjection
+            continue
+        if pos == "RP":  # personal pronoun — allow only possessive genitive
+            if len(w["parsing"]) >= 5 and w["parsing"][4] == "G":
+                continue
+            return False  # e.g. κἀγώ (nom), ὑμεῖς (nom), σοί (dat)
+        if pos in ("RI", "RD", "RR"):  # interrogative/demonstrative/relative
+            return False  # e.g. ποῦ
+        if pos.startswith("N"):
             if not w["is_voc"]:
-                # Exception: possessive pronouns, articles (RA), particles
                 return False
+        # Anything else unhandled — be conservative, disqualify
+        return False
     return True
 
 
