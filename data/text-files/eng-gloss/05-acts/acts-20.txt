@@ -1,6 +1,6 @@
 20:1
-And after the uproar had ceased, Paul sent for the disciples and
-having encouraged them, he said farewell and departed to go to Macedonia.
+And after the uproar had ceased,
+Paul sent for the disciples and having encouraged them, he said farewell and departed to go to Macedonia.
 
 
 20:2
@@ -15,10 +15,10 @@ he decided to return through Macedonia.
 
 
 20:4
-And Gaius of Derbe and Timothy, and
-the Asians Tychicus and Trophimus; and accompanying him
-was Sopater son of Pyrrhus from Berea,
+And accompanying him was Sopater son of Pyrrhus from Berea,
 and of the Thessalonians, Aristarchus and Secundus,
+and Gaius of Derbe and Timothy,
+and the Asians Tychicus and Trophimus;
 
 
 20:5
@@ -44,15 +44,19 @@ where we were assembled;
 
 
 20:9
-and a young man named Eutychus
-sitting on the window, was sinking into a deep sleep as Paul talked on and on, and overcome by sleep he fell from the third story down
+and a young man named Eutychus sitting
+on the window,
+sinking into a deep sleep
+as Paul talked on and on,
+overcome by sleep
+he fell from the third story down
 and was picked up dead.
 
 
 20:10
-But Paul went down and fell
-upon him and embracing him
-said: Do not be alarmed,
+But Paul went down and fell upon him
+and embracing him said:
+Do not be alarmed,
 for his life is in him.
 
 
@@ -72,8 +76,8 @@ intending himself to go on foot.
 
 
 20:14
-And when he met us at Assos, having taken
-him aboard, we came to Mitylene,
+And when he met us at Assos,
+having taken him aboard we came to Mitylene,
 
 
 20:15
@@ -102,7 +106,10 @@ how I was with you the whole time,
 
 
 20:19
-serving the Lord with all humility and with tears and with trials
+serving the Lord
+with all humility
+and tears
+and trials
 that came upon me through the plots of the Jews;
 
 

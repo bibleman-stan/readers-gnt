@@ -979,3 +979,72 @@ Specific case: the νόμος-stack of Rom 7:14-8:8 plays on the word's double s
 - **English gloss drift** — mechanical proportional regen still runs when Greek line counts change. Every major Greek pass requires manual English cleanup. Needs a dedicated English-alignment drift auditor.
 - **Three-in-one qualifier rule** — has no dedicated scanner. Some compliance comes automatically from the no-anchor pass (which catches modifier stacks), but edge cases persist.
 
+---
+
+### Update — 2026-04-13 (session 10: the Goldilocks refinement — subordinating vs. coordinating)
+
+This session added the **load-bearing refinement to container-not-originator** that we didn't realize we needed until an adversarial scanning agent called it out.
+
+#### The refinement in one sentence
+
+**Container-not-originator applies to SUBORDINATING syntax (modifier → head) only. It does NOT apply to COORDINATING or PARALLEL syntax. Parallel members are each their own atomic thought.**
+
+#### The three phases: breaking → over-breaking → over-correcting → Goldilocks
+
+1. **Phase 1 (early v4):** we broke prose into sense-lines. Good but over-enthusiastic in places — particles and bare PPs got their own lines.
+2. **Phase 2 (session 9 over-correction):** the container-not-originator merge pass + no-anchor pass pulled in over 900 merges. Right principle, but applied too broadly. Bare modifiers correctly merged into their heads — but **coordinated parallel members also got merged**, collapsing tri-cola and isocola into mega-lines that violated the breath-unit criterion while nominally satisfying atomic thought.
+3. **Phase 3 (this session):** an adversarial agent, asked to argue the opposite case ("we are not thinking ancient-Greek enough — we should break MORE"), delivered a partial-validation verdict: container-not-originator is correct for subordinating syntax but over-extended into coordinating syntax. The refinement recovers the right answer by restricting the principle's domain.
+
+#### The operative distinction
+
+| Syntax type | Example | Rule |
+|---|---|---|
+| **Subordinating** (modifier→head) | `εἰς τὸ ὄρος` tail on `ἀνεχώρησεν`; circumstantial ptc framing a main verb; single attributive gen. | Container-not-originator applies. **Keep merged** with originating head. |
+| **Coordinating / parallel** | τε/καί chains of finite verbs or participles at different temporal planes; μέν/δέ pairs; tri-cola; asyndetic virtue/hardship catalogs; anaphoric lists; τίς/τίς/τίς question isocola. | Container-not-originator does NOT apply. **Split** — each member is its own atomic thought. |
+
+#### The diagnostic test
+
+When in doubt, ask: does the construction describe **elaboration of one event** (→ merge) or **addition of distinct events/axes** (→ split)?
+
+A strong signal that coordination is at work: **aspect or tense shift across members.** Heb 1:3 has a present participle (sustaining), an aorist participle (purifying), and a finite indicative (enthroning) — three actions at three temporal planes, tied together by τε/καί. This is coordination of events, not elaboration of one event. Split into a tri-colon.
+
+#### Pilot re-breaks applied (three test passages)
+
+- **Heb 1:3** — the creedal christological tetracolon: sustaining / purifying / enthroning stack.
+- **Rom 1:3-4** — κατὰ σάρκα / κατὰ πνεῦμα antithesis restored to symmetry (1:3 had a single break, 1:4 had a 110-char mega-line collapsing four distinct PP axes).
+- **Eph 1:17 / 1:19** — `ὁ πατὴρ τῆς δόξης` freed from the verb line; the third τίς question's three PP axes (subject / beneficiaries / standard) each stack.
+
+All three passed integrity check (no Greek words added/removed — only break points moved). All three read as the rhetorical architecture the author built, not as prose-wall.
+
+#### Corpus-wide sweep (this session's horde)
+
+Eight parallel scanning agents (Mark / Matt / Luke-Acts / John+1-3John / Paul-minus-Eph / Heb / Cath Eps / Rev) hunted three new classes corpus-wide:
+
+1. **PARTICIPIAL-CHAIN-COLLAPSE** — ≥2 participles at different temporal planes collapsed into one line. Heb 1:3 is the paradigm. Strong cross-gospel convergence: the Eucharistic institution narratives (Matt 26:26-27 / Mark 14:22-23), the feeding miracle liturgical tri-cola (Matt 14:19 / Mark 6:41), and the vinegar-sponge 5-action collapse (Matt 27:48 / Mark 15:36) all surfaced independently in both Matthew and Mark agents — the same synoptic pericopes, same class, same collapse. Independent validation.
+2. **PREP-CATENA-ABSORPTION** — ≥3 stacked prepositional phrases introducing distinct semantic axes. 2 Thess 1:7 was the longest catena found (four axes on one line). 2 Cor 6:4-7 and 11:23-27 are the famous Pauline peristasis and κινδύνοις-catalogs — asyndetic hardship lists whose rhetorical force IS the parallel form.
+3. **SUSPENDED-SUBJECT-WITHOUT-PREDICATE** — topicalized nominative head held in suspension while intervening modifier material piles up before the finite verb arrives. Luke 3:1-2's PERIODIC-DATING-CHAIN (7 historical anchors before ἐγένετο ῥῆμα) is the Lukan paradigm. Cross-corpus convergence: John 17:24's pendant-relative nominative and 1 John 1:1-3's 10-line hanging topic chain show the same structural class, suggesting the pattern is systemic in Johannine literature as well as Pauline.
+
+**Aggregate yield: ~144 high-confidence candidates across the corpus. ~120 applied in the follow-on horde (one application agent per genre group).**
+
+#### Cross-agent convergences as validation
+
+The strongest signal that the refinement is a real rule, not an aesthetic preference:
+
+1. **Heb 1:3 flagged from BOTH directions.** Forward scanning agent flagged it as "FEF merge / three-in-one overflow" (arguing merge). Adversarial agent flagged it as "PARTICIPIAL-CHAIN-COLLAPSE" (arguing split). Both diagnosed the line as wrong; the adversarial framing won because it supplied the mechanistic explanation (aspect shift = event progression, not elaboration). Two independent agents + two opposing framings + same pericope = real rule.
+2. **SUSPENDED-SUBJECT convergence across corpora.** Eph 2:4 (Pauline) and John 17:24 (Johannine), scanned independently by different agents working on different files, surfaced the same hanging-topic pattern under different names. Not a Pauline quirk — a Greek NT structural pattern.
+3. **Eucharistic institution across synoptics.** Matt 26:26-27 and Mark 14:22-23 flagged the same took/blessed/broke/gave tetracolon collapse independently. This is the kind of empirical convergence the Bezae comparison is supposed to ratify — when the mechanical principle recovers the liturgical cadence the tradition has always heard in these verses, the rule is doing real work.
+
+#### Implications for the prospectus
+
+The refined principle is what the thesis actually needs: **container-not-originator for subordinating syntax, parallel-members-each-own-line for coordinating syntax.** Together they form a falsifiable, mechanical protocol that (a) produces the Eucharistic tetracolon, the faith/love/hope triad, the Pauline peristasis lists, and the Lukan periodic dating-chain as structurally visible without ad-hoc judgments, and (b) can be applied by a scanner rather than requiring editorial taste. This is the reproducibility floor for stylometric work on Pauline coherence.
+
+Critical observation: the most thesis-relevant re-breaks are the Pauline thanksgiving periods, peristasis catalogs, and christological hymns — precisely the passages where Pauline rhetorical architecture IS the argument. Prose-formatting destroys those structures; the refined colometric protocol recovers them mechanically.
+
+#### Remaining work
+
+- **English gloss drift** from the ~120 corpus-wide Greek edits. Mechanical regen handles line-count changes but wraps awkwardly at tri-cola; hand-fixing required.
+- **Scanner implementations** for PREP-CATENA-ABSORPTION, PARTICIPIAL-CHAIN-COLLAPSE, and SUSPENDED-SUBJECT-WITHOUT-PREDICATE so this becomes mechanical rather than agent-dispatched on subsequent passes.
+- **FROZEN-DIVINE-TRIAD whitelist** for Rev formulas (ὁ ὢν καὶ ὁ ἦν καὶ ὁ ἐρχόμενος, first/last, alpha/omega) — policy confirmed this session: first/last IS a frozen formula, merged in Rev 1:17-18.
+- **Victor-formula standardization** across Rev 2-3 seven letters (5 merged / 2 split before this session's pass).
+- **Methodology-doc cross-reference update**: the session 9 container-not-originator section above should eventually be edited to note the subordinating-vs-coordinating restriction in-place, not just as an appended update. Deferred to avoid rewriting history.
+
