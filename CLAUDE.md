@@ -26,9 +26,10 @@ Before any substantive work, read the handoffs directory in order:
 |------|--------|
 | `handoffs/00-index.md` | Index and update protocol |
 | `handoffs/01-project-overview.md` | Vision, origin, scholarly landscape, research advantages, siloing decision |
-| `handoffs/02-colometry-method.md` | Greek colometric methodology, rules, open questions, auto vs. hand quality |
 | `handoffs/03-architecture.md` | Repo structure, scripts, web app, build pipeline, deployment |
 | `handoffs/04-editorial-workflow.md` | How text goes from raw source to finished reading edition |
+
+Also check `private/OVERSEER-DIRECTIONS.md` if present — local-only session directives (gitignored). It carries active directives and a sync log; read it before starting substantive work.
 
 ---
 
@@ -91,7 +92,7 @@ Pipeline: `v4-editorial/*/ → eng-gloss/*/ → books/*.html`
 
 ## Colometric Principles (Summary)
 
-Full methodology in `handoffs/02-colometry-method.md`. Key points:
+The full methodology reference is pointed to from `private/OVERSEER-DIRECTIONS.md` (local only). Key points:
 
 ### Four Criteria
 1. **Atomic Thought:** each line = one complete thought unit

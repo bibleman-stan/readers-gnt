@@ -3,7 +3,6 @@
     "allow": [
       "WebFetch(domain:centerblc.github.io)",
       "WebFetch(domain:universaldependencies.org)",
-      "Read(//c/Users/bibleman/repos/readers-bofm/**)",
       "Read(//c/vaults-nano/**)",
       "WebFetch(domain:www.biblegateway.com)",
       "Read(//c/Users/bibleman/Downloads/**)",

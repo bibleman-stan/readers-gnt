@@ -1415,7 +1415,7 @@ function updateNavButtons() {
   document.getElementById('btn-next').disabled = (idx === BOOK_KEYS.length - 1 && currentChapter === BOOKS[currentBook].chapters);
 }
 
-// --- Nav panel (BOM Reader style) ---
+// --- Nav panel ---
 
 function openNav() {
   buildNavPanel();
@@ -1955,9 +1955,9 @@ function openSearch() {
 }
 
 // --- Recent searches cache (localStorage) ---
-// Imitates the BOM reader pattern: maintain a small rolling list of recent
-// queries that surfaces when the search input is empty. Click a row to
-// re-run the query; click the × to remove just that entry.
+// Maintain a small rolling list of recent queries that surfaces when the
+// search input is empty. Click a row to re-run the query; click the × to
+// remove just that entry.
 const RECENT_KEY = 'gnt-recent-searches';
 const MAX_RECENT = 10;
 
@@ -2166,11 +2166,10 @@ function parseBooleanQuery(query) {
   //
   // Parenthesized groups, OR, AND, and implicit-AND all UNION their
   // operand term lists so that `(might OR mighty) NEAR5 God` correctly
-  // checks both "might" and "mighty" against "God" — the old version
-  // only kept the last single term parsed (a known BOM Reader bug
-  // Stan pointed out) and would silently drop "might" from the NEAR
-  // check. NOT nodes return an empty term list since you can't
-  // reasonably be "near" what's absent.
+  // checks both "might" and "mighty" against "God" — an earlier version
+  // only kept the last single term parsed and would silently drop
+  // "might" from the NEAR check. NOT nodes return an empty term list
+  // since you can't reasonably be "near" what's absent.
   function wrap(matcher, terms) { return { matcher, terms }; }
 
   function parseOr() {
@@ -2405,10 +2404,10 @@ function performSearch(query) {
 }
 
 // --- Per-book bar chart (second-tier filter within corpus) ---
-// Imitates the BOM reader's group-then-book bar-chart pattern. The GNT
-// already has corpus chips for top-tier filtering (Pauline, Synoptics,
-// etc.); this adds the second tier — individual books within the hit set
-// — as a click-to-filter bar chart below the search status line.
+// A group-then-book bar-chart pattern. The GNT already has corpus chips
+// for top-tier filtering (Pauline, Synoptics, etc.); this adds the second
+// tier — individual books within the hit set — as a click-to-filter bar
+// chart below the search status line.
 function renderBookChart() {
   const container = document.getElementById('search-book-chart');
   if (!container) return;
