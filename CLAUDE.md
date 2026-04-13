@@ -29,7 +29,7 @@ Before any substantive work, read the handoffs directory in order:
 | `handoffs/03-architecture.md` | Repo structure, scripts, web app, build pipeline, deployment |
 | `handoffs/04-editorial-workflow.md` | How text goes from raw source to finished reading edition |
 
-Also check `private/OVERSEER-DIRECTIONS.md` if present — local-only session directives (gitignored). It carries active directives and a sync log; read it before starting substantive work.
+Also check `private/OVERSEER-DIRECTIONS.md` if present — local-only session directives (gitignored, Dropbox-backed). It carries active directives, the pointer to the full methodology canon, and a sync log. **Read it before starting substantive work, and update it before ending the session or committing — whichever comes first.** It contains its own documentation protocol; follow it. Session memory evaporates at compaction but that file survives, so treat it as the persistent write surface for anything the overseer needs to know about your session.
 
 ---
 
