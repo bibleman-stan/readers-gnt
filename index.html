@@ -2085,12 +2085,30 @@ function termWordPositions(term, verseTextStripped) {
   }
 }
 
-function nearMatch(term1, term2, distance, verseTextStripped) {
-  const pos1 = termWordPositions(term1, verseTextStripped);
-  const pos2 = termWordPositions(term2, verseTextStripped);
-  for (let i = 0; i < pos1.length; i++) {
-    for (let j = 0; j < pos2.length; j++) {
-      if (Math.abs(pos1[i] - pos2[j]) <= distance) return true;
+// Set-based NEAR: takes two lists of terms (not single strings) and
+// returns true if any term from the left set is within `distance` words
+// of any term from the right set. This is the correct semantics for
+// parenthesized sub-expressions like `(might OR mighty) NEAR5 God` —
+// the old single-string version was buggy because it only kept the
+// last term parsed on each side.
+function nearMatchSets(leftTerms, rightTerms, distance, verseTextStripped) {
+  if (!leftTerms.length || !rightTerms.length) return false;
+  // Flatten all word positions on each side via the shared term matcher
+  const leftPositions = [];
+  for (const t of leftTerms) {
+    const ps = termWordPositions(t, verseTextStripped);
+    for (const p of ps) leftPositions.push(p);
+  }
+  if (leftPositions.length === 0) return false;
+  const rightPositions = [];
+  for (const t of rightTerms) {
+    const ps = termWordPositions(t, verseTextStripped);
+    for (const p of ps) rightPositions.push(p);
+  }
+  if (rightPositions.length === 0) return false;
+  for (let i = 0; i < leftPositions.length; i++) {
+    for (let j = 0; j < rightPositions.length; j++) {
+      if (Math.abs(leftPositions[i] - rightPositions[j]) <= distance) return true;
     }
   }
   return false;
@@ -2140,14 +2158,28 @@ function parseBooleanQuery(query) {
   }
 
   let pos = 0;
-  let lastNearTerm = '';
+
+  // Each parse* function returns { matcher, terms } where:
+  //   matcher : (verseText) => boolean
+  //   terms   : string[] — the list of atomic terms this sub-expression
+  //             covers, used by NEAR for set-based proximity matching.
+  //
+  // Parenthesized groups, OR, AND, and implicit-AND all UNION their
+  // operand term lists so that `(might OR mighty) NEAR5 God` correctly
+  // checks both "might" and "mighty" against "God" — the old version
+  // only kept the last single term parsed (a known BOM Reader bug
+  // Stan pointed out) and would silently drop "might" from the NEAR
+  // check. NOT nodes return an empty term list since you can't
+  // reasonably be "near" what's absent.
+  function wrap(matcher, terms) { return { matcher, terms }; }
 
   function parseOr() {
     let left = parseAnd();
     while (pos < tokens.length && tokens[pos] === 'OR') {
       pos++;
       const right = parseAnd();
-      left = ((l, r) => (v => l(v) || r(v)))(left, right);
+      const lm = left.matcher, rm = right.matcher;
+      left = wrap(v => lm(v) || rm(v), left.terms.concat(right.terms));
     }
     return left;
   }
@@ -2159,19 +2191,24 @@ function parseBooleanQuery(query) {
       pos++;
       if (/^NEAR\d+$/.test(op)) {
         const dist = parseInt(op.replace('NEAR', ''), 10);
-        const leftTerm = lastNearTerm;
-        const rightNode = parseNot();
-        const rightTerm = lastNearTerm;
-        left = ((lt, rt, d) => (v => nearMatch(lt, rt, d, v)))(leftTerm, rightTerm, dist);
+        const right = parseNot();
+        const lts = left.terms;
+        const rts = right.terms;
+        left = wrap(
+          v => nearMatchSets(lts, rts, dist, v),
+          lts.concat(rts)
+        );
       } else {
         const right = parseNot();
-        left = ((l, r) => (v => l(v) && r(v)))(left, right);
+        const lm = left.matcher, rm = right.matcher;
+        left = wrap(v => lm(v) && rm(v), left.terms.concat(right.terms));
       }
     }
     // Implicit AND: adjacent terms with no operator
     while (pos < tokens.length && tokens[pos] !== 'OR' && tokens[pos] !== 'AND' && tokens[pos] !== ')' && !/^NEAR\d+$/.test(tokens[pos])) {
       const right = parseNot();
-      left = ((l, r) => (v => l(v) && r(v)))(left, right);
+      const lm = left.matcher, rm = right.matcher;
+      left = wrap(v => lm(v) && rm(v), left.terms.concat(right.terms));
     }
     return left;
   }
@@ -2180,27 +2217,32 @@ function parseBooleanQuery(query) {
     if (pos < tokens.length && tokens[pos] === 'NOT') {
       pos++;
       const inner = parseTerm();
-      return (fn => (v => !fn(v)))(inner);
+      const im = inner.matcher;
+      // NOT's term list is empty for NEAR purposes — a negated operand
+      // doesn't contribute atomic terms to proximity matching.
+      return wrap(v => !im(v), []);
     }
     return parseTerm();
   }
 
   function parseTerm() {
-    if (pos >= tokens.length) return () => false;
+    if (pos >= tokens.length) return wrap(() => false, []);
     const tok = tokens[pos];
     if (tok === '(') {
       pos++;
       const inner = parseOr();
       if (pos < tokens.length && tokens[pos] === ')') pos++;
-      return inner;
+      return inner; // parentheses don't change terms or matcher
     }
     pos++;
-    lastNearTerm = tok;
-    return (verseText) => termMatchesVerse(tok, verseText);
+    return wrap(
+      verseText => termMatchesVerse(tok, verseText),
+      [tok]
+    );
   }
 
-  const matcher = parseOr();
-  return { matcher, highlightTerms };
+  const result = parseOr();
+  return { matcher: result.matcher, highlightTerms };
 }
 
 // --- Main search function ---
