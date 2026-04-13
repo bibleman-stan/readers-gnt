@@ -42,6 +42,19 @@ VERSE_REF_RE = re.compile(r"^\d+:\d+[a-z]?$")
 # Characters to strip when normalizing for comparison
 PUNCT_CHARS = ",.;:·!?'\"()[]—-\u037E\u0387\u00B7\u2014\u2013⸀⸁⸂⸃⸄⸅⟦⟧"
 
+# Inline verse markers (superscript digits) indicate that a subsequent
+# verse begins inline within a merged colometric line. Map them back to
+# ASCII digits when parsing verse assignments.
+SUPERSCRIPT_DIGIT_MAP = {
+    "\u00B2": "2", "\u00B3": "3",
+    "\u2070": "0", "\u00B9": "1",
+    "\u2074": "4", "\u2075": "5", "\u2076": "6", "\u2077": "7",
+    "\u2078": "8", "\u2079": "9",
+}
+SUPERSCRIPT_DIGIT_RE = re.compile(
+    "[" + "".join(SUPERSCRIPT_DIGIT_MAP.keys()) + "]+"
+)
+
 
 def normalize_word(word):
     """Strip critical apparatus markers, punctuation, and accents.
@@ -50,8 +63,13 @@ def normalize_word(word):
     θεός vs θεὸς from oxia/grave alternation) compare equal. We only care
     about word IDENTITY and ORDER, not accentuation, for this check.
     """
+    # Remove any inline verse markers (superscript digits) — they've
+    # already been handled by _split_line_at_verse_markers upstream, but
+    # defensive normalization here ensures they never survive into the
+    # word comparison.
+    cleaned = SUPERSCRIPT_DIGIT_RE.sub("", word)
     # Remove critical apparatus markers and punctuation
-    cleaned = "".join(c for c in word if c not in PUNCT_CHARS)
+    cleaned = "".join(c for c in cleaned if c not in PUNCT_CHARS)
     # Decompose accents (NFD), strip combining marks, recompose (NFC)
     decomposed = unicodedata.normalize("NFD", cleaned)
     no_marks = "".join(c for c in decomposed if not unicodedata.combining(c))
@@ -82,6 +100,45 @@ def load_source_verses(source_path, book_code):
     return verses
 
 
+def _split_line_at_verse_markers(line, current_verse):
+    """Split a line at inline superscript verse markers (²³⁴...).
+
+    Returns a list of (verse_ref, text_segment) tuples. If the line has
+    no markers, returns [(current_verse, line)].
+
+    A marker like `²` inside a chapter-3 context means "verse 2 of the
+    current chapter begins here." Multiple markers in sequence (e.g.
+    `²καὶ λέγων· ³Μετανοεῖτε·` — not a real case but possible) split
+    the line into multiple segments, each assigned to its respective
+    verse.
+    """
+    if not SUPERSCRIPT_DIGIT_RE.search(line):
+        return [(current_verse, line)]
+
+    if ":" not in current_verse:
+        return [(current_verse, line)]
+    chapter_str = current_verse.split(":")[0]
+
+    segments = []
+    pos = 0
+    active_verse = current_verse
+    for m in SUPERSCRIPT_DIGIT_RE.finditer(line):
+        # Text before this marker belongs to the active verse
+        segment = line[pos:m.start()]
+        if segment.strip():
+            segments.append((active_verse, segment))
+        # Marker itself identifies the next verse
+        marker = m.group(0)
+        verse_num = "".join(SUPERSCRIPT_DIGIT_MAP[c] for c in marker)
+        active_verse = f"{chapter_str}:{verse_num}"
+        pos = m.end()
+    # Trailing text after the last marker
+    tail = line[pos:]
+    if tail.strip():
+        segments.append((active_verse, tail))
+    return segments
+
+
 def load_v4_chapter(chapter_path):
     """Parse a v4-editorial chapter file. Returns dict: verse_ref -> word list."""
     verses = defaultdict(list)
@@ -97,7 +154,9 @@ def load_v4_chapter(chapter_path):
                 continue
             if current_verse is None:
                 continue  # header lines before first verse
-            verses[current_verse].extend(words_from_text(stripped))
+            segments = _split_line_at_verse_markers(stripped, current_verse)
+            for verse_ref, segment in segments:
+                verses[verse_ref].extend(words_from_text(segment))
     return dict(verses)
 
 
