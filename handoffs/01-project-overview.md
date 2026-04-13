@@ -255,3 +255,95 @@ Ten principles were ported and adapted for Greek colometry:
 #### Methodology Maturation
 
 The four core criteria (atomic thought, single image, breath unit, source-language syntax) are now supported by approximately 15 sub-principles, all tested against editorial practice in the Mark 4 and Acts 1 gold standard chapters. The methodology has moved from ad hoc rule accumulation to a principled framework with documented precedent for each sub-rule.
+
+---
+
+### Update — 2026-04-12 (session 9: Synoptic Problem pivot and eleven-applications portfolio)
+
+Session 9 was an inflection point in the project's scope and positioning. The operational work continued the reading-edition build, but the strategic discovery was that **the colometric methodology is an analytical instrument applicable to at least eleven classic scholarly debates, not just a better reading edition**.
+
+#### The reframing
+
+Prior to session 9, the scholarly-impact case relied on two arguments: the substrate-itself argument ("we built a dataset nobody had before") and the revolutionary-claim argument ("compositional mode as recovery target"). Session 9 added a third: the **portfolio argument** — "one methodology, eleven distinct scholarly debates it can illuminate." A committee can dismiss a methodology that claims to solve one problem. A committee cannot easily dismiss a methodology that claims to contribute new evidence to eleven debates with two validated pilot applications.
+
+#### The eleven applications
+
+Classic debates where colometric analysis can contribute a new evidence stream:
+
+1. **Pauline authorship disputes** (Eph, Col, 2 Thess, Pastorals, Hebrews) — built-in validation via Pastorals as known non-Pauline control
+2. **Suspected textual interpolations** (Mark 16:9-20, John 7:53-8:11, 1 Cor 14:34-35, 1 Thess 2:14-16, John 21)
+3. **Aramaic-source hypotheses** (Papias on Matt, Burney on John, Torrey on Acts 1-15)
+4. **Proto-Luke and Luke-Acts source stratification** (Streeter, Taylor)
+5. **Revelation's compositional mode** — characterization of "ugly Greek"
+6. **The Johannine question** — Bultmann's sources, Brown's stages
+7. **Pauline amanuensis variation** — novel sub-authorial stylometry
+8. **Septuagint citation technique** — scroll-based vs. memory-based citation
+9. **High-density parallel passages** (Beatitudes, Lord's Prayer, Olivet Discourse)
+10. **Dating controls via early second-century Christian texts**
+11. **Hebrew Bible source criticism** (JEDP, Isaiah I/II/III) — far-future extension
+
+Full reasoning and publishable-paper framings for each: `private/colometric-application-debates.md`.
+
+#### The Synoptic Problem pivot
+
+Session 9's headline pilot was the Synoptic Problem. Kurt Aland's canonical 367-pericope table was imported from Stan's my_brain vault and parsed into machine-readable JSON (`data/synoptic/aland_pericopes.json`) with full parallel references across Matt/Mark/Luke/John.
+
+**Distribution:** 101 triple-synoptic (core data), 64 Matt-Luke double tradition (Q candidates), 48 quadruple, 53 single-John, 42 Luke-only, 23 Matt-only, 6 Mark-only. **165 pericopes directly relevant to Synoptic Problem analysis.**
+
+**The Transfiguration pilot (ANT-161)** ran as proof-of-concept. Key findings:
+
+- **Verbatim shared cola at structurally significant moments.** Peter's `καλόν ἐστιν ἡμᾶς ὧδε εἶναι` preserved identically in all three gospels; the voice from the cloud `Οὗτός ἐστιν ὁ υἱός μου` preserved as template with one Lukan substitution; the descent opening `Καὶ καταβαινόντων αὐτῶν ἐκ τοῦ ὄρους` preserved verbatim in Matt and Mark. **Incompatible with purely oral transmission.**
+- **The vocative-slot substitution pattern** — Peter addresses Jesus with `Κύριε` (Matt), `Ῥαββί` (Mark), `Ἐπιστάτα` (Luke) in the same inherited colon slot. `Ἐπιστάτα` appears 7 times in Luke and nowhere else in the NT — Lukan redactional vocabulary filling an inherited structural slot. **A novel, publishable observation** visible only at colon resolution.
+- **Direct/indirect speech conversion at colon boundaries** — same colon unit, different grammatical mode. Hypothesis-discriminating signature for direction of dependence.
+- **Sub-colon word-order inversion** as a Lukan stylistic signature (detectable corpus-wide).
+- **Redactional typology measurable at colon level:** Matt adds OT-typological cola, Mark adds colorful details, Luke restructures grammatically.
+
+Full pilot analysis: `private/transfiguration-pilot-findings.md`.
+
+#### Two empirical pilot arms for the prospectus
+
+The prospectus now leads with two empirical pilots demonstrating the methodology's discriminative power on different kinds of questions:
+
+- **Pilot 1 — Pauline authorship disputes** (validation pilot, Pastorals as control)
+- **Pilot 2 — Synoptic Problem** (novel-finding pilot, Transfiguration as proof-of-concept)
+
+Together these validate the methodology on two different scholarly tasks — authorship stylometry vs. source-dependence analysis — arguing for the method as a **general instrument** rather than narrowly tuned.
+
+#### Aland and Goodacre as positioning targets
+
+The Synoptic Problem pivot is explicitly framed against existing scholarship:
+
+- **Kurt Aland's *Synopsis Quattuor Evangeliorum*** — canonical parallel presentation with §-numbered pericopes, but at word/verse level not colon level
+- **Mark Goodacre's work** (*The Case Against Q*, NT Gateway Synoptic Parallels, 700 catalogued Matt-Luke minor agreements) — also word-level
+
+Neither has a colon-level structural dataset because no such dataset existed until ours. Pivot strategy:
+
+1. Port Aland's §-numbered pericope table to v4 files ✓ (done)
+2. Build a colon-level synoptic parallel viewer using Aland's visual vocabulary at new resolution
+3. Re-run Goodacre's 700 minor agreements at colon level — classify each as word-coincidence vs. colon-structural
+4. Compute colon edit-distance as direct hypothesis-discriminating test
+5. Open-source the dataset as Creative Commons
+6. Potential collaboration with Goodacre (publicly accessible, has invited new evidence)
+
+#### What this means for the project's trajectory
+
+**Before session 9:** "We're building a colometric reading edition with methodological contributions."
+
+**After session 9:** "We're building the analytical substrate for a new layer of NT source criticism and stylometry, with two validated pilot applications, a catalog of eleven illuminable debates, and a scholarly-impact case that pivots off Aland's canonical visualizations to a new resolution."
+
+The reading edition (gnt-reader.com) is the **visible deliverable**. The Aland-indexed colometric dataset + the methodology + the applications are the **real contribution**. The dissertation becomes a launching platform for a career-defining research program rather than a terminal thesis — two pilots run during the PhD, nine more applications queued for post-doc papers.
+
+#### Session 9 operational output
+
+Beyond the strategic reframing, session 9 landed substantial operational work:
+- 125 vocative-apposition merges (container-not-originator refinement of universal vocative rule)
+- 860 no-anchor merges (every line now carries a thought-marking anchor across the whole corpus)
+- 70 English drift fixes (two waves of mechanical-split cleanup)
+- 15 cross-verse continuity merges (atomic thoughts crossing Stephanus 1551 verse boundaries, Matt 3:1-2 as MVP)
+- 6 new scanner/applier scripts: `scan_vocative_apposition.py`, `apply_vocative_merges.py`, `scan_no_anchor_lines.py`, `apply_no_anchor_merges.py`, `scan_english_drift.py`, `scan_crossverse_continuity.py`
+- Cross-verse infrastructure: inline superscript verse markers, integrity-checker support, HTML rendering, CSS
+- Aland 367 pericopes imported and committed as JSON
+- Handoff updates across 02-method, 03-architecture, 04-workflow
+- New private docs: `transfiguration-pilot-findings.md`, `colometric-application-debates.md`; expanded `scholarly-impact-opportunity-space.md` and `phd-prospectus-draft.md`
+
+**Final scanner state:** drift 0, no-anchor 0, vocative APPOSITION-CANDIDATE 0, cross-verse PARALLEL-PTC 2 held (edge cases). Corpus in its cleanest state ever — ready for the stylometric and synoptic work that follows.
