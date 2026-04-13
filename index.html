@@ -489,6 +489,49 @@
     padding: 0 1px;
   }
 
+  /* Recent searches (empty-query state) */
+  .recent-header {
+    color: var(--text-faint);
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 12px 0 6px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+  .recent-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    color: var(--text-dim);
+  }
+  .recent-row:hover { background: rgba(255,255,255,0.03); color: var(--text); }
+  .recent-row .recent-icon {
+    opacity: 0.45;
+    font-size: 0.9em;
+    flex-shrink: 0;
+  }
+  .recent-row .recent-text {
+    flex: 1;
+    font-size: 0.95em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .recent-row .recent-clear {
+    opacity: 0;
+    color: var(--text-faint);
+    font-size: 1.1em;
+    padding: 0 6px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .recent-row:hover .recent-clear { opacity: 0.6; }
+  .recent-row .recent-clear:hover { opacity: 1; color: var(--text); }
+
   /* === SEARCH OPERATOR BUTTONS === */
   .search-ops {
     display: flex;
@@ -1809,6 +1852,88 @@ function openSearch() {
     loadLemmaIndex();
   }
   document.getElementById('lemma-info').textContent = '';
+  // Show recent searches while the input is empty (after focus settles)
+  setTimeout(renderRecentSearches, 50);
+}
+
+// --- Recent searches cache (localStorage) ---
+// Imitates the BOM reader pattern: maintain a small rolling list of recent
+// queries that surfaces when the search input is empty. Click a row to
+// re-run the query; click the × to remove just that entry.
+const RECENT_KEY = 'gnt-recent-searches';
+const MAX_RECENT = 10;
+
+function getRecentSearches() {
+  try {
+    const data = localStorage.getItem(RECENT_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (e) { return []; }
+}
+
+function saveRecentSearch(query) {
+  if (!query || query.trim().length < 2) return;
+  const q = query.trim();
+  let recent = getRecentSearches();
+  // Remove duplicate if already present (case-insensitive for Latin; exact for Greek)
+  recent = recent.filter(r => r !== q);
+  recent.unshift(q);
+  if (recent.length > MAX_RECENT) recent = recent.slice(0, MAX_RECENT);
+  try { localStorage.setItem(RECENT_KEY, JSON.stringify(recent)); } catch (e) {}
+}
+
+function removeRecentSearch(query) {
+  const recent = getRecentSearches().filter(r => r !== query);
+  try { localStorage.setItem(RECENT_KEY, JSON.stringify(recent)); } catch (e) {}
+  renderRecentSearches();
+}
+
+function renderRecentSearches() {
+  const container = document.getElementById('search-results');
+  const recent = getRecentSearches();
+  if (!container) return;
+  // Only render when input is empty (don't overwrite active search results)
+  const input = document.getElementById('search-input');
+  if (input && input.value.trim().length > 0) return;
+  container.innerHTML = '';
+  if (recent.length === 0) return;
+
+  const header = document.createElement('div');
+  header.className = 'recent-header';
+  header.textContent = 'Recent Searches';
+  container.appendChild(header);
+
+  recent.forEach(q => {
+    const row = document.createElement('div');
+    row.className = 'recent-row';
+
+    const icon = document.createElement('span');
+    icon.className = 'recent-icon';
+    icon.textContent = '\u23F1'; // stopwatch glyph
+    row.appendChild(icon);
+
+    const text = document.createElement('span');
+    text.className = 'recent-text';
+    text.textContent = q;
+    row.appendChild(text);
+
+    const clear = document.createElement('span');
+    clear.className = 'recent-clear';
+    clear.textContent = '\u00D7'; // × multiplication sign
+    clear.title = 'Remove from recent';
+    clear.addEventListener('click', function(e) {
+      e.stopPropagation();
+      removeRecentSearch(q);
+    });
+    row.appendChild(clear);
+
+    row.addEventListener('click', function() {
+      const inp = document.getElementById('search-input');
+      inp.value = q;
+      performSearch(q);
+    });
+
+    container.appendChild(row);
+  });
 }
 
 function closeSearch() {
@@ -1991,8 +2116,13 @@ function performSearch(query) {
     resultsEl.innerHTML = '';
     lastSearchTerms = [];
     document.getElementById('lemma-info').textContent = '';
+    // When the input is fully empty, show the recent searches cache
+    if (!query || query.length === 0) renderRecentSearches();
     return;
   }
+
+  // Persist this query to the recent-searches cache
+  saveRecentSearch(query);
 
   if (!searchIndex) {
     statusEl.innerHTML = '<div class="search-loading">Building search index...</div>';
