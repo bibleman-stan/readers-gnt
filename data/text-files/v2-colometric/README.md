@@ -43,7 +43,7 @@ sblgnt-source/ ─┬─> v1-colometric/  (auto_colometry.py, pattern-matched)
                                 v3-colometric/  (v3_colometry.py, rhetorical refinement of v2)
                                    │
                                    ▼
-                                v4-editorial/   (hand editing by the project editor)
+                                v4-editorial/   (project's documented colometric methodology applied to the text)
 ```
 
 ## Reproducing this tier

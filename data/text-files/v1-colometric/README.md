@@ -39,7 +39,7 @@ Apparatus markers (`⸀ ⸁ ⸂ ⸃ ⸄ ⸅`) are stripped. Line breaks are intr
 ## How v1 relates to the other tiers
 
 - **Upstream:** `sblgnt-source/` (27 canonical SBLGNT book files). v1 reads source directly, not from `v0-prose/`. (v0 and v1 use the same content; v0 exists for navigation symmetry, not as v1's data source.)
-- **Downstream:** v2 is not produced from v1. v2 re-segments from the source using Macula syntax trees. v1 and v2 are independent mechanical passes over the same source text; they are NOT in a chain. v3 is produced from v2 (not v1). v4 (hand editorial) is produced from v3.
+- **Downstream:** v2 is not produced from v1. v2 re-segments from the source using Macula syntax trees. v1 and v2 are independent mechanical passes over the same source text; they are NOT in a chain. v3 is produced from v2 (not v1). v4 (methodology-applied editorial layer) is produced from v3.
 
 The pipeline graph:
 
@@ -51,7 +51,7 @@ sblgnt-source/ ─┬─> v1-colometric/  (auto_colometry.py, pattern-matched)
                                 v3-colometric/  (v3_colometry.py, rhetorical refinement of v2)
                                    │
                                    ▼
-                                v4-editorial/   (hand editing by the project editor)
+                                v4-editorial/   (project's documented colometric methodology applied to the text)
 ```
 
 v1 is a parallel branch, not a predecessor of v2. It exists as the "pattern-matching-only baseline" — a point of comparison for seeing what the syntax-tree pass adds.

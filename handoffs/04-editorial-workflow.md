@@ -566,11 +566,13 @@ See commits fa5725d (vocative), 48df980 (no-anchor pilot), 5847940 (no-anchor co
 
 ## Update — 2026-04-14 (five-tier reproducibility arc)
 
-The `data/text-files/` directory now presents the project's text pipeline as a five-tier arc: **v0 (canonical prose) → v1 (pattern-matched) → v2 (Macula syntax-tree-driven) → v3 (rhetorical refinement) → v4 (hand editorial).** Every tier uses the same `{NN-book}/{abbrev}-{NN}.txt` layout, so the same chapter is navigable at the same path across every stage of the pipeline.
+The `data/text-files/` directory now presents the project's text pipeline as a five-tier arc: **v0 (canonical prose) → v1 (pattern-matched) → v2 (Macula syntax-tree-driven) → v3 (rhetorical refinement) → v4 (methodology-applied editorial layer).** Every tier uses the same `{NN-book}/{abbrev}-{NN}.txt` layout, so the same chapter is navigable at the same path across every stage of the pipeline.
+
+**Framing note for v4 specifically.** v4 is not "hand editing" in the sense of manual typing. It is where the project's documented colometric methodology — atomic thought, cognitive hierarchy, register sensitivity, the no-anchor rule, the universal vocative rule, the Goldilocks refinement, the other rules in the canon — is *applied* to the text, through a mix of systematic scan-and-apply tools (the mechanical merge pattern documented elsewhere in this file) and case-by-case editorial decisions where the rule set underdetermines. The editor operates the methodology; the methodology is the contribution. See the 2026-04-14 update block in `handoffs/03-architecture.md` for the longer version of this precision and the two-reproducibility-regimes note that goes with it.
 
 For the editorial workflow specifically this means:
 
-- **The editorial source of truth is still `v4-editorial/`.** Nothing about the hand-editing workflow has changed. All edits go to `v4-editorial/{NN-book}/{abbrev}-{NN}.txt`, cascade to `eng-gloss/`, then to `books/*.html`.
+- **The editorial source of truth is still `v4-editorial/`.** Nothing about the workflow has changed. All edits go to `v4-editorial/{NN-book}/{abbrev}-{NN}.txt`, cascade to `eng-gloss/`, then to `books/*.html`. The editorial workflow itself remains as documented elsewhere in this file — the update here is terminological precision, not a behavioral change.
 - **The mechanical tiers (v0-v3) are frozen artifacts.** They are the record of how the machine-produced baseline was built. They should not be edited by hand. If a mechanical script is re-run (e.g., `auto_colometry.py` against new `sblgnt-source/` content), it will write to the correct subfolder paths automatically — the scripts were updated in this restructure to use the new layout.
 - **For reproducibility work (Phase 2 defensibility and future methodology papers), the v0-v3 tiers are citable.** A skeptical reader can run the mechanical pipeline against the same source data and verify our mechanical output bit-exactly. The v3 → v4 diff is the editorial value-add and is governed by the colometric methodology canon.
 

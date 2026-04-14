@@ -27,12 +27,12 @@ v2 gives us reliable clause and phrase boundaries from the Macula syntax trees. 
 
 The practical effect: v3 reads more naturally than v2 in dialogue passages, argumentative periods, and stacked-parallelism registers. It is the last mechanical tier — every subsequent change is editorial.
 
-**v3 is still mechanical.** It does not apply the atomic-thought / single-image / breath-unit / source-syntax cognitive hierarchy that governs v4. Those are judgments made by the project editor against the colometric methodology documented in the handoffs.
+**v3 is still mechanical.** It does not apply the atomic-thought / cognitive-hierarchy / register-sensitive rule set that governs v4. Those rules — and the case-by-case judgments they license — are the province of the methodology-application layer.
 
 ## How v3 relates to the other tiers
 
 - **Upstream:** `v2-colometric/`. v3 reads v2 chapter files directly and rewrites them with rhetorical-pattern refinements.
-- **Downstream:** `v4-editorial/`. v4 is what you get when the project editor hand-reviews v3 against the colometric methodology. v4 is the single source of truth for the web app; v3 is v4's starting point.
+- **Downstream:** `v4-editorial/`. v4 is what you get when the project's documented colometric methodology is applied to v3 — via a mix of systematic scan-and-apply tools (the vocative pass, the no-anchor pass, the Goldilocks refinement, Class F audits) and case-by-case editorial decisions where the rule set underdetermines. v4 is the single source of truth for the web app; v3 is v4's starting point.
 
 The pipeline graph:
 
@@ -44,7 +44,7 @@ sblgnt-source/ ─┬─> v1-colometric/  (auto_colometry.py, pattern-matched)
                                 v3-colometric/  (v3_colometry.py, rhetorical refinement)
                                    │
                                    ▼
-                                v4-editorial/   (hand editing by the project editor)
+                                v4-editorial/   (project's documented colometric methodology applied to the text)
 ```
 
 v3 is the machine / human boundary. Everything upstream of v3 is deterministic; everything downstream (v4) is editorial.

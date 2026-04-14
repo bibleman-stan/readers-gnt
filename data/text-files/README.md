@@ -1,6 +1,6 @@
 # GNT Reader — Text Pipeline Archive
 
-This directory holds the complete pipeline by which the GNT Reader's colometric text was produced, from the canonical SBLGNT source to the hand-edited reading edition currently served at gnt-reader.com.
+This directory holds the complete pipeline by which the GNT Reader's colometric text was produced, from the canonical SBLGNT source to the methodology-applied reading edition currently served at gnt-reader.com.
 
 **Five tiers, one chapter at a time.** Every Greek chapter exists in every tier. Opening (for example) `v0-prose/08-2cor/2cor-06.txt`, `v1-colometric/08-2cor/2cor-06.txt`, `v2-colometric/08-2cor/2cor-06.txt`, `v3-colometric/08-2cor/2cor-06.txt`, and `v4-editorial/08-2cor/2cor-06.txt` shows the same chapter at five successive stages of our colometric method.
 
@@ -12,7 +12,7 @@ This directory holds the complete pipeline by which the GNT Reader's colometric 
 | **v1** | `v1-colometric/` | First-pass mechanical sense-lines. Surface pattern matching on punctuation, known subordinators (ἵνα, ὥστε, ὅτι, ὅταν, …), discourse particles, speech introductions. Strips apparatus markers. | `scripts/auto_colometry.py` |
 | **v2** | `v2-colometric/` | Syntax-tree-driven sense-lines. Uses the scholar-annotated clause boundaries and participial-phrase brackets from the Macula Greek syntax trees to segment. Significant improvement over v1 for participial phrases, genitive absolutes, and embedded prose. | `scripts/v2_colometry.py` |
 | **v3** | `v3-colometric/` | Rhetorical-pattern-refined sense-lines. Adds parallelism detection, discourse-marker framing, and other rhetorical-pattern awareness on top of v2. The last machine tier. | `scripts/v3_colometry.py` |
-| **v4** | `v4-editorial/` | Hand-edited reading edition. The editor (Stan) reviewed all 260 chapters against the colometric methodology documented in `handoffs/`, applying the atomic-thought / single-image / breath-unit / source-syntax hierarchy described there. **The single source of truth for the web app.** | Hand editing |
+| **v4** | `v4-editorial/` | Methodology-applied reading edition. The project's documented colometric methodology — atomic thought, cognitive hierarchy, register sensitivity, semantic grouping, the universal vocative rule, the no-anchor rule, and the other rules recorded in the canon — applied to the text. Changes land via a mix of systematic scan-and-apply tools for structurally-describable classes (the vocative pass, the no-anchor pass, the Goldilocks refinement, Class F audits) and case-by-case editorial decisions where rules conflict or underdetermine. **The single source of truth for the web app.** | Methodology application (systematic scanners + editorial judgment) |
 
 Plus one non-Greek directory:
 
@@ -30,7 +30,14 @@ And one untouched reference:
 
 **Honesty.** Unlike the Book of Mormon Reader (a sibling project which starts from Royal Skousen's published sense-lines), the GNT Reader had no pre-existing scholar-annotated colometric edition to lean on. The three mechanical tiers are the record of how we bootstrapped our own starting point from raw SBLGNT prose plus external syntax-tree data. Preserving them is the honest way to show the mechanical baseline we built before any editorial decisions entered.
 
-**Comparability.** A researcher interested in machine-only colometric segmentation can cite v1, v2, or v3 as-is without needing to consult editorial layers. A researcher interested in editorial refinement can diff v3 against v4 to measure the value-add of the hand pass.
+**Comparability.** A researcher interested in machine-only colometric segmentation can cite v1, v2, or v3 as-is without needing to consult the methodology-applied layer. A researcher interested in the methodology's contribution can diff v3 against v4 to measure the value-add of the rule-application layer.
+
+## Two kinds of reproducibility
+
+The five tiers divide into two reproducibility regimes, and the distinction matters:
+
+- **v0, v1, v2, v3 are bit-exactly reproducible.** Given the same inputs (`sblgnt-source/` for v0/v1; `sblgnt-source/` + Macula Greek trees for v2; v2 output for v3), running the corresponding script produces a byte-for-byte copy of the tier. Anyone can confirm our mechanical output.
+- **v4 is methodologically checkable, not bit-exactly reproducible.** The rule set is documented, but case-by-case judgment enters where rules conflict or underdetermine, and two careful readers applying the same methodology will occasionally reach different break decisions on hard passages. What v4 IS reproducible as: any chapter can be audited against the documented rule set in `handoffs/02-colometry-method.md` (the private methodology canon) or its public summaries to confirm whether breaks conform to the rules. Disagreement at an individual line is resolvable by consulting the methodology, not by dispute over "what Stan happened to type." The contribution lives in the rule set; v4 is its application, not its stenography.
 
 ## Navigation
 
@@ -85,7 +92,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/v2_colometry.py
 PYTHONIOENCODING=utf-8 py -3 scripts/v3_colometry.py
 ```
 
-v4 is editorial and not script-reproducible. See `handoffs/04-editorial-workflow.md` for the hand-editing workflow and the colometric methodology the editor applies.
+v4 is not produced by a single reproducible script because rule application involves judgment calls at the margin. It is, however, methodologically checkable — see the two-reproducibility-regimes note above and `handoffs/04-editorial-workflow.md` for the editorial workflow and the rule set the editor applies.
 
 ## For the curious
 

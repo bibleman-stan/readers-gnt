@@ -649,7 +649,11 @@ This is the replacement for the "dispatch agents to do mass editorial work" appr
 
 ## Update — 2026-04-14 (text-pipeline restructure: five-tier arc with reproducibility framing)
 
-The `data/text-files/` directory was restructured to present the project's text pipeline as a **five-tier reproducibility arc**: v0 (canonical prose) → v1 (pattern-matched) → v2 (Macula syntax-tree-driven) → v3 (rhetorical refinement) → v4 (hand editorial). Every tier uses the same `{NN-book}/` subfolder layout as `v4-editorial/`, so a chapter is navigable at the same path across all five tiers.
+The `data/text-files/` directory was restructured to present the project's text pipeline as a **five-tier reproducibility arc**: v0 (canonical prose) → v1 (pattern-matched) → v2 (Macula syntax-tree-driven) → v3 (rhetorical refinement) → v4 (methodology-applied editorial layer). Every tier uses the same `{NN-book}/` subfolder layout as `v4-editorial/`, so a chapter is navigable at the same path across all five tiers.
+
+**A precision note on v4.** v4 is NOT "hand editing" in the sense of a human manually typing out every break decision for every chapter. v4 is where the project's *documented colometric methodology* — atomic thought, cognitive hierarchy, register sensitivity, semantic grouping, the no-anchor rule, the universal vocative rule, the Goldilocks refinement, and the other rules recorded in the methodology canon — is *applied* to the text. Application happens through a mix of systematic scan-and-apply tools (the vocative pass, the no-anchor pass, adversarial-audit-driven merges, Class F audits, and similar mechanical passes that can be described structurally) and case-by-case editorial decisions where the rule set conflicts or underdetermines. The editor is the methodology's operator, not a manual typist. The project's contribution lives in the documented rule set; v4 is its application, not its stenography.
+
+**Two reproducibility regimes.** v0-v3 are bit-exactly reproducible: given the same inputs, running the scripts produces byte-for-byte copies of those tiers. v4 is NOT bit-exactly reproducible (because judgment calls enter where rules underdetermine) but IS methodologically checkable: any chapter can be audited against the documented rule set to confirm whether breaks conform to the rules. Disagreement at an individual line is resolvable by consulting the methodology, not by dispute over "what the editor happened to type."
 
 ### New directory layout
 
