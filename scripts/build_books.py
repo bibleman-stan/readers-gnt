@@ -224,7 +224,11 @@ def _find_book_subdir(base_dir, prefix):
 
 
 def resolve_greek_path(fpath):
-    """Return the best Greek source: v4-editorial if it exists, else v3-colometric."""
+    """Return the best Greek source: v4-editorial if it exists, else v3-colometric.
+
+    Both v4-editorial and v3-colometric use the {NN-book}/ subfolder layout, so
+    the fallback walks subfolders symmetrically with the primary lookup.
+    """
     basename = os.path.basename(fpath)
     prefix = _book_prefix(fpath)
     subdir = _find_book_subdir(GK_PRIMARY_DIR, prefix)
@@ -232,10 +236,12 @@ def resolve_greek_path(fpath):
         v4_path = os.path.join(GK_PRIMARY_DIR, subdir, basename)
         if os.path.isfile(v4_path):
             return v4_path, "v4"
-    # Fallback to v3-colometric (flat directory)
-    v3_path = os.path.join(GK_FALLBACK_DIR, basename)
-    if os.path.isfile(v3_path):
-        return v3_path, "v3"
+    # Fallback to v3-colometric — also book-subfolder layout
+    subdir = _find_book_subdir(GK_FALLBACK_DIR, prefix)
+    if subdir:
+        v3_path = os.path.join(GK_FALLBACK_DIR, subdir, basename)
+        if os.path.isfile(v3_path):
+            return v3_path, "v3"
     return fpath, "v3"
 
 

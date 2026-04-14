@@ -11,7 +11,7 @@ Usage:
     py -3 scripts/auto_colometry.py --book Mark --chapter 4   # format one chapter
 
 Input:  data/text-files/sblgnt-source/*.txt
-Output: data/text-files/v1-colometric/*.txt
+Output: data/text-files/v1-colometric/{NN-book}/*.txt
 """
 
 import re
@@ -56,6 +56,19 @@ BOOKS = {
     'Jude':    ('Jude',           'jude',      1),
     'Rev':     ('Revelation',     'rev',      22),
 }
+
+# Map from output abbreviation -> NN-book subfolder name (e.g. 'mark' -> '02-mark').
+# Position within BOOKS (canonical NT order) supplies the NN prefix.
+BOOK_SUBDIR = {
+    abbrev: f'{idx:02d}-{abbrev}'
+    for idx, (_display, abbrev, _count) in enumerate(BOOKS.values(), start=1)
+}
+
+
+def book_output_dir(abbrev):
+    """Return the per-book output subfolder under OUTPUT_DIR for a given abbrev."""
+    return os.path.join(OUTPUT_DIR, BOOK_SUBDIR[abbrev])
+
 
 # ---------- text cleaning ----------
 
@@ -582,9 +595,12 @@ def process_book(book_key, chapter_filter=None):
         output = format_chapter(display_name, chapter_num, verses)
 
         # Output filename: mark-04.txt, acts-17.txt, etc.
+        # Written under the per-book subfolder, e.g. v1-colometric/02-mark/mark-04.txt
         ch_str = str(chapter_num).zfill(2)
         out_filename = f'{abbrev}-{ch_str}.txt'
-        out_path = os.path.join(OUTPUT_DIR, out_filename)
+        out_subdir = book_output_dir(abbrev)
+        os.makedirs(out_subdir, exist_ok=True)
+        out_path = os.path.join(out_subdir, out_filename)
 
         with open(out_path, 'w', encoding='utf-8') as f:
             f.write(output)

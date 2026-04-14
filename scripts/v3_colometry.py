@@ -11,8 +11,8 @@ Usage:
     py -3 scripts/v3_colometry.py --book Mark                  # one book
     py -3 scripts/v3_colometry.py --book Mark --chapter 4      # one chapter
 
-Input:  data/text-files/v2-colometric/*.txt
-Output: data/text-files/v3-colometric/*.txt
+Input:  data/text-files/v2-colometric/{NN-book}/*.txt
+Output: data/text-files/v3-colometric/{NN-book}/*.txt
 """
 
 import re
@@ -99,6 +99,25 @@ BOOKS = {
     'Jude':    ('Jude',           'jude',      1),
     'Rev':     ('Revelation',     'rev',      22),
 }
+
+# Map from output abbreviation -> NN-book subfolder name (e.g. 'mark' -> '02-mark').
+# Position within BOOKS (canonical NT order) supplies the NN prefix.
+# Used for both the v2 input subfolder and the v3 output subfolder layouts.
+BOOK_SUBDIR = {
+    abbrev: f'{idx:02d}-{abbrev}'
+    for idx, (_display, abbrev, _count) in enumerate(BOOKS.values(), start=1)
+}
+
+
+def book_input_dir(abbrev):
+    """Return the per-book input subfolder under INPUT_DIR for a given abbrev."""
+    return os.path.join(INPUT_DIR, BOOK_SUBDIR[abbrev])
+
+
+def book_output_dir(abbrev):
+    """Return the per-book output subfolder under OUTPUT_DIR for a given abbrev."""
+    return os.path.join(OUTPUT_DIR, BOOK_SUBDIR[abbrev])
+
 
 # ---------- Pattern 1: Complementary verb + infinitive merging ----------
 
@@ -3521,13 +3540,15 @@ def process_book(book_key, chapter_filter=None):
 
         ch_str = str(ch).zfill(2)
         filename = f'{abbrev}-{ch_str}.txt'
-        input_path = os.path.join(INPUT_DIR, filename)
-        output_path = os.path.join(OUTPUT_DIR, filename)
+        input_path = os.path.join(book_input_dir(abbrev), filename)
+        out_subdir = book_output_dir(abbrev)
+        output_path = os.path.join(out_subdir, filename)
 
         if not os.path.exists(input_path):
             print(f'  WARNING: Input file not found: {input_path}')
             continue
 
+        os.makedirs(out_subdir, exist_ok=True)
         process_chapter_file(input_path, output_path, book_slug=abbrev)
         chapters_processed += 1
 

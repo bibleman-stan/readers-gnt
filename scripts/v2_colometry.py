@@ -16,7 +16,7 @@ Input:
     data/text-files/sblgnt-source/*.txt   (canonical text)
     research/macula-greek/SBLGNT/lowfat/  (clause boundaries via macula_clauses)
 Output:
-    data/text-files/v2-colometric/*.txt
+    data/text-files/v2-colometric/{NN-book}/*.txt
 """
 
 import re
@@ -83,6 +83,18 @@ BOOKS = {
 
 # Map from output slug to source filename key
 _SLUG_TO_BOOK_KEY = {v[1]: k for k, v in BOOKS.items()}
+
+# Map from output abbreviation -> NN-book subfolder name (e.g. 'mark' -> '02-mark').
+# Position within BOOKS (canonical NT order) supplies the NN prefix.
+BOOK_SUBDIR = {
+    abbrev: f'{idx:02d}-{abbrev}'
+    for idx, (_display, abbrev, _count) in enumerate(BOOKS.values(), start=1)
+}
+
+
+def book_output_dir(abbrev):
+    """Return the per-book output subfolder under OUTPUT_DIR for a given abbrev."""
+    return os.path.join(OUTPUT_DIR, BOOK_SUBDIR[abbrev])
 
 # Apparatus markers to strip from output text
 APPARATUS_RE = re.compile(r'[⸀⸁⸂⸃⸄⸅]')
@@ -467,7 +479,9 @@ def process_book(book_key, chapter_filter=None):
 
         ch_str = str(chapter_num).zfill(2)
         out_filename = f'{abbrev}-{ch_str}.txt'
-        out_path = os.path.join(OUTPUT_DIR, out_filename)
+        out_subdir = book_output_dir(abbrev)
+        os.makedirs(out_subdir, exist_ok=True)
+        out_path = os.path.join(out_subdir, out_filename)
 
         with open(out_path, 'w', encoding='utf-8') as f:
             f.write(output)
