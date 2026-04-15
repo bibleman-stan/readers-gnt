@@ -80,7 +80,6 @@ and settled accounts with them.
 
 25:20
 And the one who received five talents came forward and brought five more talents saying:
-Lord,
 you entrusted me with five talents;
 look, I have gained five more talents.
 
@@ -92,9 +91,8 @@ enter into the joy of your master.
 
 25:22
 And the one with the two talents also came and said:
-Lord,
-you entrusted me with two talents;
-look, I have gained two more talents.
+you entrusted me with two talents; look,
+I have gained two more talents.
 
 25:23
 His master said to him: Well done,
