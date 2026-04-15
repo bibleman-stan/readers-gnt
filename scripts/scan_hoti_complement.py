@@ -7,12 +7,17 @@ Detects ὅτι lines that may be complementizer ὅτι (indirect discourse)
 erroneously broken off from their governing verb onto a separate line.
 
 GRAMMATICAL BASIS:
-  Verbs of cognition, communication, perception, and belief (γράφω, οἶδα,
-  γινώσκω, λέγω, ἀκούω, ὁράω, πιστεύω, μαρτυρέω, etc.) govern a ὅτι
-  complement clause that functions as their direct object / argument. The
-  verb + ὅτι + complement clause form ONE propositional unit — one atomic
-  thought. There is no thought boundary between them, so there should be
-  no line break between them.
+  Verbs of cognition, perception, and belief (οἶδα, γινώσκω, ὁράω,
+  πιστεύω, ἐπίσταμαι, μαρτυρέω, etc.) govern a ὅτι complement clause
+  that functions as their direct object / argument. The verb + ὅτι +
+  complement clause form ONE propositional unit — one atomic thought.
+  There is no thought boundary between them, so there should be no line
+  break between them.
+
+  NOTE: λέγω/εἶπον (say) and γράφω (write) are EXCLUDED. They introduce
+  speech/written content, often using recitative ὅτι (= quotation marks).
+  The verb line stands alone; the content follows separately — consistent
+  with the speech-intro line convention in v4 editorial.
 
   This is distinct from causal ὅτι ("because X") or result ὅτι, which
   introduce genuinely separate clauses and warrant their own lines.
@@ -68,10 +73,15 @@ def tokens(line: str) -> List[str]:
 # Organized by verb family for maintainability.
 
 GOVERNING_VERBS: set = {
-    # γράφω — write
-    "γραφω", "γραφεις", "γραφει", "γραφομεν", "γραφετε", "γραφουσιν",
-    "εγραψα", "εγραψας", "εγραψεν", "εγραψαμεν", "εγραψατε", "εγραψαν",
-    "γεγραφα", "γεγραφας", "γεγραφεν", "γεγραμμαι",
+    # NOTE: λέγω/εἶπον (say) and γράφω (write) are EXCLUDED intentionally.
+    # Those verbs introduce speech/written content and can use recitative ὅτι
+    # (= quotation marks), meaning the content is a separate structural unit.
+    # The verb line stands alone; ὅτι + content follow on their own lines —
+    # exactly as speech-intro lines work elsewhere in v4 editorial.
+    # Only cognition, perception, belief, and testimony verbs are included:
+    # the ὅτι clause is always the syntactic object (content of knowing/believing),
+    # never recitative. μαρτυρέω is included because testimony has no recitative
+    # usage — the ὅτι clause is always the content of the testimony.
 
     # οἶδα — know
     "οιδα", "οιδας", "οιδεν", "οιδαμεν", "οιδατε", "οιδασιν",
@@ -81,12 +91,6 @@ GOVERNING_VERBS: set = {
     "γινωσκω", "γινωσκεις", "γινωσκει", "γινωσκομεν", "γινωσκετε", "γινωσκουσιν",
     "εγνων", "εγνως", "εγνω", "εγνωμεν", "εγνωτε", "εγνωσαν",
     "εγνωκα", "εγνωκας", "εγνωκεν", "εγνωκαμεν", "εγνωκατε", "εγνωκασιν",
-
-    # λέγω / εἶπον — say, tell
-    "λεγω", "λεγεις", "λεγει", "λεγομεν", "λεγετε", "λεγουσιν",
-    "ειπον", "ειπας", "ειπεν", "ειπαμεν", "ειπατε", "ειπαν",
-    "ειρηκα", "ειρηκας", "ειρηκεν", "ειρηκαμεν", "ειρηκατε", "ειρηκασιν",
-    "ελεγον", "ελεγες", "ελεγεν", "ελεγομεν", "ελεγετε", "ελεγον",
 
     # ἀκούω — hear
     "ακουω", "ακουεις", "ακουει", "ακουομεν", "ακουετε", "ακουουσιν",
