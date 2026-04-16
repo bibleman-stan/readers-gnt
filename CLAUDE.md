@@ -48,7 +48,8 @@ When Stan signals start-of-session with phrases like **"hey, let's start a new s
 5. **`c:/Users/bibleman/repos/overseer-workspace/METHODOLOGY-TIMELINE.md`** — dated log of methodology state changes on both projects. Check this if you're going to touch any scan/audit/findings files from prior sessions — the timeline tells you what methodology state they reflect.
 6. **`c:/Users/bibleman/repos/overseer-workspace/OPEN-QUESTIONS.md`** — unresolved threads that might intersect with whatever Stan is asking for. Skim for relevance.
 7. **`private/01-method/colometry-canon.md`** — the methodology canon. Always fresh-read before any editorial or rule work. Rules evolve fast.
-8. **`git log --oneline -10`** — see what's committed since the last session. Any commit you don't recognize is a state change you should understand before working.
+8. **`C:\vaults-nano\my_brain\00_Inbox\claude-brainstorming.md`** — Stan's mobile-to-desktop idea bridge. He voice-chats ideas with mobile Claude; they land here via Obsidian Sync. If there's content you haven't seen before, treat each item as a pending task/idea for the current project and either integrate it into active work or surface it to Stan. Don't let items sit here unaddressed — that breaks the loop.
+9. **`git log --oneline -10`** — see what's committed since the last session. Any commit you don't recognize is a state change you should understand before working.
 
 **After reading:** send Stan a brief check-in message confirming orientation. Something like: "Checked in. Current state: [one-sentence summary]. Top 2-3 hot threads per LANDSCAPE-MAP: [...]. Anything specific you want me to focus on, or should I continue the queued work?" Keep this to 4-5 lines. The goal is to prove you read the files, not to summarize them exhaustively.
 
@@ -201,6 +202,18 @@ The full methodology reference is pointed to from `private/OVERSEER-DIRECTIONS.m
 - Never split verb from direct object on short phrases
 - All vocatives get their own line (universal rule — each is an atomic address act)
 - Line length is a signal, not a rule
+
+---
+
+## Agent Dispatch — Three-Tier Model Routing
+
+When dispatching subagents via the Agent tool, match model to task complexity. Don't default everything to Opus — Stan pays per-token and routing matters.
+
+- **Haiku** (cheapest, fastest): file moves, renames, glob/ls formatting, mechanical reference lookups, single-file reads-and-summarize with no judgment, yes/no checks against file content.
+- **Sonnet** (mid-tier): scanner runs where rules are already defined, quick consistency checks with narrow scope, documentation updates following a clear template, short adversarial checks on a single specific question, cross-project consistency checks once both sides are stable, mirroring edits between files.
+- **Opus** (reasoning-heavy): multi-angle adversarial audits requiring deep reasoning, methodology synthesis across multiple sources, restructuring major documents, novel rule design or hierarchy reframes, anything where the judgment IS the work product.
+
+**When in doubt, Sonnet is the right default.** It handles most scoped tasks capably at a fraction of Opus cost. Reserve Opus for tasks where the reasoning quality directly determines the output's value. Stan should not have to think about this — the dispatching Claude makes the call.
 
 ---
 
