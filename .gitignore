@@ -4,6 +4,9 @@ research/
 # Private strategy docs (not on public repo)
 private/
 
+# Machine-specific Claude Code permissions (cross-project paths that shouldn't be public)
+.claude/settings.local.json
+
 # Python
 __pycache__/
 *.pyc
