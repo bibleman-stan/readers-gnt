@@ -207,6 +207,50 @@ PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark    # one book
 
 ---
 
+## The Substrate-as-Stable-API Principle
+
+**The `v4-editorial/` text format is the API between the reader and any analytical tool built on top of it. It does not change shape by policy.**
+
+The colometric text files are the canonical substrate. Their format is minimal and fixed:
+- Verse numbers on their own lines (`9:1`, `9:2`, etc.)
+- One sense-line per intended colometric break
+- UTF-8 with polytonic Greek accents
+- Blank lines between verses
+
+That is the entire grammar. Nothing richer lives in the substrate — no inline structural tags, no depth indicators, no rhetorical annotations, no morpheme boundaries, no audio timing cues.
+
+### Why the substrate stays simple
+
+**Third-party usability.** Any scholar who wants clean colometric Greek can grab `v4-editorial/` and use it without parsing project-specific annotations. That is valuable for external tools and future projects.
+
+**Format stability forever.** There is nothing in the substrate that could change shape. Verse numbers, line breaks, text. That is the whole grammar.
+
+**Enrichments are additive, not transformative.** New analytical layers (morpheme decomposition, rhetorical depth mapping, stylometry dashboards, audio sync) become side-projects that CONSUME the substrate as input. They never modify it.
+
+**Publication stability.** "Here's the reading edition. Here's what it enables." The substrate doesn't drift under the feet of either the reader OR the analyst. Both can cite a stable corpus.
+
+### When something "needs" richer markup
+
+If an analytical need arises that genuinely requires inline structural markup (e.g., `[FEF]` tags, depth indentation, phrase-level boundaries), **fork it into its own path (`readers-gnt/structures/` or similar) or its own repo.** Do NOT modify the substrate to accommodate. The substrate's value is its simplicity; compromising that compromises the whole platform.
+
+### The analytical layer pattern
+
+Analytical tools built on the substrate live at `readers-gnt/analysis/<tool-name>/` (deployed to `gnt-reader.com/analysis/<tool-name>/`). Examples (current and planned):
+
+- `/analysis/morph/` — Morpheme-decomposed reader (Greek word internal structure)
+- `/analysis/depth/` — Rhetorical depth mapping (planned)
+- `/analysis/style/` — Stylometry dashboard (planned)
+
+Each analytical layer:
+- Consumes `v4-editorial/` as read-only input
+- Lives in its own subdirectory with its own build process
+- Can evolve independently of the main reader
+- Shares the gnt-reader.com domain but not the main reader's UI
+
+This is the Unix philosophy applied to a reading edition: simple things compose; complex things don't. The substrate stays on the simple side of the line, and complexity lives in tools that consume it.
+
+---
+
 ## CRITICAL: The Cascade Rule
 
 **Every change to Greek breaks MUST cascade through the full pipeline:**
