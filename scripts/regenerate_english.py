@@ -172,18 +172,105 @@ def parse_file_structure(path):
     return structure, le
 
 
+def _split_strength(token, next_token=''):
+    """Return priority for splitting AFTER this token (lower = stronger boundary)."""
+    t = token.rstrip()
+    # Strong punctuation boundaries
+    if t.endswith(('—', '–', ';', ':')):
+        return 0
+    if t.endswith(','):
+        return 1
+    # Coordinating conjunctions at start of next token
+    nt_low = next_token.lower().lstrip()
+    if nt_low in ('and', 'but', 'or', 'nor', 'yet', 'for', 'so'):
+        return 2
+    # Subordinating conjunctions / relative markers at start of next token
+    if nt_low in ('that', 'which', 'who', 'whom', 'whose', 'when', 'where',
+                  'because', 'since', 'if', 'though', 'although', 'while',
+                  'until', 'unless', 'as', 'after', 'before', 'once', 'lest'):
+        return 3
+    return 99  # word-count fallback
+
+
+def _find_phrase_splits(text, n):
+    """Split *text* into exactly *n* segments at the best phrase boundaries.
+
+    Scans all inter-word positions for split-point strength, then uses a
+    greedy balanced-partition algorithm: pick the N-1 boundaries whose
+    positions are most evenly spaced across the text while preferring
+    stronger boundary types.  Falls back to equal word-count if no
+    phrase boundaries exist.
+
+    Returns a list of n strings.
+    """
+    words = text.split()
+    total = len(words)
+
+    if n <= 1 or total == 0:
+        return [text] if n <= 1 else [text] + [''] * (n - 1)
+
+    if total <= n:
+        # Not enough words to fill every line; pad with empties
+        return [w for w in words] + [''] * (n - total)
+
+    # Build candidate split-point list: (position_after_word, strength)
+    # position_after_word is the index i such that a split puts words[:i]
+    # on one side and words[i:] on the other.  Valid range: 1 .. total-1.
+    candidates = []
+    for i in range(1, total):
+        strength = _split_strength(words[i - 1], words[i])
+        candidates.append((i, strength))
+
+    # Choose N-1 split points.  Strategy: for each of the N-1 slots, pick
+    # the available candidate nearest the ideal even-spacing position,
+    # breaking ties by strength (lower = better), then by proximity.
+    ideal_step = total / n
+    chosen = []
+    used = set()
+    for slot in range(1, n):
+        target = slot * ideal_step
+        # Score candidates: prefer closer to target, then stronger boundary
+        best = min(
+            ((i, s) for i, s in candidates if i not in used),
+            key=lambda x: (x[1], abs(x[0] - target)),
+            default=None,
+        )
+        if best is None:
+            break
+        chosen.append(best[0])
+        used.add(best[0])
+
+    chosen.sort()
+
+    # Slice words into segments at the chosen split points
+    segments = []
+    prev = 0
+    for pos in chosen:
+        segments.append(' '.join(words[prev:pos]))
+        prev = pos
+    segments.append(' '.join(words[prev:]))
+
+    # Pad to exactly n (safety — shouldn't normally be needed)
+    while len(segments) < n:
+        segments.append('')
+
+    return segments
+
+
 def redistribute_verse(greek_lines, english_lines, force=False):
     """Redistribute English text to match the Greek line count.
 
     Strategy:
     1. Identify vocative-only Greek lines and assign known translations.
     2. Identify which existing English lines are vocative translations to exclude.
-    3. Merge remaining English and distribute proportionally across non-vocative lines.
+    3. Merge remaining English and split across non-vocative lines using
+       phrase-aware boundaries (semicolon > comma > conjunction > subordinator
+       > word-count fallback), balanced toward even line lengths.
 
-    When force=True, always redistribute proportionally — even when Greek and
-    English line counts match. This is necessary when line-order was changed
-    without changing line count (proportional redistribution at least gives
-    the right starting point; the English may need manual polish afterward).
+    When force=True, always redistribute — even when Greek and English line
+    counts match. This is necessary when line-order was changed without
+    changing line count (phrase-aware redistribution gives a better starting
+    point; the English may still need manual polish afterward).
     """
     n_greek = len(greek_lines)
     n_english = len(english_lines)
@@ -232,26 +319,9 @@ def redistribute_verse(greek_lines, english_lines, force=False):
             result[i] = eng
         return result
 
-    # Proportional distribution
-    eng_words = remaining_english.split() if remaining_english else []
-    total_eng_words = len(eng_words)
-    non_voc_greek_counts = [len(greek_lines[i].split()) for i in non_voc_indices]
-    total_greek_words = sum(non_voc_greek_counts)
-
-    distributed = {}
-    eng_idx = 0
-    for j, nvi in enumerate(non_voc_indices):
-        gwc = non_voc_greek_counts[j]
-        if j == len(non_voc_indices) - 1:
-            distributed[nvi] = ' '.join(eng_words[eng_idx:])
-        else:
-            if total_greek_words > 0:
-                proportion = gwc / total_greek_words
-                n_words = max(1, round(proportion * total_eng_words))
-            else:
-                n_words = max(1, total_eng_words // n_non_voc)
-            distributed[nvi] = ' '.join(eng_words[eng_idx:eng_idx + n_words])
-            eng_idx += n_words
+    # Phrase-aware distribution
+    segments = _find_phrase_splits(remaining_english, n_non_voc)
+    distributed = {nvi: segments[j] for j, nvi in enumerate(non_voc_indices)}
 
     result = []
     for i in range(n_greek):
@@ -376,5 +446,33 @@ def main():
     print(f"Total verses redistributed: {total_changes}")
 
 
+def _self_test():
+    """Quick smoke-test: show phrase-aware split for Matt 8:20 (3 Greek lines).
+
+    Greek (v4-editorial Matt 8): 3 lines for verse 20.
+    Expected English roughly:
+      line 1: "Foxes have dens"
+      line 2: "and the birds of the sky have nests,"
+      line 3: "but the Son of Man has nowhere to lay his head."
+    Old word-count split straddled "have / nests" mid-phrase.
+    """
+    greek = [
+        'αἱ ἀλώπεκες φωλεοὺς ἔχουσιν',
+        'καὶ τὰ πετεινὰ τοῦ οὐρανοῦ κατασκηνώσεις,',
+        'ὁ δὲ υἱὸς τοῦ ἀνθρώπου οὐκ ἔχει ποῦ τὴν κεφαλὴν κλίνῃ.',
+    ]
+    english_flat = [
+        'Foxes have dens and the birds of the sky have nests, but the Son of Man has nowhere to lay his head.'
+    ]
+    result = redistribute_verse(greek, english_flat)
+    print("Self-test — Matt 8:20 phrase-aware split:")
+    for i, line in enumerate(result):
+        print(f"  [{i+1}] {line}")
+
+
 if __name__ == '__main__':
-    main()
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == '--self-test':
+        _self_test()
+    else:
+        main()
