@@ -79,7 +79,11 @@ and how from childhood you have been acquainted with the sacred writings,
 which are able to make you wise for salvation through faith in Christ Jesus.
 
 3:16
-All Scripture is breathed out by God and profitable for teaching, for reproof, for correction, for training in righteousness,
+All Scripture is breathed out by God and profitable
+for teaching,
+for reproof,
+for correction,
+for training in righteousness,
 
 3:17
 that the man of God may be complete,
