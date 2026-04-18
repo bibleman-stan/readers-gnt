@@ -65,7 +65,7 @@ When Stan signals start-of-session with phrases like **"hey, let's start a new s
 
 When Stan signals end-of-session with phrases like **"let's wrap it up for now," "wrap it up," "let's stop here," "that's enough for today," "commit and wrap,"** or any similar winding-down language — do these things BEFORE you commit or stop, in this order:
 
-1. **Write session-dir notes for ANY substantive work, not just dialogues.** Create `private/sessions/[YYYY-MM-DD]-[topic-slug]/` and drop a notes file inside. This is **mandatory for any session that produced any ONE of the following** (not just dialogues):
+1. **Write session-dir notes for ANY substantive work, not just dialogues.** Create `private/03-sessions/[YYYY-MM-DD]-[topic-slug]/` and drop a notes file inside. **Date by the calendar day of the first commit in the session** — if a session spans midnight and commits land on the next day, label the folder with the commit date, not the session-start date. This keeps the folder name aligned with `git log` for the overseer walking in cold. This is **mandatory for any session that produced any ONE of the following** (not just dialogues):
    - **Methodology dialogue:** you were corrected on an approach, a rule refinement landed, a theoretical framing was articulated, an enthusiastic adoption was walked back → file name `dialogue-notes.md`
    - **Scanner class work:** new classes explored, applied, or retired; FP rates measured; false-positive filter tuning → file name `session-notes.md`
    - **Cross-validation findings:** cross-lens convergence, cross-agent agreement, retroactive validation of prior work → file name `session-notes.md`
@@ -82,6 +82,9 @@ When Stan signals end-of-session with phrases like **"let's wrap it up for now,"
    - What was ultimately decided, applied, or retired
    - Any load-bearing phrases Stan used verbatim — they may become prospectus language and need to be preserved exactly
    - Cross-references to other workspace files (overseer-workspace briefings, sibling OVERSEER-DIRECTIONS updates, etc.) that this session affects or is affected by
+   - **Self-log of discipline failures Stan caught this session** — name each one, and if two or more share a common underlying failure mode (pattern-matching over diagnostic, over-claiming, imposing-vs-revealing, aesthetic reasoning), say so explicitly. This is how the next session avoids repeating the same class of mistake.
+   - **Any proposed rule, framing, or claim that was walked back** — with the reason. Logging withdrawals is anti-over-claim discipline and Phase-2 defensibility material.
+   - **Workflow use-count** — if a recurring workflow (scan + adversarial audit, cross-lens convergence, horde dispatch, verdict-render, etc.) was used 3+ times this session, note the count. Repeated use under different conditions = validation that the workflow generalizes.
 
    **The GNT side executed this protocol correctly on first try** (2026-04-14 session 13 produced a three-thread `dialogue-notes.md`). Keep doing what you're already doing; this rule is the explicit codification of that practice.
 
