@@ -33,101 +33,29 @@ Also check `private/OVERSEER-DIRECTIONS.md` if present — local-only session di
 
 ---
 
-## Session bookend protocol (standing rule — CHECK-IN + WRAP-UP)
+## Session bookend protocol
 
-**Sessions have two mandatory bookends: a check-in at the start, a report at the end.** The overseer (cross-project Claude) cannot see your conversation — it only sees files you leave behind. The bookends are how the overseer stays oriented across sessions without having to guess or have Stan paste everything manually.
+Canonical shared source: [`overseer-workspace/SESSION-BOOKEND-PROTOCOL.md`](../overseer-workspace/SESSION-BOOKEND-PROTOCOL.md) — CHECK-IN, WRAP-UP, context thresholds, and compaction-resume protocol. **Read it at the start of every session.**
 
-### CHECK-IN — at session start
+### GNT-specific CHECK-IN file list (steps from the shared protocol, with GNT paths)
 
-When Stan signals start-of-session with phrases like **"hey, let's start a new session," "new session," "fresh start," "let's begin," "let's kick off,"** or any similar opening language — before you do any substantive work, read these files in this order:
+1. This CLAUDE.md in full
+2. `private/OVERSEER-DIRECTIONS.md` — active-directives section
+3. `private/README.md`
+4. `c:/Users/bibleman/repos/overseer-workspace/LANDSCAPE-MAP.md`
+5. `c:/Users/bibleman/repos/overseer-workspace/METHODOLOGY-TIMELINE.md` (only if touching prior-session files)
+6. `c:/Users/bibleman/repos/overseer-workspace/OPEN-QUESTIONS.md`
+7. `private/01-method/colometry-canon.md` — always fresh-read before editorial or rule work
+8. `C:\vaults-nano\my_brain\00_Inbox\claude-brainstorming.md` — scope per shared protocol (GNT items only)
+9. `git log --oneline -10`
 
-1. **This CLAUDE.md file in full** — you may already be doing this on orientation, but confirm it.
-2. **`private/OVERSEER-DIRECTIONS.md`** — active cross-project directives, sync log, documentation protocol. This is your primary coordination surface with the overseer.
-3. **`private/README.md`** — subdirectory layout of `private/` so you know where to find things and where to write new files.
-4. **`c:/Users/bibleman/repos/overseer-workspace/LANDSCAPE-MAP.md`** — one-glance snapshot of where the whole program is right now. Tells you what's hot, what's resolved, what's open. **Read this every session — it's the overseer's dip-in file and it's kept fresh.**
-5. **`c:/Users/bibleman/repos/overseer-workspace/METHODOLOGY-TIMELINE.md`** — dated log of methodology state changes on both projects. Check this if you're going to touch any scan/audit/findings files from prior sessions — the timeline tells you what methodology state they reflect.
-6. **`c:/Users/bibleman/repos/overseer-workspace/OPEN-QUESTIONS.md`** — unresolved threads that might intersect with whatever Stan is asking for. Skim for relevance.
-7. **`private/01-method/colometry-canon.md`** — the methodology canon. Always fresh-read before any editorial or rule work. Rules evolve fast.
-8. **`C:\vaults-nano\my_brain\00_Inbox\claude-brainstorming.md`** — Stan's mobile-to-desktop idea bridge. He voice-chats ideas with mobile Claude; they land here via Obsidian Sync. Rules of engagement (three Claudes may be reading this file — overseer + both trench Claudes — coordination matters):
-   - **Read all unaddressed items** (those without a ✓ or ⏳ mark).
-   - **Assess scope:** If clearly GNT-related (mentions GNT, Greek NT passage, gnt-reader), the GNT trench Claude handles it. If clearly BofM-related, the BofM trench Claude handles it. Cross-project, methodology-wide, or ambiguous items → the overseer handles (or you raise to Stan).
-   - **If an item is in YOUR scope:** claim it by adding a line below Stan's text: `⏳ [claimed by gnt-trench YYYY-MM-DD]`. Work on it during the session.
-   - **When done:** replace the ⏳ line with `✓ YYYY-MM-DD — [one-line disposition]. [pointer to commit/session-notes/canon section where the real record lives].`
-   - **If an item is NOT in your scope:** do NOT touch it. Don't claim it, don't address it, don't delete or archive it. Mention it in your check-in to Stan only if it bears on what he's asking.
-   - **Never delete items.** Archival is the overseer's job (moves ✓-annotated items to `claude-brainstorming-archive.md` in the same folder).
-9. **`git log --oneline -10`** — see what's committed since the last session. Any commit you don't recognize is a state change you should understand before working.
+### GNT-specific WRAP-UP additions (in addition to the shared protocol's generic wrap-up)
 
-**After reading:** send Stan a brief check-in message confirming orientation. Something like: "Checked in. Current state: [one-sentence summary]. Top 2-3 hot threads per LANDSCAPE-MAP: [...]. Anything specific you want me to focus on, or should I continue the queued work?" Keep this to 4-5 lines. The goal is to prove you read the files, not to summarize them exhaustively.
+Session notes go to `private/03-sessions/[YYYY-MM-DD]-[topic-slug]/session-notes.md` (or `dialogue-notes.md` for methodology dialogues). The "What the notes should contain" bullet list from the shared protocol applies in full — especially the three additions landed 2026-04-18 (self-log of discipline failures with common-mode grouping, withdrawn-proposal logging, workflow use-count).
 
-**Why this matters:** sessions that skip the check-in tend to propose things contradicting recent state, re-argue decisions already made, miss open questions that affect the current task, and waste Stan's time on corrections the overseer already wrote down. The overseer workspace and the OVERSEER-DIRECTIONS file are the cumulative state — reading them puts you in the same frame the overseer operates from.
+### Context-threshold and compaction-resume — see shared protocol
 
-### WRAP-UP REPORT — at session end
-
-When Stan signals end-of-session with phrases like **"let's wrap it up for now," "wrap it up," "let's stop here," "that's enough for today," "commit and wrap,"** or any similar winding-down language — do these things BEFORE you commit or stop, in this order:
-
-1. **Write session-dir notes for ANY substantive work, not just dialogues.** Create `private/03-sessions/[YYYY-MM-DD]-[topic-slug]/` and drop a notes file inside. **Date by the calendar day of the first commit in the session** — if a session spans midnight and commits land on the next day, label the folder with the commit date, not the session-start date. This keeps the folder name aligned with `git log` for the overseer walking in cold. This is **mandatory for any session that produced any ONE of the following** (not just dialogues):
-   - **Methodology dialogue:** you were corrected on an approach, a rule refinement landed, a theoretical framing was articulated, an enthusiastic adoption was walked back → file name `dialogue-notes.md`
-   - **Scanner class work:** new classes explored, applied, or retired; FP rates measured; false-positive filter tuning → file name `session-notes.md`
-   - **Cross-validation findings:** cross-lens convergence, cross-agent agreement, retroactive validation of prior work → file name `session-notes.md`
-   - **Multi-class corpus sweeps:** merges or splits applied across multiple classes or books; adversarial audit results → file name `session-notes.md`
-   - **New theoretical framings or reframings:** like the 2026-04-14 "v4 is methodology application, not hand editing" correction → file name `dialogue-notes.md` or `session-notes.md` as fits
-   - **Any work whose reasoning the commit message can't fit in its 1000-character soft limit.** If your commit body is already 600+ characters and there's more you want to preserve, that's the signal to write session notes.
-
-   **Heuristic: if the session produced something a future overseer session would want to read after it auto-loads LANDSCAPE-MAP and METHODOLOGY-TIMELINE, write the session notes.** The commit message is the pointer-summary; the session notes file is the reasoning archive. Both should exist for substantive work.
-
-   **What the notes should contain** (regardless of which filename):
-   - What you proposed, attempted, or discovered
-   - Stan's pushback, refinements, or decisions
-   - The reasoning chain (the *why* matters more than the *what* — the commit captures the *what*)
-   - What was ultimately decided, applied, or retired
-   - Any load-bearing phrases Stan used verbatim — they may become prospectus language and need to be preserved exactly
-   - Cross-references to other workspace files (overseer-workspace briefings, sibling OVERSEER-DIRECTIONS updates, etc.) that this session affects or is affected by
-   - **Self-log of discipline failures Stan caught this session** — name each one, and if two or more share a common underlying failure mode (pattern-matching over diagnostic, over-claiming, imposing-vs-revealing, aesthetic reasoning), say so explicitly. This is how the next session avoids repeating the same class of mistake.
-   - **Any proposed rule, framing, or claim that was walked back** — with the reason. Logging withdrawals is anti-over-claim discipline and Phase-2 defensibility material.
-   - **Workflow use-count** — if a recurring workflow (scan + adversarial audit, cross-lens convergence, horde dispatch, verdict-render, etc.) was used 3+ times this session, note the count. Repeated use under different conditions = validation that the workflow generalizes.
-
-   **The GNT side executed this protocol correctly on first try** (2026-04-14 session 13 produced a three-thread `dialogue-notes.md`). Keep doing what you're already doing; this rule is the explicit codification of that practice.
-
-2. **Update `private/OVERSEER-DIRECTIONS.md`** per its documentation protocol:
-   - Transform any applied items from "Status: active" to "APPLIED [date] — commit [hash]" with a brief resolution note
-   - Add any new findings to the "push FROM HERE" section for cross-project porting
-   - Append a dated sync-log entry at the bottom summarizing: commit hashes, files touched, items closed, new items opened, anything surprising
-
-3. **Send Stan a wrap-up report message** before committing. Something like: "Session wrap-up. Commits landing: [hashes]. Files touched: [list]. Items closed: [list]. New items opened: [list]. Dialogue notes written at [path] covering [topic]. Anything unsurprising elsewhere that the overseer should also know?" 4-8 lines. The goal is to give the overseer a one-message summary that captures everything important without requiring it to read the full diff.
-
-4. **Then commit and stop.**
-
-**Why this matters:** Stan's standing complaint about trench Claudes is that they forget to document, hit compaction, and lose progress. The wrap-up report is the single most important thing you do in a session — it's the handoff to the next session (same Claude or different Claude, doesn't matter). If you only have time for one thing at end-of-session, it's the wrap-up report. Commits can wait five minutes; a compacted context cannot be recovered.
-
-### CONTEXT-AWARE SELF-DISCIPLINE — watch your own context usage
-
-Compaction is your equivalent of Stan saying "wrap it up" — but unlike Stan's verbal signal, compaction is gradual and doesn't announce itself. The cost of hitting compaction mid-operation is real: aggregation steps get lost, reasoning chains get truncated, in-flight batch state evaporates. **Don't let it get down to "oh crap we just lost something beautiful."**
-
-Apply these three thresholds to your own context meter and treat them as standing rules, not suggestions:
-
-**At ~50% context remaining — informal checkpoint.** Don't stop working, but do these things cheaply:
-- Save any in-flight batch state to a file (scanner output partial results, audit aggregations, anything you'd lose if compacted)
-- Commit any WIP code changes even if the work isn't complete — commits are cheap insurance, working memory is not
-- Add a dated entry to `private/OVERSEER-DIRECTIONS.md` sync log capturing "session so far" in one paragraph. If compaction happens unexpectedly after 50%, you've got a recoverable mid-session checkpoint.
-
-**At ~40% context remaining — defensive wrap-up, proactively.** This matches the overseer's own threshold. Treat the 40% mark as equivalent to Stan saying "let's wrap it up for now," even if he hasn't said it. Execute the full WRAP-UP REPORT protocol above (dialogue-notes if applicable, OVERSEER-DIRECTIONS update, wrap-up message, commits). Don't start new major operations after this point — only finish what's already in progress. **Tell Stan you've hit 40% and are wrapping up** so he can decide whether to continue in a fresh session or stop for the night.
-
-**At ~30% context remaining — hard stop.** If you're still working past 30%, you've already taken on too much risk. At this threshold: finish ONLY the wrap-up. Don't continue substantive work. Don't start any new operation even if it seems small. The runway between 30% and auto-compact is your margin for error — preserve it. Every minute past 30% is a minute closer to losing the wrap-up itself.
-
-**Why these thresholds are conservative for trench Claudes:** execution work (corpus-wide scans, adversarial audits, merge applications, file reorganizations, stylometry runs) has more in-flight state than pure synthesis. A single compaction during an aggregation step can lose hours of work if the intermediate results only exist in working memory. The cost of triggering a checkpoint too early is low (you write some files and continue); the cost of triggering too late is "oh crap we just lost something beautiful" — Stan's phrasing, and the thing these thresholds are designed to prevent.
-
-**When in doubt, write it down.** Files survive compaction; working memory does not. This is the same discipline the overseer applies to itself.
-
-### Why BOTH bookends + context discipline matter
-
-Check-in without wrap-up = you start oriented but leave nothing for the next session.
-Wrap-up without check-in = you document cleanly but start from "what Stan just said" instead of "the full accumulated state."
-Bookends without context discipline = you're great at planned wrap-ups but lose sessions when compaction sneaks up.
-**All three together = the overseer has full and robust visibility, and compaction never costs you beautiful work.** Stan gets to work at the speed of direction-giving, not the speed of context-watching-and-rescue.
-
-See `private/OVERSEER-DIRECTIONS.md` documentation protocol for additional details, including what counts as a "substantive methodology dialogue" worth capturing.
-
----
+Threshold discipline and compaction-resume rules live in the shared protocol (revised 2026-04-19 so execution-heavy work isn't interrupted at 40% — see the shared file for details).
 
 ---
 
@@ -188,29 +116,25 @@ Pipeline: `v4-editorial/*/ → eng-gloss/*/ → books/*.html`
 
 ---
 
-## Colometric Principles (Summary)
+## Colometric Principles (Orientation Only)
 
-The full methodology reference is pointed to from `private/OVERSEER-DIRECTIONS.md` (local only). Key points:
+**Authoritative canon:** `private/01-method/colometry-canon.md`. Fresh-read that file before any editorial or rule work — rules evolve fast and this summary drifts. The bullets below are orientation-at-load-time only, not rule reference.
 
-### Four Criteria
-1. **Atomic Thought:** each line = one complete thought unit
-2. **Single Image:** each line paints one image
-3. **Breath Unit:** each line = one natural breath for oral delivery
-4. **Source-Language Syntax:** grammar reveals structure — breaks are descriptive, not interpretive
+### Four Criteria (hierarchy)
+1. **Atomic Thought** (governs by default)
+2. **Single Image**
+3. **Breath Unit**
+4. **Source-Language Syntax**
 
-### Greek Break Points
-- Subordinate clauses: ἵνα, ὥστε, ὅτι, ὅταν, ὅτε, ἐάν, μήποτε
-- Discourse markers: ἀλλά, δέ (with contrast), γάρ
-- Speech introductions: ἔλεγεν αὐτοῖς· gets its own line
-- Parallel structures: stack vertically
-- μέν/δέ contrasts: stack as parallel lines
-- Participial phrases / genitive absolutes: frame their own line
+Collisions resolved via the "default + unless" mechanism (2026-04-16 reframe): criterion 1 wins by default; the four recognized structural justifications ("unless" cases) can override it when both cognitive and structural prongs are satisfied. See canon §1 for the current statement.
 
-### Rules
-- Never dangle conjunctions at line end
-- Never split verb from direct object on short phrases
-- All vocatives get their own line (universal rule — each is an atomic address act)
-- Line length is a signal, not a rule
+### Representative break points (non-exhaustive — canon is authoritative)
+- Subordinate clauses introduced by ἵνα, ὥστε, ὅτι, ὅταν
+- μέν/δέ antithetical stacks
+- Genitive absolutes (always own line)
+- Vocatives (universal rule — each is an atomic address act)
+
+Full break-point and merge-override inventory (R1–R29, M1–M4, the 11 governor classes for parallelism-consistency, and all worked examples) lives in `private/01-method/colometry-canon.md`. Do not rely on CLAUDE.md for rule lookups.
 
 ---
 
