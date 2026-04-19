@@ -2,9 +2,9 @@
 And the Pharisees and Sadducees came and testing him asked him to show them a sign from heaven.
 
 16:2
-And he answered
-and said to them:
-When evening comes you say:
+And he answered and said to them:
+When evening comes
+you say:
 Fair weather,
 for the sky is red.
 
@@ -92,10 +92,10 @@ that they should tell no one
 that he is the Christ.
 
 16:21
-From
-that time Jesus began to show his disciples
+From that time Jesus began to show his disciples
 that he must go to Jerusalem
-and suffer many things from the elders
+and suffer many things
+from the elders
 and chief priests
 and scribes
 and be killed
