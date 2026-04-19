@@ -139,7 +139,7 @@ Collisions resolved via the "default + unless" mechanism (2026-04-16 reframe): c
 - Genitive absolutes (always own line)
 - Vocatives (universal rule — each is an atomic address act)
 
-Full break-point and merge-override inventory (R1–R29, M1–M4, the 11 governor classes for parallelism-consistency, and all worked examples) lives in `private/01-method/colometry-canon.md`. Do not rely on CLAUDE.md for rule lookups.
+Full break-point and merge-override inventory (R1–R28 with six numbers retired 2026-04-18 — see §9 of canon, M1–M4, the 11 governor classes for parallelism-consistency, and all worked examples) lives in `private/01-method/colometry-canon.md`. Do not rely on CLAUDE.md for rule lookups.
 
 ---
 
