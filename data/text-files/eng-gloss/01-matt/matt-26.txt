@@ -81,10 +81,12 @@ And the disciples did as Jesus directed them,
 and they prepared the Passover.
 
 26:20
-And when evening came he reclined at table with the twelve disciples
+And
+when evening came he reclined at table with the twelve disciples
 
 26:21
-and as they were eating he said:
+and
+as they were eating he said:
 Truly I say to you
 that one of you will betray me.
 
@@ -231,10 +233,11 @@ Rise, let us go;
 the one who betrays me has drawn near.
 
 26:47
-And while he was still speaking Judas, one of the twelve, came
-and with him a large crowd
-with swords and clubs
-from the chief priests and elders of the people.
+And while he was still speaking Judas,
+one of the twelve,
+came and with him a large crowd with swords
+and clubs from the chief priests
+and elders of the people.
 
 26:48
 And the one betraying him gave them a sign saying:

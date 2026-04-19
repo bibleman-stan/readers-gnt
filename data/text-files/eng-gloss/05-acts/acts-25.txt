@@ -22,7 +22,8 @@ And after spending no more than eight or ten days among them,
 he went down to Caesarea, and the next day he took his seat on the judgment seat and ordered Paul to be brought.
 
 25:7
-And when he arrived, the Jews who had come down from Jerusalem stood around him,
+And when he arrived,
+the Jews who had come down from Jerusalem stood around him,
 bringing many serious charges against him
 which they were not able to prove,
 
@@ -58,8 +59,9 @@ To Caesar you have appealed;
 to Caesar you shall go.
 
 25:13
-And after some days had passed King Agrippa and Bernice
-arrived at Caesarea to pay their respects to Festus.
+And
+after some days had passed King Agrippa
+and Bernice arrived at Caesarea to pay their respects to Festus.
 
 25:14
 And as they were spending many days there,
@@ -106,7 +108,8 @@ Tomorrow, he said, you will hear him.
 So on the next day when Agrippa and Bernice came with great pomp
 and entered the audience hall with the tribunes
 and the prominent men of the city
-and at the command of Festus, Paul was brought in.
+and at the command of Festus,
+Paul was brought in.
 
 25:24
 And Festus said:
@@ -120,9 +123,10 @@ and since he himself appealed to the Emperor
 I decided to send him.
 
 25:26
-But I have nothing definite to write to my lord
-about him;
-therefore I have brought him before you all and especially before you, King Agrippa,
+But I have nothing definite to write to my lord about him;
+therefore I have brought him before you all
+and especially before you,
+King Agrippa,
 so that after this examination has taken place I may have something to write;
 
 25:27

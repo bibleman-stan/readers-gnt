@@ -27,7 +27,8 @@ and immediately they sprang up because the soil had no depth,
 
 13:6
 but when the sun rose they were scorched
-and because they had no root they withered away.
+and
+because they had no root they withered away.
 
 
 13:7
@@ -102,7 +103,8 @@ So listen to the parable of the sower.
 
 
 13:19
-When anyone hears the word of the kingdom and does not understand it, the evil one comes
+When anyone hears the word of the kingdom and does not understand it,
+the evil one comes
 and snatches away what was sown in his heart;
 this is the one sown along the path.
 
