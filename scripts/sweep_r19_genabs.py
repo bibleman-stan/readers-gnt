@@ -147,6 +147,16 @@ def split_endpoint(tokens, ptc_idx, subj_idx):
     TRAIL_LEMMAS = {"καί", "δέ", "ἀλλά", "γάρ", "οὖν", "τέ", "μέν"}
     while end > max(ptc_idx, subj_idx) and tokens[end][3] in TRAIL_LEMMAS:
         end -= 1
+    # Back off accusative endpoints immediately before the main-clause
+    # finite verb: these are typically main-clause predicates of an
+    # infinitive (ποταποὺς δεῖ ὑπάρχειν, 2 Pet 3:11), not arguments of
+    # the gen ptc. Objects of the gen ptc normally sit next to the ptc,
+    # not at the far end of the extension.
+    while (end > max(ptc_idx, subj_idx)
+           and len(tokens[end][2]) >= 5 and tokens[end][2][4] == "A"
+           and end + 1 < len(tokens)
+           and is_finite(tokens[end+1][1], tokens[end+1][2])):
+        end -= 1
     return end
 
 def word_positions(line_text):
@@ -187,11 +197,16 @@ def compute_split(line_text, verse_tokens_view):
     ptc_idx, subj_idx = ga
     # Adnominal-λέγοντος exclusion: pattern "[gen NP] λέγοντος· Quote"
     # where the gen NP is governed by a main-clause verb of perception
-    # (ἤκουσα τοῦ ζῴου λέγοντος· Ἔρχου). Signature: gen ptc's lemma is
-    # a speech verb AND the line contains ano teleia or colon (boundary
-    # between speech-intro frame and quoted content).
-    if tok_seq[ptc_idx][3] in ("λέγω", "φημί") and ("·" in line_text or ":" in line_text):
-        return None
+    # (ἤκουσα τοῦ ζῴου λέγοντος· Ἔρχου). Narrow signature: gen ptc's
+    # lemma is a speech verb AND the ptc's raw token in the line has an
+    # attached ano teleia or colon (the ptc directly precedes the
+    # speech-boundary marker, not · somewhere else on the line).
+    if tok_seq[ptc_idx][3] in ("λέγω", "φημί"):
+        raw_positions = word_positions(line_text)
+        if ptc_idx < len(raw_positions):
+            raw_ptc = raw_positions[ptc_idx][0]
+            if raw_ptc.endswith("·") or raw_ptc.endswith(":"):
+                return None
     # Line must have a finite verb that is NOT obviously subordinate.
     # A finite verb preceded within 2 positions by τί/τίς/ὅς/ὅπου/ὅταν/etc.
     # is inside an embedded clause (indirect question, relative), not
