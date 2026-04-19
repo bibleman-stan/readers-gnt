@@ -1,14 +1,14 @@
 1:1
-Paul,
-called as an apostle of Christ Jesus through the will of God,
+Paul, called as an apostle of Christ Jesus
+through the will of God,
 and Sosthenes our brother,
 
 1:2
-To the church of God that is sanctified in Christ Jesus,
-that is in Corinth, those called as saints,
-together with all those who in every place call upon the name
-of our Lord Jesus Christ,
-both their Lord and ours:
+To the church of God, those sanctified in Christ Jesus,
+that is in Corinth,
+called as saints,
+together with all those who call upon the name of our Lord Jesus Christ
+in every place, both their Lord and ours:
 
 1:3
 Grace to you and peace from God our Father and the Lord Jesus Christ.
@@ -58,8 +58,8 @@ Was Paul crucified for you?
 Or were you baptized in the name of Paul?
 
 1:14
-I
-thank God that I baptized none of you except Crispus and Gaius,
+I thank God
+that I baptized none of you except Crispus and Gaius,
 
 1:15
 so that no one may say
@@ -112,7 +112,7 @@ and the weakness of God is stronger than men.
 
 1:26
 For consider your calling, brothers,
-not many of you were wise according to the flesh,
+that not many of you were wise according to the flesh,
 not many were powerful,
 not many were of noble birth.
 
@@ -137,4 +137,3 @@ who became for us wisdom from God -- righteousness and sanctification and redemp
 1:31
 so that, as it is written,
 "Let the one who boasts, boast in the Lord."
-
