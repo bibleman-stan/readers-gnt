@@ -8,7 +8,7 @@ Read this file completely before doing anything in this repo. It is your orienta
 
 A colometric reading edition of the Greek New Testament. The text is reformatted from standard prose paragraphs into **sense-lines (cola)** — each line is a natural breath unit based on Greek grammatical structure, designed for oral delivery and comprehension.
 
-The colometric methodology draws on the scholarly tradition of Lee & Scott (sound mapping), Marschall (colometric analysis of Paul), and ancient manuscript practice.
+The colometric methodology draws on ancient manuscript precedent (Codex Bezae, Claromontanus, Jerome's Vulgate *per cola et commata*) and the modern precedent of Skousen's sense-line analysis of the Book of Mormon, empirically extended by Stan to the GNT. Foundational premise: humans think, compose, and read in sense-lines. Full canon: `private/01-method/colometry-canon.md`.
 
 - **Repo:** github.com/bibleman-stan/readers-gnt (public)
 - **Live site:** gnt-reader.com (GitHub Pages, custom domain, HTTPS enforced)
@@ -29,38 +29,59 @@ Before any substantive work, read the handoffs directory in order:
 | `handoffs/03-architecture.md` | Repo structure, scripts, web app, build pipeline, deployment |
 | `handoffs/04-editorial-workflow.md` | How text goes from raw source to finished reading edition |
 
-Also check `private/OVERSEER-DIRECTIONS.md` if present — local-only session directives (gitignored, Dropbox-backed). It carries active directives, the pointer to the full methodology canon, and a sync log. **Read it before starting substantive work, and update it before ending the session or committing — whichever comes first.** It contains its own documentation protocol; follow it. Session memory evaporates at compaction but that file survives, so treat it as the persistent write surface for anything the overseer needs to know about your session.
-
 ---
 
 ## Session bookend protocol
 
-Canonical shared source: [`overseer-workspace/SESSION-BOOKEND-PROTOCOL.md`](../overseer-workspace/SESSION-BOOKEND-PROTOCOL.md) — CHECK-IN, WRAP-UP, context thresholds, and compaction-resume protocol. **Read it at the start of every session.**
+The overseer apparatus was retired 2026-04-20. Stan is now the sole authority for this project. Session bookends produce artifacts in a per-session folder. Historical record: `private/OVERSEER-DIRECTIONS-retired-2026-04-20.md` (archived, not actively consulted).
 
-### GNT-specific CHECK-IN file list (structured as mandatory + consult-on-trigger per shared protocol)
+### Session folder convention
 
-**MANDATORY (read every wake — including short "hey wake up" signals):**
+Each session gets its own folder:
+
+`private/03-sessions/yyyy-mm-dd-brief_description/`
+
+The folder is the persistent write surface for the session. Session memory evaporates at compaction; the folder survives.
+
+### CHECK-IN (at session start)
+
+**MANDATORY (read every wake, including short "hey wake up" signals):**
 1. This CLAUDE.md in full
-2. `private/OVERSEER-DIRECTIONS.md` active-directives section (NOT the archive)
-3. `c:/Users/bibleman/repos/overseer-workspace/LANDSCAPE-MAP.md`
-4. `C:\vaults-nano\my_brain\00_Inbox\claude-brainstorming.md` — scope per shared protocol (GNT items only)
-5. `git log --oneline -10`
+2. The most recent `private/03-sessions/yyyy-mm-dd-*/session-notes.md` (for carry-forwards and prior-session context)
+3. `git log --oneline -10`
 
 **CONSULT-ON-TRIGGER (evaluate the trigger; do NOT silently skip):**
-- `c:/Users/bibleman/repos/overseer-workspace/METHODOLOGY-TIMELINE.md` — **trigger:** task touches scan outputs, canon entries, or methodology artifacts from a prior session that you need to verify. **Skip when:** pure new work with no prior-session artifact dependencies.
-- `c:/Users/bibleman/repos/overseer-workspace/OPEN-QUESTIONS.md` — **trigger:** Stan's request bears on a named open question OR you're about to propose something that might overlap an unresolved thread. **Skip when:** request is clearly scoped with no open-question overlap.
-- `private/01-method/colometry-canon.md` — **trigger:** ANY editorial decision, rule interpretation, or methodology-touching work. **Skip when:** pure infrastructure / code / UX / deployment work with no canon touching.
+- `private/01-method/colometry-canon.md` — **trigger:** ANY editorial, rule-interpretation, or methodology-touching work. **Skip when:** pure infrastructure / code / UX / deployment work with no canon touching.
+- `data/syntax-reference/greek-break-legality.md` — **trigger:** applying or authoring a rule that touches generic Koine break-legality (R2-R7 Layer 1). **Skip when:** purely editorial sense-line decisions within permitted syntax.
 - `private/README.md` — **trigger:** writing a new file under `private/` and don't already know the subdirectory layout. **Skip when:** only reading existing files or writing in standard locations.
 
-**Self-report is mandatory before your first substantive response** — see the shared protocol's SELF-REPORT section for the one-line-per-file format. A silent skip is a check-in failure.
+**Self-report before first substantive response**: one line per mandatory file (e.g., `- CLAUDE.md: read`). A silent skip is a check-in failure.
 
-### GNT-specific WRAP-UP additions (in addition to the shared protocol's generic wrap-up)
+### During the session
 
-Session notes go to `private/03-sessions/[YYYY-MM-DD]-[topic-slug]/session-notes.md` (or `dialogue-notes.md` for methodology dialogues). The "What the notes should contain" bullet list from the shared protocol applies in full — especially the three additions landed 2026-04-18 (self-log of discipline failures with common-mode grouping, withdrawn-proposal logging, workflow use-count).
+Log as things happen:
+- Discipline failures (with common-mode grouping when clusters form)
+- Withdrawn or discarded proposals (and why)
+- Workflow use-count running tally (agent dispatches, commits, memory changes, cascade runs)
 
-### Context-threshold and compaction-resume — see shared protocol
+These can be drafted into a running `session-notes.md` throughout the session or assembled at WRAP-UP.
 
-Threshold discipline and compaction-resume rules live in the shared protocol (revised 2026-04-19 so execution-heavy work isn't interrupted at 40% — see the shared file for details).
+### WRAP-UP (at session end, or when context crosses ~60%)
+
+Produce in the session folder:
+
+1. **`full-transcript.md`** — verbatim dialogue extraction from the session JSONL. Dispatch a Sonnet agent with the JSONL path (`C:/Users/bibleman/.claude/projects/c--Users-bibleman-repos-readers-gnt/<session-id>.jsonl`) to stream-process and write the transcript. Format: numbered turns alternating Stan/Claude, strip tool_use and tool_result, strip `<system-reminder>` blocks.
+2. **`session-notes.md`** — session arc, what landed (commits), discipline observations with common-mode grouping, withdrawn proposals, workflow use-count, carry-forwards for next session.
+3. **`dialogue-notes.md`** — produce only for methodology-heavy sessions where the DIALOGUE arc itself is the work (vs. executing a pre-specified task). Captures the reasoning path that led to a decision, not just the decision.
+4. **`review-lists/`** (subfolder) — only when the session produced candidate lists requiring Stan review (e.g., N sweep candidates from a validator run). One markdown file per list with decision checkboxes.
+
+### Context-threshold discipline
+
+- **Green zone (0-60%)**: execute normally.
+- **Yellow zone (60-80%)**: start drafting `session-notes.md` in the background; consider wrapping at natural breakpoints.
+- **Red zone (80%+)**: stop new execution, wrap up.
+
+Compaction-resume: still run the full CHECK-IN protocol when resuming from a compaction summary. Short-form "hey wake up" still requires the 3 mandatory reads.
 
 ---
 
