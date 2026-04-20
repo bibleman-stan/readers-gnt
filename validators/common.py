@@ -217,6 +217,26 @@ def strip_punctuation(text: str) -> str:
     return _PUNCT_RE.sub("", normalized)
 
 
+# Combining accent marks that are prosody-determined (not lexically distinctive).
+# U+0301 acute, U+0300 grave, U+0342 perispomeni/circumflex.
+# Breathing marks (U+0313 smooth, U+0314 rough) are intentionally kept —
+# they carry lexical weight (e.g. ἄγω vs ἅγιος).
+_ACCENT_MARKS = frozenset(["\u0301", "\u0300", "\u0342"])
+
+
+def _compare_normalize(text: str) -> str:
+    """Return a form suitable for token-identity comparison across accent variants.
+
+    NFD-decomposes the input, strips combining acute/grave/circumflex (which
+    Macula may add or rearrange due to enclitic sandhi), then NFC-recomposes.
+    Breathing marks are preserved.  Used only for matching; original surface
+    forms are stored in Token.word unchanged.
+    """
+    decomposed = unicodedata.normalize("NFD", text)
+    stripped = "".join(ch for ch in decomposed if ch not in _ACCENT_MARKS)
+    return unicodedata.normalize("NFC", stripped)
+
+
 # ─── v4-editorial loader ──────────────────────────────────────────────────────
 
 _VERSE_RE = re.compile(r"^(\d+):(\d+)$")
@@ -417,7 +437,7 @@ def map_tokens_to_lines(v4_chapter: V4Chapter, macula_chapter: dict) -> list[Tok
             if v4_pos >= len(v4_queue):
                 break
             v4_line_idx, v4_word_pos, v4_word = v4_queue[v4_pos]
-            if m_word == v4_word:
+            if _compare_normalize(m_word) == _compare_normalize(v4_word):
                 # Consume everything up to and including this match
                 v4_ptr = v4_pos + 1
                 vref = v4_verse_refs.get((v4_line_idx, v4_word_pos), "")
