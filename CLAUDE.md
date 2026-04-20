@@ -98,6 +98,20 @@ The SBLGNT source files in `data/text-files/sblgnt-source/` are canonical refere
 
 ---
 
+## Rule-Derivative vs. Ad-Hoc Changes
+
+Line-break changes come in two classes that require different gating.
+
+**Rule-derivative changes**: a line-break change that applies a codified MECHANICAL rule from the canon unambiguously. Example: R2 forbids line-final conjunction, a line ends on καί, the fix is a forced merge. **These do NOT require per-item Stan approval** — the canon's rule is the approval. Apply mechanically and report in the session's rollup summary.
+
+**Ad-hoc changes**: a line-break change that is not directly licensed by a codified rule, or that applies an EDITORIAL/FUZZY rule (Category B), or that touches an exegetical hot spot (Category C). **These DO require Stan approval** before application — present the proposed change with its rationale and wait for explicit greenlight.
+
+The distinction is important: gating rule-derivative changes on per-item approval treats the rule as advisory when it is mechanical, wastes context budget, and pushes the editor into a review queue rather than applying the validator's work queue. The canon's mechanical-rule-authority clause (§3 Autonomy Boundary) is the authoritative statement of this distinction.
+
+**Corollary**: when a validator produces bulk output (e.g., "73 STRONG-MERGE-CANDIDATEs from Rule 27 sweep"), the correct move is to apply all of them as rule-derivative, report the rollup, and commit. Walking Stan through 73 verse-level confirmations is exactly the failure this corollary exists to prevent.
+
+---
+
 ## Build Pipeline
 
 The cascade rule: **Greek edit → English regen → HTML rebuild**.
