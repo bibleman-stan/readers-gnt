@@ -369,6 +369,8 @@ These override conditions are extensible only by worked examples + adversarial v
 - If the two verbs are semantically synonymous, form a recognizable binomial idiom, or function as a hendiadys (single unified act expressed via two near-synonyms) → M1 wins → merge. Example: `Δαιμόνιον ἔχει καὶ μαίνεται·` (John 10:20) — one diagnostic judgment expressed via two complementary terms.
 - The test is structural (verb semantic class) not intuitive. If the two verbs belong to clearly different semantic domains, they are not a gorgianic pair even if only N=2 and formally marked.
 
+**Strict-application caveat — M1 rejection does not license split.** M1's "different semantic domains" tie-breaker *withdraws the gorgianic merge protection*; it does NOT by itself license a split. Before flipping to SPLIT, check whether another merge protection fires: M2 (verb-object bond), M3 (bare-governor), M4 (fragmented atomic thought), R11 (speech-intro / approach+touch), §3.7 Need/Response (Matt 25 class), §3.7 Imperative + Divine-Consequence (Luke 6:37 class), §3.7 Cause-Consequence Bonded Beat (John 6:49 class), and default-merge when grammar is ambiguous. Split only when ALL merge protections are exhausted AND both resulting fragments pass the atomic-thought test. Rationale: the canon's overall posture is merge-by-default; M1 is one of several merge levees, and its failure signals "check the others", not "proceed to split". *Codified 2026-04-21 after a round-2 adversarial pass on 318 KEEP_MERGED verdicts showed that strict-application drift (flipping on M1 failure alone) produces split-bias inconsistent with cross-corpus practice.*
+
 #### M2. Verb-Object Clause-Nucleus Bond
 
 **Definition:** A finite verb and its direct object (or obligatory complement) on short phrases stay on one line, even under split-trigger pressure. The clause nucleus is the minimal atomic predication and cannot be fragmented.
@@ -1329,6 +1331,25 @@ The "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" ex
 ## Section 10: Chronological Update Log
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-21 (later²) — M1 tie-breaker strict-application caveat
+
+Added as a paragraph appended to the M1 tie-breaker block in Section 2.
+"M1 rejection does not license split": when the different-domain tie-breaker
+fires and withdraws gorgianic protection, check the other merge levees (M2,
+M3, M4, R11, the three §3.7 bonded-beat patterns, default-merge) before
+flipping to split.
+
+Motivation: today's reverse-drift round-2 pass showed the John agent flipped
+6 items under strict M1 rejection, while the Synoptic agents saw structurally
+similar pairs and affirmed them. Cross-genre inconsistency traced to
+treating M1 failure as sufficient for split rather than as a signal to check
+other protections. Codifying this caveat prevents future adversarial passes
+from repeating the drift.
+
+No corpus edits.
 
 ---
 
