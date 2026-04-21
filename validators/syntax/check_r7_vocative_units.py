@@ -15,6 +15,24 @@ Edge case: one-token vocative (e.g. Σίμων in Σίμων Ἰωάννου whe
 genitive) — only one token is Voc, so no multi-word vocative unit exists in
 morphological terms.  R7 does not flag.  R18 / editorial judgment covers
 whether the genitive modifier should join the vocative on the same line.
+
+Stacked-parallel filter (canon §3.9):
+  When multiple consecutive vocative tokens ARE split across lines, R7 should
+  only fire if they form ONE indivisible vocative unit (head + appositive
+  modifier).  If they are stacked parallel vocatives — each with its own head
+  structure, addressing the same person separately — each deserves its own line
+  per canon §3.9 and R7 must NOT fire.
+
+  Heuristic A — attributive modifier on the vocative's line:
+    If any line in the run has attributive modifier tokens alongside its voc
+    (genitive complements like μου, ἐχιδνῶν; non-vocative adjectives), that
+    line is already a complete modified address phrase — the run is stacked.
+    Verbs, conjunctions, and other clause-continuation tokens do NOT count.
+
+  True multi-word unit signature (R7 fires):
+    Ἄνδρες Ἰσραηλῖται pattern: both voc tokens are bare (no attributive
+    modifiers on either line), together naming one referent as head + appositive.
+    Heuristic A does not fire, so R7 correctly flags the split.
 """
 
 from __future__ import annotations
@@ -28,6 +46,7 @@ from validators.common import (
     Candidate,
     Token,
     emit_candidate,
+    is_genitive_noun_or_pronoun,
     is_vocative,
     load_macula_chapter,
     load_morphgnt_book,
@@ -110,6 +129,80 @@ def _find_vocative_runs(annotated: list[tuple[Token, str, str]]) -> list[list[tu
     return runs
 
 
+def _has_attributive_modifier_on_line(
+    line_index: int, annotated: list[tuple[Token, str, str]]
+) -> bool:
+    """Return True if any token on `line_index` is a non-vocative ATTRIBUTIVE
+    MODIFIER alongside the vocative (e.g., genitive complement, possessive
+    pronoun, non-vocative adjective).
+
+    This is the signal that a line carries a complete modified address phrase
+    and is therefore one side of a stacked-parallel address structure.
+
+    We count as "attributive modifier":
+      - Any noun, adjective, or pronoun in GENITIVE case (genitive complement
+        or possessive, e.g., μου in ἀδελφοί μου)
+      - Any adjective in a non-vocative case that co-occurs on the line with
+        a vocative (non-vocative adjective as attributive modifier)
+
+    We do NOT count verbs, conjunctions, articles, particles, or other clause
+    continuation tokens — those appear after the vocative phrase ends and are
+    not part of its modifier structure.
+
+    Ignores unmapped tokens (line_index == -1).
+    """
+    for tok, pos, parsing in annotated:
+        if tok.line_index != line_index or tok.line_index == -1:
+            continue
+        if is_vocative(pos, parsing):
+            continue
+        # Genitive noun/pronoun/adjective on same line as voc = attributive modifier
+        if is_genitive_noun_or_pronoun(pos, parsing):
+            return True
+        # Non-vocative adjective (A-) on same line as voc = attributive modifier
+        if pos == "A-" and len(parsing) >= 5 and parsing[4] != "V":
+            return True
+    return False
+
+
+def _is_stacked_parallel(
+    run: list[tuple[Token, str, str]],
+    annotated: list[tuple[Token, str, str]],
+) -> bool:
+    """Return True if this multi-token vocative run is a stacked-parallel
+    address structure (canon §3.9) rather than one indivisible vocative unit.
+
+    A run is stacked-parallel when:
+      Heuristic A: any of the individual lines that contain vocative tokens from
+        the run also contain attributive modifier tokens on that same line
+        (genitive complements like μου, ἐχιδνῶν; non-vocative adjectives like
+        ἀγαπητοί in a non-vocative case).  Each such line is already a complete
+        modified address phrase, so the lines form stacked parallel addresses.
+
+    A true multi-word unit (Ἄνδρες Ἰσραηλῖται) has:
+      - Vocative tokens on different lines (the violation pattern)
+      - NO attributive modifier tokens on either of those lines
+      - The two vocative words together name one referent (head + appositive voc)
+      So Heuristic A does not fire and R7 correctly flags the split.
+    """
+    # Group the run's vocative tokens by line
+    lines_in_run: dict[int, list[tuple[Token, str, str]]] = {}
+    for item in run:
+        tok = item[0]
+        lines_in_run.setdefault(tok.line_index, []).append(item)
+
+    line_indices = list(lines_in_run.keys())
+
+    # Heuristic A: any line in the run carries attributive modifier tokens
+    # (genitive complements, possessive pronouns, non-vocative adjectives)
+    # alongside the vocative — signals the line is a complete modified address
+    for li in line_indices:
+        if _has_attributive_modifier_on_line(li, annotated):
+            return True
+
+    return False
+
+
 def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
     """Return Candidate objects flagging R7 violations in this chapter."""
     macula = load_macula_chapter(book, chapter)
@@ -148,10 +241,15 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
         annotated.append((tok, pos, parsing))
 
     # Find consecutive vocative runs and flag any that are split across lines.
+    # Skip runs that are stacked-parallel vocatives (canon §3.9 — each own line).
     candidates: List[Candidate] = []
     for run in _find_vocative_runs(annotated):
         line_indices = {t.line_index for t, _, _ in run}
         if len(line_indices) > 1:
+            if _is_stacked_parallel(run, annotated):
+                # Canon §3.9: stacked parallel vocatives each earn their own line.
+                # Not a violation — skip.
+                continue
             words = " ".join(strip_punctuation(t.word) for t, _, _ in run)
             first_tok = run[0][0]
             context = _build_context(v4, first_tok.line_index)

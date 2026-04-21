@@ -53,6 +53,16 @@ BOOKS: list[str] = [
     "1john", "2john", "3john", "jude", "revelation",
 ]
 
+# Sentence-terminal punctuation characters (Unicode-aware).
+# · = ano teleia U+0387; · = middle dot U+00B7 (sometimes used instead).
+_SENTENCE_TERMINAL: frozenset[str] = frozenset({".", ";", "\u0387", "\u00b7"})
+
+# Subordinating conjunctions whose appearance at the start of the NEXT line
+# confirms that the negation's scope is severed — genuine R4 pattern.
+_SCOPE_SUBORDINATORS: frozenset[str] = frozenset(
+    {"ὅτι", "ἵνα", "ὡς", "ὅπως", "εἰ", "ἐάν", "ὅταν", "διότι", "ὅτε", "ὁπόταν"}
+)
+
 
 def _is_negation(tok) -> bool:
     """Return True if token is a negation particle by lemma or surface form."""
@@ -62,16 +72,86 @@ def _is_negation(tok) -> bool:
     return (pos_match and lemma in NEG_LEMMAS) or surface in NEG_SURFACE_FORMS
 
 
+def _is_sentence_terminal(tok, line_text: str) -> bool:
+    """Filter A: negation followed by sentence-terminal punctuation.
+
+    If the raw word (before strip_punctuation) ends with `.`, `;`, or `·`
+    (ano teleia), the negation closes the sentence and its scope is already
+    complete on this line — NOT a violation.
+
+    Comma is excluded here; that ambiguous case is handled by Filter B.
+    """
+    raw = tok.word if hasattr(tok, "word") else ""
+    # Check the trailing characters of the raw token word.
+    stripped = raw.rstrip()
+    if stripped and stripped[-1] in _SENTENCE_TERMINAL:
+        return True
+    # Also scan the tail of the line text (catches space-separated punct).
+    tail = line_text.rstrip()
+    if tail and tail[-1] in _SENTENCE_TERMINAL:
+        return True
+    return False
+
+
+def _negation_scope_on_line(tok, line_tokens: list) -> bool:
+    """Filter B: negation has already attached to a finite verb on the same line.
+
+    If a finite verb (POS tag starting with 'V-') appears earlier on the same
+    line than the negation particle, the negation most likely scopes over that
+    verb adverbially (e.g. οὐκέτι, μηκέτι at sentence end).  NOT a violation.
+
+    'Earlier' = position_in_line strictly less than the negation's position.
+
+    Fallback: when Macula POS tags are absent (empty string), use surface-form
+    heuristics — Greek finite verbs commonly end in verbal personal endings.
+    This is imprecise but sufficient to catch the clear adverbial-negation case
+    (e.g. 'ἀγοράζει οὐκέτι' in Rev 18:11 where POS is unavailable).
+    """
+    # Common Greek finite-verb surface endings (present/impf/aor/fut active/mid/pass).
+    _VERB_ENDINGS = (
+        "ει", "εις", "ουσιν", "ουσι", "ομεν", "ετε", "ατε", "ουν",
+        "ει", "σιν", "ασιν", "αμεν", "ντες", "ωσιν", "ησιν",
+        "ατο", "οντο", "εσθε", "εται", "ονται",
+    )
+    neg_pos = tok.position_in_line
+    for t in line_tokens:
+        if t.line_index != tok.line_index:
+            continue
+        if t.position_in_line >= neg_pos:
+            continue
+        pos_tag = t.pos if hasattr(t, "pos") else ""
+        if pos_tag.startswith("V-"):
+            return True
+        # Fallback: surface-form ending heuristic when POS unavailable.
+        if not pos_tag:
+            surface = strip_punctuation(t.word) if hasattr(t, "word") else ""
+            if any(surface.endswith(ending) for ending in _VERB_ENDINGS):
+                return True
+    return False
+
+
+def _next_line_is_negation_scope(next_line) -> bool:
+    """Filter C: next line opens with a subordinating conjunction.
+
+    These conjunctions introduce the clause that is the negation's scope target.
+    Their presence strongly confirms the line-break severs negation from scope.
+    """
+    first_token = next_line.text.split()[0] if next_line.text.strip() else ""
+    return strip_punctuation(first_token) in _SCOPE_SUBORDINATORS
+
+
 def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
     """Return Candidate objects flagging R4 violations in this chapter."""
     macula = load_macula_chapter(book, chapter)
     v4 = load_v4_editorial(book, chapter)
     tokens = map_tokens_to_lines(v4, macula)
 
-    # Count tokens per line.
+    # Count tokens per line and bucket tokens by line index.
     line_token_count: dict[int, int] = {}
+    line_tokens_map: dict[int, list] = {}
     for tok in tokens:
         line_token_count[tok.line_index] = line_token_count.get(tok.line_index, 0) + 1
+        line_tokens_map.setdefault(tok.line_index, []).append(tok)
 
     candidates: List[Candidate] = []
 
@@ -82,25 +162,46 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
         if line_len == 1:
             continue
 
-        # Violation: negation is last token of a multi-token line.
-        if tok.position_in_line == line_len - 1 and _is_negation(tok):
-            surface = strip_punctuation(tok.word) if hasattr(tok, "word") else tok.lemma
-            context = _build_context(v4, tok.line_index)
-            candidates.append(
-                emit_candidate(
-                    verse_ref=tok.verse_ref,
-                    line_index=tok.line_index,
-                    line_text=v4.lines[tok.line_index].text,
-                    rule=RULE_ID,
-                    tag="STRONG-MERGE",
-                    error_class=ERROR_CLASS,
-                    rationale=(
-                        f"Line ends on negation particle '{surface}'; "
-                        "separated from its scope"
-                    ),
-                    context=context,
-                )
+        # Only consider negation particles that are the last token of the line.
+        if not (tok.position_in_line == line_len - 1 and _is_negation(tok)):
+            continue
+
+        line_text = v4.lines[tok.line_index].text
+
+        # Filter A: sentence-terminal punctuation — negation closes the clause.
+        if _is_sentence_terminal(tok, line_text):
+            continue
+
+        # Filter B: finite verb already on this line — negation scopes locally.
+        same_line_tokens = line_tokens_map.get(tok.line_index, [])
+        if _negation_scope_on_line(tok, same_line_tokens):
+            continue
+
+        # Filter C: check next line for scope subordinator.
+        next_line_obj = (
+            v4.lines[tok.line_index + 1]
+            if tok.line_index + 1 < len(v4.lines)
+            else None
+        )
+        tag = "STRONG-MERGE" if (next_line_obj and _next_line_is_negation_scope(next_line_obj)) else "REVIEW-REQUIRED"
+
+        surface = strip_punctuation(tok.word) if hasattr(tok, "word") else tok.lemma
+        context = _build_context(v4, tok.line_index)
+        candidates.append(
+            emit_candidate(
+                verse_ref=tok.verse_ref,
+                line_index=tok.line_index,
+                line_text=line_text,
+                rule=RULE_ID,
+                tag=tag,
+                error_class=ERROR_CLASS,
+                rationale=(
+                    f"Line ends on negation particle '{surface}'; "
+                    "separated from its scope"
+                ),
+                context=context,
             )
+        )
 
     return candidates
 

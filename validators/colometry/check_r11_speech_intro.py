@@ -106,6 +106,59 @@ def _is_imperative(pos: str, parsing: str) -> bool:
     return pos.startswith("V") and len(parsing) >= 4 and parsing[3] == "D"
 
 
+# ─── FP-filter helpers ────────────────────────────────────────────────────────
+
+#: Negation particles that precede a verb to negate the speech act.
+_NEGATIONS: frozenset[str] = frozenset({"οὐ", "οὐκ", "οὐχ", "μή", "οὐδέ", "μηδέ"})
+
+#: Divine-authority nouns whose presence signals OT-attribution context.
+_DIVINE_NOUNS: frozenset[str] = frozenset({"κύριος", "θεός", "πνεῦμα"})
+
+
+def _has_preceding_negation(token_index: int, line_tokens: list) -> bool:
+    """Return True if the token immediately before token_index is a negation particle.
+
+    Class A filter: a speech verb preceded by οὐ/οὐκ/οὐχ/μή/οὐδέ/μηδέ is
+    describing the NON-occurrence of speech (e.g. οὐκ ἀπεκρίνατο οὐδέν).
+    R11 does not apply — no speech content is being introduced.
+    """
+    if token_index == 0:
+        return False
+    prev_word = line_tokens[token_index - 1][0]  # cleaned surface form
+    prev_lemma = line_tokens[token_index - 1][3]  # lemma
+    return prev_word in _NEGATIONS or prev_lemma in _NEGATIONS
+
+
+def _is_ot_attribution(verb_index: int, line_tokens: list) -> bool:
+    """Return True if this speech verb looks like an OT-attribution tag, not a speech-intro.
+
+    Class B filter heuristic:
+    - Verb is 3rd-person singular (the attribution-use form).
+    - A divine-authority noun (κύριος / θεός / πνεῦμα) appears anywhere on the same line
+      in nominative or genitive case (NOM case = '-N-----'; GEN = '-G-----' in MorphGNT).
+    - The verb is NOT the first word on the line (attribution tags appear mid- or post-content).
+
+    When matched, the validator should downgrade to REVIEW-REQUIRED rather than STRONG-SPLIT,
+    because some first-occurrence speech verbs + κύριος are genuine (e.g. λέγει κύριος opening
+    a new oracle).  Human review resolves the ambiguity.
+    """
+    _word, pos, parsing, _lemma = line_tokens[verb_index]
+    # Must be 3rd-person singular indicative
+    if not (pos.startswith("V") and len(parsing) >= 4
+            and parsing[0] == "3" and parsing[3] == "I"):
+        return False
+    # Check whether it is not the first token (attribution appears after content)
+    if verb_index == 0:
+        return False
+    # Look for divine-authority noun in NOM or GEN anywhere on the line.
+    # MorphGNT noun parsing format: --------  positions 0-7
+    # position 4 = case (N=nominative, G=genitive, D=dative, A=accusative, V=vocative)
+    for word, npos, nparsing, nlemma in line_tokens:
+        if nlemma in _DIVINE_NOUNS and npos == "N-" and len(nparsing) >= 5 and nparsing[4] in "NG":
+            return True
+    return False
+
+
 # ─── Line helpers ─────────────────────────────────────────────────────────────
 
 def _ends_with_speech_boundary(line: str) -> bool:
@@ -156,8 +209,18 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
             continue
 
         lt = _bind_line(vline.text, verse_tokens)
-        speech_verbs = [(w, l) for w, pos, p, l in lt if _is_finite_speech_verb(pos, p, l)]
-        if not speech_verbs:
+        speech_verb_indices = [
+            i for i, (w, pos, p, l) in enumerate(lt) if _is_finite_speech_verb(pos, p, l)
+        ]
+        if not speech_verb_indices:
+            continue
+        speech_verbs = [(lt[i][0], lt[i][3]) for i in speech_verb_indices]
+
+        # ── Class A filter: negated non-answer verbs ──────────────────────────
+        # If ALL speech verbs on this line are immediately preceded by a negation
+        # particle, the line describes the non-occurrence of speech (e.g.
+        # οὐκ ἀπεκρίνατο οὐδέν in Mark 14:61). No speech is being introduced.
+        if all(_has_preceding_negation(i, lt) for i in speech_verb_indices):
             continue
 
         # Exclusion 1: line ends on speech boundary — frame is properly closed.
@@ -177,15 +240,31 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
         if not (other_fins or imperatives):
             continue
 
-        # Classify: leaked imperative or finite verb = STRONG-SPLIT.
+        # ── Class B filter: OT-attribution tags ──────────────────────────────
+        # If any speech verb matches the OT-attribution heuristic (3rd sg + divine
+        # noun on same line, verb not line-initial), downgrade to REVIEW-REQUIRED.
+        # λέγει κύριος / φησίν [κύριος] mid-quotation are attribution, not intros.
+        is_ot_attr = any(_is_ot_attribution(i, lt) for i in speech_verb_indices)
+
+        # Classify: leaked imperative or finite verb = STRONG-SPLIT (or REVIEW-REQUIRED).
         leaked = other_fins + imperatives
         kind = "imperative(s)" if imperatives else "finite verb(s)"
-        tag = "STRONG-SPLIT"
-        rationale = (
-            f"R11: speech-intro line has leaked {kind} "
-            f"{[w+'('+l+')' for w,l in leaked]}; "
-            f"intro verbs: {[w+'('+l+')' for w,l in speech_verbs]}"
-        )
+        if is_ot_attr:
+            tag = "REVIEW-REQUIRED"
+            rationale = (
+                f"R11: speech-intro line has leaked {kind} "
+                f"{[w+'('+l+')' for w,l in leaked]}; "
+                f"intro verbs: {[w+'('+l+')' for w,l in speech_verbs]} "
+                f"[downgraded: possible OT-attribution tag (λέγει κύριος / φησίν), "
+                f"needs human review]"
+            )
+        else:
+            tag = "STRONG-SPLIT"
+            rationale = (
+                f"R11: speech-intro line has leaked {kind} "
+                f"{[w+'('+l+')' for w,l in leaked]}; "
+                f"intro verbs: {[w+'('+l+')' for w,l in speech_verbs]}"
+            )
 
         context = _build_context(v4.lines, vline.line_index)
         candidates.append(emit_candidate(
