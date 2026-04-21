@@ -653,6 +653,34 @@ Rationale: parenthetical attribution is a prose convention, not a new speech eve
 
 Contrast with R11 genuine violations: a speech-intro that OPENS new speech appears at line-start, immediately followed by an ano teleia (`·`) or colon, then the quoted content on the NEXT line. If the speech verb is mid-line between quoted content, it is NOT a new speech-intro — it is parenthetical attribution.
 
+### Amen-formula speech-intro (own line, content breaks next)
+
+The solemnity-prefixed speech-intro formula **ἀμήν (ἀμήν) λέγω σοι / ὑμῖν** ("truly [truly] I say to you / [to thee]") is an atomic formulaic unit that gets its own line. The content of the saying breaks to the next line.
+
+**Canonical form (single or doubled amen):**
+```
+ἀμὴν λέγω ὑμῖν,
+<content of saying>...
+```
+```
+ἀμὴν ἀμὴν λέγω σοι·
+<content of saying>...
+```
+
+**Applied 15 times corpus-wide** (commit c51faf8, 2026-04). Matthew/Mark/Luke use single amen; John uses doubled amen. Both forms follow the same structural convention.
+
+**Diagnostic:**
+- Line starts with `ἀμήν` (or `ἀμήν ἀμήν`) + `λέγω` + pronoun (σοι / ὑμῖν / etc.)
+- Ends with ano teleia, colon, or comma — then the content follows on the next line
+
+**Why this is not a generic R11 case:** R11 says speech-intro verbs stand alone, but a bare `λέγω ὑμῖν` can merge under some contexts (speech-frame aggregation, parenthetical attribution). The amen-prefix makes this formula structurally unambiguous: the solemnity marker + speech-intro verb + addressee is a complete formulaic unit. Applying R11 without the amen-prefix recognition can leave the formula mid-line-joined with its content.
+
+**Exception: repeated-vocative address `Κύριε κύριε`** (Matt 7:21-22, Luke 6:46) stays merged as a single speech act per §3.9 (repeated vocatives as rhetorical unit). Not governed by this rule.
+
+**Test contrasts:**
+- `ἀμὴν λέγω ὑμῖν, ...` — formula + content → two lines ✓
+- `Κύριε κύριε, οὐ τῷ σῷ ὀνόματι ...` — repeated vocative → one line per §3.9 ✗ (not this rule)
+
 ### 3.7 Parallel Structures and Stacking
 
 **Parallel stacking rule.** When the author builds parallel structures, stack them vertically to make the rhetoric visible:
@@ -949,6 +977,20 @@ The speech-intro `κηρύσσων ... καὶ λέγων·` is one atomic thoug
 ## Section 4: Operational Tests
 
 These are the instruments trench Claudes actually run during editorial work.
+
+### Post-Split Function-Word Recheck (mandatory after any split pass)
+
+**After any mass-split pass (R8, R12, R18, R19, or any rule that produces new line breaks), re-run the dangling-function-word check before committing.** A split can strand preposition-object, article-noun, or negation-verb pairs on either side of the new break. The recheck catches these.
+
+**Why it's mandatory:** every new line break is a potential function-word orphan. The canon's "never split" list (article+noun, preposition+object, negation+verb, noun+genitive modifier, noun+possessive pronoun — see Layer 1 `data/syntax-reference/greek-break-legality.md`) is a forbidden-break set; a split pass can accidentally produce forbidden breaks if the scanner isn't perfectly tuned. The recheck is the safety net.
+
+**Gold-standard regression-test chapters:**
+1. **Mark 4** — parable density, nested subordination, gorgianic pairs
+2. **Rom 2:12-13** — Paul's densely-packed νόμος argumentation; prepositional-phrase gauntlets
+3. **Acts 1:1-4** — Lukan complex-participial opening; "while being assembled with them he commanded them not to depart from Jerusalem but to wait for the promise of the Father..."
+4. **Heb 1:3** — triadic participle chain with aspect shifts (the §3.16 showcase)
+
+**After any pipeline change (regen logic, scanner rewrite, validator update), manually diff these four chapters' v4 + eng-gloss before and after. If any of the four breaks, the pipeline change is suspect.**
 
 ### The No-Anchor Test (Default Case of Criterion 1)
 
@@ -1374,6 +1416,28 @@ The "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" ex
 ## Section 10: Chronological Update Log
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-22 (later) — Tier 1 sweep codifications (2 canon + 4 memory)
+
+Triggered by Stan's concern that other established conventions may be hiding
+undocumented. Four parallel sweeps (handoffs / session-notes / git-log /
+retired-docs) identified ~25 items across 5 tiers. Tier 1 items (prevent
+future misapplication) applied:
+
+- **Canon §3.6 Amen-formula subsection** — ἀμήν [ἀμήν] λέγω σοι/ὑμῖν
+  gets its own line; content breaks to next line. Applied to 15 corpus
+  instances in commit c51faf8 (2026-04) but never codified. A future
+  adversarial sweep could have re-jammed.
+- **Canon §4 Post-Split Function-Word Recheck** — mandatory after any
+  mass-split pass; Mark 4 / Rom 2:12-13 / Acts 1:1-4 / Heb 1:3 as gold-
+  standard regression-test chapters for pipeline changes.
+- Memory installs (not committed — outside git):
+  `feedback_regen_force_destructive.md`, `feedback_two_phase_pipeline.md`,
+  `feedback_two_check_cascade.md`, `project_known_gloss_drift.md`.
+
+Tiers 2-5 pending Stan triage.
 
 ---
 
