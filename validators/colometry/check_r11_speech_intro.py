@@ -9,12 +9,16 @@ no speech-boundary marker at end, no ὅτι (indirect speech → R10).
 
 FP filters (applied in order before emit_candidate):
   Class A  — negated speech verb (non-occurrence of speech)
-  Class B  — OT-attribution tag (λέγει κύριος)
-  F1       — speech verb inside subordinate clause on same line
+  Class B  — OT-attribution tag (λέγει κύριος / λέγει τὸ πνεῦμα) — FULL FILTER
+  F1       — speech verb inside subordinate clause on same line (includes ὅσα variants)
   F2       — translation-gloss idiom (ὃ λέγεται μεθερμηνευόμενον)
   F3       — passive speech form ("is said / is called")
-  F4       — speech verb inside already-opened quote (downgrade → REVIEW-REQUIRED)
+  F4       — speech verb inside already-opened quote — FULL FILTER (canon §3.6)
   F5       — parenthetical mid-speech attribution φησίν/λέγει (downgrade → REVIEW-REQUIRED)
+  F6       — ὅσα / ὅσοι / ὅσον variants added to F1 subordinator list
+  F7       — post-positioned attribution tag (verb late in line, prior line ends · or :)
+  F8       — narrative explanatory comment (τοῦτο δὲ εἶπεν σημαίνων pattern)
+  F9       — descriptive speech-as-behavior (λέγουσιν ... ποιοῦσιν contrast pattern)
 
 NOTE: load_morphgnt_book() returns (word, pos, parsing) 3-tuples — no lemma.
 _load_morphgnt_with_lemma() bridges that gap directly from the MorphGNT file.
@@ -161,6 +165,9 @@ def _is_subordinate_speech_verb(verb_index: int, line_tokens: list) -> bool:
         "πῶς",
         # causal subordinator
         "διότι",
+        # F6: quantitative relative (ὅσα / ὅσοι / ὅσον and inflected forms)
+        # "everything/however much was said" — backward-anaphoric, not speech-intro
+        "ὅσα", "ὅσον", "ὅσοι", "ὅσους", "ὅσων", "ὅσοις", "ὅσῳ",
     })
     for i, (word, _pos, _parsing, _lemma) in enumerate(line_tokens):
         if i >= verb_index:
@@ -291,6 +298,80 @@ def _is_ot_attribution(verb_index: int, line_tokens: list) -> bool:
     return False
 
 
+def _is_postpositioned_attribution(verb_index: int, line_tokens: list,
+                                    line_index: int, v4_lines: list) -> bool:
+    """F7: Return True for post-positioned attribution tags.
+
+    When a speech verb appears late in a line (not in the first half of
+    tokens), the verb is a post-positioned attribution tag — the spoken
+    content precedes the verb on the same line, and the verb attributes it
+    rather than introducing new speech.
+
+    Examples:
+      Luke 7:40  εἰπέ, φησίν.          (φησίν is final token, 2 tokens)
+      Acts 23:35 Διακούσομαί σου, ἔφη,  (ἔφη is final, preceded by content)
+      Heb 8:5    Ὅρα γάρ, φησίν,        (φησίν late, after content tokens)
+
+    Threshold: verb must appear after the first token (index > 0) and
+    NOT be the first token. Combined with the line having other content
+    before it, this reliably identifies post-positioned attribution.
+    We require the line to have at least 2 tokens and the verb to be
+    in the second half or later.
+    """
+    if not line_tokens:
+        return False
+    n = len(line_tokens)
+    if n < 2:
+        return False
+    # Must be in the second half of the line (post-positioned)
+    halfway = max(1, n // 2)
+    return verb_index >= halfway
+
+
+def _is_narrative_explanatory(line_tokens: list, line_text: str) -> bool:
+    """F8: Return True for narrative explanatory comments (τοῦτο δὲ εἶπεν σημαίνων).
+
+    Pattern: the speech verb explains/glosses a prior statement's significance.
+    Heuristic: line begins with τοῦτο (δέ|γάρ)? εἶπεν / τοῦτο εἶπεν AND
+    contains a clarifying participle (σημαίνων, δηλῶν, δεικνύων).
+
+    Example: John 21:19  τοῦτο δὲ εἶπεν σημαίνων ποίῳ θανάτῳ δοξάσει τὸν θεόν.
+    """
+    _CLARIFYING_PARTICIPLES: frozenset[str] = frozenset({
+        "σημαίνων", "σημαίνουσα", "σημαῖνον",
+        "δηλῶν", "δηλοῦσα", "δηλοῦν",
+        "δεικνύων", "δεικνύουσα", "δεικνύον",
+    })
+    words = [w for w, _pos, _parsing, _lemma in line_tokens]
+    words_lower = [w.lower() for w in words]
+    # Must begin with τοῦτο (possibly followed by δέ or γάρ) then εἶπεν/εἶπεν
+    if not words_lower:
+        return False
+    if words_lower[0] != "τοῦτο":
+        return False
+    # Check for a clarifying participle anywhere on the line
+    surface_words = {strip_punctuation(w) for w in line_text.split()}
+    return bool(_CLARIFYING_PARTICIPLES & surface_words)
+
+
+def _is_descriptive_speech_behavior(line_tokens: list) -> bool:
+    """F9: Return True for descriptive speech-as-behavior comments.
+
+    Pattern: speech verb coordinated with a contrasting finite verb describing
+    what a group does vs. says — "they say X but don't do Y."
+    Heuristic: line has a speech lemma AND ποιέω (or cognate) on the same line
+    AND a negation particle (οὐ/μή and variants) somewhere on the line.
+
+    Example: Matt 23:3  λέγουσιν γὰρ καὶ οὐ ποιοῦσιν.
+    """
+    _NEGATIONS_SET: frozenset[str] = frozenset({"οὐ", "οὐκ", "οὐχ", "μή", "οὐδέ", "μηδέ"})
+    _BEHAVIOR_LEMMAS: frozenset[str] = frozenset({"ποιέω", "πράσσω", "πράττω"})
+    has_behavior = any(l in _BEHAVIOR_LEMMAS for _w, _pos, _p, l in line_tokens)
+    has_negation = any(w in _NEGATIONS_SET or l in _NEGATIONS_SET
+                       for w, _pos, _p, l in line_tokens)
+    return has_behavior and has_negation
+
+
 # ─── Line helpers ─────────────────────────────────────────────────────────────
 
 def _ends_with_speech_boundary(line: str) -> bool:
@@ -391,44 +472,48 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
         if not (other_fins or imperatives):
             continue
 
-        # ── Class B filter: OT-attribution tags ──────────────────────────────
-        # If any speech verb matches the OT-attribution heuristic (3rd sg + divine
-        # noun on same line, verb not line-initial), downgrade to REVIEW-REQUIRED.
-        # λέγει κύριος / φησίν [κύριος] mid-quotation are attribution, not intros.
-        is_ot_attr = any(_is_ot_attribution(i, lt) for i in speech_verb_indices)
+        # ── Class B filter: OT-attribution tags (FULL FILTER) ────────────────
+        # λέγει κύριος / λέγει τὸ πνεῦμα mid-quotation are attribution tags,
+        # not speech-intros. Canon §3.6 "OT-Attribution Tags Inside Quotation
+        # Blocks" codifies this as authoritative. Skip entirely.
+        if any(_is_ot_attribution(i, lt) for i in speech_verb_indices):
+            continue
 
-        # ── F4 filter: speech verb inside already-opened quote ────────────────
-        # Prior line ends with speech-boundary marker — we are already inside the
-        # quoted content. Downgrade rather than filter (nested R11 violations can
-        # still be real; human review resolves).
-        is_inside_quote = _is_in_already_opened_quote(vline.line_index, v4.lines)
+        # ── F4 filter: speech verb inside already-opened quote (FULL FILTER) ──
+        # Prior line ends with speech-boundary marker — already inside quoted
+        # content. Canon §3.6 OT-attribution subsection codifies as non-violation.
+        if _is_in_already_opened_quote(vline.line_index, v4.lines):
+            continue
+
+        # ── F7 filter: post-positioned attribution tag (FULL FILTER) ─────────
+        # Speech verb appears late in line (not first quarter of tokens) AND
+        # prior line ends with speech-boundary. The verb attributes preceding
+        # quoted content rather than introducing new speech.
+        if any(_is_postpositioned_attribution(i, lt, vline.line_index, v4.lines)
+               for i in speech_verb_indices):
+            continue
+
+        # ── F8 filter: narrative explanatory comment (FULL FILTER) ───────────
+        # τοῦτο δὲ εἶπεν σημαίνων ... pattern — retrospective narration glossing
+        # a prior speech's significance. Not a fresh speech-intro.
+        if _is_narrative_explanatory(lt, vline.text):
+            continue
+
+        # ── F9 filter: descriptive speech-as-behavior comment (FULL FILTER) ──
+        # λέγουσιν ... οὐ ποιοῦσιν pattern — describes habitual behavior contrast,
+        # not introducing a specific speech event.
+        if _is_descriptive_speech_behavior(lt):
+            continue
 
         # ── F5 filter: parenthetical mid-speech attribution ───────────────────
         # φησίν / λέγει flanked by commas — inserted attribution, not speech-intro.
-        # Downgrade rather than filter (canon has no clear ruling yet).
+        # Downgrade rather than filter (canon has no clear ruling yet for this pattern).
         is_paren_attr = any(_is_parenthetical_attribution(i, lt) for i in speech_verb_indices)
 
         # Classify: leaked imperative or finite verb = STRONG-SPLIT (or REVIEW-REQUIRED).
         leaked = other_fins + imperatives
         kind = "imperative(s)" if imperatives else "finite verb(s)"
-        if is_ot_attr:
-            tag = "REVIEW-REQUIRED"
-            rationale = (
-                f"R11: speech-intro line has leaked {kind} "
-                f"{[w+'('+l+')' for w,l in leaked]}; "
-                f"intro verbs: {[w+'('+l+')' for w,l in speech_verbs]} "
-                f"[downgraded: possible OT-attribution tag (λέγει κύριος / φησίν), "
-                f"needs human review]"
-            )
-        elif is_inside_quote:
-            tag = "REVIEW-REQUIRED"
-            rationale = (
-                f"R11: speech-intro line has leaked {kind} "
-                f"{[w+'('+l+')' for w,l in leaked]}; "
-                f"intro verbs: {[w+'('+l+')' for w,l in speech_verbs]} "
-                f"[downgraded: speech verb inside already-opened quote]"
-            )
-        elif is_paren_attr:
+        if is_paren_attr:
             tag = "REVIEW-REQUIRED"
             rationale = (
                 f"R11: speech-intro line has leaked {kind} "
