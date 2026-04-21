@@ -705,6 +705,50 @@ Test: is the structural difference between parallel passages authorial (one uses
 
 This is a specific instance of the broader principle that **the text is authoritative over the methodology's aesthetic preferences.** Where the author chose asymmetry, we preserve it; where the editor imposed asymmetry, we normalize it. See also "The Complete Framework" (Section 2, step 4) for how R28 operates at the split-trigger level within the full decision procedure.
 
+### Need/Response Paired Beats — Stay Together
+
+When a passage pairs a stated condition with its corresponding response in the same clause (ἐπείνασα / καὶ ἐδώκατέ μοι φαγεῖν, "I was hungry / and you gave me to eat"), the pair stays on one line as a single "need-met" beat. Each pair is one rhetorical unit: need + response is indivisible.
+
+**Canonical cases** — Matt 25:35-36 (positive, fivefold) + Matt 25:42-43 (negative inversion):
+
+```
+ἐπείνασα γὰρ καὶ ἐδώκατέ μοι φαγεῖν,
+ἐδίψησα καὶ ἐποτίσατέ με,
+ξένος ἤμην καὶ συνηγάγετέ με,
+γυμνὸς καὶ περιεβάλετέ με,
+ἠσθένησα καὶ ἐπεσκέψασθέ με,
+```
+
+Each line is a need + response pair. Splitting the need from the response would produce dangling "I was hungry" fragments stripped of their meaning.
+
+**Diagnostic:**
+- Line contains a state/condition verb (ἐπείνασα, ἐδίψησα, ξένος ἤμην, γυμνός, ἠσθένησα, ἐν φυλακῇ ἤμην)
+- Followed by καί + response verb in 2p or 3p (ἐδώκατε, ἐποτίσατε, συνηγάγετε, περιεβάλετε, ἐπεσκέψασθε, ἤλθατε)
+- Pair stays merged under a shared "each need-met pair is one rhetorical beat" principle.
+
+**Relation to R12/R13:** R12's parallel-stacking trigger fires on the OUTER series (five beats stacked), not on the INNER pairs. Each beat stays intact; the series stacks beat-by-beat.
+
+### Imperative + Divine-Consequence — Stay Together
+
+An imperative followed by a divine-promise response (impersonal passive or 3p active — "and it will be given," "and you will find," "and God will give") is one unified petition/promise unit. The imperative and its promised divine response stay on one line.
+
+**Canonical cases:**
+- Luke 6:37 (×3): Μὴ κρίνετε καὶ οὐ μὴ κριθῆτε / μὴ καταδικάζετε καὶ οὐ μὴ καταδικασθῆτε / ἀπολύετε καὶ ἀπολυθήσεσθε
+- Luke 6:38: Δίδοτε, καὶ δοθήσεται ὑμῖν
+- Luke 10:28: τοῦτο ποίει καὶ ζήσῃ
+- Luke 11:9 (×3): αἰτεῖτε, καὶ δοθήσεται ὑμῖν / ζητεῖτε, καὶ εὑρήσετε / κρούετε, καὶ ἀνοιγήσεται ὑμῖν
+- Jas 4:8: ἐγγίσατε τῷ θεῷ, καὶ ἐγγιεῖ ὑμῖν
+- 1 John 5:16: αἰτήσει καὶ δώσει αὐτῷ ζωήν
+
+**Diagnostic:**
+- Line contains an imperative (any person/number) or a hortatory subjunctive
+- Followed by καί + 2p/3p verb that expresses divine response (passive for impersonal-divine agency, or 3p active with divine subject explicit or implicit)
+- Pair stays merged as one prayer/promise act.
+
+**Why not R12:** The imperative and the promised response are not two independent propositions — they are a coordinated petition/promise unit. The divine subject of the response is typically elided; splitting the imperative from its promise severs the single rhetorical gesture.
+
+**Related:** Compare with R11 synonymous-doublet imperatives (Mark 4:39 Σιώπα, πεφίμωσο) — another "stays merged despite καί-linkage" class. The M1 gorgianic-pair rule and these two patterns share the generating principle: **N=2 coordinate members with unified rhetorical force stay on one line**.
+
 ### 3.8 De-Contrast Overbreak
 
 (General discourse-marker treatment lives in R8's framing-devices table in §3.3 — γάρ, ἀλλά, πλήν, οὐδέ, μηδέ, etc. all lead their content per R8. §3.8 is reserved for the one discourse-marker pattern that needs its own diagnostic: the δέ pivot.)
@@ -1263,6 +1307,26 @@ The "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" ex
 ## Section 10: Chronological Update Log
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-21 — Canon codification: need/response + divine-consequence patterns
+
+Surfaced by today's triage of the 51 deferred reverse-drift candidates from
+2026-04-18. The triage found that 17 of 51 "split candidates" were actually
+instances of two recurring rhetorical patterns that the canon didn't name:
+
+1. **Need/Response class** (Matt 25 fivefold positive + inversion, 7 instances)
+2. **Divine-Consequence class** (Luke 6:37, 11:9, Jas 4:8, 1 John 5:16, etc., 10 instances)
+
+Both are "N=2 coordinate members with unified rhetorical force stay merged"
+patterns — same generating principle as M1 gorgianic-pair and R11 synonymous-
+doublet imperative. Added as §3.7 subsections with canonical cases, diagnostics,
+and relation to R12.
+
+No corpus edits (the 17 candidates were already correctly merged in v4-editorial;
+the scanner was over-flagging). This closes a canon gap revealed by the FP
+analysis.
 
 ---
 
