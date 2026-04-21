@@ -7,6 +7,15 @@ own line; quoted content begins on next line.
 Violation: line has 3rd-person indicative speech verb + another finite/imperative,
 no speech-boundary marker at end, no ὅτι (indirect speech → R10).
 
+FP filters (applied in order before emit_candidate):
+  Class A  — negated speech verb (non-occurrence of speech)
+  Class B  — OT-attribution tag (λέγει κύριος)
+  F1       — speech verb inside subordinate clause on same line
+  F2       — translation-gloss idiom (ὃ λέγεται μεθερμηνευόμενον)
+  F3       — passive speech form ("is said / is called")
+  F4       — speech verb inside already-opened quote (downgrade → REVIEW-REQUIRED)
+  F5       — parenthetical mid-speech attribution φησίν/λέγει (downgrade → REVIEW-REQUIRED)
+
 NOTE: load_morphgnt_book() returns (word, pos, parsing) 3-tuples — no lemma.
 _load_morphgnt_with_lemma() bridges that gap directly from the MorphGNT file.
 Once common.py exposes a lemma-aware loader this bridge can be removed.
@@ -129,6 +138,129 @@ def _has_preceding_negation(token_index: int, line_tokens: list) -> bool:
     return prev_word in _NEGATIONS or prev_lemma in _NEGATIONS
 
 
+def _is_subordinate_speech_verb(verb_index: int, line_tokens: list) -> bool:
+    """F1: Return True if a subordinator token precedes the speech verb on the same line.
+
+    Subordinators indicate the speech verb is inside an embedded/relative clause
+    and is NOT the main-clause predication that introduces speech.
+
+    Examples:
+      Mark 14:16  καθὼς εἶπεν αὐτοῖς  (καθὼς precedes εἶπεν)
+      John 13:24  οὗ λέγει             (οὗ precedes λέγει)
+      John 4:50   ὃν εἶπεν αὐτῷ       (ὃν precedes εἶπεν)
+    """
+    _SUBORDINATORS: frozenset[str] = frozenset({
+        # καθώς appears with both acute (lemma) and grave (surface) in MorphGNT
+        "καθώς", "καθὼς",
+        "ὡς",
+        # relative pronouns (various forms — grave accent used in running text)
+        "ὅ", "ὃ", "ὅν", "ὃν", "ὅς", "ὃς", "ἥ", "οὗ", "ὧν", "οἷς", "αἷς",
+        "ὅπου", "ὅθεν",
+        # interrogative / indirect-interrogative
+        "τίς", "τί", "τίνος", "τίνι", "τίνα",
+        "πῶς",
+        # causal subordinator
+        "διότι",
+    })
+    for i, (word, _pos, _parsing, _lemma) in enumerate(line_tokens):
+        if i >= verb_index:
+            break
+        if word in _SUBORDINATORS:
+            return True
+    return False
+
+
+def _is_translation_gloss(line_tokens: list) -> bool:
+    """F2: Return True for translation-gloss parentheticals.
+
+    Matches: ὃ λέγεται μεθερμηνευόμενον / ὃ ἑρμηνεύεται / ὃ ἐστιν μεθερμηνευόμενον.
+    These are annotation formulae, not speech-introductions.
+
+    Example: John 1:38  Ῥαββί (ὃ λέγεται μεθερμηνευόμενον Διδάσκαλε)
+    """
+    words = {w for w, _pos, _parsing, _lemma in line_tokens}
+    has_legetai = any(
+        l == "λέγω" and p.startswith("V") and len(pa) >= 4 and pa[2] == "P"
+        for w, p, pa, l in line_tokens
+    )
+    # Also catch by surface form — λέγεται may arrive with lemma λέγω + passive parsing
+    has_legetai_surface = "λέγεται" in words
+    has_gloss_word = bool(
+        {"μεθερμηνευόμενον", "ἑρμηνεύεται"} & words
+    )
+    return (has_legetai or has_legetai_surface) and has_gloss_word
+
+
+def _is_passive_speech(tok: tuple) -> bool:
+    """F3: Return True if the speech verb token has passive morphology.
+
+    MorphGNT parsing string position 2 (0-indexed) = voice: A=active, M=middle, P=passive.
+    Passive forms ("is said / is called / it is said") are impersonal and do not
+    introduce direct speech.
+
+    Example: Heb 7:13  λέγεται (V-3PPI-3S → voice slot = 'P')
+    """
+    _word, pos, parsing, _lemma = tok
+    if not pos.startswith("V") or len(parsing) < 3:
+        return False
+    return parsing[2] == "P"
+
+
+def _is_in_already_opened_quote(line_index: int, v4_lines: list) -> bool:
+    """F4: Return True if the previous colometric line ends with a speech-boundary marker.
+
+    When the prior line ends with · (ano teleia) or : (colon), it already opened a
+    quotation. The current line is inside that quote; a speech verb here is embedded,
+    not introducing new speech.
+
+    Returns False for line_index == 0 (no prior line).
+    """
+    if line_index == 0:
+        return False
+    # Walk back to find the immediately preceding non-empty line
+    for i in range(line_index - 1, -1, -1):
+        prev_text = v4_lines[i].text.rstrip()
+        if not prev_text:
+            continue
+        return (
+            prev_text.endswith(":")
+            or prev_text.endswith("·")
+            or prev_text.endswith("\u0387")  # GREEK ANO TELEIA (U+0387)
+            or prev_text.endswith("\u00B7")  # MIDDLE DOT (U+00B7)
+        )
+    return False
+
+
+def _is_parenthetical_attribution(verb_index: int, line_tokens: list) -> bool:
+    """F5: Return True for φησίν or λέγει flanked by commas — parenthetical attribution.
+
+    Pattern: content, φησίν, content  (or λέγει flanked by surrounding commas).
+    These are mid-speech parenthetical attributions ("he says"), not speech-intro openings.
+
+    Example: Matt 14:8  Δός μοι, φησίν, ὧδε ...
+    """
+    _PAREN_LEMMAS: frozenset[str] = frozenset({"φημί", "λέγω"})
+    word, pos, parsing, lemma = line_tokens[verb_index]
+    if lemma not in _PAREN_LEMMAS:
+        return False
+    # Check that raw surface form is preceded and followed by comma-attached tokens.
+    # Because strip_punctuation removes punctuation from stored words, we need to
+    # re-inspect the raw text. We approximate by checking verb_index has neighbours
+    # on both sides and the cleaned word matches a known parenthetical form.
+    _PAREN_SURFACES: frozenset[str] = frozenset({"φησίν", "λέγει"})
+    if word not in _PAREN_SURFACES:
+        return False
+    # Must not be first or last token (needs neighbours on both sides)
+    if verb_index == 0 or verb_index >= len(line_tokens) - 1:
+        return False
+    # Both neighbours should be non-speech content (not another speech verb).
+    prev_lemma = line_tokens[verb_index - 1][3]
+    next_lemma = line_tokens[verb_index + 1][3]
+    if prev_lemma in SPEECH_LEMMAS or next_lemma in SPEECH_LEMMAS:
+        return False
+    return True
+
+
 def _is_ot_attribution(verb_index: int, line_tokens: list) -> bool:
     """Return True if this speech verb looks like an OT-attribution tag, not a speech-intro.
 
@@ -223,6 +355,25 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
         if all(_has_preceding_negation(i, lt) for i in speech_verb_indices):
             continue
 
+        # ── F1 filter: subordinate-clause speech verb ─────────────────────────
+        # ALL speech verbs on the line are inside a subordinate clause (a
+        # subordinator token precedes each of them). The verb is embedded, not
+        # the main-clause speech-intro predication. Skip entirely.
+        if all(_is_subordinate_speech_verb(i, lt) for i in speech_verb_indices):
+            continue
+
+        # ── F2 filter: translation-gloss parenthetical ────────────────────────
+        # Pattern: ὃ λέγεται μεθερμηνευόμενον / ὃ ἑρμηνεύεται — annotation idiom,
+        # not a speech-introduction.
+        if _is_translation_gloss(lt):
+            continue
+
+        # ── F3 filter: passive speech forms ───────────────────────────────────
+        # ALL speech verbs on the line are passive voice ("is said / is called").
+        # Passive forms are impersonal and do not introduce direct speech.
+        if all(_is_passive_speech(lt[i]) for i in speech_verb_indices):
+            continue
+
         # Exclusion 1: line ends on speech boundary — frame is properly closed.
         if _ends_with_speech_boundary(vline.text):
             continue
@@ -246,6 +397,17 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
         # λέγει κύριος / φησίν [κύριος] mid-quotation are attribution, not intros.
         is_ot_attr = any(_is_ot_attribution(i, lt) for i in speech_verb_indices)
 
+        # ── F4 filter: speech verb inside already-opened quote ────────────────
+        # Prior line ends with speech-boundary marker — we are already inside the
+        # quoted content. Downgrade rather than filter (nested R11 violations can
+        # still be real; human review resolves).
+        is_inside_quote = _is_in_already_opened_quote(vline.line_index, v4.lines)
+
+        # ── F5 filter: parenthetical mid-speech attribution ───────────────────
+        # φησίν / λέγει flanked by commas — inserted attribution, not speech-intro.
+        # Downgrade rather than filter (canon has no clear ruling yet).
+        is_paren_attr = any(_is_parenthetical_attribution(i, lt) for i in speech_verb_indices)
+
         # Classify: leaked imperative or finite verb = STRONG-SPLIT (or REVIEW-REQUIRED).
         leaked = other_fins + imperatives
         kind = "imperative(s)" if imperatives else "finite verb(s)"
@@ -257,6 +419,22 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
                 f"intro verbs: {[w+'('+l+')' for w,l in speech_verbs]} "
                 f"[downgraded: possible OT-attribution tag (λέγει κύριος / φησίν), "
                 f"needs human review]"
+            )
+        elif is_inside_quote:
+            tag = "REVIEW-REQUIRED"
+            rationale = (
+                f"R11: speech-intro line has leaked {kind} "
+                f"{[w+'('+l+')' for w,l in leaked]}; "
+                f"intro verbs: {[w+'('+l+')' for w,l in speech_verbs]} "
+                f"[downgraded: speech verb inside already-opened quote]"
+            )
+        elif is_paren_attr:
+            tag = "REVIEW-REQUIRED"
+            rationale = (
+                f"R11: speech-intro line has leaked {kind} "
+                f"{[w+'('+l+')' for w,l in leaked]}; "
+                f"intro verbs: {[w+'('+l+')' for w,l in speech_verbs]} "
+                f"[downgraded: parenthetical mid-speech attribution]"
             )
         else:
             tag = "STRONG-SPLIT"
