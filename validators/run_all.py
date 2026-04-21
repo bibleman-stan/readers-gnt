@@ -32,10 +32,8 @@ BOOKS = [
     ("1john", 5), ("2john", 1), ("3john", 1), ("jude", 1), ("rev", 22),
 ]
 
-DEFAULT_OUTPUT = (
-    "private/03-sessions/2026-04-20-foundational-reframing-and-layer-1/"
-    "validator-report-initial-run.md"
-)
+# No default output path — callers must pass --output explicitly.
+# Prior versions hardcoded a session-specific folder which went stale.
 
 # ---------------------------------------------------------------------------
 # Dynamic validator discovery
@@ -109,21 +107,25 @@ def main(output_path=None, books_filter=None, validators_filter=None, verbose=Fa
                     rule = getattr(v, "RULE_ID", repr(v))
                     print(f"  ! {rule} on {book} {chapter} raised: {exc}", file=sys.stderr)
 
-    out = output_path or DEFAULT_OUTPUT
+    if output_path is None:
+        print(
+            "ERROR: --output PATH is required (no default output path).",
+            file=sys.stderr,
+        )
+        sys.exit(2)
 
-    # Ensure output directory exists
-    out_dir = os.path.dirname(out)
+    out_dir = os.path.dirname(output_path)
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
 
     write_candidates(
         all_candidates,
-        out,
+        output_path,
         title="Layer 2 Validator Suite — Initial Run",
     )
     print(
         f"Wrote {len(all_candidates)} candidates across {len(validators)} validator(s) "
-        f"({total_chapters} chapters checked) to {out}"
+        f"({total_chapters} chapters checked) to {output_path}"
     )
 
 
