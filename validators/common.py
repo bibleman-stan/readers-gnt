@@ -552,9 +552,27 @@ def is_vocative(pos: str, parsing: str) -> bool:
     return pos in ("N-", "A-", "RP", "RD") and len(parsing) >= 5 and parsing[4] == "V"
 
 
-def is_2p_pronoun(pos: str, parsing: str, lemma: str) -> bool:
-    """True if personal pronoun with lemma σύ (second-person)."""
-    return pos == "RP" and lemma == "σύ"
+_SECOND_PERSON_PRONOUN_SURFACES: frozenset = frozenset({
+    # 2p singular
+    "σύ", "σοῦ", "σου", "σοί", "σοι", "σέ", "σε",
+    # 2p plural
+    "ὑμεῖς", "ὑμῶν", "ὑμῖν", "ὑμᾶς",
+})
+
+
+def is_2p_pronoun(pos: str, parsing: str, lemma: str, surface: str = "") -> bool:
+    """True if personal pronoun referencing second person (σύ and case forms).
+
+    Uses lemma == "σύ" as the primary check (requires load_morphgnt_book_with_lemma).
+    Falls back to surface-form matching for robustness when lemma is absent.
+    Canon §3.9: object-appositive merge fires on any explicit 2p pronoun.
+    """
+    if pos == "RP" and lemma == "σύ":
+        return True
+    # Surface-form fallback: catches cases where lemma field is empty or mismatched.
+    if surface and strip_punctuation(surface) in _SECOND_PERSON_PRONOUN_SURFACES:
+        return True
+    return False
 
 
 def is_genitive_participle(pos: str, parsing: str) -> bool:

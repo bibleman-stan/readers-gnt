@@ -25,7 +25,7 @@ from validators.common import (
     Candidate,
     emit_candidate,
     iter_v4_chapters,
-    load_morphgnt_book,
+    load_morphgnt_book_with_lemma,
     parse_chapter_file,
     strip_punctuation,
     is_finite_verb,
@@ -64,7 +64,8 @@ _morph_cache: dict[str, dict] = {}
 
 def _get_morph(slug: str) -> dict:
     if slug not in _morph_cache:
-        _morph_cache[slug] = load_morphgnt_book(slug)
+        # Use the lemma-aware loader so is_2p_pronoun (lemma == "σύ") fires correctly.
+        _morph_cache[slug] = load_morphgnt_book_with_lemma(slug)
     return _morph_cache[slug]
 
 
@@ -94,7 +95,7 @@ def _classify_line(
                 twop_v.append((c, lemma))
             elif is_finite_verb(pos, p):
                 fins_non2p.append((c, lemma))
-            if is_2p_pronoun(pos, p, lemma):
+            if is_2p_pronoun(pos, p, lemma, surface=c):
                 twop_p.append((c, lemma))
 
     return vocs, fins_non2p, twop_v, twop_p
@@ -137,6 +138,10 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
     candidates: List[Candidate] = []
     global_line_index = 0  # track 0-based line index across the chapter
 
+    # Stacked-parallel-vocative tracking: True if the previous line's first
+    # token was a vocative (canon §3.9 boundary: τεκνία / πατέρες / νεανίσκοι).
+    prev_line_starts_with_voc: bool = False
+
     for verse in verses:
         ch_num = verse["ch"]
         vs_num = verse["vs"]
@@ -153,14 +158,22 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
 
         if not normalized_words:
             global_line_index += len(verse["lines"])
+            prev_line_starts_with_voc = False
             continue
 
         for line in verse["lines"]:
             vocs, fins, twop_v, twop_p = _classify_line(line, normalized_words)
 
+            # Check whether this line's first token is a vocative (for stacked-stack tracking).
+            line_first_token_is_voc = bool(vocs) and bool(line.split()) and \
+                strip_punctuation(line.split()[0]) in {w for w, _ in vocs}
+
             if vocs and fins and not twop_v and not twop_p:
-                # Check discourse-frame cluster guard before flagging
-                if not _has_discourse_frame_prefix(line, normalized_words):
+                # Guard 1: discourse-frame cluster (Loipon + vocative).
+                # Guard 2: stacked parallel vocatives — if prior line started with a
+                #           vocative, this line is part of an address stack; do not flag.
+                if (not _has_discourse_frame_prefix(line, normalized_words)
+                        and not prev_line_starts_with_voc):
                     voc_str = ", ".join(f"{w}({l})" for w, l in vocs)
                     fin_str = ", ".join(f"{w}({l})" for w, l in fins)
                     book_cap = book[0].upper() + book[1:]
@@ -182,6 +195,7 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
                         )
                     )
 
+            prev_line_starts_with_voc = line_first_token_is_voc
             global_line_index += 1
 
     return candidates
