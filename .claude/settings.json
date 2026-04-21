@@ -3,26 +3,14 @@
     "allow": [
       "WebFetch(domain:centerblc.github.io)",
       "WebFetch(domain:universaldependencies.org)",
-      "Read(//c/vaults-nano/**)",
       "WebFetch(domain:www.biblegateway.com)",
-      "Read(//c/Users/bibleman/Downloads/**)",
+      "WebFetch(domain:ntgreeketal.com)",
       "Bash(rm -f .git/index.lock)",
       "Bash(git add:*)",
-      "Bash(git commit -m ':*)",
-      "WebFetch(domain:ntgreeketal.com)",
-      "Read(//c/Users/bibleman/repos/readers-bofm/private/03-sessions/2026-04-19-three-layer-architecture/**)",
-      "Read(//c/Users/bibleman/Dropbox/bom-reader-private/03-sessions/2026-04-19-three-layer-architecture/**)",
-      "Read(//c/Users/bibleman/repos/readers-bofm/**)"
+      "Bash(git commit -m ':*)"
     ],
     "additionalDirectories": [
-      "C:\\Users\\bibleman\\.claude\\projects\\c--Users-bibleman-repos-readers-nt",
-      "c:\\Users\\bibleman\\repos\\readers-gnt\\.git",
-      "C:\\Users\\bibleman\\repos\\readers-gnt\\.git",
-      "C:\\Users\\bibleman\\.claude\\projects\\c--Users-bibleman-repos-readers-nt\\memory",
-      "c:\\Users\\bibleman\\repos\\readers-gnt\\private",
-      "C:\\Users\\bibleman\\Dropbox\\gnt-reader-private",
-      "c:\\Users\\bibleman\\repos\\overseer-workspace",
-      "C:\\Users\\bibleman\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\eflomal"
+      "c:\\Users\\bibleman\\repos\\rev-reader\\private"
     ]
   }
 }
