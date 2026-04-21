@@ -14,7 +14,7 @@ FP filters (applied in order before emit_candidate):
   F2       — translation-gloss idiom (ὃ λέγεται μεθερμηνευόμενον)
   F3       — passive speech form ("is said / is called")
   F4       — speech verb inside already-opened quote — FULL FILTER (canon §3.6)
-  F5       — parenthetical mid-speech attribution φησίν/λέγει (downgrade → REVIEW-REQUIRED)
+  F5       — parenthetical mid-speech attribution φησίν/λέγει (FULL FILTER per canon §3.6)
   F6       — ὅσα / ὅσοι / ὅσον variants added to F1 subordinator list
   F7       — post-positioned attribution tag (verb late in line, prior line ends · or :)
   F8       — narrative explanatory comment (τοῦτο δὲ εἶπεν σημαίνων pattern)
@@ -507,27 +507,19 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
 
         # ── F5 filter: parenthetical mid-speech attribution ───────────────────
         # φησίν / λέγει flanked by commas — inserted attribution, not speech-intro.
-        # Downgrade rather than filter (canon has no clear ruling yet for this pattern).
-        is_paren_attr = any(_is_parenthetical_attribution(i, lt) for i in speech_verb_indices)
+        # Canon §3.6 "Parenthetical Mid-Speech Attribution" codifies this as full filter.
+        if any(_is_parenthetical_attribution(i, lt) for i in speech_verb_indices):
+            continue  # F5: parenthetical mid-speech attribution — not a speech-intro per canon §3.6
 
-        # Classify: leaked imperative or finite verb = STRONG-SPLIT (or REVIEW-REQUIRED).
+        # Classify: leaked imperative or finite verb = STRONG-SPLIT.
         leaked = other_fins + imperatives
         kind = "imperative(s)" if imperatives else "finite verb(s)"
-        if is_paren_attr:
-            tag = "REVIEW-REQUIRED"
-            rationale = (
-                f"R11: speech-intro line has leaked {kind} "
-                f"{[w+'('+l+')' for w,l in leaked]}; "
-                f"intro verbs: {[w+'('+l+')' for w,l in speech_verbs]} "
-                f"[downgraded: parenthetical mid-speech attribution]"
-            )
-        else:
-            tag = "STRONG-SPLIT"
-            rationale = (
-                f"R11: speech-intro line has leaked {kind} "
-                f"{[w+'('+l+')' for w,l in leaked]}; "
-                f"intro verbs: {[w+'('+l+')' for w,l in speech_verbs]}"
-            )
+        tag = "STRONG-SPLIT"
+        rationale = (
+            f"R11: speech-intro line has leaked {kind} "
+            f"{[w+'('+l+')' for w,l in leaked]}; "
+            f"intro verbs: {[w+'('+l+')' for w,l in speech_verbs]}"
+        )
 
         context = _build_context(v4.lines, vline.line_index)
         candidates.append(emit_candidate(
