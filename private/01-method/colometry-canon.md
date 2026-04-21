@@ -901,6 +901,49 @@ Mark's paratactic short lines and Paul's periodic long lines both emerge from ap
 
 A strong signal that coordination is at work: **aspect or tense shift across members.** Heb 1:3 has a present participle (sustaining), an aorist participle (purifying), and a finite indicative (enthroning) — three actions at three temporal planes. This is coordination of events, not elaboration of one event. Split into a tri-colon.
 
+### 3.17 Cross-Verse Continuity Merge
+
+**When a single atomic thought crosses a Stephanus 1551 verse boundary, the sense-line stays intact.** The verse boundary is an editorial overlay (imposed 1551 on a text that already had its own rhetorical structure); it does not constrain sense-line formation. The sense-line is formed by grammatical/rhetorical continuity, and the versification is carried along by an inline superscript marker.
+
+**Canonical example — Matt 3:1-2:**
+
+```
+3:1
+Ἐν δὲ ταῖς ἡμέραις ἐκείναις παραγίνεται Ἰωάννης ὁ βαπτιστὴς
+κηρύσσων ἐν τῇ ἐρήμῳ τῆς Ἰουδαίας ²καὶ λέγων·
+
+3:2
+Μετανοεῖτε,
+```
+
+The speech-intro `κηρύσσων ... καὶ λέγων·` is one atomic thought (a preaching-speech-intro bond). SBLGNT places `καὶ λέγων·` at the start of 3:2. The sense-line rule keeps `κηρύσσων ... καὶ λέγων·` as one breath unit; the `²` superscript preserves the versification reference.
+
+**Procedure (per `handoffs/04-editorial-workflow.md`):**
+
+1. **Identify the boundary** — grammatical continuity indicator (participle chain, suspended main verb, subject/verb straddle, speech-intro straddle, discourse-adverb leading the next clause, etc.).
+2. **Merge in place** — the sense-line lives in the *earlier* verse's block (where its lead word sits), with the content that SBLGNT attributes to the later verse attached inline after a superscript digit (`²`/`³`/`⁴`/...) indicating where the later verse begins visually.
+3. **Mirror in English** — the same merge, the same superscript position.
+4. **Cite using the earlier verse's reference** when referring to the merged colometric line.
+
+**Both directions apply.** The Matt 3:1-2 case has SBLGNT pushing a word *forward* into the next verse (`καὶ λέγων·` is SBLGNT-3:2 but sense-line-3:1). The John 4:35-36 case has the opposite: SBLGNT assigns `ἤδη` to the end of 4:35, but R8 makes `ἤδη` the lead of the clause in 4:36 (`ἤδη ὁ θερίζων μισθὸν λαμβάνει`). Same convention applies — keep the sense-line intact (in the earlier verse's block, where `ἤδη` sits), mark the versification boundary with a `³⁶` superscript before the post-boundary content:
+
+```
+4:35
+...
+ὅτι λευκαί εἰσιν πρὸς θερισμόν·
+ἤδη ³⁶ὁ θερίζων μισθὸν λαμβάνει
+
+4:36
+καὶ συνάγει καρπὸν εἰς ζωὴν αἰώνιον,
+ἵνα ὁ σπείρων ὁμοῦ χαίρῃ καὶ ὁ θερίζων.
+```
+
+**Precedent:** This mirrors the Nestle-Aland typographic convention for inline verse numbering, ported down to the colometric-line level. NA28 renders `καὶ λέγων·` inline in its flowing Greek with a superscript `²` marking the verse-boundary; we follow the same surface convention and add the colometric justification.
+
+**Infrastructure:** `scripts/verify_word_order.py` recognizes these markers and splits a merged line at each superscript digit for per-verse word-order integrity comparison against SBLGNT. `scripts/build_books.py` renders superscripts as `<sup class="verse-marker">` HTML anchors so citation lookups still land at the exact inline location. A reader searching for "Matt 3:2" still finds `Μετανοεῖτε,` at the top of the 3:2 block; the superscript in 3:1's sense-line is an additional anchor for the mid-line boundary.
+
+**Why codify this in the canon?** Versification is not original. Sense-line formation is. When they collide, the rule is clear: sense-line wins, versification becomes a secondary annotation. This principle sits alongside "editorial punctuation is not original; hide in display" (see feedback_no_editorial_overlays_as_signal) and "don't let editorial overlays drive structural decisions" — the general posture of seeing past 1550s editorial conventions to the text's own structure.
+
 ---
 
 ## Section 4: Operational Tests
@@ -1331,6 +1374,26 @@ The "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" ex
 ## Section 10: Chronological Update Log
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-22 — Canon §3.17: Cross-Verse Continuity Merge codified
+
+The convention was already in practice (18 Greek + 18 English instances in
+the corpus) and documented in `handoffs/04-editorial-workflow.md` §"Cross-
+verse continuity" and `handoffs/03-architecture.md` §"Source format
+convention". Promoted to canon on 2026-04-22 after Stan flagged the gap
+(John 4:35 `ἤδη` decision was stuck on "do we move words across verse
+boundaries?" with no canon answer to point at).
+
+The rule: sense-lines follow grammatical/rhetorical structure; when they
+cross a Stephanus 1551 verse boundary, the sense-line stays intact in the
+earlier verse's block and an inline superscript (`²`/`³⁶`/`⁴`/...) carries
+the versification reference. Mirrors the Nestle-Aland typographic
+convention ported down to the colometric-line level.
+
+Applied same day: John 4:35/4:36 (`ἤδη` pattern — SBLGNT-back / R8-forward)
+and 1 Cor 14:5 (`μείζων` — within-verse R8 restructure, not cross-verse).
 
 ---
 
