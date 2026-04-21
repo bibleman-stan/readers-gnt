@@ -749,6 +749,28 @@ An imperative followed by a divine-promise response (impersonal passive or 3p ac
 
 **Related:** Compare with R11 synonymous-doublet imperatives (Mark 4:39 Σιώπα, πεφίμωσο) — another "stays merged despite καί-linkage" class. The M1 gorgianic-pair rule and these two patterns share the generating principle: **N=2 coordinate members with unified rhetorical force stay on one line**.
 
+### Cause-Consequence Bonded Beats — Stay Together
+
+An N=2 coordinate pair where member 2 is the direct causal consequence of member 1, AND the rhetorical/narrative *point* of mentioning member 1 IS member 2, stays merged as one bonded beat.
+
+**Canonical cases:**
+- John 6:49: `ἔφαγον... τὸ μάννα καὶ ἀπέθανον·` — "ate the manna and died." Remove "died" and the eating has no point in the manna/bread-of-life discourse.
+- John 10:12: `θεωρεῖ τὸν λύκον ἐρχόμενον καὶ ἀφίησιν τὰ πρόβατα` — "sees the wolf coming and abandons the sheep." Remove "abandons" and the seeing has no point as a cowardice-indictment.
+
+**Diagnostic — the removal test:**
+- Remove member 2. Does member 1 lose its reason for being mentioned in the discourse?
+- If yes, the pair is causally bonded; stay merged.
+- If no (i.e., member 1 stands as its own independent beat with its own discourse value), the pair is a coordinate series; split per justification 1.
+
+**Test contrasts (non-examples):**
+- Luke 18:32 passion list (παραδοθήσεται / ἐμπαιχθήσεται / ὑβρισθήσεται / ἐμπτυσθήσεται) — each item has independent discourse value as a fate-item in the series. Not bonded; split applies.
+- Jas 4:2 φονεύετε / ζηλοῦτε — parallel accusations, neither is the point of mentioning the other. Not bonded; split per M1 tie-breaker.
+- John 9:15 ἐνιψάμην / βλέπω — aspect shift (aorist → present) marks two distinct events in time; even though the washing caused the seeing, the present tense on βλέπω makes it the ongoing-state beat, not the immediate-consequence of the completed washing. §3.16 fires; split.
+
+**Why not M1:** M1 requires same semantic domain (synonymy / cognate / intensification-variant). Cause-Consequence pairs are deliberately cross-domain (action + consequence). M1's tie-breaker correctly rejects them as gorgianic, but Cause-Consequence Bonded Beat is the merge protection that fires instead.
+
+**Family placement:** Same cluster as M1 gorgianic-pair, R11 synonymous-doublet imperative, Need/Response (Matt 25), Imperative + Divine-Consequence (Luke 6:37). All share the generating principle: **N=2 coordinate members with unified rhetorical force stay on one line**. This subsection extends the family to cover cross-domain causal bonds, which the prior subsections (all same-domain or divine-subjected) do not.
+
 ### 3.8 De-Contrast Overbreak
 
 (General discourse-marker treatment lives in R8's framing-devices table in §3.3 — γάρ, ἀλλά, πλήν, οὐδέ, μηδέ, etc. all lead their content per R8. §3.8 is reserved for the one discourse-marker pattern that needs its own diagnostic: the δέ pivot.)
@@ -1307,6 +1329,32 @@ The "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" ex
 ## Section 10: Chronological Update Log
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-21 (later) — Canon codification: Cause-Consequence Bonded Beats
+
+Surfaced by today's reverse-drift round-2 adversarial pass on 318 KEEP_MERGED
+verdicts. Two Johannine N=2 cross-domain pairs resisted splitting despite
+failing M1's same-domain tie-breaker:
+
+- John 6:49 `ἔφαγον... τὸ μάννα καὶ ἀπέθανον` (eating + mortal consequence)
+- John 10:12 `θεωρεῖ τὸν λύκον ἐρχόμενον καὶ ἀφίησιν τὰ πρόβατα` (perception +
+  cowardly response)
+
+Both are causally bonded — member 2 is the direct consequence of member 1 AND
+the rhetorical point of mentioning member 1. The removal test diagnoses the
+bond: remove member 2, member 1 loses its reason for being mentioned.
+
+Added as §3.7 subsection. Canon family: M1 gorgianic-pair, R11 synonymous-
+doublet imperative, Need/Response (Matt 25), Divine-Consequence (Luke 6:37),
+and now Cause-Consequence Bonded Beats (John 6:49, 10:12). All share the
+generating principle: **N=2 coordinate members with unified rhetorical force
+stay on one line** — extended to cover cross-domain causal bonds.
+
+No corpus edits (these two verses were already correctly merged in
+v4-editorial; adding the canon protection prevents future adversarial flips
+from over-applying the M1 tie-breaker).
 
 ---
 
