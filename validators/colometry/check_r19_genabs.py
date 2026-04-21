@@ -39,6 +39,8 @@ _KNOWN_FP_ALLOWLIST: frozenset[tuple[str, int, int]] = frozenset({
     ("john",  7, 38),   # ὕδατος ζῶντος — attributive, head ποταμοί scattered on same line
     ("2cor",  6, 16),   # θεοῦ ἐσμεν ζῶντος — head ναός on prior line (inter-line NP)
     ("heb",  11,  1),   # ἐλπιζομένων ὑπόστασις πραγμάτων — ptc-noun gap > 1
+    ("matt",  9, 10),   # ἐγένετο + gen abs Septuagintalism — formulaic temporal frame, not independent
+    ("phil",  2, 15),   # γενεᾶς σκολιᾶς καὶ διεστραμμένης — attributive adjective-modified NP, not gen abs
 })
 
 # Class A filter: finite verbs inside these subordinating words are NOT main-clause finites.
@@ -51,7 +53,31 @@ _SUBORDINATORS: frozenset[str] = frozenset({
     "ὅστις", "ἥτις", "ὅτι",
     # interrogative-relative
     "ὅπου", "ὅθεν",
+    # purpose/result subordinator
+    "ἵνα",
+    # interrogative / indirect-question markers
+    "τί", "τίς", "τίνος", "τίνι", "τίνα", "τίνες", "τίνων", "τίσιν", "τίνας",
+    "πῶς", "πότε", "διατί",
 })
+
+# Perception verbs whose genitive complements are NOT genitive absolutes:
+# ἀκούω/ὁράω/βλέπω/θεωρέω/θεάομαι take a gen object + participial complement.
+_PERCEPTION_LEMMAS: frozenset[str] = frozenset({
+    "ἀκούω", "ὁράω", "βλέπω", "θεωρέω", "θεάομαι", "ὁρῶ", "εἴδω", "εἶδον",
+})
+
+
+def _is_perception_verb_complement(gen_ptc_idx: int, gen_subj_idx: int, tokens: list) -> bool:
+    """Return True if a perception verb on the same line (within 5 tokens before the
+    gen-noun/ptc pair) governs the gen noun + gen ptc as its complement.
+    In that construction the genitive is an object-complement, not a gen abs.
+    """
+    min_idx = min(gen_ptc_idx, gen_subj_idx)
+    for k in range(max(0, min_idx - 5), min_idx):
+        _, _, _, lemma = tokens[k]
+        if lemma in _PERCEPTION_LEMMAS:
+            return True
+    return False
 
 BOOKS: list[str] = [
     "matt","mark","luke","john","acts","rom","1cor","2cor","gal","eph",
@@ -184,6 +210,9 @@ def _gen_abs_candidates(tokens: list) -> list[tuple]:
             if num2 == ptc_num and gnd2 == ptc_gnd:
                 # Class B: skip attributive genitival participles (NP-internal)
                 if _is_attributive_gen_ptc(i, j, tokens):
+                    break
+                # Perception-verb complement filter: gen noun + gen ptc as object
+                if _is_perception_verb_complement(i, j, tokens):
                     break
                 out.append((w, lemma, w2, lemma2, i, j))
                 break
