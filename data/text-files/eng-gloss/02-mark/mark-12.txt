@@ -100,7 +100,8 @@ and they asked him a question, saying:
 Teacher,
 Moses wrote for us:
 if a man's brother dies
-and leaves a wife but no child,
+and leaves a wife
+and leaves no child,
 his brother should take the wife
 and raise up offspring for his brother.
 
