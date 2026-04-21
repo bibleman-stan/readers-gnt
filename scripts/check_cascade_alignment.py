@@ -5,6 +5,12 @@ Scans data/text-files/eng-gloss/ against v4-editorial/ for mechanical
 signatures of misalignment. Flags candidates for manual review.
 Does NOT modify any file.
 
+Heuristics (structural/grammatical only — no punctuation or case signals):
+  - word-count-imbalance  : English token count >> or << Greek token count per line
+  - line-count-mismatch   : Greek line count ≠ English line count for a verse
+  - orphan-start          : English starts with a grammatical continuation preposition
+                            but Greek does not start with a corresponding connector
+
 Usage:
     py -3 scripts/check_cascade_alignment.py                    # all books
     py -3 scripts/check_cascade_alignment.py --book matt        # one book
@@ -15,7 +21,7 @@ Usage:
 import argparse
 import re
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -26,40 +32,45 @@ _ENG_ROOT = _REPO_ROOT / "data" / "text-files" / "eng-gloss"
 # Heuristic helpers
 # ---------------------------------------------------------------------------
 
-# Pattern: sentence-terminating punctuation followed by a continuation word.
-# Captures constructions like ". And", "? But", "; Then", etc.
-_SENT_MID = re.compile(
-    r'[.?;]\s+(And|But|Then|Therefore|Yes|No)\b',
+# Greek grammatical continuation markers: conjunctions, postpositives, subordinators,
+# AND prepositions/articles — all indicate a line that legitimately depends on context.
+_GK_CONTINUATION = re.compile(
+    r'^('
+    # Conjunctions / postpositives / subordinators
+    r'καί|καὶ|δέ|δὲ|ἀλλά|ἀλλὰ|γάρ|γὰρ|οὖν|τότε|ὅτι|ἵνα|ὥστε|ὅταν|εἰ|ἐάν|'
+    # Prepositions (common, including elided forms with apostrophe variants)
+    r'ἐν|εἰς|ἐκ|ἐξ|ἀπό|ἀπὸ|ἀπʼ|ἀφʼ|πρός|πρὸς|διά|διὰ|διʼ|κατά|κατὰ|κατʼ|'
+    r'μετά|μετὰ|μετʼ|ἐπί|ἐπὶ|ἐπʼ|ἐφʼ|παρά|παρὰ|παρʼ|ὑπό|ὑπὸ|ὑφʼ|περί|περὶ|'
+    r'ὑπέρ|ὑπὲρ|ἀντί|ἀντὶ|πρό|πρὸ|σύν|σὺν|ἕνεκα|ἕνεκεν|'
+    # Relative pronouns (depend on antecedent in prior line)
+    r'ὅς|ὃς|οὗ|ᾧ|ὅν|ἣ|ἧς|ᾗ|ἥν|οἵ|ὧν|οἷς|οὕς|αἵ|αἷς|ἅς|ὅ|'
+    # Other subordinators / adverbs that begin dependent lines
+    r'ὅπου|ὅπως|ἕως|πρίν|πρὶν|ὅταν|ὅτε|'
+    # Articles (line continues with a noun phrase)
+    r'ὁ|ἡ|τό|τοῦ|τῆς|τῷ|τῇ|τόν|τήν|τοί|αἱ|τά|τῶν|τοῖς|ταῖς|τούς|τάς'
+    r')',
+    re.UNICODE | re.IGNORECASE,
+)
+
+# English grammatical-continuation starters: function words that are
+# strongly dependent-only as English line-openers in a colometric edition.
+#
+# DELIBERATELY NARROW: broad prepositions ("in", "to", "for", "by") legitimately
+# open colometric lines when they head infinitive phrases, purpose clauses, or
+# locatives — including when the Greek starts with an infinitive or verb.
+# Only include markers where an English line-start is a near-certain signal
+# that content spilled from the prior line:
+#   "of ..."   — pure genitive marker; no independent English clause opens with "of"
+#   "without ..." — almost never starts an independent sense-line
+_ENG_GRAMMATICAL_CONT = re.compile(
+    r'^(of|without)\b',
     re.IGNORECASE,
 )
 
-# Greek continuation markers that legitimately start a line
-_GK_CONTINUATION = re.compile(r'^(καί|καὶ|δέ|δὲ|ἀλλά|ἀλλὰ|γάρ|γὰρ|οὖν|τότε|ὅτι)')
-
-# English lowercase CONJUNCTION starters only (not articles/prepositions)
-# Case-sensitive: lowercase "and/but/or" is the signal; uppercase "And/But" at
-# verse-start or after speech-intro is expected.
-_ENG_CONJ_LOWERCASE = re.compile(r'^(and|but|or)\b')
-
-# Greek full-stop only (period, not ano teleia which is ≈ colon/semicolon)
-# Use only for the most unambiguous mismatch cases.
-_GK_FULL_STOP = re.compile(r'\.$')
-
-# English full-stop terminal
-_ENG_FULL_STOP = re.compile(r'[.?!]$')
-
-# Greek line ending in a bare word (no punctuation at all) — mid-clause continuation
-_GK_BARE_END = re.compile(r'[^\W·:.,;?!\s]$', re.UNICODE)
-
 
 def _word_count(line: str) -> int:
-    """Count whitespace-delimited tokens (strips punctuation from count boundary)."""
+    """Count whitespace-delimited tokens."""
     return len(line.split())
-
-
-def has_sentence_end_mid_line(eng_line: str) -> bool:
-    """Detect a sentence terminator followed by a continuation word on the same line."""
-    return bool(_SENT_MID.search(eng_line))
 
 
 def has_word_count_imbalance(g_line: str, e_line: str) -> tuple[bool, str]:
@@ -76,56 +87,38 @@ def has_word_count_imbalance(g_line: str, e_line: str) -> tuple[bool, str]:
     return False, ""
 
 
-def has_punct_mismatch(g_line: str, e_line: str) -> bool:
-    """
-    Flag only high-signal asymmetries to avoid ·/:/ ; false positives.
-
-    The Greek ano teleia (·) maps to English colon or semicolon — NOT a mismatch.
-    The Greek comma maps to English comma — NOT a mismatch.
-
-    We flag:
-    1. English ends with a full stop/question/exclamation mark but Greek ends
-       with a bare word (no punct) — English over-closes a continuing clause.
-    2. Greek ends with a period (full stop) but English doesn't end with any
-       sentence-terminal — unusual enough to flag.
-    """
-    gk_bare = bool(_GK_BARE_END.search(g_line.rstrip()))
-    eng_strong = bool(_ENG_FULL_STOP.search(e_line))
-    gk_full_stop = bool(_GK_FULL_STOP.search(g_line))
-
-    if eng_strong and gk_bare:
-        return True
-    if gk_full_stop and not eng_strong:
-        return True
-    return False
-
-
 def has_orphan_start(g_line: str, e_line: str) -> bool:
     """
-    Flag if English starts with a lowercase continuation word (and/or/but/the…)
-    but the Greek line starts with an UPPERCASE letter (indicating an independent
-    clause / sentence start, not a continuation).
+    Flag if English starts with a grammatical-continuation preposition/relator
+    but the Greek line does NOT start with a corresponding connector.
 
-    This catches content that leaked from the previous line onto this one,
-    producing misaligned continuation phrasing under an independent-clause Greek line.
+    This is a structural signal: a dependent-role English opener under an
+    independent-clause Greek line suggests content leaked from the prior line.
+
+    Capitalization is NOT tested — it is editorial overlay.
     """
     eng_stripped = e_line.strip()
     gk_stripped = g_line.strip()
     if not eng_stripped or not gk_stripped:
         return False
-    # Lowercase "and/but/or" at line start — strict conjunction check
-    eng_cont = bool(_ENG_CONJ_LOWERCASE.match(eng_stripped))
-    if not eng_cont:
+
+    # English must begin with a grammatical-continuation function word
+    if not _ENG_GRAMMATICAL_CONT.match(eng_stripped):
         return False
-    # Greek starts with uppercase → independent clause; lowercase-conjunction English
-    # here may indicate content that leaked from the prior line.
-    if not gk_stripped[0].isupper():
+
+    # Greek must NOT begin with a recognized continuation marker
+    # (if Greek also continues, the pairing is legitimate)
+    if _GK_CONTINUATION.match(gk_stripped):
         return False
-    # Exception: Greek has a second-position postpositive (δέ, δὲ, γάρ, γὰρ, μέν, μὲν)
-    # which IS a continuation marker even though the line starts uppercase.
+
+    # Exception: Greek has a second-position postpositive (δέ, γάρ, μέν, οὖν)
+    # — the line is continuative even though it starts with a nominal/verbal form.
     gk_tokens = gk_stripped.split()
-    if len(gk_tokens) >= 2 and gk_tokens[1] in ("δέ", "δὲ", "γάρ", "γὰρ", "μέν", "μὲν", "οὖν"):
+    if len(gk_tokens) >= 2 and gk_tokens[1] in (
+        "δέ", "δὲ", "γάρ", "γὰρ", "μέν", "μὲν", "οὖν"
+    ):
         return False
+
     return True
 
 
@@ -171,11 +164,11 @@ def _parse_verses(text: str) -> list[tuple[str, list[str]]]:
 
 @dataclass
 class Warning:
-    heuristic: str          # "sentence-end-mid-line" | "word-count-imbalance" | etc.
+    heuristic: str          # "word-count-imbalance" | "line-count-mismatch" | "orphan-start"
     book: str
     chapter: int
     verse: str              # "4:3" style
-    line_idx: int           # 1-based index within the verse
+    line_idx: int           # 1-based index within the verse (0 for line-count-mismatch)
     greek_line: str
     eng_line: str
     detail: str             # human-readable explanation
@@ -194,21 +187,6 @@ def check_verse(
 ) -> list[Warning]:
     warnings: list[Warning] = []
 
-    # Line-count mismatch: only per-line checks are meaningful when counts match.
-    # Still run sentence-end check on all English lines regardless.
-    for idx, e_line in enumerate(english_lines, start=1):
-        if has_sentence_end_mid_line(e_line):
-            warnings.append(Warning(
-                heuristic="sentence-end-mid-line",
-                book=book,
-                chapter=chapter,
-                verse=verse_ref,
-                line_idx=idx,
-                greek_line=greek_lines[idx - 1] if idx - 1 < len(greek_lines) else "",
-                eng_line=e_line,
-                detail=f'sentence-terminal followed by continuation word: "{e_line}"',
-            ))
-
     # Per-paired-line checks (only when counts match)
     if len(greek_lines) == len(english_lines):
         for idx, (g_line, e_line) in enumerate(zip(greek_lines, english_lines), start=1):
@@ -225,18 +203,6 @@ def check_verse(
                     detail=reason,
                 ))
 
-            if has_punct_mismatch(g_line, e_line):
-                warnings.append(Warning(
-                    heuristic="punctuation-mismatch",
-                    book=book,
-                    chapter=chapter,
-                    verse=verse_ref,
-                    line_idx=idx,
-                    greek_line=g_line,
-                    eng_line=e_line,
-                    detail=f'gk ends "{g_line[-1] if g_line else ""}" / eng ends "{e_line[-1] if e_line else ""}"',
-                ))
-
             if has_orphan_start(g_line, e_line):
                 warnings.append(Warning(
                     heuristic="orphan-start",
@@ -246,7 +212,7 @@ def check_verse(
                     line_idx=idx,
                     greek_line=g_line,
                     eng_line=e_line,
-                    detail=f'English starts with continuation word but Greek does not: "{e_line[:40]}"',
+                    detail=f'English starts with grammatical-continuation word but Greek does not: "{e_line[:60]}"',
                 ))
     else:
         # Line-count mismatch is itself a structural flag
@@ -357,19 +323,15 @@ def _collect_chapter_pairs(
 # ---------------------------------------------------------------------------
 
 HEURISTIC_ORDER = [
-    "sentence-end-mid-line",
     "word-count-imbalance",
-    "punctuation-mismatch",
-    "orphan-start",
     "line-count-mismatch",
+    "orphan-start",
 ]
 
 HEURISTIC_LABELS = {
-    "sentence-end-mid-line":  "1. Sentence-end-mid-line",
-    "word-count-imbalance":   "2. Word-count imbalance",
-    "punctuation-mismatch":   "3. Punctuation mismatch",
-    "orphan-start":           "4. Orphan-start",
-    "line-count-mismatch":    "5. Line-count mismatch",
+    "word-count-imbalance": "1. Word-count imbalance",
+    "line-count-mismatch":  "2. Line-count mismatch",
+    "orphan-start":         "3. Orphan-start (grammatical continuation)",
 }
 
 
@@ -409,7 +371,7 @@ def _format_report(warnings: list[Warning]) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Post-cascade misalignment warning checker. Read-only."
+        description="Post-cascade misalignment warning checker (structural only). Read-only."
     )
     parser.add_argument("--book", metavar="BOOK",
                         help="Short book name, e.g. matt, mark, john")
@@ -439,7 +401,6 @@ def main() -> None:
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(report, encoding="utf-8")
         print(f"Report written to {out_path}", file=sys.stderr)
-        # Summary to stdout
         verses_flagged = len({(w.book, w.chapter, w.verse) for w in all_warnings})
         print(f"{len(all_warnings)} warnings across {verses_flagged} verses.")
     else:
