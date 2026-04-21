@@ -5,6 +5,9 @@ research/
 private/
 
 # Machine-specific Claude Code permissions (cross-project paths that shouldn't be public)
+# Both files are machine-specific; the harness auto-writes permissions to settings.json.
+# Gitignoring both prevents GitHub Desktop churn every time a new path is approved.
+.claude/settings.json
 .claude/settings.local.json
 
 # Python
