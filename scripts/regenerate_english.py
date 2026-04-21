@@ -20,6 +20,30 @@ BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 V4_DIR = os.path.join(BASE, "data", "text-files", "v4-editorial")
 WEB_DIR = os.path.join(BASE, "data", "text-files", "eng-gloss")
 
+# Alignment map for drop-in aligned redistribution (2026-04-21).
+# Loaded lazily on first use; None means fallback to proportional heuristic.
+_ALIGNMENT_MAP = None
+_ALIGNMENT_MAP_LOADED = False  # sentinel: True once a load attempt has been made
+
+
+def _get_alignment_map():
+    """Load corpus-alignment.json once; return dict or None on failure."""
+    global _ALIGNMENT_MAP, _ALIGNMENT_MAP_LOADED
+    if _ALIGNMENT_MAP_LOADED:
+        return _ALIGNMENT_MAP
+    _ALIGNMENT_MAP_LOADED = True
+    try:
+        import json
+        from pathlib import Path
+        path = Path(__file__).resolve().parent.parent / "data" / "alignment" / "corpus-alignment.json"
+        if not path.exists():
+            return None
+        with path.open(encoding="utf-8") as f:
+            _ALIGNMENT_MAP = json.load(f)
+        return _ALIGNMENT_MAP
+    except Exception:
+        return None
+
 
 def strip_punct(word):
     return word.rstrip('\u00b7,;.!?\u0387:\u037E')
@@ -257,20 +281,22 @@ def _find_phrase_splits(text, n):
     return segments
 
 
-def redistribute_verse(greek_lines, english_lines, force=False):
+def redistribute_verse(greek_lines, english_lines, force=False, book=None, verse_ref=None):
     """Redistribute English text to match the Greek line count.
 
     Strategy:
     1. Identify vocative-only Greek lines and assign known translations.
     2. Identify which existing English lines are vocative translations to exclude.
     3. Merge remaining English and split across non-vocative lines using
-       phrase-aware boundaries (semicolon > comma > conjunction > subordinator
-       > word-count fallback), balanced toward even line lengths.
+       alignment-driven redistribution (if alignment map available) or the
+       legacy phrase-aware heuristic as fallback.
 
     When force=True, always redistribute — even when Greek and English line
     counts match. This is necessary when line-order was changed without
     changing line count (phrase-aware redistribution gives a better starting
     point; the English may still need manual polish afterward).
+
+    book and verse_ref (e.g. "matt", "4:1") enable the alignment-driven path.
     """
     n_greek = len(greek_lines)
     n_english = len(english_lines)
@@ -319,8 +345,33 @@ def redistribute_verse(greek_lines, english_lines, force=False):
             result[i] = eng
         return result
 
-    # Phrase-aware distribution
-    segments = _find_phrase_splits(remaining_english, n_non_voc)
+    # Aligned redistribution path (2026-04-21): try eflomal alignment first.
+    segments = None
+    if book is not None and verse_ref is not None:
+        alignment_map = _get_alignment_map()
+        if alignment_map is not None:
+            try:
+                import sys as _sys
+                import os as _os
+                _scripts_dir = _os.path.dirname(_os.path.abspath(__file__))
+                if _scripts_dir not in _sys.path:
+                    _sys.path.insert(0, _scripts_dir)
+                from align_redistribute_english import align_redistribute
+                ch_str, vs_str = verse_ref.split(":")
+                ch, vs = int(ch_str), int(vs_str)
+                # Build the non-vocative greek lines for alignment
+                non_voc_greek_lines = [greek_lines[i] for i in non_voc_indices]
+                result_aligned = align_redistribute(
+                    book, ch, vs, non_voc_greek_lines, non_voc_english, alignment_map
+                )
+                if result_aligned is not None:
+                    segments = result_aligned
+            except Exception:
+                pass  # Fall through to legacy heuristic
+
+    # Legacy phrase-aware heuristic fallback
+    if segments is None:
+        segments = _find_phrase_splits(remaining_english, n_non_voc)
     distributed = {nvi: segments[j] for j, nvi in enumerate(non_voc_indices)}
 
     result = []
@@ -358,9 +409,13 @@ def process_file(v4_file, book_prefix, force=False):
     new_english = OrderedDict()
     changes = 0
 
+    # Derive book slug (e.g. "01-matt" -> "matt") for alignment lookup.
+    book_slug = re.sub(r'^\d+-', '', book_prefix)
+
     for verse_ref, greek_lines in v4_verses.items():
         existing = web_verses.get(verse_ref, [])
-        new_lines = redistribute_verse(greek_lines, existing, force=force)
+        new_lines = redistribute_verse(greek_lines, existing, force=force,
+                                       book=book_slug, verse_ref=verse_ref)
         if new_lines != existing:
             changes += 1
         new_english[verse_ref] = new_lines
