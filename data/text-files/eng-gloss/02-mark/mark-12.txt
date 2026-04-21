@@ -100,7 +100,7 @@ and they asked him a question, saying:
 Teacher,
 Moses wrote for us:
 if a man's brother dies
-and leaves a wife but leaves no child,
+and leaves a wife but no child,
 his brother should take the wife
 and raise up offspring for his brother.
 
@@ -157,7 +157,8 @@ Hear, O Israel, the Lord our God,
 the Lord is one,
 
 12:30
-and you shall love the Lord your God with all your heart
+and you shall love the Lord your God
+with all your heart
 and with all your soul
 and with all your mind
 and with all your strength.
