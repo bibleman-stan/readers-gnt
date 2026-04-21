@@ -37,9 +37,11 @@ The overseer apparatus was retired 2026-04-20. Stan is now the sole authority fo
 
 ### Session folder convention
 
-Each session gets its own folder:
+Each Claude Code session (JSONL boundary) gets its own folder:
 
 `private/03-sessions/yyyy-mm-dd-brief_description/`
+
+Use the **session start date**. A compaction-wake starts a new session; create a new folder with a new descriptor, even if the calendar date is the same as the pre-compaction folder. Multiple folders with the same date + different descriptors is correct and expected.
 
 The folder is the persistent write surface for the session. Session memory evaporates at compaction; the folder survives.
 
