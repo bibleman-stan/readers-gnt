@@ -615,6 +615,8 @@ Hymin to mysterion dedotai tes basileias tou theou:
 
 Imperatives (Akouete, Siopa) also stand alone — they are complete predications (Mark 4:3).
 
+**Special case: amen-prefix speech-intro formula** — ἀμήν [ἀμήν] λέγω σοι/ὑμῖν is treated as a distinct class. See the "Amen-formula speech-intro" subsection below.
+
 **Exception: synonymous-doublet imperatives stay together.** When two imperatives are uttered as a single rebuke with one breath — where the second is not a distinct action but an intensifying restatement — they merge onto one line. Mark 4:39 `Siopa, pephimoso.` ("Be silent, be muzzled!") is the canonical example. Test: if the second imperative is a synonym or intensifier with no new content, merge. If it commands a distinct action, split.
 
 **Speech-intro frame aggregation.** The speech-introducing apparatus is one complete speech-act predication and may include a preceding qualifying temporal or conditional clause. When the qualifier (ὅταν, ὅτε, ἐάν + finite/participial content) is the *direct qualifying condition* of the speech-intro verb (not an independent scene-setter), the entire frame merges onto one line; the quote follows on the next line. Canonical: Heb 1:6 `hotan de palin eisagagage ton prototokon eis ten oikoumenen, legei:` — one speech-intro line, symmetrical with Heb 1:5, 7, 13. Scope boundary: applies only when the temporal/conditional clause directly qualifies the speech-intro verb; if the clause introduces a new narrative scene independently, the standard R9 subordinate-clause break applies.
@@ -977,6 +979,17 @@ The speech-intro `κηρύσσων ... καὶ λέγων·` is one atomic thoug
 ## Section 4: Operational Tests
 
 These are the instruments trench Claudes actually run during editorial work.
+
+### Gold-standard regression-test chapters — why these four
+
+The chapters listed below under Post-Split Function-Word Recheck (Mark 4, Rom 2:12-13, Acts 1:1-4, Heb 1:3) were selected because together they stress every major colometric axis:
+
+- **Mark 4** — parable density + nested subordination + gorgianic pairs (tests M1, R11, §3.7 stacking, and the gen-abs/participle discipline in §3.10)
+- **Rom 2:12-13** — Paul's densely-packed νόμος argumentation with prepositional-phrase gauntlets (tests R7 PP-catena merges, R8 framing devices, and R14 coordinate-member splits)
+- **Acts 1:1-4** — Lukan complex-participial opening with achri-clause and purpose-infinitive stacking (tests §3.10 participial discipline, periodic-sentence handling, and speech-intro frame aggregation)
+- **Heb 1:3** — triadic participle chain with aspect shifts (the §3.16 showcase — tests coordination-vs-elaboration and the aspect-shift split trigger)
+
+Any pipeline change that breaks one of these four is suspect. If a change breaks three or more, it's probably wrong.
 
 ### Post-Split Function-Word Recheck (mandatory after any split pass)
 

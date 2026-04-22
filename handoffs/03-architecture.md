@@ -634,6 +634,8 @@ Punctuation-boundary filter skips lines ending with sentence-terminating marks. 
 
 #### Cross-verse continuation support
 
+**Editorial rule codified in `private/01-method/colometry-canon.md` §3.17** (2026-04-22). This section describes the infrastructure — integrity checker recognition, HTML rendering. Refer to the canon for the editorial rule itself.
+
 The Stephanus 1551 verse divisions occasionally cut through grammatically-continuous thought units (e.g., Matt 3:1-2 where `κηρύσσων` in 3:1 and `λέγων` in 3:2 are parallel participles modifying `παραγίνεται`). Session 9 added infrastructure for inline-verse-marker cross-verse merging:
 
 **Source format convention.** A merged colometric line that crosses a verse boundary lives in the *earlier* verse's block, with an inline superscript digit (`²`/`³`/`⁴`/...) marking where the next verse begins visually:

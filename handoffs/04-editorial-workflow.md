@@ -523,15 +523,17 @@ Translation quality, LLM-generated book cleanup, English drift correction within
 
 #### Cross-verse continuation workflow
 
-When a single atomic thought crosses a Stephanus 1551 verse boundary (e.g., Matt 3:1-2, Eph 1:3-14), the editorial procedure is:
+**Canonical rule now in `private/01-method/colometry-canon.md` §3.17** (codified 2026-04-22). The editorial procedure summary below is retained for workflow reference; refer to the canon for the authoritative rule + rationale + examples.
 
-1. **Identify the boundary:** grammatical continuity indicator — participle chain, suspended main verb, subject/verb straddle, speech-intro straddle
-2. **Edit in place:** merge the grammatically-continuous content from verse N+1 into verse N's last line, with an inline superscript digit (`²`/`³`/...) marking where verse N+1 visually begins
+When a single atomic thought crosses a Stephanus 1551 verse boundary (e.g., Matt 3:1-2, John 4:35-36), the editorial procedure is:
+
+1. **Identify the boundary:** grammatical continuity indicator — participle chain, suspended main verb, subject/verb straddle, speech-intro straddle, discourse-adverb leading the next clause
+2. **Edit in place:** the sense-line lives in the *earlier* verse's block (where its lead word sits), with an inline superscript digit (`²`/`³⁶`/...) marking where the next verse begins visually
 3. **Update the corresponding English gloss** with the same merge and the same superscript marker
 4. **Rebuild** — the integrity checker recognizes superscripts and splits the merged line at markers for per-verse word-order comparison. HTML renders superscripts as `<sup class="verse-marker">` anchors.
-5. **Cite using verse N's ref** when referring to the merged colometric line
+5. **Cite using the earlier verse's ref** when referring to the merged colometric line
 
-This is a low-frequency editorial act (~30-80 cases estimated corpus-wide). Candidates should be identified and applied case-by-case with review; no mechanical scanner for cross-verse continuation exists yet.
+This is a low-frequency editorial act (~30-80 cases estimated corpus-wide; 18 applied as of 2026-04-22). Candidates should be identified and applied case-by-case with canon §3.17 as authority; no mechanical scanner for cross-verse continuation exists yet.
 
 #### Drift scanner in the cascade
 
