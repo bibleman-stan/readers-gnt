@@ -1171,6 +1171,27 @@ A proposed rule or rule revision is adopted when it produces a more genuine sens
 
 Rules that fail (1) — produce imposed or artificial breaks — are rejected regardless of theoretical elegance. Rules that pass (1) but fail (2) are documented as editorial (not mechanical) and gated per §3's Category A/B/C discipline. Rules that pass (1) and (2) but degrade (3) require a revision pass on the adjacent rules or cases that cause the degradation.
 
+**Defensibility capture for new canon additions.** Every new canon subsection or rule revision should include three elements in its codification:
+- **WHY** — what problem it solves, what case surfaced it
+- **HOW WE KNOW** — the empirical warrant (corpus instances, cross-reference, grammatical test)
+- **SCOPE** — where it applies and where it doesn't (test contrasts / non-examples)
+
+The §3.7 subsections added 2026-04-21 (Cause-Consequence Bonded Beats, M1 strict-application caveat) each follow this shape implicitly. Making it explicit here means future additions can be audited against a defensibility checklist — relevant both for day-to-day consistency and for the PhD prospectus where each rule will need to carry its warrant. Retroactive audit of existing canon sections is future work; the requirement is prospective from 2026-04-22.
+
+### v4 as methodology application (not hand typing)
+
+A reproducibility distinction that matters for scholarly defensibility:
+
+- **v0–v3** (earlier stages of the text pipeline) are **bit-exactly reproducible** from source. Running the scripts on the source inputs produces byte-identical output.
+- **v4-editorial** is **methodologically checkable**, not bit-exactly reproducible. It is where the documented colometric methodology is *applied* through a mix of scan-and-apply tools (scripts), rule-application validators, and case-by-case editorial decisions where the rule set underdetermines. A different editor following the same canon should arrive at largely the same breaks — within the Category B/C bands of legitimate editorial variation.
+
+**Implication:** v4 is not "hand-typed prose formatted nicely". It is the methodology *in operation*. Every line break in v4 either (a) applies a Category A rule mechanically, or (b) reflects a Category B/C editorial call that should be traceable to a canon rule plus a defensibility rationale. The corpus is auditable against the canon; it is not reproducible from the canon alone because the editorial calls require human (or Claude-with-Stan) judgment.
+
+This framing is relevant for:
+- External reviewers evaluating whether v4 is a "scholarly product" or a "personal annotation". It is the former, grounded in an articulated methodology.
+- Future Claudes auditing whether a corpus edit is defensible: trace it to a canon rule + warrant. If it can't be traced, it's a methodology gap (add to canon) or a bug (fix in corpus).
+- The scan-and-apply pattern: mechanical sweeps ARE methodology application, not mechanical overrides. The script encodes a Category A rule; running it applies the rule at scale.
+
 ---
 
 ## Section 7
@@ -1416,6 +1437,49 @@ The "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" ex
 ## Section 10: Chronological Update Log
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-22 (later²) — Tier 2/4/5 sweep codifications (2 canon + 4 memory + 1 CLAUDE.md)
+
+Continuation of 2026-04-22's hidden-decision-point sweep. After Tier 1
+(prevent-misapplication) codifications landed, Tiers 2-5 triaged:
+
+**Canon additions (§6 Precedent and Scope):**
+- **Defensibility capture for new canon additions** — WHY / HOW WE KNOW /
+  SCOPE triplet required for new subsections/rule revisions. Prospective
+  from 2026-04-22; retroactive audit deferred.
+- **v4 as methodology application** — reproducibility-regimes
+  distinction (v0-v3 bit-exact; v4 methodologically auditable). Matters
+  for external review and PhD prospectus framing.
+
+**Memory installs** (not committed — outside git):
+- `feedback_scripts_before_agents.md` — script-first for mechanical sweeps.
+- `feedback_commit_format_mechanical.md` — mass-edit commit body format.
+- `feedback_check_existing_tooling.md` — MorphGNT/validator/Layer 1 check
+  before building new scanners.
+- `project_substrate_stable_api.md` — v4-editorial as read-only API for
+  analytical tools (fork-don't-enrich).
+
+**CLAUDE.md** (session bookend):
+- Canon self-consistency audit trigger — after ≥2 canon codifications,
+  light-touch audit before WRAP-UP.
+
+**Skipped as obsolete or over-structure:**
+- Mechanical-merge 5-step pattern (covered by existing parallelize memory)
+- Three-quality signature + verdict-render (overseer-era artifact)
+- 17-agent cross-lens wave architecture (overseer-era)
+
+**Tier 3 items (forgotten carry-forwards) resolved by corpus inspection:**
+- 4 atomic-attribute candidates (Luke 2:36, Acts 9:36, 16:1, 16:14) — all
+  currently show clean attribute-per-line structure. Implicitly resolved.
+- John 6:22 (εἶδον + two ὅτι) — current state follows R10 properly.
+  Implicitly resolved.
+
+**Tier 3 items flagged for Stan** (deferred; require authorization):
+- 21 REVIEW correlatives from 04-15 `scan_correlative_stacking.py`
+- Track B AMBIGUOUS re-audit from 04-16
+- Stylometry re-run (trigger condition may now be met)
 
 ---
 

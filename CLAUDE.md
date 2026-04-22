@@ -77,6 +77,18 @@ Produce in the session folder:
 3. **`dialogue-notes.md`** — produce only for methodology-heavy sessions where the DIALOGUE arc itself is the work (vs. executing a pre-specified task). Captures the reasoning path that led to a decision, not just the decision.
 4. **`review-lists/`** (subfolder) — only when the session produced candidate lists requiring Stan review (e.g., N sweep candidates from a validator run). One markdown file per list with decision checkboxes.
 
+### Canon self-consistency audit trigger
+
+**After any session with ≥2 new canon codifications (new subsections or rule revisions), run a canon self-consistency audit before WRAP-UP.** Not a time-based cadence — a content-trigger.
+
+**What the audit checks:**
+1. Do the new additions contradict existing canon sections? (grep for overlapping keywords; spot-read affected §§)
+2. Do the new additions satisfy the §6 defensibility capture (WHY / HOW WE KNOW / SCOPE)?
+3. Are there adjacent rules that should reference the new additions? (e.g., a new §3.7 subsection might warrant a cross-reference in M1 or R11)
+4. Does the handoffs documentation still match the canon? (if a rule migrated from handoffs to canon, the handoff version should either update or deprecate)
+
+**Light-touch**: this is a ~5-minute pass, not a full re-read. A single grep for the new subsection's key terms + spot-reads is usually sufficient. Flag contradictions or stale cross-references in the session-notes carry-forwards.
+
 ### Context-threshold discipline
 
 - **Green zone (0-60%)**: execute normally.
