@@ -147,6 +147,24 @@ The distinction is important: gating rule-derivative changes on per-item approva
 
 ---
 
+## Pre-commit adversarial-audit discipline
+
+**Before any commit that modifies `private/01-method/colometry-canon.md`, check whether the change matches a mandatory-audit trigger per canon §6.5.** The 11 triggers are listed in canon §6.5; re-read them when uncertain. If the change matches any trigger, audit evidence (hostile-agent dispatch + verdict + application) must be present in the commit message or the canon §10 Update Log entry.
+
+**Audit-skippable.** Canon edits that do NOT match any trigger (typo fixes, cross-reference updates without precedence claims, deletions of same-session reverts, defensibility-capture additions to already-settled rules without scope changes, Category A mechanical corpus edits that are not part of a ≥5-instance sweep) proceed without audit.
+
+**When uncertain.** Dispatch the audit. The cost of a false-positive audit (Stan reads a no-op audit result) is small; the cost of a false-negative audit (a fake rule commits) is large.
+
+**Self-test to run pre-commit** (faster than full trigger-list scan):
+- Does this change include a scope claim, a precedence claim, a closed-list extension, or a named-category carve-out? → audit.
+- Does this change rest on spot-check evidence rather than a full-corpus classification? → audit.
+- Does this change reclassify or delete previously-settled canon content? → audit.
+- If no to all three → probably skip-safe.
+
+This discipline complements (does NOT replace) the session-end **Canon self-consistency audit trigger** in the Session bookend protocol above. Pre-commit is per-change; self-consistency is session-rollup. See canon §3 "Scope/precedence/closed-list/carve-out diagnostic" for the Category-B-by-default rule this self-test instantiates, and canon §6.5 for the full trigger list.
+
+---
+
 ## Build Pipeline
 
 The cascade rule: **Greek edit → English regen → HTML rebuild**.

@@ -439,6 +439,14 @@ When proposing sense-line changes, classify each change:
 
 **Proposed-rule adoption protocol.** A proposed rule is adopted when its first corpus sweep produces ≥80% clean categorization (unambiguous STRONG-MERGE or STRONG-SPLIT). Apply the clean categorizations; refine the rule for the ambiguous residue and re-run. If ≥80% cannot be reached after two refinement passes, the rule is likely editorial rather than mechanical — reclassify and gate per Category B/C.
 
+**Scope/precedence/closed-list/carve-out diagnostic (added 2026-04-24 from BofM cross-project directive).** Canon additions that include ANY of the following are **Category B by default**, regardless of how they are framed in the commit message or §10 Update Log entry:
+- A scope claim (*"rule X applies to / does not apply to Y"*)
+- A precedence claim (*"rule A trumps rule B"*, *"X wins over Y when both fire"*)
+- A closed-list extension (adding a verb class, adding a named category, adding a SCOPE-exclusion item)
+- A named-category carve-out (introducing a new gating category, even if cross-referenced to an existing rule)
+
+This diagnostic catches the failure mode where a canon change is self-framed as "documenting existing practice" or "scope clarification" but substantively asserts a new judgment. §6.5 "Mandatory-audit triggers for canon changes" operationalizes this diagnostic for commit-time discipline.
+
 **Greek-specific instances:**
 - **Category A:** A dangling article (ton at line end) or a verb split from its direct object — mechanical error, fix confidently.
 - **Category B:** Phil 2:6-8 kenosis hymn — whether thanatou de staurou gets its own line or stays with the preceding line changes how the descent structure reads.
@@ -1191,6 +1199,38 @@ Rules that fail (1) — produce imposed or artificial breaks — are rejected re
 
 The §3.7 subsections added 2026-04-21 (Cause-Consequence Bonded Beats, M1 strict-application caveat) each follow this shape implicitly. Making it explicit here means future additions can be audited against a defensibility checklist — relevant both for day-to-day consistency and for the PhD prospectus where each rule will need to carry its warrant. Retroactive audit of existing canon sections is future work; the requirement is prospective from 2026-04-22.
 
+### Mandatory-audit triggers for canon changes (added 2026-04-24 from BofM cross-project directive)
+
+The "extensible only by worked examples + adversarial validation" requirement on new structural justifications (§2 line 236) and new merge-overrides (§2 line 352) is strengthened here to an explicit mandatory-audit trigger list at commit time. A canon proposal matching any of the following triggers MUST dispatch an adversarial audit (hostile agent or equivalent external skeptical review) and reflect its findings in the commit. Skipping audit on a triggered proposal is a protocol violation.
+
+**Mandatory-audit triggers (11 categories):**
+
+1. **New named rules / sub-clauses / categories** — including precedence cross-references between rules (e.g., "Rule A trumps Rule B at X"). Shape-matches feel-tests, enumerated lists, and subjective carve-outs particularly.
+2. **Rule status promotions** — *proposed* → settled. Removes the hedge; stakes increase.
+3. **Spot-check-based proposals** — any canon claim resting on less than full-corpus-sweep evidence. Claims like "I checked 30 instances and the pattern is uniform" must be verified by a full-corpus classification before codification.
+4. **Reclassification of canon-recorded Category B/C items** — once a verse, rule, or item is recorded as Category B/C in §10 Update Log or a session's pending list, subsequent sessions cannot silently reclassify it under a different rule-framing.
+5. **Rule deletions or SCOPE narrowings that retire live applications** — retiring a rule is as high-stakes as adding one; audit prevents discarding legitimate work. See §9 Superseded Formulations for the retirement trail.
+6. **Mechanical signature / validator changes under settled rules** — adding a verb class to a closed-list UD signature, refining a UD trigger, or changing validator conditions silently expands or contracts rule coverage.
+7. **Corpus sweeps ≥5 instances under a settled rule** — a sweep asserts "the rule fires cleanly here" N times; the collective scope-claim needs audit even when individual instances are Category A.
+8. **Canonical example additions to settled rules** — examples shape rule interpretation; a poorly-chosen example silently redefines the rule.
+9. **Meta-rule changes to this trigger list itself** — changes to this protocol must be audited.
+10. **Discipline-shifting memory file additions** — new `feedback_*.md` or `project_*.md` files that shape how Claude approaches canon work are behaviorally-governing, not just observations; they need the same scrutiny as canon.
+11. **Cross-project imports** (BofM ↔ GNT) **or recoveries from retired canon** (§9 Superseded Formulations) — provenance from a sibling project or older version is not validation; the imported claim must have GNT corpus evidence independent of its source.
+
+**Audit dispatch protocol — parallel by default.** When a proposal triggers multiple audit dimensions (e.g., fake-rule test + full-corpus sweep + scope test), dispatch all in a single message with multiple Agent tool calls. Sequential only when audit A's verdict determines whether audit B should run. Parallelization substantially reduces friction and lowers the effective cost per audit.
+
+**Audit-skippable categories (all must hold for the proposal to bypass audit):**
+- Category A mechanical corpus edits per already-codified rules (sweep-scale ≥5 still triggers #7 regardless)
+- Typo fixes, cross-reference updates that don't assert precedence, internal formatting cleanups
+- Deletions of items already reverted in the same session (audit-trail cleanup)
+- Defensibility-capture additions (WHY / HOW WE KNOW / SCOPE) to already-settled rules without changing the rule's scope
+
+**Relationship to the self-consistency audit.** The pre-commit audit triggers above are per-change, before commit. The "≥2 canon codifications → light self-consistency audit before WRAP-UP" trigger in CLAUDE.md is session-rollup, after commits but before wrap. Both mechanisms coexist; neither replaces the other.
+
+**Provenance.** Imported 2026-04-24 from BofM cross-project directive (BofM canon §7.3, codified 2026-04-23 PM after 5 fake-rule catches in one session: Stab-commata, doctrinal-weight bump, EP-6 Exception/Save, 1 Ne 19:5 reclass attempt, R28 reverse). Cross-project import itself satisfied audit trigger #11 via three parallel hostile audits (necessity, redundancy, framework-mismatch) dispatched 2026-04-24 before codification; audit findings are recorded in §10 Update Log.
+
+**Why it earns its place in GNT despite the absence of GNT-native fake-rule catches of the same 5 shapes.** GNT's recent codification history does not cleanly shape-match BofM's 5 training-set failures, but GNT's own risk profile is different: the 2026-04-21 §3.7 subsection burst (Need/Response, Imperative + Divine-Consequence, Cause-Consequence) and the 2026-04-22 gold-standard 4-chapter regression list each carry the shape that triggers #1, #7, and #8 are designed for — named patterns / mechanical-looking diagnostics / canonical-example closed lists without a documented full-corpus sweep in their provenance. The trigger list is prospective: it prevents future under-sweep codifications regardless of whether prior GNT codifications would or would not have been caught.
+
 ### v4 as methodology application (not hand typing)
 
 A reproducibility distinction that matters for scholarly defensibility:
@@ -1450,6 +1490,42 @@ The "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" ex
 ## Section 10: Chronological Update Log
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-24 — Pre-commit adversarial-audit discipline imported from BofM (§3 diagnostic + §6.5 trigger list + CLAUDE.md self-test + memory consolidation)
+
+Cross-project import from BofM's 2026-04-23 canon tightening (BofM commits `cc555b8`, `1357a62`). BofM codified a systematic adversarial-audit discipline after 5 fake-rule catches in one session (Stab-commata register, doctrinal-weight Category-B bump, EP-6 Exception/Save, 1 Ne 19:5 reclass attempt, R28 reverse). Per BofM canon §7.3 item 11, cross-project imports require adversarial audit independent of source.
+
+**Audit discipline applied to this import.** Three parallel Opus hostile audits dispatched 2026-04-24 AM:
+- **Necessity audit**: does GNT have the failure modes the imports catch? Verdict: GNT's recent codifications do not cleanly shape-match BofM's 5 catches; but GNT's §3.7 subsection burst (Need/Response + Imperative + Divine-Consequence + Cause-Consequence, 2026-04-21) and gold-standard 4-chapter list (2026-04-22) lack full-corpus sweep provenance by BofM §7.3 trigger-#7 standards. Import is prospective discipline, not retroactive catch. CONFIDENCE: MEDIUM.
+- **Redundancy audit**: for each of 4 candidates (§7.3 trigger list, §2 diagnostic, CLAUDE.md self-test, `feedback_rhetoric_bandwagon` extensions), is there GNT discipline that duplicates? Verdict: #1 and #2 COMPLEMENTARY (clean imports); #3 and #4 PARTIAL-OVERLAP (consolidate into existing GNT infrastructure rather than add standalone).
+- **Framework-mismatch audit**: do BofM's §§2/7/8 references port? Verdict: NO — GNT §2 is "Unless Conditions" (not Autonomy Boundary), GNT §7 is RETIRED, GNT §8 is "Greek-Specific Application" (update log is §10). All §2/§7/§8 refs in imports must retarget. Recommended §6.5 placement for trigger list (between Defensibility capture and v4 methodology subsections). CLAUDE.md section between "Rule-Derivative vs. Ad-Hoc" and "Build Pipeline". Strip BofM-specific named examples (1 Ne 19:5, Gap 1-A, EP-6, Stab-commata, Mosiah 18:7, etc.).
+
+**Codified (this commit):**
+
+1. **§3 Autonomy Boundary — scope/precedence/closed-list/carve-out diagnostic.** Canon additions that include a scope claim, precedence claim, closed-list extension, or named-category carve-out default to Category B regardless of commit-message framing. Catches the "self-framed as documenting practice" failure mode. Cross-references §6.5 for the audit mechanism.
+
+2. **§6 Precedent and Scope — new §6.5 "Mandatory-audit triggers for canon changes".** Enumerates 11 mandatory-audit triggers (new rules/sub-clauses, status promotions, spot-check proposals, B/C reclassifications, rule deletions, validator changes, sweeps ≥5, canonical example additions, meta-rule changes, discipline-shifting memory additions, cross-project imports). Audit-skippable catalog named explicitly. Parallelization default (independent audits dispatched in one message). Relationship to CLAUDE.md self-consistency audit trigger stated (pre-commit vs session-rollup, distinct mechanisms).
+
+3. **CLAUDE.md — new "Pre-commit adversarial-audit discipline" section.** 3-question self-test (scope/precedence/closed-list/carve-out | spot-check evidence | reclassification/deletion of settled canon). Placed between "Rule-Derivative vs. Ad-Hoc Changes" and "Build Pipeline". Explicit cross-refs to §3 diagnostic and §6.5 trigger list. Explicit distinction from the existing Session-bookend self-consistency trigger (both coexist).
+
+4. **Memory `feedback_rhetoric_bandwagon.md` extended.** Two new sub-patterns merged with existing external-rhetoric content: (a) named-category carve-out — the rhetoric-bandwagon failure mode applied to internally-invented categories (not just externally imported ones); (b) biased-spot-check — full-corpus sweep required before codification, spot-check confirmation alone is insufficient. BofM's 5-catches training set cited as sibling reference; GNT builds its own catches list as failures occur. Operational 3-question discipline mirrors CLAUDE.md.
+
+**What was NOT imported and why:**
+- **BofM §1 Application Order step-by-step (Step 0-4).** BofM generated this from 4 parallel structural audits on its own rule set. GNT would need its own structural audit before porting. Deferred as a future investigation; not necessary for the audit-discipline tightening.
+- **BofM N=2 Adjudication Principle (cross-cutting).** Precipitating case was BofM Alma 24:10 compound-verb under shared auxiliary; GNT's M1 strict-application caveat (2026-04-21) already covers the corresponding GNT ground. Principle likely redundant for GNT; skip until a GNT corpus case surfaces the gap.
+- **BofM-specific named examples in the trigger list and §8 entries.** Stripped per framework-mismatch audit.
+- **BofM `feedback_agent_sweep_filter.md` (level/provenance/redundancy filter).** GNT has `feedback_adversarial_agent_drift.md` covering a related but distinct failure mode (hostile-audit genre-group drift). Not duplicated.
+
+**Reference breakage checked:** all "§2" references in imported material retargeted to "§3" (GNT Autonomy Boundary); all "§7 Change Protocol" self-references retargeted to "§6.5"; all "§8" references retargeted to "§10 Update Log"; "pending.md" references retargeted to session-folder pending lists.
+
+**Files touched:** `private/01-method/colometry-canon.md` (§3 + §6 + §10), `CLAUDE.md` (new section), `C:/Users/bibleman/.claude/projects/c--Users-bibleman-repos-readers-gnt/memory/feedback_rhetoric_bandwagon.md` (extended).
+
+**Defensibility capture:**
+- **WHY**: prospective prevention of under-sweep-before-codification and self-framed-as-documentation-but-actually-precedence-claim failure modes; GNT's §3.7 burst and gold-standard list are the relevant exposure.
+- **HOW WE KNOW**: 3 parallel hostile audits (necessity/redundancy/framework) dispatched 2026-04-24 before codification; audit findings recorded above.
+- **SCOPE**: applies to all future canon commits; pre-commit per-change (§6.5 / CLAUDE.md self-test) and session-rollup (existing ≥2-codifications self-consistency trigger) are distinct mechanisms that coexist.
 
 ---
 
