@@ -28,9 +28,9 @@ The division matters because it separates *what Greek grammar requires of any ed
 
 ---
 
-**How to use this document:**
+**What is this document?**
 
-The canon serves two audiences with different reading patterns. Some sections are "mainly philosophy" (the *what / why / posture* of the project), some are "mainly operational" (the *how* — rules and tests Claude reads literally for editorial application), and some are dual-natured by design (philosophy and operational hooks interleaved at sub-paragraph granularity). The structure aims to keep the integration honest while making the predominant character of each section legible at a glance.
+This document serves as a canon for laying out the "main design philosophy" (the *what / why / posture* of the project) as well as the "pragmatic implementation rules and principles" (the *how* — rules and tests Claude reads literally for editorial application). There are times when the line between design philosophy and operational implementation blends together. The structure aims to keep the integration honest while making the predominant character of each section legible at a glance.
 
 - **Part 1 (The Method, §§1-4)** contains BOTH the theoretical foundation (§§1-2) AND the heaviest operational rule reference (§§3-4). It is the constitutional core; any session touching editorial work reads it. The header of each section discloses whether that section is mainly philosophical, mainly operational, or dual-natured.
 - **Part 2 (The Framework, §§5-8)** carries register operationalization, precedent and scope discipline, the change-protocol machinery (§6.5 Mandatory-audit triggers), and Greek-specific application supplements + scholarly material.
@@ -61,15 +61,13 @@ Sense-line breaks are governed by **three forces** operating in concert: a **gen
 
 ### Mission and Method — the Discipline Framing
 
-**Mission:** We are revealing sense-lines — atomic thoughts the reader can process as discrete units. This is what the project is trying to produce (stated in the foundational premise at the top of the canon).
+**Mission:** We are revealing sense-lines — atomic thoughts the reader can process as discrete units.
 
 **Method:** The framework below is syntax-constrained. This is **not** because syntax is primary to the mission — atomic thought is. It is because **syntactic violation is fatal while sense ambiguity is recoverable within the permitted space.** An ungrammatical line cannot be rescued by good sense. A grammatical line that isn't the ideal sense-boundary can still be read. The method therefore leads with the syntactic floor (subtractive force) so that editorial judgment (generative force) operates only within the legal-break space.
 
-The mission is sense-driven. The method is syntax-constrained. These are two sides of the discipline, not a conflict.
+The mission is sense-driven. The method is syntax-constrained.
 
 ### Framing Principle: Container, Not Originator
-
-Before the three forces themselves, the relationship between *thought* and *syntax* has to be stated precisely, because it determines how the forces combine.
 
 **The atomic thought is the primary, originating reality.** It is what the author wants to say, prior to and independent of any particular language. Greek, Hebrew, Aramaic, English, and Chinese speakers all compose in thought units. The atomic-thought target is *language-invariant*.
 
@@ -79,9 +77,9 @@ This is the classical distinction between **logos endiathetos** (the thought in 
 
 **Consequences for the framework:**
 
-1. **Propositions (atomic thoughts) are the generative force because they are what we are recovering.** The thought is the target.
-2. **Syntax is the subtractive force — the evidence surface through which propositions become visible in this particular language, and simultaneously the floor below which no line can legally sit.** Not a separate check; not a lesser concern. Syntax both reveals where propositions end (thought-marking syntax) and constrains where breaks are legal (Layer 1 break-legality, complement integrity, formula integrity).
-3. **Grammar is bigger than syntax** — it includes lexicon, morphology, pragmatics, phonology. Most of these do not affect colometric decisions. "Syntactic" is more precise than "grammatical" when we describe the evidence we use. Morphology (case, mood, person, tense) is the surface we read syntax *off of* — vocative case tells us a word is in an address relation; 2p verb inflection tells us there is an implicit "you" subject that a vocative can name. But the thing we care about is the *relationship* morphology reveals, not the morphology itself.
+1. **Propositions (atomic thoughts) are the generative force because they are what we are recovering.**
+2. **Syntax is the subtractive force — the evidence surface through which propositions become visible in this particular language, and simultaneously the floor below which no line can legally sit.** Syntax both reveals where propositions end (thought-marking syntax) and constrains where breaks are legal (Layer 1 break-legality, complement integrity, formula integrity).
+3. **Grammar is bigger than syntax** — it includes lexicon, morphology, pragmatics, phonology. Most of these do not affect colometric decisions. "Syntactic" is more precise than "grammatical" when we describe the evidence we use. Morphology (case, mood, person, tense) is the surface we read syntax *off of* — vocative case tells us a word is in an address relation; 2p verb inflection tells us there is an implicit "you" subject that a vocative can name.
 4. **Cross-linguistic invariance is preserved.** Paul's atomic thought units in Romans are the same units whether read in Greek, English, or Chinese. Only the container changes. We are not imposing Greek syntax on English readers; we are recovering the shape Paul's thoughts actually had when he dictated them.
 
 ### The Three Forces
@@ -168,7 +166,7 @@ When these conflict, chunking wins. A break that aids cognitive chunking but fla
 
 ### Imposing vs. Revealing — Scope Discipline
 
-**Line breaks follow structure that already exists in the text. If a rule produces a line that does not match the text's inherent structure, the rule is wrong.** This is the load-bearing meta-principle for the whole project:
+**Line breaks follow structure that already exists in the text. If a rule produces a line that does not match the text's inherent structure, the rule is wrong.**
 
 - We do not impose visual structure that the grammar does not directly support.
 - We do not construct grammatical categories to justify editorial instincts.
@@ -1150,7 +1148,7 @@ Rules that fail (1) — produce imposed or artificial breaks — are rejected re
 - **HOW WE KNOW** — the empirical warrant (corpus instances, cross-reference, grammatical test)
 - **SCOPE** — where it applies and where it doesn't (test contrasts / non-examples)
 
-The §3.17 Cross-Verse Continuity codification and the §6.5 Mandatory-audit triggers each include explicit WHY/HOW WE KNOW/SCOPE elements. Making the requirement explicit here means future additions can be audited against a defensibility checklist — relevant both for day-to-day consistency and for the PhD prospectus where each rule will need to carry its warrant. Retroactive audit of existing canon sections is future work; the requirement is prospective from 2026-04-22.
+Future additions are audited against this checklist — relevant for both day-to-day consistency and for the PhD prospectus where each rule needs to carry its warrant. Retroactive audit of existing canon sections is future work; the requirement is prospective from 2026-04-22.
 
 ### Mandatory-audit triggers for canon changes
 
@@ -1189,12 +1187,12 @@ A reproducibility distinction that matters for scholarly defensibility:
 - **v0–v3** (earlier stages of the text pipeline) are **bit-exactly reproducible** from source. Running the scripts on the source inputs produces byte-identical output.
 - **v4-editorial** is **methodologically checkable**, not bit-exactly reproducible. It is where the documented colometric methodology is *applied* through a mix of scan-and-apply tools (scripts), rule-application validators, and case-by-case editorial decisions where the rule set underdetermines. A different editor following the same canon should arrive at largely the same breaks — within the Category B/C bands of legitimate editorial variation.
 
-**Implication:** v4 is not "hand-typed prose formatted nicely". It is the methodology *in operation*. Every line break in v4 either (a) applies a Category A rule mechanically, or (b) reflects a Category B/C editorial call that should be traceable to a canon rule plus a defensibility rationale. The corpus is auditable against the canon; it is not reproducible from the canon alone because the editorial calls require human (or Claude-with-Stan) judgment.
+**Implication:** v4 is not "hand-typed prose formatted nicely". It is the methodology *in operation*. Every line break in v4 either (a) applies a Category A rule mechanically, or (b) reflects a Category B/C editorial call traceable to a canon rule plus a defensibility rationale. The corpus is auditable against the canon; it is not reproducible from the canon alone, because the editorial calls require human (or Claude-with-Stan) judgment.
 
-This framing is relevant for:
-- External reviewers evaluating whether v4 is a "scholarly product" or a "personal annotation". It is the former, grounded in an articulated methodology.
-- Future Claudes auditing whether a corpus edit is defensible: trace it to a canon rule + warrant. If it can't be traced, it's a methodology gap (add to canon) or a bug (fix in corpus).
-- The scan-and-apply pattern: mechanical sweeps ARE methodology application, not mechanical overrides. The script encodes a Category A rule; running it applies the rule at scale.
+This matters for:
+- **External reviewers** evaluating whether v4 is a "scholarly product" or a "personal annotation" — it is the former, grounded in an articulated methodology.
+- **Future Claudes** auditing whether a corpus edit is defensible: trace it to a canon rule + warrant. If it can't be traced, it's a methodology gap (add to canon) or a bug (fix in corpus).
+- **The scan-and-apply pattern**: mechanical sweeps ARE methodology application, not overrides of it. The script encodes a Category A rule; running it applies the rule at scale.
 
 ---
 
@@ -1469,6 +1467,39 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 *Purpose: **dual-natured** — chronological reasoning trail. Recent entries documenting active-rule provenance are operationally referenced (cross-project import status, audit findings, retirement dates); older entries are historical narrative. When an entry documents an active rule, it is the canonical source for that rule's WHY/HOW WE KNOW/SCOPE.*
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-25 (later⁵) — Voice cleanup: stripped AI-slop patterns from §0-§1 and §6
+
+Stan demonstrated a cleanup pattern by editing the §0 "How to use this document" preface in place: cut bureaucratic abstraction ("the canon serves two audiences with different reading patterns"), strip restated content ("As such, this document does allow those to blend together"), name the things instead of categorizing them. Direction: "your document reads too much like AI slop in places and not QUITE coherent for the human audience." Stan invited Claude to riff off the pattern and clean more.
+
+Patterns hunted:
+- Bureaucratic noun phrases ("audiences with different reading patterns")
+- Triadic parallel "X, Y, and Z" structures filled out for rhythm
+- Conceptual-filler sentences telling you what's coming rather than just being it
+- Self-restating clauses ("X. As such, X-restated.")
+- Meta-pointing to other parts of the canon when the cross-reference adds nothing
+- "Serves to" / "serves as" instead of "is" or "does"
+
+Changes this commit (Stan's + Claude's, intermingled in the same paragraphs):
+
+- §0 preface heading: "How to use this document" → "What is this document?" (Stan)
+- §0 preface body: rewritten content-led instead of audience-led (Stan)
+- §0 preface: double-space fix
+- §1 Mission: cut "(stated in the foundational premise at the top of the canon)" meta-pointer
+- §1 Method tail: cut "These are two sides of the discipline, not a conflict" defensive restatement
+- §1 Framing Principle intro: cut "Before the three forces themselves, the relationship between thought and syntax has to be stated precisely..." meta-framing-of-the-section opener
+- §1 Consequences item 1: cut "The thought is the target" restatement
+- §1 Consequences item 2: cut "Not a separate check; not a lesser concern" defensive add
+- §1 Consequences item 3: cut "But the thing we care about is the relationship..." restatement of prior sentence
+- §1 Imposing-vs-Revealing: cut "This is the load-bearing meta-principle for the whole project:" meta-claim before the bullet list
+- §6 Defensibility-capture middle paragraph: cut "The §3.17 ... and the §6.5 ... each include explicit WHY/HOW/SCOPE elements. Making the requirement explicit here means..." meta-pointing-and-restating sentences
+- §6 v4 framing list: tighter intro ("This matters for:" vs. "This framing is relevant for:"); bolded list-item leads for parallelism
+
+Net: ~30 lines changed, 14 insertions / 16 deletions across ~9 paragraphs. No rule content modified; voice tightened.
+
+Audit-skippable per §6.5 (internal formatting cleanup; no scope/precedence/closed-list claims; no rule semantics changed). The discipline going forward: when in or near a section for other reasons, prune the slop opportunistically. No standing cleanup-pass directive — clean-as-you-go.
 
 ---
 
