@@ -30,9 +30,9 @@ The division matters because it separates *what Greek grammar requires of any ed
 
 **What is this document?**
 
-This document serves as a canon for laying out the "main design philosophy" (the *what / why / posture* of the project) as well as the "pragmatic implementation rules and principles" (the *how* — rules and tests Claude reads literally for editorial application). There are times when the line between design philosophy and operational implementation blends together. The structure aims to keep the integration honest while making the predominant character of each section legible at a glance.
+This document serves as a canon for laying out the main design philosophy (the *what / why / posture* of the project) as well as the pragmatic implementation rules and principles (the *how* — rules and tests Claude reads literally for editorial application). There are times when the line between design philosophy and operational implementation blends together. The structure aims to keep the integration honest while making the predominant character of each section legible at a glance.
 
-- **Part 1 (The Method, §§1-4)** contains BOTH the theoretical foundation (§§1-2) AND the heaviest operational rule reference (§§3-4). It is the constitutional core; any session touching editorial work reads it. The header of each section discloses whether that section is mainly philosophical, mainly operational, or dual-natured.
+- **Part 1 (The Method, §§1-4)** is the constitutional core: theoretical foundation (§§1-2) and operational rule reference (§§3-4). Each section header discloses whether the section is mainly philosophical, mainly operational, or dual-natured.
 - **Part 2 (The Framework, §§5-8)** carries register operationalization, precedent and scope discipline, the change-protocol machinery (§6.5 Mandatory-audit triggers), and Greek-specific application supplements + scholarly material.
 - **Part 3 (The Record, §§9-10)** is the historical appendix — superseded formulations and the chronological update log.
 - **Layer 1 and Layer 2** are separate from this canon — see the Architecture section above. Layer 1 lives at `data/syntax-reference/greek-break-legality.md`. Layer 2 validators live at `validators/syntax/` and `validators/colometry/` (under active build).
@@ -49,7 +49,7 @@ Some sections are dual-natured by design: §1 interleaves theoretical principles
 
 # Part 1: The Method
 
-*Everything in Part 1 is authoritative and current. A trench Claude reading sections 1 through 4 has everything it needs for editorial work.*
+*Everything in Part 1 is authoritative and current. Sections 1 through 4 contain everything an editor needs to make line-break decisions.*
 
 ---
 
@@ -417,7 +417,7 @@ The distinction from M1: M2 concerns verb + obligatory complement (transitive nu
 - Dangling discourse particles: `alla` alone on a line without a complete clause
 - Orphaned appositives separated from their head noun when the appositive alone has no independent image
 
-**This is the adversarial auditor's primary over-split detection rule.** Most session 18/19 reversals (Rom 1:29, Luke 14:21, Phil 4:8, 2 Pet 2:10) triggered M4 alongside M1 or M3.
+**This is the adversarial auditor's primary over-split detection rule.** Most reversals (Rom 1:29, Luke 14:21, Phil 4:8, 2 Pet 2:10) trigger M4 alongside M1 or M3.
 
 ### The Complete Framework
 
@@ -933,7 +933,7 @@ The speech-intro `κηρύσσων ... καὶ λέγων·` is one atomic thoug
 
 *Purpose: **mainly operational** — diagnostic tests Claude runs to gate or sharpen editorial decisions (No-Anchor, Period, Image, Two-Prong, Q1/Q2, Completing-Predication, Validator Work-Queue). Each test has explicit inputs, outputs, and pass/fail criteria.*
 
-These are the instruments trench Claudes actually run during editorial work.
+These are the diagnostics actually run during editorial work.
 
 ### Gold-standard regression-test chapters — why these four
 
@@ -1467,6 +1467,30 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 *Purpose: **dual-natured** — chronological reasoning trail. Recent entries documenting active-rule provenance are operationally referenced (cross-project import status, audit findings, retirement dates); older entries are historical narrative. When an entry documents an active rule, it is the canonical source for that rule's WHY/HOW WE KNOW/SCOPE.*
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-25 (later⁶) — Voice cleanup pass 2: jargon expansion + AI-slop removal in §0-§1 + §3.7 residue
+
+Stan committed to the framing: "if this is my proto-scholarly document, write it for the human reader by default. Extra context costs Claude nothing; missing context costs the human reader real effort." Discriminator: write for humans throughout; AI-jargon (project-internal shorthand) goes; domain Greek/colometric terms stay because they're content.
+
+This pass:
+
+- §0 preface (line 33): Stan's air-quote removal landed. Direct content-led prose, no scare-quotes around content.
+- §0 Part 1 bullet (line 35): replaced "any work session performed by Claude under Stan's direction involving editorial work reads it" (Stan's prior bureaucratic phrasing) with content-led "is the constitutional core: theoretical foundation (§§1-2) and operational rule reference (§§3-4)." Reader-routing handled separately by the Reader's guide; the Part bullets describe what each Part *is*.
+- §1 Part 1 epigraph (line 52): "A trench Claude reading sections 1 through 4 has everything it needs for editorial work." → "Sections 1 through 4 contain everything an editor needs to make line-break decisions." Drops "trench Claude" project jargon; states the content directly.
+- §2 M4 over-split rule (line 420): "Most session 18/19 reversals" → "Most reversals." Strips the project-internal session-numbering reference; the verse list communicates the data point.
+- §4 Operational Tests intro (line 936): "These are the instruments trench Claudes actually run" → "These are the diagnostics actually run." Drops "trench Claudes."
+
+Net: 5 small edits, 5 lines changed. No rule content modified.
+
+**Going-forward discipline:**
+- Domain Greek/colometric terms (genitive absolute, M1, R8, hoti-complement, καί-merge) stay — they are content.
+- Project-internal jargon (trench Claude, session-numbering, sweep, validator, scanner, cascade) needs to be either defined upstream once OR rewritten as description. "Session" used operationally (e.g., "in the same session" within §6.5 trigger #4) earns its place because it has a concrete operational meaning at commit-time; "session 18/19 reversals" was just project-internal index residue.
+- Reader-routing belongs in the Reader's guide, not in every Part description.
+- Bureaucratic agent-naming ("performed by Claude under Stan's direction") is AI-precision over human-readability. The cost asymmetry runs the other way: extra context for humans is free for AI; AI-precision-via-jargon is costly for humans.
+
+Audit-skippable per §6.5 (internal formatting cleanup; no rule content changed; no scope/precedence/closed-list claims).
 
 ---
 
