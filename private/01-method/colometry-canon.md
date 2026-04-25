@@ -30,10 +30,20 @@ The division matters because it separates *what Greek grammar requires of any ed
 
 **How to use this document:**
 
-- **Part 1 (The Method)** is the constitutional core. Every session that touches editorial work MUST read it. It contains everything a trench Claude needs to make correct editorial decisions.
-- **Part 2 (The Framework)** provides depth — register operationalization, precedent manuscripts, Greek-specific application data. Read when you need the "why" behind Part 1.
-- **Part 3 (The Record)** is the historical appendix — superseded formulations, chronological update log, the reasoning trail. Read when you need to understand how a decision evolved.
+The canon serves two audiences with different reading patterns. Some sections are "mainly philosophy" (the *what / why / posture* of the project), some are "mainly operational" (the *how* — rules and tests Claude reads literally for editorial application), and some are dual-natured by design (philosophy and operational hooks interleaved at sub-paragraph granularity). The structure aims to keep the integration honest while making the predominant character of each section legible at a glance.
+
+- **Part 1 (The Method, §§1-4)** contains BOTH the theoretical foundation (§§1-2) AND the heaviest operational rule reference (§§3-4). It is the constitutional core; any session touching editorial work reads it. The header of each section discloses whether that section is mainly philosophical, mainly operational, or dual-natured.
+- **Part 2 (The Framework, §§5-8)** carries register operationalization, precedent and scope discipline, the change-protocol machinery (§6.5 Mandatory-audit triggers), and Greek-specific application supplements + scholarly material.
+- **Part 3 (The Record, §§9-10)** is the historical appendix — superseded formulations and the chronological update log.
 - **Layer 1 and Layer 2** are separate from this canon — see the Architecture section above. Layer 1 lives at `data/syntax-reference/greek-break-legality.md`. Layer 2 validators live at `validators/syntax/` and `validators/colometry/` (under active build).
+
+**Reader's guide (added 2026-04-25):**
+
+- **Editor making editorial decisions** (typically a Claude session working on the corpus): focus on §§3-4 and §6.5. Consult §§1-2 for grounding when proposing or evaluating rules.
+- **Scholar reading the method as a published artifact**: focus on §§0-1 (foundational premise + framework theory), §6 (precedent + scope), and §8 (Greek-specific application + exegetical convergence).
+- **Tracking how a decision evolved**: §§9-10 carry the reasoning trail.
+
+Some sections are dual-natured by design: §1 interleaves theoretical principles with their operational corollaries (e.g., the "reaching-for-split" vocabulary watchlist sits inside the Imposing-vs-Revealing philosophical principle); §2's five structural justifications each combine cognitive-prong (philosophical) with structural-prong (operational) arguments. **Treat bolded paragraphs as load-bearing** in those sections regardless of the surrounding prose's character. When revising philosophical prose in dual-natured sections, leave bolded paragraphs untouched unless the change is intentional and audited per §6.5.
 
 ---
 
@@ -44,6 +54,8 @@ The division matters because it separates *what Greek grammar requires of any ed
 ---
 
 ## Section 1: The Framework
+
+*Purpose: theoretical foundation for the three-forces architecture and the imposing-vs-revealing posture. **Dual-natured by design** — operational corollaries (vocabulary watchlists, fronting paradox, Showcase Acts 1:9) are embedded throughout. Treat bolded paragraphs as load-bearing for editorial application.*
 
 Sense-line breaks are governed by **three forces** operating in concert: a **generative** force that proposes where breaks should happen, a **subtractive** force that vetoes breaks that would violate Greek syntax, and a **diagnostic** force that sharpens ambiguous cases. Earlier formulations used a four-criteria strict-hierarchy framing; this framework replaces that with the three-forces architecture adopted 2026-04-20 after cross-canon alignment with the sibling project (see §10 update log).
 
@@ -218,6 +230,8 @@ The gen abs interrupts the FEF suspension with a camera shift to the disciples' 
 ---
 
 ## Section 2: The Unless Conditions (Closed List)
+
+*Purpose: operational gating definitions for when exceptions to default-split apply. Five structural justifications (closed list) + four merge-overrides (closed list) + the complete decision procedure. **Dual-natured by design** — each justification interleaves cognitive-prong (philosophical) and structural-prong (operational) arguments at sub-paragraph granularity.*
 
 When a line fails the strict predication test, it may still stand if it passes BOTH prongs of the exception test. If either prong fails, merge. The two-prong requirement prevents the exception from becoming a blank check — editorial intuition alone cannot override the predication default.
 
@@ -425,6 +439,8 @@ The framework is a default-merge with two closed lists of exceptions — five sp
 ---
 
 ## Section 3: The Rules
+
+*Purpose: **mainly operational** — rule reference Claude reads literally for editorial application. Read for the Autonomy Boundary (Category A/B/C + scope/precedence/closed-list/carve-out diagnostic), Rule Index, and individual rule subsections (§3.1 through §3.17).*
 
 ### Autonomy Boundary (Read This First)
 
@@ -923,6 +939,8 @@ The speech-intro `κηρύσσων ... καὶ λέγων·` is one atomic thoug
 
 ## Section 4: Operational Tests
 
+*Purpose: **mainly operational** — diagnostic tests Claude runs to gate or sharpen editorial decisions (No-Anchor, Period, Image, Two-Prong, Q1/Q2, Completing-Predication, Validator Work-Queue). Each test has explicit inputs, outputs, and pass/fail criteria.*
+
 These are the instruments trench Claudes actually run during editorial work.
 
 ### Gold-standard regression-test chapters — why these four
@@ -1064,6 +1082,8 @@ Only candidates tagged `REVIEW-REQUIRED` / `AMBIG` / `UNCLEAR` actually require 
 
 ## Section 5: Register Operationalization
 
+*Purpose: **mainly operational** — register-aware modulation layer that sits on top of the base framework. Six registers detected by local syntactic signatures + the FEF (Front-End Frame) treatment for Greek. Read when applying register-sensitive rules in argumentative, sermonic, narrative, or apostrophic contexts.*
+
 The four-criteria hierarchy as stated (atomic thought > single image > breath > source-language syntax) is **register-flat at the base layer**. But actual practice is register-aware. Register is a **modulation layer that sits on top of the base hierarchy**, detected by local syntactic/lexical signatures rather than by coarse genre tags.
 
 **Register is detected locally, not globally.** A chapter can shift register mid-verse. An argumentative period can contain an enumerative catena; a narrative chain can break into a sermonic indictment. We do not pre-classify whole books into registers; we read the signature of each local span and apply the appropriate modulation.
@@ -1097,6 +1117,8 @@ The Greek equivalent of the Hebrew wayehi protasis is the **periodic sentence wi
 ---
 
 ## Section 6: Precedent and Scope
+
+*Purpose: **dual-natured** — scholarly grounding (Codex Bezae, Claromontanus, Skousen) and project scope discipline (mainly philosophical) PLUS the operational change-protocol machinery (Defensibility capture, §6.5 Mandatory-audit triggers — operational; Claude reads §6.5 literally before any canon commit).*
 
 ### Precedent for colometric layout
 
@@ -1191,6 +1213,8 @@ This framing is relevant for:
 ---
 
 ## Section 8: Greek-Specific Application
+
+*Purpose: **dual-natured** — Greek-specific operational supplements (verb valency table, participial-rules detail, vocative/adverbial supplements, Standalone Verb Test) interleaved with scholarly material (exegetical hot-spot convergence, stylometry findings, corpus statistics, validation benchmarks) for external-reader defensibility. Operational supplements amend §3 rules; scholarly material is for the publishable artifact.*
 
 ### Verb Valency and the "Atomic Thought" Test
 
@@ -1357,6 +1381,8 @@ We preserve verse references for alignment with standard editions, but they do n
 
 ## Section 9: Superseded Formulations
 
+*Purpose: **mainly historical** — retirement narratives documenting rules and formulations that no longer govern. Read to understand the reasoning trail of canon evolution. Operationally referenced by §6.5 trigger #11 (recoveries from retired canon must be audited).*
+
 ### Three §3.7 Subsections Retired (2026-04-25): Need/Response, Imperative + Divine-Consequence, Cause-Consequence Bonded Beats
 
 First retroactive application of the §6.5 mandatory-audit trigger list (codified 2026-04-24 from BofM cross-project import). The three subsections were added 2026-04-21 without a documented full-corpus sweep. Three parallel Opus hostile audits (2026-04-25) found each subsection fails the audit-discipline standard for different reasons. All three retired; canonical cases handled by existing rules.
@@ -1444,7 +1470,36 @@ The "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" ex
 
 ## Section 10: Chronological Update Log
 
+*Purpose: **dual-natured** — chronological reasoning trail. Recent entries documenting active-rule provenance are operationally referenced (cross-project import status, audit findings, retirement dates); older entries are historical narrative. When an entry documents an active rule, it is the canonical source for that rule's WHY/HOW WE KNOW/SCOPE.*
+
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-25 (later³) — Section-purpose disclosure: preface rewrite + Reader's guide + PURPOSE headers at each section
+
+After Stan's editorial-anxiety inquiry (he wanted to revise theory paragraphs without breaking Claude's literal-read targets), evaluated three architectural options: full split into two docs (rejected — drift risk + cross-reference rework + BofM divergence), inline blockquote convention for OP paragraphs in MIXED sections (rejected after three parallel hostile audits — theater not protection, fast decay, BofM precedent is "extract don't annotate"), section-level disclosure (adopted).
+
+**This commit applies the section-level disclosure path:**
+
+1. **Preface rewrite (lines 31-36 → expanded).** Replaced the misleading "Part 1 = constitutional core for humans" framing with an honest description: Part 1 contains BOTH theoretical foundation (§§1-2) AND the heaviest operational rule reference (§§3-4). Stan's framing ("mainly human / mainly robot / some bleed is fine — that's how it goes") preserved as the organizing posture.
+
+2. **Reader's guide subsection added** after the preface. Routes readers by purpose: editor making editorial decisions → §§3-4 + §6.5; scholar reading method as artifact → §§0-1, 6, 8; tracking decision evolution → §§9-10. States explicitly that §§1 and 2 are dual-natured by design and that bolded paragraphs in those sections are load-bearing regardless of surrounding prose.
+
+3. **PURPOSE headers added at each of 9 section openers** (§§1, 2, 3, 4, 5, 6, 8, 9, 10). Each header discloses the section's predominant character: "mainly philosophical," "mainly operational," "dual-natured by design," or "mainly historical." Cross-references operational sub-blocks where they sit inside otherwise-philosophical sections.
+
+**What was NOT done:**
+- No paragraph-level inline markers (rejected per audit consensus — fast decay, classification ambiguity, distorts meaning at sub-paragraph mixing points).
+- No section reshuffling (preserves cross-references; preserves BofM-parity).
+- No two-doc split.
+- No publishable-artifact extraction (separable; deferred).
+
+**Audit discipline.** Three parallel Opus hostile audits (efficacy / edge cases / conversion + drift) ran before adopting the path. Audit consensus: preface rewrite unanimously approved; blockquote convention unanimously rejected; section-level disclosure (this commit's path) was the convergent positive recommendation. Per §6.5: this is internal formatting cleanup + cross-reference clarification (audit-skippable), but the audit was run anyway because the change touches the canon's organizing structure.
+
+**Defensibility capture:**
+- WHY: solve Stan's editorial-anxiety problem (revise theory without breaking operational reads) at the section level rather than the paragraph level.
+- HOW WE KNOW: three parallel hostile audits documented in this session's folder; convergent rejection of paragraph-level marking; convergent approval of section-level disclosure.
+- SCOPE: applies to canon top-of-document and section openers only; no rule content changed; no rule semantics affected.
 
 ---
 
