@@ -197,7 +197,7 @@ The colometric grid is **flat by design** — every line has equal visual status
 
 **Corollary — punctuation must not have deterministic force.** The commas, semicolons, colons, and dashes in the SBLGNT are editorial additions — not original to the text. They may corroborate a line-break decision but CANNOT justify one by themselves. Test: remove the punctuation mentally and ask whether the break still holds on purely grammatical grounds.
 
-**Corollary — the "reaching-for-split" warning.** When the grammatical case for a split is borderline and you find yourself reaching for rhetorical-motif, image-analysis, cognitive-predictive-processing, or oral-rhythm arguments as tiebreakers, **that is the signal that scope creep is happening.** The scope-disciplined default in a borderline case is to keep the grammatical constituent intact — i.e., **prefer merge to split** when the grammar is ambiguous.
+**Corollary — the "reaching-for-split" warning.** When the grammatical case for a split is borderline and you find yourself reaching for rhetorical-motif, image-analysis, cognitive-predictive-processing, oral-rhythm, theological-weight, soteriological-significance, pastoral-force, narrative-climax, prosodic-emphasis, doctrinal-stakes, or any analogous non-grammatical category as a tiebreaker, **that is the signal that scope creep is happening.** The scope-disciplined default in a borderline case is to keep the grammatical constituent intact — i.e., **prefer merge to split** when the grammar is ambiguous. *Vocabulary list extended 2026-04-25 after the "soteriological climax" catch (see `feedback_rhetoric_bandwagon.md` catches list).*
 
 **The fronting paradox — marked word order argues for MERGE, not split.** When a grammatically tight unit (verb + its required-case complement, or other bound constituent) appears in a *marked* word order — e.g., object fronted before its governing verb — the natural editorial instinct is to split at the fronted element as a way of "visualizing the emphasis." **This instinct is wrong.** The rhetorical effect of fronting depends on the grammatical unity *staying intact*. The marked arrangement is felt as emphatic precisely because the hearer processes the fronted element in a non-default position *within a single breath unit*. Splitting at the fronted-element boundary mechanizes the emphasis — it imposes a pause that was not in the original oral delivery — and paradoxically *diminishes* the rhetorical force.
 
@@ -1444,6 +1444,39 @@ The "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" ex
 ## Section 10: Chronological Update Log
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-25 (later) — Meta-correction: judgment-handoff smuggling caught + tightening applied + Matt 25:42a / Acts 16:31 / Luke 8:50 / Jas 4:7 merges
+
+Within minutes of committing the §3.7 retirement (`6b741fe`), Phase B reasoning produced the exact failure mode the retirement targeted: invoking "soteriological weight," "pastoral comfort," "narrative climax," and "prosodic emphasis" as adjudication categories for splits at Acts 16:31, Luke 8:50, and Jas 4:7. Stan caught it directly: *"soteriological climax... gibberish that contradicts the colometry document."*
+
+**Three parallel hostile meta-audits** dispatched on the failure:
+- AUDIT A (cognitive/process): root cause = pre-commit self-test scoped to canon-file edits, not session-folder analysis docs; Phase B framing as "decision points for Stan's judgment" let weight-based reasoning reach the page without the discipline ever firing. Pattern named: **"judgment-handoff smuggling"** — sub-shape of named-category carve-out, distinguished by the handoff verb ("Stan's call," "warrant," "open question") doing the work that "named category" does in the parent pattern. R28 framework drift mid-document — silently slid from "is asymmetry textual?" to "is asymmetry weight-justified?" — re-instantiating retired §3.7 logic under new labels (reclassification by stealth).
+- AUDIT B (tightening proposals): rejected 4 of 8 candidates as rule-multiplication; accepted 3 — extend canon §1 line 200 vocabulary watchlist (T5); add judgment-handoff smuggling sub-pattern to `feedback_rhetoric_bandwagon.md` (T3); add first GNT-native catch entry (T4).
+- AUDIT C (session sweep): contamination confined to Phase B findings document's bridging/forwarding paragraphs (Tier 2/4 + line 118 + line 120-122). Canon §9, canon §10, Tier 1 commit body (`358657b`), yesterday's import commit (`2501e48`), and the §3.7 retirement reasoning itself are clean. Note: the §3.7 retirement audit chain itself contained a small conflation — Audit 1 treated R28 as protecting the Matt 25:42a split (it does not; R28 protects only the genuine compression at 25:43c "ἀσθενὴς καὶ ἐν φυλακῇ καὶ οὐκ ἐπεσκέψασθέ με" where two state-conditions are covered by one response verb).
+
+**Codified (this commit):**
+
+1. **§1 line 200 vocabulary watchlist extended.** Added theological-weight, soteriological-significance, pastoral-force, narrative-climax, prosodic-emphasis, doctrinal-stakes, and "any analogous non-grammatical category" to the disallowed-tiebreaker list. Closes the actual vocabulary gap that let yesterday's reasoning through.
+
+2. **Memory `feedback_rhetoric_bandwagon.md`**: new "judgment-handoff smuggling sub-pattern" section + first GNT-native entry in catches training set documenting the 2026-04-25 "soteriological climax" catch with specific traps that produced it.
+
+3. **Phase B findings document annotated** at top with contamination notice. Document preserved for the reasoning trail; contaminated sections marked as record-of-failure-mode rather than load-bearing analysis.
+
+**Corpus merges applied as Tier 1 mechanical-default corrections (not "decisions"):**
+
+- **Matt 25:42a**: `ἐπείνασα γὰρ / καὶ οὐκ ἐδώκατέ μοι φαγεῖν` merged to one line. R28 mechanical test — counts identical to Matt 25:35a (1 state verb + 1 negated response verb = 2 finite verbs). No authorial asymmetry. R28 protects only 25:43c (the genuine sick+prison-under-one-verb compression), not 25:42a.
+- **Acts 16:31**: `Πίστευσον ἐπὶ τὸν κύριον Ἰησοῦν, καὶ σωθήσῃ σὺ καὶ ὁ οἶκός σου.` merged. Same author (Luke) merges similar imperative+καί+response constructions consistently in Luke 6:37 ×3, 11:9 ×3, 6:38, 10:28. Same-author consistency under M1 strict-application caveat + R8 short-line default.
+- **Luke 8:50**: `Μὴ φοβοῦ, μόνον πίστευσον, καὶ σωθήσεται.` merged. Same Luke-author consistency.
+- **Jas 4:7 second split**: `ἀντίστητε δὲ τῷ διαβόλῳ, καὶ φεύξεται ἀφʼ ὑμῶν·` merged. First split at the contrastive δέ pivot (`ὑποτάγητε / ἀντίστητε δέ`) stays — that is grammatical. Same-chapter same-author consistency with Jas 4:8 + Jas 4:10 (both merged 1-line imperative+καί+response constructions).
+
+**Cascade outcomes:** regen Matt + Luke + Acts + Jas (4 verses redistributed). Three manual fixes required after regen due to proportional-heuristic redistribution failures: Matt 25:42 English content scrambled (rewrote 2 lines clean); Luke 8:50 English orphaned "Do" at line-end (rewrote to mirror 2-line Greek); Luke 6:25 collateral damage (regen deleted "Woe" from line 127 — restored). HTML rebuilt for all 4 books. `verify_word_order.py`: 0 discrepancies across 27 books. `check_cascade_alignment.py`: 3 warnings (the known stable construction FPs).
+
+**Defensibility capture:**
+- WHY: a discipline that fires only on canon-file commits cannot catch failure modes embedded in session-folder analysis documents that recommend corpus actions. The vocabulary-watchlist extension closes the gap by making the prohibited reasoning recognizable wherever it appears (canon, analysis, recommendation, post-hoc rationale).
+- HOW WE KNOW: 3 parallel Opus hostile meta-audits with full text-citation evidence; corpus merges grounded in R28-mechanical or M1-caveat + R8-default reasoning explicitly free of weight-based vocabulary.
+- SCOPE: tightening targets a behavioral failure-shape (judgment-handoff smuggling) and a vocabulary gap; does NOT promote audit machinery to all corpus decisions or to all editorial outputs (audit B explicitly rejected that as scope creep).
 
 ---
 
