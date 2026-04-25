@@ -18,13 +18,13 @@ Scholarly alignment with cognitive-science, psycholinguistic, or classical-rheto
 
 The colometric methodology sits on a three-layer architecture:
 
-**Layer 1 — Generic Koine break-legality.** Constraints any competent editor of any Koine Greek text would observe: article + noun stays together, preposition + object doesn't split, postpositives can't start a line, periphrastics stay whole. Lives as a shape-capped table at [`data/syntax-reference/greek-break-legality.md`](../../data/syntax-reference/greek-break-legality.md) — 24 rows of syntactic signature + legality verdict + BDF/Smyth/Wallace citation. Not our editorial doctrine; a pointer to generic Koine grammar facts. Migrated from canon §3.2 on 2026-04-20 (R2–R7 now live here).
+**Layer 1 — Generic Koine break-legality.** Constraints any competent editor of any Koine Greek text would observe: article + noun stays together, preposition + object doesn't split, postpositives can't start a line, periphrastics stay whole. Lives as a shape-capped table at [`data/syntax-reference/greek-break-legality.md`](../../data/syntax-reference/greek-break-legality.md) — 24 rows of syntactic signature + legality verdict + BDF/Smyth/Wallace citation. Not our editorial doctrine; a pointer to generic Koine grammar facts. R2–R7 live here.
 
-**Layer 2 — Validators.** Mechanical checks that read Layer 1 and Layer 3 rules against Macula-Greek ([Clear-Bible/macula-greek](https://github.com/Clear-Bible/macula-greek), CC-BY 4.0) and MorphGNT ([morphgnt/sblgnt](https://github.com/morphgnt/sblgnt), CC-BY-SA) parse data. Two error classes: `MALFORMED` for Layer 1 violations (ungrammatical typography — must fix, Category A by default), `DEVIATION` for Layer 3 violations (grammatical but not our editorial convention — Category A/B/C gating per §3 Autonomy Boundary). Target directory split: `validators/syntax/` for Layer 1 checks, `validators/colometry/` for Layer 3 checks. Under active build 2026-04-20 (see session folder `private/03-sessions/2026-04-20-foundational-reframing-and-layer-1/`).
+**Layer 2 — Validators.** Mechanical checks that read Layer 1 and Layer 3 rules against Macula-Greek ([Clear-Bible/macula-greek](https://github.com/Clear-Bible/macula-greek), CC-BY 4.0) and MorphGNT ([morphgnt/sblgnt](https://github.com/morphgnt/sblgnt), CC-BY-SA) parse data. Two error classes: `MALFORMED` for Layer 1 violations (ungrammatical typography — must fix, Category A by default), `DEVIATION` for Layer 3 violations (grammatical but not our editorial convention — Category A/B/C gating per §3 Autonomy Boundary). Target directory split: `validators/syntax/` for Layer 1 checks, `validators/colometry/` for Layer 3 checks. Under active build.
 
 **Layer 3 — This canon.** Editorial sense-line methodology specific to the Reader's GNT. Where and why we diverge from or add to generic Koine syntax to reveal atomic thought. The three forces (§1), five structural justifications (§2), four merge-overrides (§2), rules (§3), operational tests (§4), register operationalization (§5), and Greek-specific application data (§8) all live here. The Subtractive force in §1 is the contract with Layer 1 — we never violate it.
 
-The division matters because it separates *what Greek grammar requires of any editor* (Layer 1) from *what our project chooses to do editorially* (Layer 3). Pre-2026-04-20, the canon mixed the two — rules like R2 (never end on conjunction) were codified as editorial when they are in fact generic syntactic facts. That was a category error, resolved by the 2026-04-20 foundational-reframing + Layer 1 extraction.
+The division matters because it separates *what Greek grammar requires of any editor* (Layer 1) from *what our project chooses to do editorially* (Layer 3).
 
 ---
 
@@ -37,7 +37,7 @@ The canon serves two audiences with different reading patterns. Some sections ar
 - **Part 3 (The Record, §§9-10)** is the historical appendix — superseded formulations and the chronological update log.
 - **Layer 1 and Layer 2** are separate from this canon — see the Architecture section above. Layer 1 lives at `data/syntax-reference/greek-break-legality.md`. Layer 2 validators live at `validators/syntax/` and `validators/colometry/` (under active build).
 
-**Reader's guide (added 2026-04-25):**
+**Reader's guide:**
 
 - **Editor making editorial decisions** (typically a Claude session working on the corpus): focus on §§3-4 and §6.5. Consult §§1-2 for grounding when proposing or evaluating rules.
 - **Scholar reading the method as a published artifact**: focus on §§0-1 (foundational premise + framework theory), §6 (precedent + scope), and §8 (Greek-specific application + exegetical convergence).
@@ -57,7 +57,7 @@ Some sections are dual-natured by design: §1 interleaves theoretical principles
 
 *Purpose: theoretical foundation for the three-forces architecture and the imposing-vs-revealing posture. **Dual-natured by design** — operational corollaries (vocabulary watchlists, fronting paradox, Showcase Acts 1:9) are embedded throughout. Treat bolded paragraphs as load-bearing for editorial application.*
 
-Sense-line breaks are governed by **three forces** operating in concert: a **generative** force that proposes where breaks should happen, a **subtractive** force that vetoes breaks that would violate Greek syntax, and a **diagnostic** force that sharpens ambiguous cases. Earlier formulations used a four-criteria strict-hierarchy framing; this framework replaces that with the three-forces architecture adopted 2026-04-20 after cross-canon alignment with the sibling project (see §10 update log).
+Sense-line breaks are governed by **three forces** operating in concert: a **generative** force that proposes where breaks should happen, a **subtractive** force that vetoes breaks that would violate Greek syntax, and a **diagnostic** force that sharpens ambiguous cases.
 
 ### Mission and Method — the Discipline Framing
 
@@ -140,10 +140,6 @@ Each line should paint a single image or picture in the mind. Close your eyes an
 
 The image test operates within syntactic permission — it never overrides a syntactic veto. It is a sharpener, not a generator and not a floor.
 
-### Breath — Retired 2026-04-20
-
-Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterion. Retired 2026-04-20 after empirical test across 260 hand-edited chapters found zero cases where breath was the sole deciding factor on any line break. The cognitive-chunking work breath was informally doing is now absorbed by structural justification #5 (substantive adjunct as own focus, §2). If a merge produces something unspeakable, reconsider — but that reconsideration will find its warrant in the three forces (propositions / syntax / image) or in justification #5, not in breath as its own criterion.
-
 ### The Framework in Practice
 
 ```
@@ -209,7 +205,7 @@ The colometric grid is **flat by design** — every line has equal visual status
 
 **Corollary — punctuation must not have deterministic force.** The commas, semicolons, colons, and dashes in the SBLGNT are editorial additions — not original to the text. They may corroborate a line-break decision but CANNOT justify one by themselves. Test: remove the punctuation mentally and ask whether the break still holds on purely grammatical grounds.
 
-**Corollary — the "reaching-for-split" warning.** When the grammatical case for a split is borderline and you find yourself reaching for rhetorical-motif, image-analysis, cognitive-predictive-processing, oral-rhythm, theological-weight, soteriological-significance, pastoral-force, narrative-climax, prosodic-emphasis, doctrinal-stakes, or any analogous non-grammatical category as a tiebreaker, **that is the signal that scope creep is happening.** The scope-disciplined default in a borderline case is to keep the grammatical constituent intact — i.e., **prefer merge to split** when the grammar is ambiguous. *Vocabulary list extended 2026-04-25 after the "soteriological climax" catch (see `feedback_rhetoric_bandwagon.md` catches list).*
+**Corollary — the "reaching-for-split" warning.** When the grammatical case for a split is borderline and you find yourself reaching for rhetorical-motif, image-analysis, cognitive-predictive-processing, oral-rhythm, theological-weight, soteriological-significance, pastoral-force, narrative-climax, prosodic-emphasis, doctrinal-stakes, or any analogous non-grammatical category as a tiebreaker, **that is the signal that scope creep is happening.** The scope-disciplined default in a borderline case is to keep the grammatical constituent intact — i.e., **prefer merge to split** when the grammar is ambiguous. *See `feedback_rhetoric_bandwagon.md` catches list for examples of these terms in action.*
 
 **The fronting paradox — marked word order argues for MERGE, not split.** When a grammatically tight unit (verb + its required-case complement, or other bound constituent) appears in a *marked* word order — e.g., object fronted before its governing verb — the natural editorial instinct is to split at the fronted element as a way of "visualizing the emphasis." **This instinct is wrong.** The rhetorical effect of fronting depends on the grammatical unity *staying intact*. The marked arrangement is felt as emphatic precisely because the hearer processes the fronted element in a non-default position *within a single breath unit*. Splitting at the fronted-element boundary mechanizes the emphasis — it imposes a pause that was not in the original oral delivery — and paradoxically *diminishes* the rhetorical force.
 
@@ -384,7 +380,7 @@ These override conditions are extensible only by worked examples + adversarial v
 - If the two verbs are semantically synonymous, form a recognizable binomial idiom, or function as a hendiadys (single unified act expressed via two near-synonyms) → M1 wins → merge. Example: `Δαιμόνιον ἔχει καὶ μαίνεται·` (John 10:20) — one diagnostic judgment expressed via two complementary terms.
 - The test is structural (verb semantic class) not intuitive. If the two verbs belong to clearly different semantic domains, they are not a gorgianic pair even if only N=2 and formally marked.
 
-**Strict-application caveat — M1 rejection does not license split.** M1's "different semantic domains" tie-breaker *withdraws the gorgianic merge protection*; it does NOT by itself license a split. Before flipping to SPLIT, check whether another merge protection fires: M2 (verb-object bond), M3 (bare-governor), M4 (fragmented atomic thought), R11 (speech-intro / approach+touch), R8's καί-merge default for short coordinate clauses, R28 textual-asymmetry preservation when applicable, and default-merge when grammar is ambiguous. Split only when ALL merge protections are exhausted AND both resulting fragments pass the atomic-thought test. Rationale: the canon's overall posture is merge-by-default; M1 is one of several merge levees, and its failure signals "check the others", not "proceed to split". *Codified 2026-04-21 after a round-2 adversarial pass on 318 KEEP_MERGED verdicts showed that strict-application drift (flipping on M1 failure alone) produces split-bias inconsistent with cross-corpus practice. Reference list updated 2026-04-25 after retirement of three §3.7 subsections (Need/Response, Imperative + Divine-Consequence, Cause-Consequence Bonded Beats); their work is absorbed by M1 itself + R8 default + R28.*
+**Strict-application caveat — M1 rejection does not license split.** M1's "different semantic domains" tie-breaker *withdraws the gorgianic merge protection*; it does NOT by itself license a split. Before flipping to SPLIT, check whether another merge protection fires: M2 (verb-object bond), M3 (bare-governor), M4 (fragmented atomic thought), R11 (speech-intro / approach+touch), R8's καί-merge default for short coordinate clauses, R28 textual-asymmetry preservation when applicable, and default-merge when grammar is ambiguous. Split only when ALL merge protections are exhausted AND both resulting fragments pass the atomic-thought test. Rationale: the canon's overall posture is merge-by-default; M1 is one of several merge levees, and its failure signals "check the others", not "proceed to split".
 
 #### M2. Verb-Object Clause-Nucleus Bond
 
@@ -456,7 +452,7 @@ When proposing sense-line changes, classify each change:
 
 **Proposed-rule adoption protocol.** A proposed rule is adopted when its first corpus sweep produces ≥80% clean categorization (unambiguous STRONG-MERGE or STRONG-SPLIT). Apply the clean categorizations; refine the rule for the ambiguous residue and re-run. If ≥80% cannot be reached after two refinement passes, the rule is likely editorial rather than mechanical — reclassify and gate per Category B/C.
 
-**Scope/precedence/closed-list/carve-out diagnostic (added 2026-04-24 from BofM cross-project directive).** Canon additions that include ANY of the following are **Category B by default**, regardless of how they are framed in the commit message or §10 Update Log entry:
+**Scope/precedence/closed-list/carve-out diagnostic.** Canon additions that include ANY of the following are **Category B by default**, regardless of how they are framed in the commit message or §10 Update Log entry:
 - A scope claim (*"rule X applies to / does not apply to Y"*)
 - A precedence claim (*"rule A trumps rule B"*, *"X wins over Y when both fire"*)
 - A closed-list extension (adding a verb class, adding a named category, adding a SCOPE-exclusion item)
@@ -499,7 +495,7 @@ This diagnostic catches the failure mode where a canon change is self-framed as 
 
 *Retired (see §9):* R15 (folded into R14), R16 (folded into R8), R21 (absorbed as operational mechanism for R12/R13/R14), R25 (folded into R11), R26 (pure restatement of M2), R29 (pointer-only; M1–M4 stand on their own in Section 2).
 
-Rules are classified as MECHANICAL (any trained editor would apply them identically), EDITORIAL (defensible, documented, but require judgment), PRINCIPLE (governing stance, not a per-line rule), or LAYER 1 (pure Koine-Greek syntax facts, migrated 2026-04-20 to [`data/syntax-reference/greek-break-legality.md`](../../data/syntax-reference/greek-break-legality.md); Mechanical in effect, but their warrant is generic Greek grammar rather than a project-specific editorial choice).
+Rules are classified as MECHANICAL (any trained editor would apply them identically), EDITORIAL (defensible, documented, but require judgment), PRINCIPLE (governing stance, not a per-line rule), or LAYER 1 (pure Koine-Greek syntax facts at [`data/syntax-reference/greek-break-legality.md`](../../data/syntax-reference/greek-break-legality.md); Mechanical in effect, but their warrant is generic Greek grammar rather than a project-specific editorial choice).
 
 ### 3.1 The No-Anchor Rule
 
@@ -507,7 +503,7 @@ Every sense-line must carry at least one thought-marking anchor: (1) a finite ve
 
 *Serves:* the generative force (atomic thought / propositions) — this rule operationalizes the DEFAULT case of the generative force (the predication test).
 
-**TIGHTENED participle scope (2026-04-16):** Anchor type (3) is "a participle standing as predicate" — not any participle. A participle functioning as an adverbial modifier or attributive adjective does not anchor its line; only a participle standing as the predicate of its own clause (genitive absolute, circumstantial participle carrying an independent predication via ellipsis) counts.
+**Participle scope.** Anchor type (3) is "a participle standing as predicate" — not any participle. A participle functioning as an adverbial modifier or attributive adjective does not anchor its line; only a participle standing as the predicate of its own clause (genitive absolute, circumstantial participle carrying an independent predication via ellipsis) counts.
 
 **Critical clarification:** A "substantive head" does NOT include bare noun phrases that continue a prior clause's predicate as list objects or appositional extensions. A line of objects from the previous line's verb fails the anchor test even though it contains nouns.
 
@@ -519,11 +515,11 @@ Every sense-line must carry at least one thought-marking anchor: (1) a finite ve
 
 **Object-continuation failure mode:** The most common way a noun-only line slips through is as a compound-list continuation: the previous line establishes a verb, and the following line names additional objects. These look anchored (they have nouns) but are not.
 
-**Corpus status (2026-04-12):** 860 no-anchor merges applied across 26 books. Final scan: 0 unanchored lines remaining corpus-wide.
+**Corpus status:** 860 no-anchor merges applied across 26 books. Final scan: 0 unanchored lines remaining corpus-wide.
 
 ### 3.2 Syntactic Bond Rules — Migrated to Layer 1
 
-*2026-04-20: R2–R7 (never dangle conjunction, never end on article, never split negation, never split periphrastic, fixed phrases, vocative indivisibility) are pure Koine-Greek syntax facts — they would be observed by any competent editor of any Koine text, not just this project. They have been migrated to the Layer 1 break-legality reference: [`data/syntax-reference/greek-break-legality.md`](../../data/syntax-reference/greek-break-legality.md). Validators read them from there.*
+*R2–R7 (never dangle conjunction, never end on article, never split negation, never split periphrastic, fixed phrases, vocative indivisibility) are pure Koine-Greek syntax facts — they would be observed by any competent editor of any Koine text, not just this project. They live at the Layer 1 break-legality reference: [`data/syntax-reference/greek-break-legality.md`](../../data/syntax-reference/greek-break-legality.md). Validators read them from there.*
 
 *Rule numbers R2–R7 are preserved in the Rule Index (marked as "Layer 1") to avoid breaking references in prior session notes and scanners. Their effect on editing is unchanged — they are still hard constraints that any line-break edit must respect.*
 
@@ -603,13 +599,11 @@ ho poiesas anthropos zesetai en aute.
 
 **Resolution of the verb-identity contradiction:** This rule (R10) SUPERSEDES the earlier negative result on verb-identity rules (recorded in Section 9). That negative result showed that fine-grained verb-class rules *within* each category do not generalize. But the COARSE cognition-vs-declaration distinction IS a valid verb-identity rule. The negative result holds for finer-grained verb-class subdivision; the coarse distinction holds.
 
-*Established:* 2026-04-15 session (1 John 2:14 analysis, commits f086011, 196315a). *Refined:* 2026-04-16 session — martyreo and homologeo reclassified from cognition-class to declaration-class on the period-test argument, validated by the 1 John 4:14/4:15 parallel (martyreo and homologeo two verses apart, both public-declaration verbs with identical ὅτι-content structure).
-
 ### ὅτι Placement Convention — Leads Its Complement
 
 When a ὅτι-clause is split from its governing verb (split applies under R10 for declaration/speech verbs: λέγω, γράφω, μαρτυρέω, ὁμολογέω, διδάσκω, κηρύσσω, ἀπαγγέλλω, etc.), the ὅτι leads the new line — it does not dangle at the end of the preceding line.
 
-Corpus state (post-2026-04-18 flip): **834 leading : 0 trailing** — convention is universal.
+Corpus state: **834 leading : 0 trailing** — convention is universal.
 
 Grammatical warrant: ὅτι is a complementizer — its function is to introduce the clause that follows. Placing it at line-end severs it from the clause it governs. Standard Koine grammar (BDF §416, Smyth §2017, Wallace p. 453-461) describes ὅτι as introducing its complement; our placement convention honors that function visually.
 
@@ -785,7 +779,7 @@ ho de huios tou anthropou ouk echei pou ten kephalen kline.
 
 Test: is there a finite verb in the clause following de? If yes -> split. If the de introduces only a nominal or participial phrase without its own finite verb -> likely false positive, leave merged.
 
-*27 confirmed splits applied corpus-wide (2026-04-15 sweep).*
+*27 confirmed splits applied corpus-wide.*
 
 ### 3.9 Vocative Rule (Refined Three-Way Treatment)
 
@@ -810,7 +804,7 @@ Two justifications, not one:
 
 **Repeated vocatives as a rhetorical unit still stay together.** `Kyrie kyrie` (Matt 7:21-22) is one speech act.
 
-*125 vocative merges landed across 21 books (2026-04-12).*
+*125 vocative merges landed across 21 books.*
 
 ### 3.10 Participial Phrases and Genitive Absolutes
 
@@ -846,7 +840,7 @@ kai aneginosken ton propheten Esaian.   <- imperfect equivalent, stacks as paral
 - **Merge**: `akoloutheso soi hopou ean aperche.` (Matt 8:19) — hopou clause specifies the destination. `erchetai hora hote...` (John 9:4, 16:25) — hote clause specifies which hour.
 - **Split**: purpose clauses (hina), result clauses (hoste), causal clauses (hoti / gar / dioti) — these introduce new semantic layers.
 
-*15 merges applied corpus-wide (2026-04-15 sweep).*
+*15 merges applied corpus-wide.*
 
 ### 3.12 Dative Indirect Object as Semantic Subject of Infinitive
 
@@ -1156,9 +1150,9 @@ Rules that fail (1) — produce imposed or artificial breaks — are rejected re
 - **HOW WE KNOW** — the empirical warrant (corpus instances, cross-reference, grammatical test)
 - **SCOPE** — where it applies and where it doesn't (test contrasts / non-examples)
 
-The §3.17 Cross-Verse Continuity codification (2026-04-22) and the §6.5 Mandatory-audit triggers (2026-04-24) each include explicit WHY/HOW WE KNOW/SCOPE elements. Making the requirement explicit here means future additions can be audited against a defensibility checklist — relevant both for day-to-day consistency and for the PhD prospectus where each rule will need to carry its warrant. Retroactive audit of existing canon sections is future work; the requirement is prospective from 2026-04-22.
+The §3.17 Cross-Verse Continuity codification and the §6.5 Mandatory-audit triggers each include explicit WHY/HOW WE KNOW/SCOPE elements. Making the requirement explicit here means future additions can be audited against a defensibility checklist — relevant both for day-to-day consistency and for the PhD prospectus where each rule will need to carry its warrant. Retroactive audit of existing canon sections is future work; the requirement is prospective from 2026-04-22.
 
-### Mandatory-audit triggers for canon changes (added 2026-04-24 from BofM cross-project directive)
+### Mandatory-audit triggers for canon changes
 
 The "extensible only by worked examples + adversarial validation" requirement on new structural justifications (§2 line 236) and new merge-overrides (§2 line 352) is strengthened here to an explicit mandatory-audit trigger list at commit time. A canon proposal matching any of the following triggers MUST dispatch an adversarial audit (hostile agent or equivalent external skeptical review) and reflect its findings in the commit. Skipping audit on a triggered proposal is a protocol violation.
 
@@ -1186,9 +1180,7 @@ The "extensible only by worked examples + adversarial validation" requirement on
 
 **Relationship to the self-consistency audit.** The pre-commit audit triggers above are per-change, before commit. The "≥2 canon codifications → light self-consistency audit before WRAP-UP" trigger in CLAUDE.md is session-rollup, after commits but before wrap. Both mechanisms coexist; neither replaces the other.
 
-**Provenance.** Imported 2026-04-24 from BofM cross-project directive (BofM canon §7.3, codified 2026-04-23 PM after 5 fake-rule catches in one session: Stab-commata, doctrinal-weight bump, EP-6 Exception/Save, 1 Ne 19:5 reclass attempt, R28 reverse). Cross-project import itself satisfied audit trigger #11 via three parallel hostile audits (necessity, redundancy, framework-mismatch) dispatched 2026-04-24 before codification; audit findings are recorded in §10 Update Log.
-
-**Why it earns its place in GNT despite the absence of GNT-native fake-rule catches of the same 5 shapes.** GNT's recent codification history does not cleanly shape-match BofM's 5 training-set failures, but GNT's own risk profile is different: the 2026-04-21 §3.7 subsection burst (Need/Response, Imperative + Divine-Consequence, Cause-Consequence) and the 2026-04-22 gold-standard 4-chapter regression list each carry the shape that triggers #1, #7, and #8 are designed for — named patterns / mechanical-looking diagnostics / canonical-example closed lists without a documented full-corpus sweep in their provenance. The trigger list is prospective: it prevents future under-sweep codifications regardless of whether prior GNT codifications would or would not have been caught.
+**Provenance and rationale.** See §10 Update Log entry 2026-04-24 for the cross-project-import context, the audit dispatched before codification, and the GNT-side risk profile that earned the trigger list its place.
 
 ### v4 as methodology application (not hand typing)
 
@@ -1262,9 +1254,9 @@ The pipeline has no concept of "hymn," "creed," or "Christology." It applies the
 
 See Section 3.10 for the main rules. Additional detail:
 
-**Participial chain collapse (2026-04-13 finding).** When >=2 participles at different temporal planes are collapsed into one line, split them. The paradigm: Heb 1:3 (present participle sustaining, aorist participle purifying, finite indicative enthroning). Cross-gospel convergence: Eucharistic institution narratives (Matt 26:26-27 / Mark 14:22-23), feeding miracle tri-cola (Matt 14:19 / Mark 6:41), vinegar-sponge 5-action collapse (Matt 27:48 / Mark 15:36).
+**Participial chain collapse.** When >=2 participles at different temporal planes are collapsed into one line, split them. The paradigm: Heb 1:3 (present participle sustaining, aorist participle purifying, finite indicative enthroning). Cross-gospel convergence: Eucharistic institution narratives (Matt 26:26-27 / Mark 14:22-23), feeding miracle tri-cola (Matt 14:19 / Mark 6:41), vinegar-sponge 5-action collapse (Matt 27:48 / Mark 15:36).
 
-**Prepositional catena absorption (2026-04-13).** >=3 stacked prepositional phrases introducing distinct semantic axes earn splitting. 2 Thess 1:7 (four axes), 2 Cor 6:4-7 and 11:23-27 (the famous Pauline peristasis and kindynois catalogs).
+**Prepositional catena absorption.** >=3 stacked prepositional phrases introducing distinct semantic axes earn splitting. 2 Thess 1:7 (four axes), 2 Cor 6:4-7 and 11:23-27 (the famous Pauline peristasis and kindynois catalogs).
 
 **Suspended-subject-without-predicate.** Topicalized nominative head held in suspension while modifier material piles up before the finite verb. Luke 3:1-2's periodic dating chain; John 17:24's pendant-relative nominative; 1 John 1:1-3's 10-line hanging topic chain.
 
@@ -1280,11 +1272,11 @@ Mechanical detection: `scripts/scan_vocative_apposition.py` classifies every voc
 
 ### Orphaned Adverbial Completion Rule
 
-See Section 3.11. Greek-specific detail: the merge cases concentrate on hopou/hote/hos clauses of <=6 words that specify the preceding predicate. 15 merges applied corpus-wide (2026-04-15).
+See Section 3.11. Greek-specific detail: the merge cases concentrate on hopou/hote/hos clauses of <=6 words that specify the preceding predicate. 15 merges applied corpus-wide.
 
 ### De-Contrast Overbreak Rule
 
-See Section 3.8. 27 confirmed splits across 16 books (2026-04-15).
+See Section 3.8. 27 confirmed splits across 16 books.
 
 ### Discourse-Frame + Vocative Cluster Rule
 
@@ -1466,6 +1458,10 @@ The "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" ex
 
 ### Marschall Posture *(retired 2026-04-20 — archived with other scholarly-framing material)*
 
+### Breath as a Fourth Criterion *(retired 2026-04-20)*
+
+Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterion alongside atomic thought, single image, and source-language syntax. Retired 2026-04-20 after empirical test across 260 hand-edited chapters found zero cases where breath was the sole deciding factor on any line break. The cognitive-chunking work breath was informally doing is absorbed by structural justification #5 (substantive adjunct as own focus, §2). If a merge produces something unspeakable, the reconsideration finds its warrant in the three forces (propositions / syntax / image) or in justification #5. Full retirement reasoning at §10 Update Log entry "2026-04-20 (later³) — H3: Breath Criterion Retired."
+
 ---
 
 ## Section 10: Chronological Update Log
@@ -1473,6 +1469,57 @@ The "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" ex
 *Purpose: **dual-natured** — chronological reasoning trail. Recent entries documenting active-rule provenance are operationally referenced (cross-project import status, audit findings, retirement dates); older entries are historical narrative. When an entry documents an active rule, it is the canonical source for that rule's WHY/HOW WE KNOW/SCOPE.*
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-25 (later⁴) — Residue cleanup: stripped historical-narrative residue from active sections per the rationale-vs-reasoning-trail discipline
+
+Stan's question on line 27 ("Pre-2026-04-20, the canon mixed the two...") and line 31 ("How to use this document — used by whom?") surfaced a class of issues: the canon had accumulated historical-narrative residue inside current-state operational sections. Each residue was load-bearing at the moment of its codification (it justified a recent change) but stale once the change was settled. The pattern: "(added 2026-04-X)," "TIGHTENED 2026-04-X," "Pre-2026-04-X we used to do Y, now we do Z," "Earlier formulations used a four-criteria framing..."
+
+**Stated discipline going forward (now codified by the cleanup itself):**
+
+- **Rationale-for-current-state lives in the rule body.** Why the rule is what it is.
+- **Reasoning-trail-for-the-change lives in §10.** The journey of how we got there. §10 is the canonical record.
+- **Fresh-change pointer ("see §10 entry 2026-04-X") allowed inline temporarily** — in the rule body, near the change. After a few sessions or once the change is settled, even the pointer goes; §10 is enough.
+- **Status markers for retired material stay** ("(retired 2026-04-X — see §9)"); they communicate current state.
+- **Corpus chronicle dates stay** in the §8 Corpus Statistics table where the dates are intrinsic to the chronicle.
+- **Operational cutoff dates stay** (e.g., "prospective from 2026-04-22" on the defensibility-capture meta-rule — that's the cutoff, not residue).
+
+**Cleanup applied this commit:**
+
+- §0 Architecture: stripped "Pre-2026-04-20, the canon mixed the two..." (line 27 residue); stripped migration-date and "under active build 2026-04-20" markers from Layer 1/Layer 2 descriptions (current-state framing).
+- §1 The Framework intro: stripped "Earlier formulations used a four-criteria strict-hierarchy framing..." sentence.
+- §1 Breath subsection: removed entirely from §1; moved to §9 Superseded Formulations as "Breath as a Fourth Criterion *(retired 2026-04-20)*". The §10 retirement entry stays as the canonical reasoning trail.
+- §1 Reader's guide heading: dropped "(added 2026-04-25)" date marker.
+- §1 Imposing-vs-Revealing watchlist annotation: trimmed "Vocabulary list extended 2026-04-25 after the 'soteriological climax' catch" reasoning trail to a clean operational pointer ("See `feedback_rhetoric_bandwagon.md` catches list for examples").
+- §2 M1 strict-application caveat: stripped italic reasoning trail ("*Codified 2026-04-21 after a round-2 adversarial pass on 318 KEEP_MERGED verdicts...*"). Rule body retains the rationale ("the canon's overall posture is merge-by-default"); §10 entry 2026-04-21 (later²) carries the trail.
+- §3 scope/precedence/closed-list/carve-out diagnostic heading: dropped "(added 2026-04-24 from BofM cross-project directive)" date marker.
+- §3.1 No-Anchor Rule: "TIGHTENED participle scope (2026-04-16)" → "Participle scope" (current-state heading); stripped corpus-status date.
+- §3.2 Layer 1 migration: "*2026-04-20: R2–R7 ... have been migrated to ...*" → "*R2–R7 ... live at ...*" (current-state framing).
+- §3.5 R10 Cognition vs. Speech: stripped "*Established:* 2026-04-15 session ... *Refined:* 2026-04-16 session ..." reasoning trail. Rule body retains the substance; §10 has the journey.
+- §3.5 ὅτι Placement: "Corpus state (post-2026-04-18 flip): 834 leading : 0 trailing" → "Corpus state: 834 leading : 0 trailing" (the flip date is in §10).
+- §3.7 R28 / inline corpus-stat callouts: stripped sweep-dates from "(2026-04-15 sweep)" and similar parentheticals where the date was ornamental, not load-bearing.
+- §6 Defensibility-capture paragraph: stripped per-codification dates where they were illustrative-not-cutoff.
+- §6.5 Provenance + Why-it-earns paragraphs: replaced two paragraphs of reasoning-trail prose with a one-line pointer to §10 entry 2026-04-24. The §10 entry has the full audit trail and import context.
+- §8 Greek-Specific subsections: stripped dates from "Participial chain collapse (2026-04-13 finding)" and "Prepositional catena absorption (2026-04-13)"; stripped sweep dates from inline cross-references to §3.11 and §3.8.
+
+**What was NOT stripped (intentional residues that earn their place):**
+
+- §3.17 retirement footnote at line 759: fresh change (2026-04-25), pointer to §9 — kept per the "fresh-change pointer allowed inline temporarily" clause.
+- Heb 1:3-4 removal annotation at §1 line 306: fresh change (2026-04-25), explanatory note. Kept.
+- §6 "prospective from 2026-04-22": cutoff date for the defensibility-capture meta-rule. Operational, not residue.
+- §6.5 pointer to §10 entry 2026-04-24 (line 1183 after this commit): the §6.5 trigger list was just imported; pointer stays for the few-sessions transition window.
+- §7 retirement note ("Retired 2026-04-20. Scholarly-grounding material..."): retired-section status marker.
+- §8 Corpus Statistics table: chronicle dates intrinsic to the data.
+- §9 Superseded Formulations entries: §9 is the proper home for retirement narratives.
+- §10 entries: §10 is the proper home for the reasoning trail.
+
+**Net effect.** Active rule sections now state current-state cleanly without embedded "we used to do X" narrative. §10 stays as the single source of truth for change history. ~58 lines edited / 31 lines net removed across ~14 paragraphs. Audit-skippable per §6.5 (internal formatting cleanups + cross-reference updates that don't assert precedence). No rule content lost; no cross-reference broken.
+
+**Defensibility capture (for this commit's discipline):**
+- WHY: stale historical residue in current-state sections muddies what each section is *for*; doubles the canonical record between rule body and §10; creates editorial friction (Stan can't tell what a date is doing in a rule body).
+- HOW WE KNOW: Stan's questions on line 27 + line 31 surfaced the pattern; comprehensive scan identified ~14 instances of pure residue; rationale-vs-reasoning-trail discipline distinguishes load-bearing dates from residue cleanly.
+- SCOPE: applies to active rule sections (Parts 1-2). §9 retirement narratives and §10 update log are the proper homes for historical content; they retain their dates.
 
 ---
 
