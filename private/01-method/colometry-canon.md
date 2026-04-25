@@ -292,7 +292,8 @@ oute ses oute brosis aphanizei
 **Canonical cases:**
 - **Acts 10:1-3** (Cornelius): `hekatontarches ek speires` / `eusebes kai phoboumenos ton theon` / `poion eleemosynas pollas to lao` — no finite verb until v.3 (eiden). Each line is one attribute of Cornelius.
 - **Pauline salutations** (Rom 1:1, 2 Cor 1:1, Gal 1:1, etc.): `Paulos apostolos` / `dia thelematos theou` — each credential on its own line.
-- **Heb 1:3-4**: `hos on apaugasma tes doxes` / `kai charakter tes hypostaseos autou` — each is one image of the Son.
+
+*(Heb 1:3-4 was previously cited here; removed 2026-04-25 because the rule's detectable signature requires "no finite verb appears until a later verse" and Heb 1:3 has ἐκάθισεν within the verse. The split of Heb 1:3 L1's two distinct-image attributes is governed by §3.16 coordinating-syntax-with-distinct-images, not by this justification.)*
 
 #### 3. Speech-Act Announcement Convention
 
@@ -1444,6 +1445,30 @@ The "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" ex
 ## Section 10: Chronological Update Log
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-25 (later²) — Canon audit Tier 2: 4 corpus/canon mechanical fixes from rule-traceability findings
+
+Following the 4 parallel canon audits (order/precedence, ambiguity, verbosity, goal-fit) earlier this session, Audit 4 (goal-fit) surfaced concrete canon-corpus mismatches. After Stan's pushback ("either fix the effing rules or quit effing hedging"), reclassified the findings: 4 are mechanical applications of existing rules, 1 (§3.16 inconsistency) was a misread of the rule's actual scope.
+
+**Mechanical applications (Category A under existing rules):**
+
+- **Rev 1:3** — restructured from 4-line layout violating M2 (`καὶ τηροῦντες / τὰ ἐν αὐτῇ γεγραμμένα` split verb from object) to 4 lines correctly applying justification 1 (N=3 substantival participles parallel) + M2 (each participle merged with its complement): `μακάριος ὁ ἀναγινώσκων / καὶ οἱ ἀκούοντες τοὺς λόγους τῆς προφητείας / καὶ τηροῦντες τὰ ἐν αὐτῇ γεγραμμένα, / ὁ γὰρ καιρὸς ἐγγύς.`
+
+- **John 17:24** — `θέλω` had been on its own line, violating §4 Period Test which lists *thelo / epithymeo / boulomai* (desire) as OBLIGATORY-complement (no break permitted). Merged θέλω with its ἵνα-clause: `θέλω ἵνα ὅπου εἰμὶ ἐγὼ κἀκεῖνοι ὦσιν μετʼ ἐμοῦ`. Fronted topic `ὃ δέδωκάς μοι` retained as own line. Verse went from 7 lines to 6.
+
+- **Rom 9:5** — `ὁ ὢν` had been orphaned at line-end; canon §8 line 1222 prescribes Christological reading (`ὁ ὢν` connects to `ὁ Χριστός` as substantival participle / appositional modifier). Restructured to: `ὧν οἱ πατέρες, / καὶ ἐξ ὧν ὁ χριστὸς τὸ κατὰ σάρκα, / ὁ ὢν ἐπὶ πάντων, θεὸς εὐλογητὸς εἰς τοὺς αἰῶνας· ἀμήν.` — 3 lines, with ὁ ὢν leading the appositive predicate. Category A within the canon's documented Category-C disposition (canon §8 already chose Christological).
+
+- **Heb 1:3 L1 split + canon §1 line 295 citation correction** — L1 had merged `ὃς ὢν ἀπαύγασμα τῆς δόξης` with `καὶ χαρακτὴρ τῆς ὑποστάσεως αὐτοῦ`. The two attributes are distinct semantic domains (light/radiance vs. seal/imprint metaphors) — M1 strict-application caveat rejects gorgianic merge for cross-domain pairs; no other merge protection fires; §3.16 prescribes split for coordinating syntax with distinct images. Split applied. Verse went from 4 to 5 lines. Canon §1 line 295 had cited Heb 1:3-4 as a portrait-attribute (justification 2) example, but the rule's detectable signature (line 290) requires "no finite verb appears until a later verse" — Heb 1:3 has `ἐκάθισεν` within the verse. Removed Heb 1:3-4 from the example list with explanatory note pointing to §3.16 as the actual governing rule.
+
+**Non-action (audit-misread)**: Audit 4 also flagged §3.16 aspect-shift as "fires inconsistently corpus-wide" citing Heb 1:3, Heb 1:9, and Phil 2:7. Re-reading §3.16 confirms: the rule covers any subordinating-vs-coordinating distinction, not just participle-chain aspect-shift. Heb 1:9 splits aorist+aorist parallel finite verbs (justification 1, parallel members with distinct predicates) — different rule. Phil 2:7 merges γενόμενος + εὑρεθεὶς (same-aspect participles describing the same incarnation event) — §3.16 elaboration-vs-distinct-events test fires merge correctly. The audit conflated §3.16 with finite-verb parallelism rules and assumed aspect-shift was §3.16's only diagnostic. No corpus action; no canon revision.
+
+**Cascade outcomes**: regen for john + rom + rev + heb. Two regen successes (john 17:24, heb 1:3 — line counts changed). Two no-ops where line counts didn't change (rom 9:5, rev 1:3) but break positions shifted — required manual English re-pairing for rev 1:3 and heb 1:3 (per `feedback_verify_cascade_output` discipline). HTML rebuilt for all four books. `verify_word_order.py`: 0 discrepancies. `check_cascade_alignment.py`: 3 warnings (the known stable construction FPs).
+
+**Pre-commit audit discipline**: §6.5 trigger #1 (canonical example correction), trigger #5 (canon revision retiring a citation), trigger #8 (canonical example modification) satisfied via the 4 parallel canon audits earlier this session. The corpus changes themselves are Category A applications under existing rules (M2 / §4 Period Test / canon §8 Christological reading / §3.16 + M1 strict-application).
+
+**Reframing lesson logged**: Stan's pushback ("either fix the effing rules or quit effing hedging") reinforced that "edge cases" and "decision points" are usually mechanical applications I'm hedging on. If the canon prescribes X and v4 has Y, the default is to apply the canon. Stan's judgment is needed only when the canon's stated scope doesn't actually cover the case (canon defect → fix canon), or when a rule's scope is genuinely unclear (rule-clarity gap → fix rule). Most "Tier 2 needs your judgment" items are actually Tier 1 mechanical fixes I was hesitant to apply.
 
 ---
 
