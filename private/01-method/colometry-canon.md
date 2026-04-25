@@ -369,7 +369,7 @@ These override conditions are extensible only by worked examples + adversarial v
 - If the two verbs are semantically synonymous, form a recognizable binomial idiom, or function as a hendiadys (single unified act expressed via two near-synonyms) → M1 wins → merge. Example: `Δαιμόνιον ἔχει καὶ μαίνεται·` (John 10:20) — one diagnostic judgment expressed via two complementary terms.
 - The test is structural (verb semantic class) not intuitive. If the two verbs belong to clearly different semantic domains, they are not a gorgianic pair even if only N=2 and formally marked.
 
-**Strict-application caveat — M1 rejection does not license split.** M1's "different semantic domains" tie-breaker *withdraws the gorgianic merge protection*; it does NOT by itself license a split. Before flipping to SPLIT, check whether another merge protection fires: M2 (verb-object bond), M3 (bare-governor), M4 (fragmented atomic thought), R11 (speech-intro / approach+touch), §3.7 Need/Response (Matt 25 class), §3.7 Imperative + Divine-Consequence (Luke 6:37 class), §3.7 Cause-Consequence Bonded Beat (John 6:49 class), and default-merge when grammar is ambiguous. Split only when ALL merge protections are exhausted AND both resulting fragments pass the atomic-thought test. Rationale: the canon's overall posture is merge-by-default; M1 is one of several merge levees, and its failure signals "check the others", not "proceed to split". *Codified 2026-04-21 after a round-2 adversarial pass on 318 KEEP_MERGED verdicts showed that strict-application drift (flipping on M1 failure alone) produces split-bias inconsistent with cross-corpus practice.*
+**Strict-application caveat — M1 rejection does not license split.** M1's "different semantic domains" tie-breaker *withdraws the gorgianic merge protection*; it does NOT by itself license a split. Before flipping to SPLIT, check whether another merge protection fires: M2 (verb-object bond), M3 (bare-governor), M4 (fragmented atomic thought), R11 (speech-intro / approach+touch), R8's καί-merge default for short coordinate clauses, R28 textual-asymmetry preservation when applicable, and default-merge when grammar is ambiguous. Split only when ALL merge protections are exhausted AND both resulting fragments pass the atomic-thought test. Rationale: the canon's overall posture is merge-by-default; M1 is one of several merge levees, and its failure signals "check the others", not "proceed to split". *Codified 2026-04-21 after a round-2 adversarial pass on 318 KEEP_MERGED verdicts showed that strict-application drift (flipping on M1 failure alone) produces split-bias inconsistent with cross-corpus practice. Reference list updated 2026-04-25 after retirement of three §3.7 subsections (Need/Response, Imperative + Divine-Consequence, Cause-Consequence Bonded Beats); their work is absorbed by M1 itself + R8 default + R28.*
 
 #### M2. Verb-Object Clause-Nucleus Bond
 
@@ -745,71 +745,7 @@ Test: is the structural difference between parallel passages authorial (one uses
 
 This is a specific instance of the broader principle that **the text is authoritative over the methodology's aesthetic preferences.** Where the author chose asymmetry, we preserve it; where the editor imposed asymmetry, we normalize it. See also "The Complete Framework" (Section 2, step 4) for how R28 operates at the split-trigger level within the full decision procedure.
 
-### Need/Response Paired Beats — Stay Together
-
-When a passage pairs a stated condition with its corresponding response in the same clause (ἐπείνασα / καὶ ἐδώκατέ μοι φαγεῖν, "I was hungry / and you gave me to eat"), the pair stays on one line as a single "need-met" beat. Each pair is one rhetorical unit: need + response is indivisible.
-
-**Canonical cases** — Matt 25:35-36 (positive, fivefold) + Matt 25:42-43 (negative inversion):
-
-```
-ἐπείνασα γὰρ καὶ ἐδώκατέ μοι φαγεῖν,
-ἐδίψησα καὶ ἐποτίσατέ με,
-ξένος ἤμην καὶ συνηγάγετέ με,
-γυμνὸς καὶ περιεβάλετέ με,
-ἠσθένησα καὶ ἐπεσκέψασθέ με,
-```
-
-Each line is a need + response pair. Splitting the need from the response would produce dangling "I was hungry" fragments stripped of their meaning.
-
-**Diagnostic:**
-- Line contains a state/condition verb (ἐπείνασα, ἐδίψησα, ξένος ἤμην, γυμνός, ἠσθένησα, ἐν φυλακῇ ἤμην)
-- Followed by καί + response verb in 2p or 3p (ἐδώκατε, ἐποτίσατε, συνηγάγετε, περιεβάλετε, ἐπεσκέψασθε, ἤλθατε)
-- Pair stays merged under a shared "each need-met pair is one rhetorical beat" principle.
-
-**Relation to R12/R13:** R12's parallel-stacking trigger fires on the OUTER series (five beats stacked), not on the INNER pairs. Each beat stays intact; the series stacks beat-by-beat.
-
-### Imperative + Divine-Consequence — Stay Together
-
-An imperative followed by a divine-promise response (impersonal passive or 3p active — "and it will be given," "and you will find," "and God will give") is one unified petition/promise unit. The imperative and its promised divine response stay on one line.
-
-**Canonical cases:**
-- Luke 6:37 (×3): Μὴ κρίνετε καὶ οὐ μὴ κριθῆτε / μὴ καταδικάζετε καὶ οὐ μὴ καταδικασθῆτε / ἀπολύετε καὶ ἀπολυθήσεσθε
-- Luke 6:38: Δίδοτε, καὶ δοθήσεται ὑμῖν
-- Luke 10:28: τοῦτο ποίει καὶ ζήσῃ
-- Luke 11:9 (×3): αἰτεῖτε, καὶ δοθήσεται ὑμῖν / ζητεῖτε, καὶ εὑρήσετε / κρούετε, καὶ ἀνοιγήσεται ὑμῖν
-- Jas 4:8: ἐγγίσατε τῷ θεῷ, καὶ ἐγγιεῖ ὑμῖν
-- 1 John 5:16: αἰτήσει καὶ δώσει αὐτῷ ζωήν
-
-**Diagnostic:**
-- Line contains an imperative (any person/number) or a hortatory subjunctive
-- Followed by καί + 2p/3p verb that expresses divine response (passive for impersonal-divine agency, or 3p active with divine subject explicit or implicit)
-- Pair stays merged as one prayer/promise act.
-
-**Why not R12:** The imperative and the promised response are not two independent propositions — they are a coordinated petition/promise unit. The divine subject of the response is typically elided; splitting the imperative from its promise severs the single rhetorical gesture.
-
-**Related:** Compare with R11 synonymous-doublet imperatives (Mark 4:39 Σιώπα, πεφίμωσο) — another "stays merged despite καί-linkage" class. The M1 gorgianic-pair rule and these two patterns share the generating principle: **N=2 coordinate members with unified rhetorical force stay on one line**.
-
-### Cause-Consequence Bonded Beats — Stay Together
-
-An N=2 coordinate pair where member 2 is the direct causal consequence of member 1, AND the rhetorical/narrative *point* of mentioning member 1 IS member 2, stays merged as one bonded beat.
-
-**Canonical cases:**
-- John 6:49: `ἔφαγον... τὸ μάννα καὶ ἀπέθανον·` — "ate the manna and died." Remove "died" and the eating has no point in the manna/bread-of-life discourse.
-- John 10:12: `θεωρεῖ τὸν λύκον ἐρχόμενον καὶ ἀφίησιν τὰ πρόβατα` — "sees the wolf coming and abandons the sheep." Remove "abandons" and the seeing has no point as a cowardice-indictment.
-
-**Diagnostic — the removal test:**
-- Remove member 2. Does member 1 lose its reason for being mentioned in the discourse?
-- If yes, the pair is causally bonded; stay merged.
-- If no (i.e., member 1 stands as its own independent beat with its own discourse value), the pair is a coordinate series; split per justification 1.
-
-**Test contrasts (non-examples):**
-- Luke 18:32 passion list (παραδοθήσεται / ἐμπαιχθήσεται / ὑβρισθήσεται / ἐμπτυσθήσεται) — each item has independent discourse value as a fate-item in the series. Not bonded; split applies.
-- Jas 4:2 φονεύετε / ζηλοῦτε — parallel accusations, neither is the point of mentioning the other. Not bonded; split per M1 tie-breaker.
-- John 9:15 ἐνιψάμην / βλέπω — aspect shift (aorist → present) marks two distinct events in time; even though the washing caused the seeing, the present tense on βλέπω makes it the ongoing-state beat, not the immediate-consequence of the completed washing. §3.16 fires; split.
-
-**Why not M1:** M1 requires same semantic domain (synonymy / cognate / intensification-variant). Cause-Consequence pairs are deliberately cross-domain (action + consequence). M1's tie-breaker correctly rejects them as gorgianic, but Cause-Consequence Bonded Beat is the merge protection that fires instead.
-
-**Family placement:** Same cluster as M1 gorgianic-pair, R11 synonymous-doublet imperative, Need/Response (Matt 25), Imperative + Divine-Consequence (Luke 6:37). All share the generating principle: **N=2 coordinate members with unified rhetorical force stay on one line**. This subsection extends the family to cover cross-domain causal bonds, which the prior subsections (all same-domain or divine-subjected) do not.
+*Three §3.7 subsections retired 2026-04-25 after hostile retroactive audit (Need/Response Paired Beats; Imperative + Divine-Consequence; Cause-Consequence Bonded Beats). Audit findings: Need/Response was Matt-25-only (zero corpus instances outside one pericope); Imperative + Divine-Consequence misdescribed the corpus (~50% merge rate, 8 documented counterexample splits including Matt 7:7 ×3 vs Luke 11:9 ×3); Cause-Consequence relied on a removal-test feel-test that two editors apply differently. All three were subsumed by M1 + R8 default + justification 1 + R28 textual-asymmetry. Full retirement reasoning at §9 Superseded Formulations 2026-04-25 entry; audit reports in `private/03-sessions/2026-04-24-bofm-discipline-imports/`.*
 
 ### 3.8 De-Contrast Overbreak
 
@@ -1420,6 +1356,24 @@ We preserve verse references for alignment with standard editions, but they do n
 
 ## Section 9: Superseded Formulations
 
+### Three §3.7 Subsections Retired (2026-04-25): Need/Response, Imperative + Divine-Consequence, Cause-Consequence Bonded Beats
+
+First retroactive application of the §6.5 mandatory-audit trigger list (codified 2026-04-24 from BofM cross-project import). The three subsections were added 2026-04-21 without a documented full-corpus sweep. Three parallel Opus hostile audits (2026-04-25) found each subsection fails the audit-discipline standard for different reasons. All three retired; canonical cases handled by existing rules.
+
+**Need/Response Paired Beats — OVERFIT + REDUNDANT.** Exhaustive corpus sweep on the diagnostic (state-verb + καί + 2p-response-verb) found ZERO instances outside Matt 25:35-36 / 42-43 — twelve consecutive verses by one author. The "class" was one pericope dressed up as a general principle. Subsumed by M1 + justification 1 + R8 default. Bonus defect: §3.7 Need/Response mandated merge of `ἐπείνασα γὰρ / καὶ οὐκ ἐδώκατέ μοι φαγεῖν` (Matt 25:42) while §R28 textual-asymmetry four lines earlier explicitly defended that split. Direct rule contradiction; resolves cleanly with §3.7 retirement (R28 wins).
+
+**Imperative + Divine-Consequence — FEEL-TEST + OVERFIT + CORPUS-INCONSISTENT.** Full-corpus sweep documented 8 counterexample splits where the rule predicted merge: Matt 7:7 ×3, Acts 16:31, Luke 8:50, Jas 4:7, Jas 4:10, John 21:6, Matt 11:29, Jas 1:5. Actual merge rate ~50%, not the implied uniform behavior. Most damning: rule was codified from Luke 6 + Luke 11 + Jas 4:8 + Luke 10:28 + 1 John 5:16 set without sweeping Matt 7:7 — the exact Q-source parallel of Luke 11:9 — which SPLITS. The audit discipline lapse (failed to check the sibling gospel) is itself a precedent worth remembering. "Divine response" is a feel-test requiring theological judgment; Matt 8:9 (centurion: "Go and he goes") shows identical merge behavior with zero divine agency, demonstrating the merge phenomenon is structural not theological.
+
+**Cause-Consequence Bonded Beats — FEEL-TEST.** The "removal test" (does member 1 lose its reason for being mentioned if member 2 is removed?) is a pericope-level rhetorical judgment that two competent editors apply differently. Applied literally, the test would require merging ~100-300 splits across the corpus (Matt 1:25, 8:15, 9:25, 12:13, Mark 14:72, Luke 24:50, Rev 8:8, Acts 7:57, etc.) — corpus change Stan does not want. The two canonical cases (John 6:49, John 10:12) merge under R8's short-line default + M1 strict-application caveat saying "check other merge protections before flipping to split"; the rule formalized two judgment calls as principle. Bonus defect: cited §3.16 for John 9:15 aspect-shift, but §3.16 is about participle chains (Container-Not-Originator), not finite-verb aspect — cross-reference mis-wired.
+
+**M1 strict-application caveat (line 372) reference list updated**: removed three §3.7 subsection cross-references; added R8 default and R28 textual-asymmetry as the merge-protections that absorb the canonical cases.
+
+**Audit reports archived** at `private/03-sessions/2026-04-24-bofm-discipline-imports/` (full audit text, methodology, file:line citations for every counterexample).
+
+**Live corpus consequence:** none of the canonical merges are disturbed by retirement. Luke 6:37 ×3, Luke 11:9 ×3, Luke 6:38, Luke 10:28, Jas 4:8, 1 John 5:16, John 6:49, John 10:12, Matt 25:35-36 fivefold all stay merged under M1 strict-application caveat + R8 default + R28 (for Matt 25). The retirement is canon parsimony, not corpus revision.
+
+**Open question forwarded (not part of retirement):** the 8 imperative+divine-consequence splits surfaced by the audit + Matt 7:7 vs Luke 11:9 Q-source asymmetry are now flagged as `application_consistency_vs_rule_coverage` candidates for direct editorial judgment — distinguishing genuine authorial asymmetry (preserve under R28; potentially publishable finding) from editorial drift (correct one to match the other).
+
 ### Canon Consolidation (2026-04-18): Six Retired Rule Numbers
 
 Adversarial audit convergence (3 Opus agents, three angles: over-structuring, redundancy, mechanical-triggerability) identified six rule numbers as redundant, folded, or pointer-only. Retired in this pass:
@@ -1490,6 +1444,36 @@ The "Vocative Attachment" and "Epistolary vs. Narrative Vocative Distinction" ex
 ## Section 10: Chronological Update Log
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-25 — Three §3.7 subsections retired after first retroactive audit application
+
+First exercise of the §6.5 mandatory-audit trigger list (codified yesterday from BofM cross-project import). Stan asked whether anything in the existing canon warranted retroactive review under the new discipline; the §3.7 subsection burst from 2026-04-21 (Need/Response Paired Beats, Imperative + Divine-Consequence, Cause-Consequence Bonded Beats) was identified as the strongest shape-match for triggers #1 (new sub-clauses) + #7 (corpus-sweep evidence missing) + #8 (canonical example additions).
+
+**Three parallel Opus hostile audits dispatched** — one per subsection, each running a full-corpus sweep against the rule's diagnostic. All three failed:
+
+- Need/Response: ZERO non-Matt-25 instances; rule was a single pericope masquerading as general principle. Plus direct contradiction with §R28 on Matt 25:42.
+- Imperative + Divine-Consequence: 8 documented counterexample splits; ~50% actual merge rate. Rule was codified from a Luke-only set without sweeping Matt 7:7 — the Q-source parallel that splits.
+- Cause-Consequence: removal test is a feel-test; literal application would force ~100-300 corpus merges Stan does not want.
+
+**Decision: retire all three (Option 1, full retirement)** rather than demote-to-worked-examples (Option 2). Stan's reasoning: rules that don't earn their place go; canon parsimony > per-verse documentation; §10 Update Log + git history + §9 Superseded Formulations preserve the reasoning trail. Retiring cleanly establishes that the audit discipline applies to its own outputs without exception — the first retroactive application is the precedent for all future ones.
+
+**Edits this commit:**
+
+- **§3.7**: deleted three subsection blocks (lines 748-812 in pre-edit state). Replaced with a note pointing to §9 retirement entry.
+- **§2 M1 strict-application caveat**: removed the three §3.7 cross-references from the merge-protections checklist; added R8 default + R28 in their place.
+- **§9 Superseded Formulations**: new entry "Three §3.7 Subsections Retired (2026-04-25)" with full audit findings + corpus-consequence note + open-question forwarding.
+- **§10 Update Log**: this entry.
+
+**Live corpus consequence**: none. Every canonical merge that the retired rules protected (Luke 6:37 ×3, Luke 11:9 ×3, Luke 6:38, Luke 10:28, Jas 4:8, 1 John 5:16, John 6:49, John 10:12, Matt 25:35-36 fivefold) stays merged under M1 + R8 + R28. The retirement is documentary, not prescriptive.
+
+**Open question forwarded (Phase B of this session)**: 8 imperative+divine-consequence splits + the Matt 7:7 vs Luke 11:9 Q-source asymmetry are flagged as `application_consistency_vs_rule_coverage` candidates. Each needs R28 mechanical analysis (count finite verbs / elided verbs / predicative heads in each parallel passage) to determine whether the asymmetry is authorial (preserve — potentially publishable as colometric evidence of authorial choice) or editorial (correct one to match the other). Phase B work in this session.
+
+**Defensibility capture:**
+- WHY: rules that fail the discipline standard go to §9; the alternative (keeping them around as worked examples) is the zombie-rule failure mode the new audit discipline targets.
+- HOW WE KNOW: 3 parallel Opus hostile audits with full-corpus sweeps + file:line citations; audit reports archived in session folder.
+- SCOPE: §3.7 only; other rules retain their current status.
 
 ---
 
