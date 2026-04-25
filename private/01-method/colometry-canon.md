@@ -4,7 +4,7 @@ This document is the authoritative reference for the editorial methodology behin
 
 ## Foundational premise
 
-Humans think, compose, and deconstruct (read and hear) in sense-lines — atomic thought-units that correspond to how ideas are generated, encoded, and recovered. This is the working hypothesis that drives the project. It was not derived from any scholarly framework; it was arrived at intuitively and analogically, triggered by Royal Skousen's demonstration that the Book of Mormon could be reduced to sense-lines (*The Earliest Text*, 2009/2022) and Stan's reasoning by analogy that what is true for the Book of Mormon is likely true for the Greek New Testament and perhaps any text.
+The project's working hypothesis is that humans think, compose, and deconstruct (read and hear) in "sense-lines" — a term Skousen used for the Book of Mormon. We use it here in an expanded sense: atomic thought-units that correspond to how ideas are generated, encoded, and recovered. This hypothesis was reached intuitively and analogically, triggered by Royal Skousen's demonstration that the Book of Mormon could be rendered in sense-lines (*The Earliest Text*, 2009/2022). Skousen's stated rationale was specific to the Book of Mormon: his sense-lines aim to convey "a dictated rather than a written text," approximating how the original translation might have sounded during Joseph Smith's dictation. Stan took Skousen's term as a starting point and expanded the concept to the definition above. He then experimented with line breaks in the English Book of Mormon text, where the expanded definition appeared to expose idea-units sometimes obscured by editorial punctuation, versification, and line-break decisions. Stan applied the same method to the GNT, reasoning by analogy that what is true for the Book of Mormon is likely true for the Greek New Testament — and perhaps *any* text.
 
 The methodology itself — four criteria, rules, hierarchy, structural justifications, merge-overrides — emerged from hands-on editorial experimentation across all 260 chapters of the GNT. It is pragmatic, not theory-derived.
 
@@ -952,13 +952,7 @@ Any pipeline change that breaks one of these four is suspect. If a change breaks
 
 **Why it's mandatory:** every new line break is a potential function-word orphan. The canon's "never split" list (article+noun, preposition+object, negation+verb, noun+genitive modifier, noun+possessive pronoun — see Layer 1 `data/syntax-reference/greek-break-legality.md`) is a forbidden-break set; a split pass can accidentally produce forbidden breaks if the scanner isn't perfectly tuned. The recheck is the safety net.
 
-**Gold-standard regression-test chapters:**
-1. **Mark 4** — parable density, nested subordination, gorgianic pairs
-2. **Rom 2:12-13** — Paul's densely-packed νόμος argumentation; prepositional-phrase gauntlets
-3. **Acts 1:1-4** — Lukan complex-participial opening; "while being assembled with them he commanded them not to depart from Jerusalem but to wait for the promise of the Father..."
-4. **Heb 1:3** — triadic participle chain with aspect shifts (the §3.16 showcase)
-
-**After any pipeline change (regen logic, scanner rewrite, validator update), manually diff these four chapters' v4 + eng-gloss before and after. If any of the four breaks, the pipeline change is suspect.**
+**After any pipeline change (regen logic, scanner rewrite, validator update), manually diff the four gold-standard regression-test chapters above (Mark 4, Rom 2:12-13, Acts 1:1-4, Heb 1:3) — v4 + eng-gloss, before and after. If any of the four breaks, the pipeline change is suspect.**
 
 ### The No-Anchor Test (Default Case of the Generative Force)
 
@@ -1467,6 +1461,34 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 *Purpose: **dual-natured** — chronological reasoning trail. Recent entries documenting active-rule provenance are operationally referenced (cross-project import status, audit findings, retirement dates); older entries are historical narrative. When an entry documents an active rule, it is the canonical source for that rule's WHY/HOW WE KNOW/SCOPE.*
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-25 (later⁷) — Voice cleanup pass 3: Foundational premise rewrite + §4 redundancy removal
+
+Stan rewrote the Foundational premise paragraph to give a more accurate "how did we get here" narrative (the actual sequence: Skousen's term → Stan expanded the concept → tested on BofM English → applied to GNT → universalist generalization). Web search confirmed Skousen's stated rationale in *The Earliest Text* is BofM-dictation-specific, not part of a "previous pioneers in colometry" tradition; bracketed claim removed accordingly. Per Stan's direction, then applied the slop-cleanup discipline to the rewritten paragraph + reviewed the rest of the document.
+
+Foundational premise paragraph cleanups (7 internal edits within one paragraph):
+
+  - Bureaucratic stack: "The operating key assumption and theoretical framework for this project is that..." → "The project's working hypothesis is that..."
+  - "real-world demonstration" → "demonstration" (filler removed)
+  - Verbose Skousen sentence "Stan took inspiration from Skousen's coining of the term 'sense-line' as a conceptual starting point and expanded upon the concept until arriving at the definition mentioned above" → "Stan took Skousen's term as a starting point and expanded the concept to the definition above"
+  - Passive "This expanded 'atomic thought' unit was then used to experiment in creating line breaks..." → active "He then experimented with line breaks..."
+  - Hedge pile "where it seemed to genuinely be exposing idea units" → "where the expanded definition appeared to expose idea-units"
+  - "his same method" → "the same method"
+  - "sense-lines" / "sense lines" → standardized to "sense-lines"
+  - All-caps "ANY text" → italicized "*any* text" (scholarly emphasis convention)
+  - Air-quotes around our internal definition removed; quotes preserved on first introduction of "sense-lines" and on Skousen's quoted phrase
+
+§4 Operational Tests redundancy removed:
+
+  - "Post-Split Function-Word Recheck" subsection had a duplicate gold-standard chapter list (already stated in the preceding "Gold-standard regression-test chapters — why these four" subsection). Replaced the duplicate list with an inline reference to the first list, preserving the operational instruction ("manually diff these four chapters' v4 + eng-gloss before and after").
+
+Sections reviewed and found tight after prior cleanups (no edits this pass): §0 Posture, §0 Architecture, §0 What is this document (the "structure aims to keep the integration honest" sentence flagged 4× and kept by Stan stays), §1 Three Forces, §1 Priority Order, §1 Imposing-vs-Revealing, §2 Five Structural Justifications, §4 Two-Prong Exception Test, §6 Defensibility-capture (cleaned in pass 1 + pass 2).
+
+Net: ~12 lines changed across 2 paragraphs/sections. No rule content modified. Audit-skippable per §6.5.
+
+Going-forward discipline (codified across passes 1-3 in §10 entries `2026-04-25 (later⁵)` through `(later⁷)`): write for human readability throughout; cost asymmetry runs one direction (extra context for humans is free for AI); domain Greek/colometric terms stay; project-internal jargon gets defined or rewritten as description; section-internal historical residue goes to §10; bureaucratic nominalizations / passive voice / "serves to" constructions / triadic-rhythm parallels / self-restating clauses / meta-pointing cross-references all get pruned opportunistically.
 
 ---
 
