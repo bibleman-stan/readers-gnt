@@ -285,7 +285,7 @@ oute ses oute brosis aphanizei
 
 **Cognitive prong argument:** A set of attributes building one portrait functions as one cognitive chunk even without an explicit verb, because the portrait IS the idea unit.
 
-**Structural prong argument:** The accumulation pattern (adjective, adjective, prepositional phrase) is a recognized grammatical form for predicate-complement stacking. The reader reconstructs "X is [attribute]" or "X who is [attribute]" from context. Criterion 2 (single image) provides the formal justification.
+**Structural prong argument:** The accumulation pattern (adjective, adjective, prepositional phrase) is a recognized grammatical form for predicate-complement stacking. The reader reconstructs "X is [attribute]" or "X who is [attribute]" from context. The diagnostic force (single image) provides the formal justification.
 
 **Detectable signature:** A verse or span where (a) no finite verb appears until a later verse, (b) the lines are successive characterizations of the same subject, and (c) each characterization could be extracted as a standalone description.
 
@@ -337,7 +337,7 @@ Each is a complete speech-act predication. The speech content follows on the nex
 - **FEF periodic frame** (§5, §8). Luke 3:1-2 — five genitive-phrase temporal adjuncts (ἐν ἔτει πεντεκαιδεκάτῳ τῆς ἡγεμονίας Τιβερίου Καίσαρος... ἐπὶ ἀρχιερέως Ἅννα καὶ Καϊάφα...) — the matrix ἐγένετο ῥῆμα θεοῦ lands only after the adjunct chain completes.
 - **Fronted temporal existential.** John 1:1 `ἐν ἀρχῇ` — only 2 words but carries the Gospel prologue's entire temporal frame; the brevity-but-substance is the edge case flagged by the ≤3-word caveat above (substance can override length).
 
-**Relation to R19, R20, FEF:** These are the mechanical operationalizations of justification #5 for specific adjunct classes. Justification #5 is the generating principle; R19 / R20 / FEF treatment are how it lands for gen abs, prep catenae, and periodic frames respectively. A future adjunct pattern not covered by the existing rules inherits its warrant from justification #5 rather than requiring a new top-level rule.
+**Relation to R19, prep-catena (§8), FEF:** These are the mechanical operationalizations of justification #5 for specific adjunct classes. Justification #5 is the generating principle; R19 (gen abs), prep-catena treatment (§8), and FEF periodic-frame treatment (§5) are how it lands for those classes. A future adjunct pattern not covered by the existing rules inherits its warrant from justification #5 rather than requiring a new top-level rule.
 
 **Contrast with breath:** justification #5 captures the cognitive work that breath was loosely doing (long lines need breaking) but with a principled grammatical-peripherality test rather than an un-thresholded "feels too long" judgment. Breath's continuing status is under review (§1); substantive adjunct is the proposition-side replacement for the cognitive-chunking work breath was smuggling in.
 
@@ -488,7 +488,7 @@ Rules are classified as MECHANICAL (any trained editor would apply them identica
 
 Every sense-line must carry at least one thought-marking anchor: (1) a finite verb, (2) an infinitive, (3) a participle standing as predicate, or (4) a substantive head that is the independently predicated topic of its own line.
 
-*Serves:* Criterion 1 (atomic thought) — this rule operationalizes the DEFAULT case of criterion 1 (the predication test).
+*Serves:* the generative force (atomic thought / propositions) — this rule operationalizes the DEFAULT case of the generative force (the predication test).
 
 **TIGHTENED participle scope (2026-04-16):** Anchor type (3) is "a participle standing as predicate" — not any participle. A participle functioning as an adverbial modifier or attributive adjective does not anchor its line; only a participle standing as the predicate of its own clause (genitive absolute, circumstantial participle carrying an independent predication via ellipsis) counts.
 
@@ -745,7 +745,7 @@ Test: is the structural difference between parallel passages authorial (one uses
 
 This is a specific instance of the broader principle that **the text is authoritative over the methodology's aesthetic preferences.** Where the author chose asymmetry, we preserve it; where the editor imposed asymmetry, we normalize it. See also "The Complete Framework" (Section 2, step 4) for how R28 operates at the split-trigger level within the full decision procedure.
 
-*Three §3.7 subsections retired 2026-04-25 after hostile retroactive audit (Need/Response Paired Beats; Imperative + Divine-Consequence; Cause-Consequence Bonded Beats). Audit findings: Need/Response was Matt-25-only (zero corpus instances outside one pericope); Imperative + Divine-Consequence misdescribed the corpus (~50% merge rate, 8 documented counterexample splits including Matt 7:7 ×3 vs Luke 11:9 ×3); Cause-Consequence relied on a removal-test feel-test that two editors apply differently. All three were subsumed by M1 + R8 default + justification 1 + R28 textual-asymmetry. Full retirement reasoning at §9 Superseded Formulations 2026-04-25 entry; audit reports in `private/03-sessions/2026-04-24-bofm-discipline-imports/`.*
+*Three §3.7 subsections (Need/Response Paired Beats, Imperative + Divine-Consequence, Cause-Consequence Bonded Beats) retired 2026-04-25 — see §9 Superseded Formulations.*
 
 ### 3.8 De-Contrast Overbreak
 
@@ -949,7 +949,7 @@ Any pipeline change that breaks one of these four is suspect. If a change breaks
 
 **After any pipeline change (regen logic, scanner rewrite, validator update), manually diff these four chapters' v4 + eng-gloss before and after. If any of the four breaks, the pipeline change is suspect.**
 
-### The No-Anchor Test (Default Case of Criterion 1)
+### The No-Anchor Test (Default Case of the Generative Force)
 
 **What it checks:** Does every sense-line carry at least one thought-marking anchor (finite verb, infinitive, predicate participle, or independently-predicated substantive head)?
 
@@ -1133,7 +1133,7 @@ Rules that fail (1) — produce imposed or artificial breaks — are rejected re
 - **HOW WE KNOW** — the empirical warrant (corpus instances, cross-reference, grammatical test)
 - **SCOPE** — where it applies and where it doesn't (test contrasts / non-examples)
 
-The §3.7 subsections added 2026-04-21 (Cause-Consequence Bonded Beats, M1 strict-application caveat) each follow this shape implicitly. Making it explicit here means future additions can be audited against a defensibility checklist — relevant both for day-to-day consistency and for the PhD prospectus where each rule will need to carry its warrant. Retroactive audit of existing canon sections is future work; the requirement is prospective from 2026-04-22.
+The §3.17 Cross-Verse Continuity codification (2026-04-22) and the §6.5 Mandatory-audit triggers (2026-04-24) each include explicit WHY/HOW WE KNOW/SCOPE elements. Making the requirement explicit here means future additions can be audited against a defensibility checklist — relevant both for day-to-day consistency and for the PhD prospectus where each rule will need to carry its warrant. Retroactive audit of existing canon sections is future work; the requirement is prospective from 2026-04-22.
 
 ### Mandatory-audit triggers for canon changes (added 2026-04-24 from BofM cross-project directive)
 
@@ -1931,7 +1931,7 @@ Adversarial audit by three Opus agents (over-structuring / redundancy / mechanic
 
 ### 2026-04-20 (later²) — H2: Fifth Structural Justification — Substantive Adjunct as Own Focus
 
-Added "Substantive Adjunct as Own Focus" as structural justification #5 in §2, matching BofM's 2026-04-19 PM addition. Justification #5 is the generative principle that R19 (gen abs always own line), R20 (prep-catena absorption), and the FEF periodic-frame treatment all derive from.
+Added "Substantive Adjunct as Own Focus" as structural justification #5 in §2, matching BofM's 2026-04-19 PM addition. Justification #5 is the generative principle that R19 (gen abs always own line), prep-catena absorption (§8), and the FEF periodic-frame treatment all derive from.
 
 This is a unification move, not an addition of editorial behavior. Three existing rules that previously presented as independent syntactic rules are now surfaced as mechanical operationalizations of one generating principle: a fronted or trailing adjunct that is (a) grammatically peripheral to the matrix + (b) carries substantial semantic content earns its own line.
 
