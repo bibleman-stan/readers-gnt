@@ -1,0 +1,47 @@
+#!/bin/sh
+# GNT Reader pre-commit hook (regression-baseline gate)
+# Runs Layer 2 validators on commits that touch the canon, the syntax-reference
+# table, the editorial corpus, or the validator suite itself. Blocks commits
+# that INCREASE finding counts vs validators/.baseline.json.
+#
+# Install (one-time):
+#   ln -s ../../validators/hooks/pre-commit .git/hooks/pre-commit
+#   (or: cp validators/hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit)
+#
+# Bypass (Stan-only, explicit decision):
+#   git commit --no-verify
+
+set -e
+
+# Only run if relevant files are staged
+RELEVANT=$(git diff --cached --name-only | grep -E "^(data/text-files/v4-editorial/|private/01-method/colometry-canon\.md|data/syntax-reference/|validators/)" || true)
+
+if [ -z "$RELEVANT" ]; then
+    exit 0
+fi
+
+echo ""
+echo "[pre-commit] Canon/corpus/validator files staged. Running run_all --baseline-check..."
+echo ""
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+cd "$REPO_ROOT"
+
+PYTHONIOENCODING=utf-8 py -3 validators/run_all.py --baseline-check
+RESULT=$?
+
+if [ $RESULT -ne 0 ]; then
+    echo ""
+    echo "[pre-commit] BLOCKED: validators report new candidates vs baseline."
+    echo "[pre-commit] Either:"
+    echo "  (a) fix the new violations and re-stage, OR"
+    echo "  (b) update the baseline if the increase is intentional:"
+    echo "      PYTHONIOENCODING=utf-8 py -3 validators/run_all.py --update-baseline"
+    echo ""
+    exit 1
+fi
+
+echo ""
+echo "[pre-commit] No regressions vs baseline. Proceeding."
+echo ""
+exit 0

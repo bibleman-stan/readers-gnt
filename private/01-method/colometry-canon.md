@@ -1160,7 +1160,11 @@ The "extensible only by worked examples + adversarial validation" requirement on
 8. **Canonical example additions to settled rules** — examples shape rule interpretation; a poorly-chosen example silently redefines the rule.
 9. **Meta-rule changes to this trigger list itself** — changes to this protocol must be audited.
 10. **Discipline-shifting memory file additions** — new `feedback_*.md` or `project_*.md` files that shape how Claude approaches canon work are behaviorally-governing, not just observations; they need the same scrutiny as canon.
-11. **Cross-project imports** (BofM ↔ GNT) **or recoveries from retired canon** (§9 Superseded Formulations) — provenance from a sibling project or older version is not validation; the imported claim must have GNT corpus evidence independent of its source.
+11. **Cross-project imports** (BofM ↔ GNT ↔ Tanakh) **or recoveries from retired canon** (§9 Superseded Formulations) — provenance from a sibling project or older version is not validation; the imported claim must have GNT corpus evidence independent of its source.
+12. **Corpus-fit verification — post-codification AND post-detection.**
+    - **(a) Post-codification.** A new rule, sub-clause, or named pattern is **not "closed" until a corpus-wide goal-fit audit has confirmed (i) all eligible instances conform OR (ii) all residuals are explicitly enumerated** in §10. This extends trigger #3 (spot-check-based proposals) temporally: full-corpus verification is required at codification AND once after, on the live corpus.
+    - **(b) Post-detection.** This trigger ALSO fires when Stan-eyeball or any audit surfaces a violation of an **existing** (settled) rule. Application drift accumulates as the corpus changes around long-codified rules. When a violation is detected, schedule a same-rule full-corpus re-sweep within the same session if practical, or as the next session's first task. (Inverse direction from #7, which gates operator-initiated sweeps.)
+    - **Audit dimensions to consider:** goal-fit (does corpus implement codified rules), application-consistency on formulaic phrases (καὶ ἐγένετο FEFs, λέγων-introduced speech, ἀπεκρίθη + εἶπεν redundant-speech, μέν/δέ pairing), application-consistency on parallel-list constructions (genealogies, beatitudes, woe-series, conditional pairs — see §9 Superseded Formulations entry on §3.7 retirement + R28 textual asymmetry), self-consistency (cross-references, defensibility triplets), judgment-handoff smuggling (named in `feedback_rhetoric_bandwagon.md`).
 
 **Audit dispatch protocol — parallel by default.** When a proposal triggers multiple audit dimensions (e.g., fake-rule test + full-corpus sweep + scope test), dispatch all in a single message with multiple Agent tool calls. Sequential only when audit A's verdict determines whether audit B should run. Parallelization substantially reduces friction and lowers the effective cost per audit.
 
@@ -1461,6 +1465,26 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 *Purpose: **dual-natured** — chronological reasoning trail. Recent entries documenting active-rule provenance are operationally referenced (cross-project import status, audit findings, retirement dates); older entries are historical narrative. When an entry documents an active rule, it is the canonical source for that rule's WHY/HOW WE KNOW/SCOPE.*
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-26 (later) — Mechanical hook port from Tanakh + §6.5 trigger #12 added
+
+Three port-backs from sibling Tanakh-reader project, where they had been built and validated. Cross-project audit (three parallel hostile audits — discipline machinery, three-layer architecture, voice quality) surfaced these as items GNT was missing. Stan greenlit the engineering investment.
+
+**1. Regression-baseline pre-commit hook.** Extended `validators/run_all.py` with three new modes — `--summary` (per-rule dashboard), `--baseline-check` (compare to `validators/.baseline.json`; exit 1 on regression), `--update-baseline` (capture current counts). Created `validators/.baseline.json` with all 9 GNT validators at 0 candidates each. Wrote `validators/hooks/pre-commit` shell script gating commits that touch the canon, syntax-reference, v4-editorial corpus, or validators/ — runs `--baseline-check` and blocks if any rule's candidate count increased. Installed to `.git/hooks/pre-commit`.
+
+**2. Content-aware commit-msg hook.** Wrote `validators/check_canon_extensions.py` adapted from Tanakh's `validators/check_canon_extensions.py` with GNT-specific changes: watches both `private/01-method/colometry-canon.md` AND `data/syntax-reference/greek-break-legality.md`; regex patterns updated for GNT §3.X rule numbering; audit-evidence keywords updated to GNT §-numbers (§6.5, §10); `NEW_DATED_PRINCIPLE_RE` loosened per cross-project audit-B finding (now detects any new `### ` heading whose text doesn't look like a §10 dated update-log entry, broadening recall at the cost of more false-positives that the skip-safe claim can clear). Wrote `validators/hooks/commit-msg` shell script. Installed to `.git/hooks/commit-msg`.
+
+**3. §6.5 trigger #12 — Corpus-fit verification (post-codification AND post-detection).** Added as the 12th mandatory-audit trigger. Pre-commit audit dispatched per §6.5 trigger #9 (meta-rule changes to the trigger list itself); audit verdict was ADOPT-WITH-REVISION with four substantive changes from Tanakh's original wording: (i) explicit relationship statement to triggers #3 and #7 to disambiguate scope; (ii) dropped ὅτι-complement-after-cognition example (overlaps with §4 Period Test, smuggles scope); (iii) replaced with μέν/δέ pairing example (load-bearing GNT pattern); (iv) updated §3.7 reference to §9 Superseded Formulations entry on §3.7 retirement (since §3.7 itself was retired 2026-04-25). Cut redundant prose ("HOW WE KNOW" recap, "parallel by default" duplication).
+
+**Net impact.** GNT now has cross-project parity with Tanakh (and BofM, who had built similar mechanisms first). The audit-discipline gap that was discretionary-only at commit time is now mechanically gated:
+
+- Pre-commit hook catches **regressions** (any rule's candidate count increased).
+- Commit-msg hook catches **closed-list extensions** (new rules / merge-overrides / Layer 1 table rows / audit triggers / SCOPE bullets) that don't increase any rule's count and would otherwise slip through.
+- Both hooks bypass-able via `git commit --no-verify` for Stan-only explicit decisions.
+
+**This commit's audit status.** §6.5 trigger #9 (meta-rule change to the trigger list itself) audit dispatched and applied per the revised wording above. §6.5 trigger #11 (cross-project import) audit consists of the original three parallel audits dispatched 2026-04-26 (discipline / three-layer / voice). §6.5 trigger #1 (new closed-list category in §6.5) audit also satisfied via trigger #9's meta-rule audit. All three triggers fire on this single addition; all three are documented above.
 
 ---
 

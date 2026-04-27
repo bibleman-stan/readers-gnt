@@ -1,0 +1,21 @@
+#!/bin/sh
+# GNT Reader commit-msg hook (content-aware canon-extension gate)
+# Detects canon extensions matching §6.5 mandatory-audit triggers in the
+# staged diff and blocks commits that introduce them without audit evidence
+# in the commit message.
+#
+# Closes the gap the regression-baseline pre-commit hook can't catch:
+# new closed-list additions / new rule sections / new merge-overrides / new
+# audit triggers that don't increase any existing rule's candidate count.
+#
+# Install (one-time):
+#   ln -s ../../validators/hooks/commit-msg .git/hooks/commit-msg
+#   (or: cp validators/hooks/commit-msg .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg)
+#
+# Bypass (Stan-only, explicit decision):
+#   git commit --no-verify -m '...'
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+cd "$REPO_ROOT"
+
+PYTHONIOENCODING=utf-8 py -3 validators/check_canon_extensions.py "$1"

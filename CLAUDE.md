@@ -155,7 +155,14 @@ The distinction is important: gating rule-derivative changes on per-item approva
 
 **When uncertain.** Dispatch the audit. The cost of a false-positive audit (Stan reads a no-op audit result) is small; the cost of a false-negative audit (a fake rule commits) is large.
 
-**Required commit-message declaration.** Every commit message that touches `private/01-method/colometry-canon.md` must declare audit-status explicitly: either `Audit-skippable per §6.5 ([reason])` with the reason citing one of the named audit-skippable categories above, OR `Audit dispatched: [evidence]` with concrete reference (parallel-agent verdicts, §10 entry, prior-commit pointer). Omission is itself a discipline failure — visible at a glance in `git log`. This is a documentation requirement, not a mechanical hook; the hook (BofM-style content-aware commit-msg gate) remains a deferred engineering option.
+**Required commit-message declaration.** Every commit message that touches `private/01-method/colometry-canon.md` must declare audit-status explicitly: either `Audit-skippable per §6.5 ([reason])` with the reason citing one of the named audit-skippable categories above, OR `Audit dispatched: [evidence]` with concrete reference (parallel-agent verdicts, §10 entry, prior-commit pointer). Omission is itself a discipline failure — visible at a glance in `git log`. As of 2026-04-26 this is also **mechanically gated** by the commit-msg hook (see "Validator hooks" below).
+
+**Validator hooks (installed 2026-04-26, ported from sibling Tanakh project):**
+
+- **`validators/hooks/pre-commit`** — runs `validators/run_all.py --baseline-check` when canon, syntax-reference, v4-editorial corpus, or validators are staged. Blocks commit if any rule's candidate count INCREASED vs `validators/.baseline.json`. Update the baseline after intentional changes: `PYTHONIOENCODING=utf-8 py -3 validators/run_all.py --update-baseline`.
+- **`validators/hooks/commit-msg`** — runs `validators/check_canon_extensions.py` against the proposed commit message. Detects canon extensions matching §6.5 trigger patterns (new rule subsections, merge-overrides, Layer 1 table rows, audit triggers, SCOPE bullets) and blocks the commit if no audit-evidence keyword OR skip-safe claim is present in the message.
+- **Bypass (Stan-only, explicit decision)**: `git commit --no-verify`.
+- **Install (one-time)**: `cp validators/hooks/pre-commit .git/hooks/pre-commit && cp validators/hooks/commit-msg .git/hooks/commit-msg && chmod +x .git/hooks/pre-commit .git/hooks/commit-msg` (already done in this clone; the source-of-truth scripts live in `validators/hooks/` and are tracked in git; the installed copies in `.git/hooks/` are not tracked).
 
 **Self-test to run pre-commit** (faster than full trigger-list scan):
 - Does this change include a scope claim, a precedence claim, a closed-list extension, or a named-category carve-out? → audit.
