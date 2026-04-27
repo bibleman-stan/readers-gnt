@@ -31,16 +31,16 @@ The practical effect: v2 handles participial chains, genitive absolutes, and emb
 ## How v2 relates to the other tiers
 
 - **Upstream:** `sblgnt-source/` (for the text) plus the Macula Greek syntax trees (for the parse structure). v2 is NOT produced from v1.
-- **Downstream:** `v3-colometric/` is produced from v2 by `scripts/v3_colometry.py`, which adds rhetorical-pattern awareness. v2 is v3's direct predecessor in the chain.
+- **Downstream:** `v3-colometric/` is produced from v2 by `scripts/archive/v3_colometry.py`, which adds rhetorical-pattern awareness. v2 is v3's direct predecessor in the chain.
 
 The pipeline graph:
 
 ```
-sblgnt-source/ ─┬─> v1-colometric/  (auto_colometry.py, pattern-matched)
-                └─> v2-colometric/  (v2_colometry.py, Macula-tree-driven)
+sblgnt-source/ ─┬─> v1-colometric/  (archive/auto_colometry.py, pattern-matched)
+                └─> v2-colometric/  (archive/v2_colometry.py, Macula-tree-driven)
                                    │
                                    ▼
-                                v3-colometric/  (v3_colometry.py, rhetorical refinement of v2)
+                                v3-colometric/  (archive/v3_colometry.py, rhetorical refinement of v2)
                                    │
                                    ▼
                                 v4-editorial/   (project's documented colometric methodology applied to the text)
@@ -51,10 +51,10 @@ sblgnt-source/ ─┬─> v1-colometric/  (auto_colometry.py, pattern-matched)
 v2 depends on external Macula Greek syntax-tree data that is not bundled with this repository. To reproduce:
 
 1. Obtain the Macula Greek syntax trees from [github.com/Clear-Bible/macula-greek](https://github.com/Clear-Bible/macula-greek).
-2. Place or symlink them where `scripts/v2_colometry.py` expects to find them (see the script's top-of-file docstring for the exact path conventions).
+2. Place or symlink them where `scripts/archive/v2_colometry.py` expects to find them (see the script's top-of-file docstring for the exact path conventions).
 3. Run:
    ```bash
-   PYTHONIOENCODING=utf-8 py -3 scripts/v2_colometry.py
+   PYTHONIOENCODING=utf-8 py -3 scripts/archive/v2_colometry.py
    ```
 
 The script reads `sblgnt-source/` + the Macula trees and writes to `v2-colometric/{NN-book}/{abbrev}-{NN}.txt`.

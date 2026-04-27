@@ -8,15 +8,17 @@ This directory holds the complete pipeline by which the GNT Reader's colometric 
 
 | Tier | Directory | What it is | Produced by |
 |---|---|---|---|
-| **v0** | `v0-prose/` | Canonical SBLGNT prose, one chapter per file. Retains the SBLGNT apparatus markers (`⸀ ⸁ ⸂ ⸃ ⸄ ⸅`) so this tier is a faithful slice of the published scholarly text. **Our starting point.** | Mechanical chapter-split of `sblgnt-source/` (see `v0-prose/README.md`) |
-| **v1** | `v1-colometric/` | First-pass mechanical sense-lines. Surface pattern matching on punctuation, known subordinators (ἵνα, ὥστε, ὅτι, ὅταν, …), discourse particles, speech introductions. Strips apparatus markers. | `scripts/auto_colometry.py` |
-| **v2** | `v2-colometric/` | Syntax-tree-driven sense-lines. Uses the scholar-annotated clause boundaries and participial-phrase brackets from the Macula Greek syntax trees to segment. Significant improvement over v1 for participial phrases, genitive absolutes, and embedded prose. | `scripts/v2_colometry.py` |
-| **v3** | `v3-colometric/` | Rhetorical-pattern-refined sense-lines. Adds parallelism detection, discourse-marker framing, and other rhetorical-pattern awareness on top of v2. The last machine tier. | `scripts/v3_colometry.py` |
+| **v0** | `v0-prose/` | Canonical SBLGNT prose, one chapter per file. Retains the SBLGNT apparatus markers (`⸀ ⸁ ⸂ ⸃ ⸄ ⸅`) so this tier is a faithful slice of the published scholarly text. **Our starting point.** | Mechanical chapter-split of `sblgnt-source/` (see `v0-prose/README.md`); producer at `scripts/archive/build_v0_prose.py` |
+| **v1** | `v1-colometric/` | First-pass mechanical sense-lines. Surface pattern matching on punctuation, known subordinators (ἵνα, ὥστε, ὅτι, ὅταν, …), discourse particles, speech introductions. Strips apparatus markers. | `scripts/archive/auto_colometry.py` |
+| **v2** | `v2-colometric/` | Syntax-tree-driven sense-lines. Uses the scholar-annotated clause boundaries and participial-phrase brackets from the Macula Greek syntax trees to segment. Significant improvement over v1 for participial phrases, genitive absolutes, and embedded prose. | `scripts/archive/v2_colometry.py` |
+| **v3** | `v3-colometric/` | Rhetorical-pattern-refined sense-lines. Adds parallelism detection, discourse-marker framing, and other rhetorical-pattern awareness on top of v2. The last machine tier. | `scripts/archive/v3_colometry.py` |
 | **v4** | `v4-editorial/` | Methodology-applied reading edition. The project's documented colometric methodology — atomic thought, cognitive hierarchy, register sensitivity, semantic grouping, the universal vocative rule, the no-anchor rule, and the other rules recorded in the canon — applied to the text. Changes land via a mix of systematic scan-and-apply tools for structurally-describable classes (the vocative pass, the no-anchor pass, the Goldilocks refinement, Class F audits) and case-by-case editorial decisions where rules conflict or underdetermine. **The single source of truth for the web app.** | Methodology application (systematic scanners + editorial judgment) |
+
+**v0–v3 producers archived 2026-04-26.** The four producer scripts now live at `scripts/archive/`. The tier directories themselves are preserved as frozen scaffolding; the scripts are preserved for provenance and re-derivability. See `scripts/archive/README.md`.
 
 Plus one non-Greek directory:
 
-- `eng-gloss/` — English structural glosses aligned line-for-line with `v4-editorial/`, produced by `scripts/generate_english_glosses.py` and `scripts/regenerate_english.py` after Greek edits.
+- `eng-gloss/` — English structural glosses aligned line-for-line with `v4-editorial/`. The active English-regen tool is `scripts/regenerate_english.py` (incremental, with skip-guard). The original from-scratch seeder (`generate_english_glosses.py`) and a Pauline-only seeder variant (`generate_pauline_english.py`) were archived 2026-04-26 and live under `scripts/archive/`.
 
 And one untouched reference:
 
@@ -26,7 +28,7 @@ And one untouched reference:
 
 **Transparency.** Anyone checking our work can see exactly what the text looked like at every stage. "Where did we start, where did we go, how did it look along the way" is fully inspectable.
 
-**Reproducibility.** v0 → v1 → v2 → v3 is a deterministic pipeline. Given our source data (`sblgnt-source/` for v0, plus the Macula Greek syntax trees for v2), anyone can re-run `scripts/auto_colometry.py`, `scripts/v2_colometry.py`, and `scripts/v3_colometry.py` against these inputs and produce bit-exact copies of the v1/v2/v3 tiers. The v3 → v4 transition is NOT deterministic; it's editorial hand work, and the rules governing it are documented in `handoffs/` (see the colometric methodology references).
+**Reproducibility.** v0 → v1 → v2 → v3 is a deterministic pipeline. Given our source data (`sblgnt-source/` for v0, plus the Macula Greek syntax trees for v2), anyone can re-run `scripts/archive/auto_colometry.py`, `scripts/archive/v2_colometry.py`, and `scripts/archive/v3_colometry.py` against these inputs and produce bit-exact copies of the v1/v2/v3 tiers. The v3 → v4 transition is NOT deterministic; it's editorial hand work, and the rules governing it are documented in `handoffs/` (see the colometric methodology references).
 
 **Honesty.** Unlike the Book of Mormon Reader (a sibling project which starts from Royal Skousen's published sense-lines), the GNT Reader had no pre-existing scholar-annotated colometric edition to lean on. The three mechanical tiers are the record of how we bootstrapped our own starting point from raw SBLGNT prose plus external syntax-tree data. Preserving them is the honest way to show the mechanical baseline we built before any editorial decisions entered.
 
@@ -80,17 +82,19 @@ Total: 260 chapters, consistent shape in every tier.
 
 ```bash
 # v0 — chapter-split the SBLGNT source prose
-PYTHONIOENCODING=utf-8 py -3 scripts/build_v0_prose.py
+PYTHONIOENCODING=utf-8 py -3 scripts/archive/build_v0_prose.py
 
 # v1 — mechanical pattern-matched pass (reads sblgnt-source/, writes v1-colometric/)
-PYTHONIOENCODING=utf-8 py -3 scripts/auto_colometry.py
+PYTHONIOENCODING=utf-8 py -3 scripts/archive/auto_colometry.py
 
 # v2 — Macula syntax-tree pass (requires Macula Greek trees; reads sblgnt-source/ + Macula, writes v2-colometric/)
-PYTHONIOENCODING=utf-8 py -3 scripts/v2_colometry.py
+PYTHONIOENCODING=utf-8 py -3 scripts/archive/v2_colometry.py
 
 # v3 — rhetorical-pattern refinement (reads v2-colometric/, writes v3-colometric/)
-PYTHONIOENCODING=utf-8 py -3 scripts/v3_colometry.py
+PYTHONIOENCODING=utf-8 py -3 scripts/archive/v3_colometry.py
 ```
+
+The producer scripts were moved to `scripts/archive/` on 2026-04-26 once `v4-editorial/` reached 260/260 coverage and the v0–v3 tiers were no longer in the active editorial loop. They are preserved unchanged for re-derivation; running them today will overwrite the frozen tier corpora.
 
 v4 is not produced by a single reproducible script because rule application involves judgment calls at the margin. It is, however, methodologically checkable — see the two-reproducibility-regimes note above and `handoffs/04-editorial-workflow.md` for the editorial workflow and the rule set the editor applies.
 

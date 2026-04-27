@@ -1,9 +1,8 @@
 """
 build_books.py — Generate HTML book files from colometric text sources.
 
-Reads chapter files from v4-editorial/*/ (preferred) or v3-colometric/ (Greek)
-and optionally from eng-gloss/*/ (preferred) or ylt-colometric/ (English),
-and writes one HTML fragment per book into books/.
+Reads chapter files from v4-editorial/*/ (Greek) and optionally from
+eng-gloss/*/ (English), and writes one HTML fragment per book into books/.
 
 Each .line span contains a .gk span (Greek) and optionally a .en span
 (English), enabling Greek/English/Both display modes in the web app.
@@ -25,7 +24,6 @@ from collections import defaultdict
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPT_DIR)
 GK_PRIMARY_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4-editorial")
-GK_FALLBACK_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v3-colometric")
 INPUT_DIR = GK_PRIMARY_DIR  # used by discover_books for globbing all chapters (subfoldered)
 EN_DIR = os.path.join(REPO_ROOT, "data", "text-files", "eng-gloss")
 OUTPUT_DIR = os.path.join(REPO_ROOT, "books")
@@ -224,11 +222,7 @@ def _find_book_subdir(base_dir, prefix):
 
 
 def resolve_greek_path(fpath):
-    """Return the best Greek source: v4-editorial if it exists, else v3-colometric.
-
-    Both v4-editorial and v3-colometric use the {NN-book}/ subfolder layout, so
-    the fallback walks subfolders symmetrically with the primary lookup.
-    """
+    """Return the v4-editorial Greek source path. Raise if missing."""
     basename = os.path.basename(fpath)
     prefix = _book_prefix(fpath)
     subdir = _find_book_subdir(GK_PRIMARY_DIR, prefix)
@@ -236,13 +230,9 @@ def resolve_greek_path(fpath):
         v4_path = os.path.join(GK_PRIMARY_DIR, subdir, basename)
         if os.path.isfile(v4_path):
             return v4_path, "v4"
-    # Fallback to v3-colometric — also book-subfolder layout
-    subdir = _find_book_subdir(GK_FALLBACK_DIR, prefix)
-    if subdir:
-        v3_path = os.path.join(GK_FALLBACK_DIR, subdir, basename)
-        if os.path.isfile(v3_path):
-            return v3_path, "v3"
-    return fpath, "v3"
+    raise FileNotFoundError(
+        f"v4-editorial Greek source missing for {basename} (looked under {GK_PRIMARY_DIR})"
+    )
 
 
 def resolve_english_path(fpath):

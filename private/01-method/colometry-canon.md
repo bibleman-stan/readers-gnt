@@ -1460,6 +1460,49 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 
 ---
 
+### 2026-04-26 (later⁷) — Architecture transition: tier-producer scripts archived
+
+After the later⁶ residue-purge commit, Stan asked whether the three vestigial scripts flagged as carry-forward (`diagnostic_scanner.py`, `v3_colometry.py`, `v4_pauline_review.py`) should be retired. I recommended **wide scope, framed as freeze-and-document rather than delete**: the project transitioned from a machine pipeline (v0→v1→v2→v3) to a hand-edited corpus (`v4-editorial/` as single source of truth) when v4 reached 260/260 coverage. The producer scripts have been operationally vestigial since then; the documentation hadn't caught up. Stan greenlit ("be very careful, redundant, and smart about paralleling/double-checking, but proceed").
+
+**Pre-flight audit (5 parallel Sonnet agents):**
+
+1. **Live-readers audit:** Verified the scope claim "v4-editorial is single source of truth, v1/v2/v3 have no live readers." Outcome: scope claim holds — *with one caveat.* `scripts/build_books.py` had a silent runtime fallback to `v3-colometric/` (`GK_FALLBACK_DIR`, `resolve_greek_path()` lines 226–245) that returned a v3 path if a v4 file was missing. Practically dead given v4 completeness, but the code path was active.
+2. **Retirement-readiness for the 3 named scripts:** All three confirmed retire-ready — zero inbound module imports, all command-line references are doc-examples. Input paths point at `v3-colometric/` / `v2-colometric/`.
+3. **morphgnt_lookup.py + sibling-script status:** `morphgnt_lookup.py` is **ACTIVE** (used by `validators/common.py` as the morphological backend for the production validator suite — must NOT archive). `v4_auto_fix.py` is **ACTIVE**. Five additional scripts surfaced as same-class vestigial: `v2_colometry.py`, `auto_colometry.py`, `build_v0_prose.py`, `generate_english_glosses.py` (SEED-ONLY, predates `regenerate_english.py`), `generate_pauline_english.py` (zero inbound refs).
+4. **v4-editorial completeness:** 260/260 confirmed (27 books, all expected chapter counts present). The `build_books.py` fallback is unreachable on every normal build.
+5. **English-gloss generator status:** `generate_english_glosses.py` is SEED-ONLY (predates incremental-regen tool); `generate_pauline_english.py` is fully vestigial (no inbound refs, V1_DIR fallback).
+
+**Archived this commit (8 scripts → `scripts/archive/`):**
+
+- `build_v0_prose.py` (v0 producer)
+- `auto_colometry.py` (v1 producer)
+- `v2_colometry.py` (v2 producer)
+- `v3_colometry.py` (v3 producer; "last machine tier")
+- `diagnostic_scanner.py` (line-auditing tool, superseded by Layer 2 validators)
+- `v4_pauline_review.py` (one-time editorial review pass)
+- `generate_english_glosses.py` (eng-gloss seeder, superseded by `regenerate_english.py`)
+- `generate_pauline_english.py` (Pauline-subset seeder)
+
+**Defensive code change:** Removed the `GK_FALLBACK_DIR` v3-colometric fallback from `scripts/build_books.py`. `resolve_greek_path()` now raises `FileNotFoundError` with a clear message if a v4-editorial file is missing. Smoke-tested with `--book mark` and full-corpus build; both pass.
+
+**Documentation aligned:**
+
+- `scripts/archive/README.md` (new) — architecture-transition explanation + per-script provenance.
+- `CLAUDE.md` Key Files table — replaced archived-script entries with currently-active scripts; updated NEVER list (auto_colometry warning replaced with `scripts/archive/` warning).
+- `data/text-files/README.md` + four per-tier READMEs (`v0-prose/`, `v1-colometric/`, `v2-colometric/`, `v3-colometric/`) — producer paths now point under `archive/`; v3 README "Historical note on the build pipeline" updated to record the fallback removal.
+- `handoffs/03-architecture.md` — banner at top noting the archive sweep; line 539 diagnostic_scanner description updated to record the archive move; dated update blocks below preserved unchanged (snapshots are append-only).
+- `handoffs/04-editorial-workflow.md` — banner at top; "Protection of Hand-Edited Chapters" section updated to record resolution; Phase 1 example (line 177) updated from `v3_colometry.py` to currently-active scripts (`apply_m1_merges.py`, etc.).
+- `scripts/morphgnt_lookup.py` docstring — clarified that the production user is now `validators/common.py`; v3_colometry.py noted as the original (now-archived) reason for its existence.
+
+**Carry-forward (separate from this commit):**
+
+- `bezae_compare.py` reads multiple tiers analytically and may benefit from a similar fallback review, but it is a live web-app feature (not in the editorial loop) and its multi-tier reads are appropriate for its purpose. No action recommended at this time.
+- The frozen tier corpus directories (`v0-prose/`, `v1-colometric/`, `v2-colometric/`, `v3-colometric/`) remain in `data/text-files/`. They are inert but harmless; preserved for provenance and re-derivability per the data/text-files/README.md "two reproducibility regimes" framing.
+
+**Audit-status for this commit per §6.5:** This is a SCOPE claim about the project's architecture ("v4-editorial is single source of truth, v0–v3 are frozen scaffolding"). Per §6.5 trigger #2 (scope claim), an audit was warranted and was satisfied by the 5-agent pre-flight verification documented above. The audit-evidence is the agent verdicts + the §10 entry capturing them; the scope claim has the empirical basis Stan asked for.
+
+---
+
 ### 2026-04-26 (later⁶) — Final residue purge: README.md + 3 scripts + secondary doc/CLAUDE.md sweep
 
 After the later⁵ commit, a wider sweep surfaced more retired-framework residue across public-facing surfaces and helper scripts. Same carry-forward-inertia class as later² through later⁵; same audit-skippable rationale.

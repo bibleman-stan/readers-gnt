@@ -7,9 +7,9 @@ rhetorical pattern detection to improve the display. The v2 output has correct
 clause boundaries from Macula syntax trees, but needs rhetorical refinement.
 
 Usage:
-    py -3 scripts/v3_colometry.py                              # all books
-    py -3 scripts/v3_colometry.py --book Mark                  # one book
-    py -3 scripts/v3_colometry.py --book Mark --chapter 4      # one chapter
+    py -3 scripts/archive/v3_colometry.py                              # all books
+    py -3 scripts/archive/v3_colometry.py --book Mark                  # one book
+    py -3 scripts/archive/v3_colometry.py --book Mark --chapter 4      # one chapter
 
 Input:  data/text-files/v2-colometric/{NN-book}/*.txt
 Output: data/text-files/v3-colometric/{NN-book}/*.txt

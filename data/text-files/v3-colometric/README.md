@@ -37,11 +37,11 @@ The practical effect: v3 reads more naturally than v2 in dialogue passages, argu
 The pipeline graph:
 
 ```
-sblgnt-source/ ─┬─> v1-colometric/  (auto_colometry.py, pattern-matched)
-                └─> v2-colometric/  (v2_colometry.py, Macula-tree-driven)
+sblgnt-source/ ─┬─> v1-colometric/  (archive/auto_colometry.py, pattern-matched)
+                └─> v2-colometric/  (archive/v2_colometry.py, Macula-tree-driven)
                                    │
                                    ▼
-                                v3-colometric/  (v3_colometry.py, rhetorical refinement)
+                                v3-colometric/  (archive/v3_colometry.py, rhetorical refinement)
                                    │
                                    ▼
                                 v4-editorial/   (project's documented colometric methodology applied to the text)
@@ -52,18 +52,18 @@ v3 is the machine / human boundary. Everything upstream of v3 is deterministic; 
 ## Reproducing this tier
 
 ```bash
-PYTHONIOENCODING=utf-8 py -3 scripts/v3_colometry.py
+PYTHONIOENCODING=utf-8 py -3 scripts/archive/v3_colometry.py
 ```
 
 The script reads `data/text-files/v2-colometric/{NN-book}/*.txt` and writes to `data/text-files/v3-colometric/{NN-book}/{abbrev}-{NN}.txt`. Running it against the same v2 content produces a bit-exact copy of this directory.
 
 ## Historical note on the build pipeline
 
-Before `v4-editorial/` existed (sessions 1-5 of the project), `v3-colometric/` was the source that `scripts/build_books.py` read to generate the public HTML. The build script still contains a v3 fallback path — if a chapter file is missing from v4-editorial for some reason, build_books.py falls back to the v3 version. In practice, this fallback is dead code: every chapter has been editorially reviewed and lives in v4. The fallback is preserved as a safety net and as documentation of the v3 → v4 transition.
+Before `v4-editorial/` existed (sessions 1–5 of the project), `v3-colometric/` was the source that `scripts/build_books.py` read to generate the public HTML. A v3 fallback in `build_books.py` was retained for a time as a safety net while v4 coverage filled in. The fallback was confirmed dead in practice (v4-editorial reached 260/260) and removed 2026-04-26 alongside the producer-script archive sweep. `build_books.py` now reads `v4-editorial/` only and raises `FileNotFoundError` if a chapter file is missing.
 
 ## Status
 
-**Frozen.** v3 is the final machine tier. It has been superseded for editorial purposes by v4. It is retained as the reproducibility record, the "complete mechanical baseline" for diffing against the editorial hand, and the build pipeline's historical fallback. The script that produces it is preserved but not actively developed.
+**Frozen.** v3 is the final machine tier. It has been superseded for editorial purposes by v4. It is retained as the reproducibility record and the "complete mechanical baseline" for diffing against the editorial hand. The producer script was archived 2026-04-26 (`scripts/archive/v3_colometry.py`) and is preserved for re-derivability, not active development.
 
 ## License
 

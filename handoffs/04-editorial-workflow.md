@@ -1,5 +1,7 @@
 # 04 — Editorial Workflow
 
+> **Update 2026-04-26 — Tier-producer archive sweep.** The v0–v3 tier producers and several adjacent one-time tools (`build_v0_prose.py`, `auto_colometry.py`, `v2_colometry.py`, `v3_colometry.py`, `diagnostic_scanner.py`, `generate_english_glosses.py`, `generate_pauline_english.py`, `v4_pauline_review.py`) were moved to `scripts/archive/`. The pipeline diagram below describes the original five-tier bootstrap; the active editorial loop is now `v4-editorial/ → regenerate_english.py → eng-gloss/ → build_books.py → books/*.html`. See `scripts/archive/README.md` and canon §10 (2026-04-26 later⁷).
+
 ## The Pipeline
 
 ```
@@ -72,11 +74,7 @@ Each chapter file in `v1-colometric/`:
 
 ## Protection of Hand-Edited Chapters
 
-**WARNING:** Running `auto_colometry.py` will overwrite ALL files in v1-colometric, destroying any hand edits. There is currently no protection mechanism for this.
-
-**Future need:** A way to mark chapters as "hand-edited, do not overwrite" — possibly a manifest file, or moving hand-edited chapters to a `v2-editorial/` directory (mirroring the BOM Reader's v1→v2 distinction).
-
-**For now:** Be careful. If running the auto-formatter, ensure no hand-edited chapters will be lost. Check `git diff` before committing.
+**Resolved 2026-04-26.** This section originally warned that `auto_colometry.py` would overwrite hand-edited chapters in `v1-colometric/`. The concern was specific to an early phase when hand edits were landing directly in `v1-colometric/`. The project later moved to `v4-editorial/` as the dedicated hand-editing surface (with `v0`–`v3` tiers frozen as scaffolding), and on 2026-04-26 the tier-producer scripts were moved to `scripts/archive/`. There is no longer a way for a routine command to clobber hand-edited chapters: the active loop reads/writes `v4-editorial/` only.
 
 ## Review Process
 
@@ -174,7 +172,7 @@ This pattern catches HIGH severity issues (rule interactions, sentence boundary 
 4. Example: finding elided ἀλλʼ not handled → immediately add ALL Greek elided forms (παρʼ, ἀπʼ, ἐπʼ, ὑπʼ, κατʼ, μετʼ, διʼ, ἀφʼ, ἐφʼ), not just ἀλλʼ
 
 **When changing the pipeline (MANDATORY two-phase pattern):**
-1. **Phase 1 — Algorithm change:** One agent modifies the script (v3_colometry.py, macula_*.py, etc.). This is a single-file code change.
+1. **Phase 1 — Algorithm change:** One agent modifies the script (e.g., `apply_m1_merges.py`, `apply_vocative_merges.py`, `regenerate_english.py`, `macula_*.py`, etc.). This is a single-file code change.
 2. **Phase 2 — Corpus rebuild:** 8 SEPARATE agents run the modified script on genre groups: Mark / Matthew / Luke-Acts / John+Johannine / Pauline / Hebrews / General Epistles / Revelation
 3. These are ALWAYS two separate dispatches. NEVER dispatch one agent to do both code change AND full corpus rebuild.
 4. Never run one agent on all 27 books — Luke-Acts alone is a quarter of the NT.

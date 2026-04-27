@@ -5,7 +5,9 @@ Loads MorphGNT SBLGNT data and provides functions to check whether
 a given Greek word has a verbal element (finite verb, participle,
 or infinitive).
 
-Used by v3_colometry.py to detect verbless lines that should be merged.
+Used by validators/common.py as the morphological backend for the
+production validator suite (R2–R7, R11, R18, R19, etc.). Originally
+written for the now-archived v3_colometry.py verbless-line merge pass.
 """
 
 import os

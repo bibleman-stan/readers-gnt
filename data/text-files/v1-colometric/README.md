@@ -4,7 +4,7 @@
 
 ## What's here
 
-260 `.txt` files. Each file is one chapter of one New Testament book, broken into sense-lines by `scripts/auto_colometry.py`. Layout mirrors every other tier:
+260 `.txt` files. Each file is one chapter of one New Testament book, broken into sense-lines by `scripts/archive/auto_colometry.py`. Layout mirrors every other tier:
 
 ```
 v1-colometric/
@@ -32,9 +32,9 @@ Apparatus markers (`⸀ ⸁ ⸂ ⸃ ⸄ ⸅`) are stripped. Line breaks are intr
 
 **v1 is a first draft.** It catches the low-hanging colometric structure: obvious subordinate clauses, discourse particles, speech introductions, basic punctuation-aligned breaks. It produces a reasonable starting point for further refinement.
 
-**v1 is not scholar-annotated.** It has no knowledge of Greek syntax trees beyond what surface patterns reveal. It misses many participial phrases, mis-handles genitive absolutes, does not reliably isolate embedded prose from matrix clauses, and cannot distinguish subordinating from coordinating uses of the same particle. These shortcomings are what `v2_colometry.py` exists to fix.
+**v1 is not scholar-annotated.** It has no knowledge of Greek syntax trees beyond what surface patterns reveal. It misses many participial phrases, mis-handles genitive absolutes, does not reliably isolate embedded prose from matrix clauses, and cannot distinguish subordinating from coordinating uses of the same particle. These shortcomings are what `archive/v2_colometry.py` exists to fix.
 
-**v1 is deterministic.** Running `auto_colometry.py` against the same `sblgnt-source/` content produces a bit-exact copy of this directory. This is important for reproducibility: someone verifying our work can reproduce v1 exactly.
+**v1 is deterministic.** Running `archive/auto_colometry.py` against the same `sblgnt-source/` content produces a bit-exact copy of this directory. This is important for reproducibility: someone verifying our work can reproduce v1 exactly.
 
 ## How v1 relates to the other tiers
 
@@ -44,11 +44,11 @@ Apparatus markers (`⸀ ⸁ ⸂ ⸃ ⸄ ⸅`) are stripped. Line breaks are intr
 The pipeline graph:
 
 ```
-sblgnt-source/ ─┬─> v1-colometric/  (auto_colometry.py, pattern-matched)
-                └─> v2-colometric/  (v2_colometry.py, Macula-tree-driven)
+sblgnt-source/ ─┬─> v1-colometric/  (archive/auto_colometry.py, pattern-matched)
+                └─> v2-colometric/  (archive/v2_colometry.py, Macula-tree-driven)
                                    │
                                    ▼
-                                v3-colometric/  (v3_colometry.py, rhetorical refinement of v2)
+                                v3-colometric/  (archive/v3_colometry.py, rhetorical refinement of v2)
                                    │
                                    ▼
                                 v4-editorial/   (project's documented colometric methodology applied to the text)
@@ -59,18 +59,18 @@ v1 is a parallel branch, not a predecessor of v2. It exists as the "pattern-matc
 ## Reproducing this tier
 
 ```bash
-PYTHONIOENCODING=utf-8 py -3 scripts/auto_colometry.py
+PYTHONIOENCODING=utf-8 py -3 scripts/archive/auto_colometry.py
 ```
 
 Or to regenerate a single book:
 
 ```bash
-PYTHONIOENCODING=utf-8 py -3 scripts/auto_colometry.py --book Mark
+PYTHONIOENCODING=utf-8 py -3 scripts/archive/auto_colometry.py --book Mark
 ```
 
 The script reads `data/text-files/sblgnt-source/*.txt` and writes to `data/text-files/v1-colometric/{NN-book}/{abbrev}-{NN}.txt`.
 
-**Warning:** running `auto_colometry.py` will overwrite every file in this directory.
+**Warning:** running `archive/auto_colometry.py` will overwrite every file in this directory. The script was archived 2026-04-26; running it on a frozen tier is almost never the desired outcome.
 
 ## Status
 

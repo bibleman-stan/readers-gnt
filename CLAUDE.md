@@ -104,10 +104,11 @@ Compaction-resume: still run the full CHECK-IN protocol when resuming from a com
 | File | Purpose |
 |------|---------|
 | `index.html` | Main web app — all CSS/JS inline (~2,500 lines), search, corpus filters, settings |
-| `scripts/build_books.py` | Converts text files → HTML fragments (reads v4-editorial + eng-gloss) |
-| `scripts/auto_colometry.py` | Rule-based sense-line formatter (~620 lines) — generates initial drafts only |
-| `scripts/generate_english_glosses.py` | Generates structural English glosses |
-| `scripts/regenerate_english.py` | Regenerates English glosses after Greek edits |
+| `scripts/build_books.py` | Converts v4-editorial + eng-gloss → HTML fragments under `books/` |
+| `scripts/regenerate_english.py` | Regenerates English glosses after Greek edits (incremental, with skip-guard) |
+| `scripts/v4_auto_fix.py` | Mechanical fixes against v4-editorial (read/write in place) |
+| `scripts/morphgnt_lookup.py` | MorphGNT morphological backend (used by `validators/common.py`) |
+| `scripts/archive/` | Tier-producer scripts (v0–v3) frozen 2026-04-26; see `scripts/archive/README.md` |
 | `data/text-files/sblgnt-source/` | 27 raw SBLGNT source files — **NEVER EDIT** |
 | `data/text-files/v4-editorial/*/` | 260 chapter files in book subfolders — **single source of truth for Greek text** |
 | `data/text-files/eng-gloss/*/` | 260 chapter files in book subfolders — structural English glosses |
@@ -123,7 +124,7 @@ The SBLGNT source files in `data/text-files/sblgnt-source/` are canonical refere
 - Modify a canonical SBLGNT source file
 - Alter the Greek text itself (words, accents, breathing marks)
 - Add or remove words
-- Run auto_colometry.py without checking if hand-edited chapters will be overwritten
+- Run any `scripts/archive/` tier-producer script (v0–v3) — they write to frozen scaffolding directories and almost never produce a desired outcome on a hand-edited corpus
 
 **ALWAYS:**
 - Work in `v4-editorial/` — the only editorial tool is where lines break

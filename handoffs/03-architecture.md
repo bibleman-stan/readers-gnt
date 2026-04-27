@@ -1,5 +1,7 @@
 # 03 — Architecture & Build Pipeline
 
+> **Update 2026-04-26 — Tier-producer archive sweep.** The v0–v3 tier producers (`build_v0_prose.py`, `auto_colometry.py`, `v2_colometry.py`, `v3_colometry.py`), the line-auditing tool (`diagnostic_scanner.py`), the original eng-gloss seeders (`generate_english_glosses.py`, `generate_pauline_english.py`), and the one-time Pauline review pass (`v4_pauline_review.py`) were moved to `scripts/archive/`. The `build_books.py` v3 fallback referenced in earlier blocks was confirmed dead in practice (v4-editorial: 260/260) and removed in the same commit. **The dated snapshots and update blocks below describe the architecture as of the date in their header.** For current `scripts/` layout, see `CLAUDE.md` Key Files table and `scripts/archive/README.md`. See canon §10 (2026-04-26 later⁷) for the audit trail.
+
 ## Repo Structure (as of 2026-04-09)
 
 ```
@@ -536,7 +538,7 @@ New directories:
 
 New and updated scripts:
 - **web_align.py** (new): Double-wire WEB alignment with spaCy dependency parsing validation. Approach: Greek to Macula English (perfect by construction) to WEB (LCS alignment). spaCy validates cut points to prevent splitting inside English phrases.
-- **diagnostic_scanner.py** (new): Line auditing tool. Applies the framework's forces to flag lines that fail atomic-thought or single-image tests. (The script's prior breath-unit test was purged 2026-04-26 alongside the canon retirement; see canon §10 2026-04-26 final-residue-purge entry. Path discovery may still be stale — flagged for future review.)
+- **diagnostic_scanner.py** (new at the time of this dated block; **moved to `scripts/archive/diagnostic_scanner.py` on 2026-04-26**): Line auditing tool. Applied the framework's forces to flag lines that fail atomic-thought or single-image tests. The script's prior breath-unit test was purged earlier on 2026-04-26 alongside the canon retirement (see canon §10 2026-04-26 final-residue-purge entry). It was archived later that day after the audit confirmed v4-editorial as single source of truth and Layer 2 validators superseded its function. See canon §10 (2026-04-26 later⁷) for the archive sweep.
 - **ylt_align_lcs.py** (new): Experimental LCS-based YLT alignment (R&D, superseded by web_align.py).
 - **ylt_align_double.py** (new): Experimental double-wire YLT alignment (R&D, superseded by web_align.py).
 - **build_books.py** (updated): Now checks v4-editorial before v3-colometric for Greek source (editorial hand takes priority). Checks eng-gloss before ylt-colometric for English source.

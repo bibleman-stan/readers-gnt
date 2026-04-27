@@ -8,9 +8,9 @@ text provides the actual words (preserving all punctuation, accents, breathing
 marks exactly).
 
 Usage:
-    py -3 scripts/v2_colometry.py                              # all books
-    py -3 scripts/v2_colometry.py --book Acts                  # one book
-    py -3 scripts/v2_colometry.py --book Acts --chapter 1      # one chapter
+    py -3 scripts/archive/v2_colometry.py                              # all books
+    py -3 scripts/archive/v2_colometry.py --book Acts                  # one book
+    py -3 scripts/archive/v2_colometry.py --book Acts --chapter 1      # one chapter
 
 Input:
     data/text-files/sblgnt-source/*.txt   (canonical text)

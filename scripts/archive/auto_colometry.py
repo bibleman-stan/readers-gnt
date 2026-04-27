@@ -6,9 +6,9 @@ Takes raw SBLGNT source files and applies rule-based colometric line-breaking.
 This is a "v1" automated pass — a starting point for hand-editing, not the final word.
 
 Usage:
-    py -3 scripts/auto_colometry.py                     # format all books
-    py -3 scripts/auto_colometry.py --book Mark         # format one book
-    py -3 scripts/auto_colometry.py --book Mark --chapter 4   # format one chapter
+    py -3 scripts/archive/auto_colometry.py                     # format all books
+    py -3 scripts/archive/auto_colometry.py --book Mark         # format one book
+    py -3 scripts/archive/auto_colometry.py --book Mark --chapter 4   # format one chapter
 
 Input:  data/text-files/sblgnt-source/*.txt
 Output: data/text-files/v1-colometric/{NN-book}/*.txt

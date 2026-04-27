@@ -4,8 +4,8 @@ One English line per Greek colometric line, preserving clause order.
 Uses Macula lowfat XML for word-level glosses, then produces readable English.
 
 Usage:
-    PYTHONIOENCODING=utf-8 py -3 scripts/generate_english_glosses.py --books rom,1cor,2cor
-    PYTHONIOENCODING=utf-8 py -3 scripts/generate_english_glosses.py --books mark
+    PYTHONIOENCODING=utf-8 py -3 scripts/archive/generate_english_glosses.py --books rom,1cor,2cor
+    PYTHONIOENCODING=utf-8 py -3 scripts/archive/generate_english_glosses.py --books mark
 """
 
 import xml.etree.ElementTree as ET

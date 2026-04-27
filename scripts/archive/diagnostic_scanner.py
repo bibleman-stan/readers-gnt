@@ -13,9 +13,9 @@ following the canon-wide purge of the retired Breath criterion. See
 canon §10 entry "2026-04-20 (later³) — H3: Breath Criterion Retired".)
 
 Usage:
-    PYTHONIOENCODING=utf-8 py -3 scripts/diagnostic_scanner.py --chapter mark-04
-    PYTHONIOENCODING=utf-8 py -3 scripts/diagnostic_scanner.py --all-mark
-    PYTHONIOENCODING=utf-8 py -3 scripts/diagnostic_scanner.py --book mark
+    PYTHONIOENCODING=utf-8 py -3 scripts/archive/diagnostic_scanner.py --chapter mark-04
+    PYTHONIOENCODING=utf-8 py -3 scripts/archive/diagnostic_scanner.py --all-mark
+    PYTHONIOENCODING=utf-8 py -3 scripts/archive/diagnostic_scanner.py --book mark
 """
 
 import argparse
