@@ -1,13 +1,16 @@
 """
 diagnostic_scanner.py — Colometric diagnostic scanner.
 
-Tests every content line of a v3 colometric chapter against the three
-core colometric criteria:
+Tests every content line of a v3 colometric chapter against the framework's
+forces:
 
   1. Atomic thought — does the line contain a verbal element, and if it
      has a finite verb, are its core arguments on the same line?
   2. Single image  — does the line have 2+ finite verbs (over-merge)?
-  3. Breath unit   — is the line within the 7-30 syllable range?
+
+(A prior breath-unit test based on syllable count was removed 2026-04-26
+following the canon-wide purge of the retired Breath criterion. See
+canon §10 entry "2026-04-20 (later³) — H3: Breath Criterion Retired".)
 
 Usage:
     PYTHONIOENCODING=utf-8 py -3 scripts/diagnostic_scanner.py --chapter mark-04
@@ -19,7 +22,6 @@ import argparse
 import os
 import re
 import sys
-import unicodedata
 
 # ---------------------------------------------------------------------------
 # Setup imports from sibling modules
@@ -39,49 +41,6 @@ from macula_valency import (
     check_line_valency,
     check_stranded_finite_verb,
 )
-
-# ---------------------------------------------------------------------------
-# Greek syllable counting
-# ---------------------------------------------------------------------------
-
-# Greek vowels (lowercase, with and without accents/breathings)
-_VOWEL_BASES = set('αεηιουω')
-
-# Diphthongs: these two-vowel combos count as one syllable nucleus
-_DIPHTHONGS = {'αι', 'ει', 'οι', 'υι', 'αυ', 'ευ', 'ηυ', 'ου'}
-
-
-def _strip_accents(text):
-    """Strip accents/breathings from Greek text, keeping base vowels."""
-    nfkd = unicodedata.normalize('NFD', text)
-    return ''.join(c for c in nfkd if unicodedata.category(c) != 'Mn')
-
-
-def count_greek_syllables(text):
-    """Approximate Greek syllable count by counting vowel clusters.
-
-    Rules:
-      - Strip accents/breathings to get base characters
-      - Walk through base characters; count each vowel-cluster as one syllable
-      - Recognise diphthongs (αι, ει, οι, υι, αυ, ευ, ηυ, ου) as single nuclei
-      - ι/υ after another vowel that is NOT a recognised diphthong starts a new syllable
-    """
-    base = _strip_accents(text.lower())
-    syllables = 0
-    i = 0
-    while i < len(base):
-        c = base[i]
-        if c in _VOWEL_BASES:
-            syllables += 1
-            # Check for diphthong
-            if i + 1 < len(base) and base[i:i+2] in _DIPHTHONGS:
-                i += 2
-                continue
-            i += 1
-        else:
-            i += 1
-    return syllables
-
 
 # ---------------------------------------------------------------------------
 # Finite verb counting (uses morphgnt verse data)
@@ -191,8 +150,6 @@ def parse_colometric_file(filepath):
 
 FLAG_NO_VERBAL     = "NO_VERBAL"       # no verbal element at all
 FLAG_MULTI_FINITE  = "MULTI_FINITE"    # 2+ finite verbs (over-merge)
-FLAG_TOO_SHORT     = "TOO_SHORT"       # < 7 syllables
-FLAG_TOO_LONG      = "TOO_LONG"        # > 30 syllables
 FLAG_STRANDED_VERB = "STRANDED_VERB"   # finite verb separated from arguments
 FLAG_UNSAT_VALENCY = "UNSAT_VALENCY"   # participle valency unsatisfied
 
@@ -245,14 +202,6 @@ def scan_chapter(filepath, book_slug):
         if fv_count >= 2:
             flags.append(FLAG_MULTI_FINITE)
             details['finite_verbs'] = fv_forms
-
-        # --- Test 3: Syllable count (breath unit) ---
-        syl_count = count_greek_syllables(line_text)
-        if syl_count < 7:
-            flags.append(FLAG_TOO_SHORT)
-        if syl_count > 30:
-            flags.append(FLAG_TOO_LONG)
-        details['syllables'] = syl_count
 
         results.append({
             'chapter': ch,
@@ -310,7 +259,7 @@ def print_report(results, label=""):
     print(f"  Violation rate:         {pct:.1f}%")
     print()
     print(f"  Violation breakdown:")
-    for flag in [FLAG_NO_VERBAL, FLAG_MULTI_FINITE, FLAG_TOO_SHORT, FLAG_TOO_LONG,
+    for flag in [FLAG_NO_VERBAL, FLAG_MULTI_FINITE,
                  FLAG_STRANDED_VERB, FLAG_UNSAT_VALENCY]:
         count = violation_counts.get(flag, 0)
         if count:
@@ -408,7 +357,7 @@ def main():
         print(f"  Violation rate:         {pct:.1f}%")
         print()
         print(f"  Violation breakdown:")
-        for flag in [FLAG_NO_VERBAL, FLAG_MULTI_FINITE, FLAG_TOO_SHORT, FLAG_TOO_LONG,
+        for flag in [FLAG_NO_VERBAL, FLAG_MULTI_FINITE,
                      FLAG_STRANDED_VERB, FLAG_UNSAT_VALENCY]:
             count = grand_violations.get(flag, 0)
             if count:

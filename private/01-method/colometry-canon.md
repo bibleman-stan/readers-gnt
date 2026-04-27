@@ -1460,6 +1460,27 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 
 ---
 
+### 2026-04-26 (later⁵) — scripts/diagnostic_scanner.py breath-unit test purged
+
+Stan corrected my hedging: "if we're purging, we're purging, right" — the script's residual `Test 3: Syllable count (breath unit)` was the same residue class as the §4 Breath Test removed at later². No reason to hold for separate decision; carry-forward-inertia firing again.
+
+Removed from `scripts/diagnostic_scanner.py`:
+- `Test 3: Syllable count (breath unit)` block (the per-line check + flag-append logic)
+- `FLAG_TOO_SHORT` and `FLAG_TOO_LONG` flag definitions
+- `count_greek_syllables` function (~25 lines; only used by Test 3)
+- Now-orphaned helpers: `_VOWEL_BASES`, `_DIPHTHONGS`, `_strip_accents`
+- Two `FLAG_TOO_*` references in violation-breakdown reporting lists
+- Unused `unicodedata` import
+- Docstring updated to reflect current two forces (atomic thought, single image) with a brief note explaining the retirement
+
+Verified: script parses cleanly; no remaining `breath`/`FLAG_TOO`/syllable references except the docstring retirement note. handoffs/03-architecture.md:539 description (updated at later⁴) now matches the script.
+
+**Separate observation (not addressed this commit):** the script's input-discovery logic expects `data/text-files/v3-colometric/` paths that no longer exist (corpus structure migrated to `data/text-files/v4-editorial/`). Smoke test on `mark-04` chapter failed at file-discovery. Suggests the script may be vestigial overall, not just the breath-unit test. Logged as carry-forward — Stan to decide whether to retire the script entirely or update its path-resolution.
+
+**Audit-skippable per §6.5** — internal cleanup of code that operationalized a retired criterion. Substantive Breath retirement was made and audited 2026-04-20.
+
+---
+
 ### 2026-04-26 (later⁴) — Adjacent-surface residue purged: CLAUDE.md + handoffs/
 
 After the canon residue audit (later³), Stan asked whether the cleanup implies anything mechanical needs checking, or just documentation drift. Honest answer: corpus is fine (substantive retirements were applied 2026-04-20 with empirical 0-impact validation), but ADJACENT documentation surfaces still carried retired-framework references. Sweep across validators/ (clean), scripts/ (one remaining residue at `scripts/diagnostic_scanner.py:249` — held per Stan's direction), CLAUDE.md, handoffs/, and memory active files (clean; archive/ entries are properly archived).
