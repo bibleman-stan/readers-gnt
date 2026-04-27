@@ -6,7 +6,7 @@ This document is the authoritative reference for the editorial methodology behin
 
 The project's working hypothesis is that humans think, compose, and deconstruct (read and hear) in "sense-lines" — a term Skousen used for the Book of Mormon. We use it here in an expanded sense: atomic thought-units that correspond to how ideas are generated, encoded, and recovered. This hypothesis was reached intuitively and analogically, triggered by Royal Skousen's demonstration that the Book of Mormon could be rendered in sense-lines (*The Earliest Text*, 2009/2022). Skousen's stated rationale was specific to the Book of Mormon: his sense-lines aim to convey "a dictated rather than a written text," approximating how the original translation might have sounded during Joseph Smith's dictation. Stan took Skousen's term as a starting point and expanded the concept to the definition above. He then experimented with line breaks in the English Book of Mormon text, where the expanded definition appeared to expose idea-units sometimes obscured by editorial punctuation, versification, and line-break decisions. Stan applied the same method to the GNT, reasoning by analogy that what is true for the Book of Mormon is likely true for the Greek New Testament — and perhaps *any* text.
 
-The methodology itself — four criteria, rules, hierarchy, structural justifications, merge-overrides — emerged from hands-on editorial experimentation across all 260 chapters of the GNT. It is pragmatic, not theory-derived.
+The methodology itself — three forces, structural justifications, merge-overrides, rules — emerged from hands-on editorial experimentation across all 260 chapters of the GNT. It is pragmatic, not theory-derived.
 
 ## Posture
 
@@ -348,7 +348,7 @@ Each is a complete speech-act predication. The speech content follows on the nex
 
 **Relation to R19, prep-catena (§8), FEF:** These are the mechanical operationalizations of justification #5 for specific adjunct classes. Justification #5 is the generating principle; R19 (gen abs), prep-catena treatment (§8), and FEF periodic-frame treatment (§5) are how it lands for those classes. A future adjunct pattern not covered by the existing rules inherits its warrant from justification #5 rather than requiring a new top-level rule.
 
-**Contrast with breath:** justification #5 captures the cognitive work that breath was loosely doing (long lines need breaking) but with a principled grammatical-peripherality test rather than an un-thresholded "feels too long" judgment. Breath's continuing status is under review (§1); substantive adjunct is the proposition-side replacement for the cognitive-chunking work breath was smuggling in.
+**Contrast with the retired breath criterion:** justification #5 absorbs the cognitive work breath was loosely doing (long lines need breaking) — with a principled grammatical-peripherality test rather than an un-thresholded "feels too long" judgment. Breath itself is retired (§9 Superseded Formulations); substantive adjunct is the proposition-side replacement for the cognitive-chunking work breath was smuggling in.
 
 ---
 
@@ -865,7 +865,7 @@ This is the colometric analogue of accusative-subject-of-infinitive construction
 
 ### 3.15 Authorial Style Principle
 
-The same four colometric criteria apply uniformly to all NT authors. Do not adjust thresholds, rules, or sensitivity by author or genre. Let the colometric output reveal authorial differences rather than encoding assumptions about them.
+The same colometric framework applies uniformly to all NT authors. Do not adjust thresholds, rules, or sensitivity by author or genre. Let the colometric output reveal authorial differences rather than encoding assumptions about them.
 
 Mark's paratactic short lines and Paul's periodic long lines both emerge from applying the same criteria consistently. The difference in output IS the finding — it reflects genuine compositional differences between authors, not editorial preferences about how each author "should" look.
 
@@ -1062,7 +1062,7 @@ Only candidates tagged `REVIEW-REQUIRED` / `AMBIG` / `UNCLEAR` actually require 
 
 *Purpose: **mainly operational** — register-aware modulation layer that sits on top of the base framework. Six registers detected by local syntactic signatures + the FEF (Front-End Frame) treatment for Greek. Read when applying register-sensitive rules in argumentative, sermonic, narrative, or apostrophic contexts.*
 
-The four-criteria hierarchy as stated (atomic thought > single image > breath > source-language syntax) is **register-flat at the base layer**. But actual practice is register-aware. Register is a **modulation layer that sits on top of the base hierarchy**, detected by local syntactic/lexical signatures rather than by coarse genre tags.
+The three-forces framework (§1) is **register-flat at the base layer**. But actual practice is register-aware. Register is a **modulation layer that sits on top of the base framework**, detected by local syntactic/lexical signatures rather than by coarse genre tags.
 
 **Register is detected locally, not globally.** A chapter can shift register mid-verse. An argumentative period can contain an enumerative catena; a narrative chain can break into a sermonic indictment. We do not pre-classify whole books into registers; we read the signature of each local span and apply the appropriate modulation.
 
@@ -1074,10 +1074,10 @@ The four-criteria hierarchy as stated (atomic thought > single image > breath > 
 | **Gorgianic (pair-bond)** | Coordinate pairs with figura etymologica, sound echoes, rhythmic balance; exactly 2 members; no independent rhetorical weight per member | Tight merging — both stay on one line. `kopo kai mochtho` (2 Cor 11:27), `hagia kai amomo` (Eph 5:27). |
 | **Narrative frame-setting (FEF)** | `egeneto de` / `egeneto en to` / kai egeneto chains; temporal, spatial, circumstantial protasis with deferred main clause | Frame-expansion structure: the protasis is held together as one atomic temporal frame even when long; the main clause starts a new line. Luke 3:1-2 paradigm. |
 | **Sermonic / indictment / woe-formula** | 2p imperatives stacked; vocatives at paragraph-initial; ouai formulas; rhetorical questions in anaphoric sequence | Tighter breaks; anaphoric stacking of parallel indictment clauses. Matt 23:13-29, Luke 11:42-52, Jude 11-16. |
-| **Argumentative / periodic** | gar / hoti / dioti / dia touto / ara / oun causal-consecutive markers; hina and hoste result chains; participial subordinate chains in main-clause matrix | **Longer atomic-thought lines licensed; cognitive hierarchy overrides breath.** Rom 1:4-5, Heb 1:1-2 sit here — the long line is register-correct. |
+| **Argumentative / periodic** | gar / hoti / dioti / dia touto / ara / oun causal-consecutive markers; hina and hoste result chains; participial subordinate chains in main-clause matrix | **Longer atomic-thought lines licensed by register.** Rom 1:4-5, Heb 1:1-2 sit here — the long line is register-correct. |
 | **Apostrophic** | Vocative density; 2p direct address; emotional appeal; often discourse-initial o or paragraph-initial vocative | Vocative-indivisibility + framing-attach. Each vocative gets its own line; the vocative preserves the appeal as its own discourse gesture. Gal 3:1, 4:19, 1 Cor 15:55. |
 
-**How to read the table.** The first column is a detection rule. The second column is the modulation. No new criteria enter; the existing hierarchy governs, but the register changes which member is load-bearing in that local span.
+**How to read the table.** The first column is a detection rule. The second column is the modulation. No new forces enter; the three forces (§1) govern, but the register changes which force is load-bearing in that local span.
 
 ### FEF Framework for Greek
 
@@ -1457,6 +1457,25 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 *Purpose: **dual-natured** — chronological reasoning trail. Recent entries documenting active-rule provenance are operationally referenced (cross-project import status, audit findings, retirement dates); older entries are historical narrative. When an entry documents an active rule, it is the canonical source for that rule's WHY/HOW WE KNOW/SCOPE.*
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-26 (later³) — Residue audit pass: 5 more retired-framework references purged
+
+After the Breath Test removal (later²), Stan asked for another residue audit per the carry-forward-inertia discipline lesson — sweep for OTHER places where §X retired a thing but §Y still has dead text. Five active residues found and purged:
+
+- **§0 Foundational premise (line 9)** — "four criteria, rules, hierarchy, structural justifications, merge-overrides" → "three forces, structural justifications, merge-overrides, rules". The four-criteria framework was retired 2026-04-20 in favor of three forces; "hierarchy" referenced the retired strict-hierarchy framing.
+- **§2 justification #5 substantive-adjunct (line 351)** — "Breath's continuing status is under review (§1)" was true 2026-04-19/20 when retirement was being decided. Breath was retired 2026-04-20. Updated to "Breath itself is retired (§9 Superseded Formulations)" with the surrounding contrast paragraph adjusted to current-state framing.
+- **§5 Register Operationalization intro (line 1065)** — "The four-criteria hierarchy as stated (atomic thought > single image > breath > source-language syntax) is register-flat at the base layer" → "The three-forces framework (§1) is register-flat at the base layer". The retired-framework anchor was load-bearing for the "register is a modulation layer" claim that follows; updated to the three-forces anchor without changing the substance.
+- **§5 "How to read the table" note (line 1080)** — "the existing hierarchy governs" → "the three forces (§1) govern"; "No new criteria enter" → "No new forces enter". Same framework-anchor swap.
+- **§5 Six Registers table, Argumentative row (line 1077)** — "cognitive hierarchy overrides breath" → "licensed by register". Breath is retired; nothing for the hierarchy to override.
+- **§3.15 Authorial Style Principle (line 868)** — "The same four colometric criteria apply uniformly" → "The same colometric framework applies uniformly". Substance unchanged (uniform application across authors); framework anchor updated.
+
+Sections checked and confirmed clean (no retired-framework residue): §0 Posture, §0 Architecture, §1 The Framework (cleaned in pass 1+2), §2 Five Justifications + M1-M4, §3 The Rules (R1-R28; retired R15/R16/R21/R25/R26/R29 properly listed in Rule Index with `*Retired (see §9):*` marker), §4 Operational Tests (Breath Test now removed), §6 Precedent and Scope (cleaned in pass 1), §7 (retired marker present), §8 Greek-Specific Application.
+
+The carry-forward-inertia pattern was the diagnostic: each of these residues had been visible in the canon for sessions but treated as out-of-scope for non-residue work. The discipline added at "later²" — *if §X retired a thing, sweep §Y for residual references at the same time* — would have caught all five at the time of the original retirements. Going forward, this discipline applies to every retirement: same-session sweep across active sections.
+
+**Audit-skippable per §6.5** — internal formatting cleanup + cross-reference updates that don't assert precedence (no rule semantics changed, no new scope/precedence/closed-list claims). The substantive retirements (Breath, four-criteria framework) were made and audited 2026-04-20.
 
 ---
 
