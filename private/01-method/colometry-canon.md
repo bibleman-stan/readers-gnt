@@ -988,14 +988,6 @@ R10-governed verbs (lego, eipon, phemi, martyreo, homologeo, didasko, kerysso, a
 
 **How to run it:** Close your eyes and picture the scene. Does the line make you see ONE thing? If two distinct images, candidate for splitting. If no complete image, candidate for merging.
 
-### The Breath Test
-
-**What it checks:** Can the line be delivered in one breath at natural reading pace?
-
-**How to run it:** Read it aloud (or imagine reading aloud). If you gasp, it is too long. If you have nowhere to land, it is too short.
-
-**Honest scope:** Currently no falsifiable threshold. Functions as a sanity check, not a mechanical gate.
-
 ### The Two-Prong Exception Test
 
 **What it checks:** Should a line that fails the predication test still stand?
@@ -1465,6 +1457,20 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 *Purpose: **dual-natured** — chronological reasoning trail. Recent entries documenting active-rule provenance are operationally referenced (cross-project import status, audit findings, retirement dates); older entries are historical narrative. When an entry documents an active rule, it is the canonical source for that rule's WHY/HOW WE KNOW/SCOPE.*
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-26 (later²) — §4 Breath Test removed (residue from §1 retirement)
+
+§1 retired Breath as a force on 2026-04-20. The §4 Operational Tests subsection on the Breath Test was not removed at that time and survived four subsequent canon-cleanup passes. It self-confessed "no falsifiable threshold... not a mechanical gate" — dispositive on its own that the section was residue, not a reasoned exception. §1 had already made the call.
+
+The contradiction was flagged as Tier 3 carry-forward in the 2026-04-25 canon audit, then carried forward across three subsequent session continuations without action. Stan caught it directly today and named the pattern: when §X retires a thing, sweep §Y for residual references at the same time; don't carry the contradiction as a "deferred" decision point. **A contradiction where one side has already retired the thing is residue, not deliberation.**
+
+This commit removes §4 The Breath Test entirely. The cognitive-chunking work breath was informally doing (long-line flag) is fully absorbed by §2 structural justification #5 (substantive adjunct as own focus). §9 retains the retirement narrative; §10 retains the 2026-04-20 reasoning trail.
+
+**Audit-skippable per §6.5** — internal formatting cleanup + cross-reference update without precedence claim. The substantive call (retire Breath) was made and audited 2026-04-20.
+
+**Discipline lesson logged:** "carry-forward inertia" — when an item appears on a carry-forward list, the test for whether it earns continued deferral vs. immediate action is whether the deciding move has already been made elsewhere. If yes, fix on first contact instead of re-deferring.
 
 ---
 
