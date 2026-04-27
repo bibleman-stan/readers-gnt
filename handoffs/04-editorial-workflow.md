@@ -362,7 +362,7 @@ YLT/WEB alignment work revealed that the v3 colometric pipeline has an approxima
 - Mark 4:1: subject split from verb
 - Matt 16:25: inconsistent conditional treatment
 
-Critical finding: v1 (simple conjunction rules) got some verses RIGHT that v3 (sophisticated Macula-driven pipeline) BROKE. Root cause: v3 optimizes for grammar rules, not the three core criteria (atomic thought, single image, breath unit). The v2/v3 layers were actively degrading some of v1's criteria-driven breaks.
+Critical finding: v1 (simple conjunction rules) got some verses RIGHT that v3 (sophisticated Macula-driven pipeline) BROKE. Root cause: v3 optimizes for grammar rules, not the framework's primary forces (atomic thought, single image), with syntax operating as a subtractive constraint rather than a primary driver. The v2/v3 layers were actively degrading some of v1's principle-driven breaks.
 
 This does not mean v3 is worse overall — it is better on most verses. But "more sophisticated" does not equal "more correct" in every case. The v4 editorial pass is now understood as essential corrective work, not optional polish.
 
@@ -437,7 +437,7 @@ The English is now a purpose-built rendering tracking Greek clause order by cons
 
 #### Universal Vocative Rule
 
-All vocatives get their own line — atomic thought (complete address act) + breath unit (natural pause before and after). One exception: repeated vocatives (Κύριε κύριε). Supersedes the earlier three-category vocative distinction.
+All vocatives get their own line — each is an atomic thought (complete address act, with natural pause before and after). One exception: repeated vocatives (Κύριε κύριε). Supersedes the earlier three-category vocative distinction.
 
 #### Cross-Pollination from BOM Reader
 
@@ -445,7 +445,7 @@ Ten principles ported and adapted for Greek: FEFs, three-category framework, fra
 
 #### Methodology Maturation
 
-The four criteria (atomic thought, single image, breath unit, source-language syntax) are now supported by approximately 15 sub-principles, all tested against editorial practice in the Mark 4 and Acts 1 gold standard chapters.
+The framework's three forces (atomic thought, single image, syntax-as-constraint) are now supported by approximately 15 sub-principles, all tested against editorial practice in the Mark 4 and Acts 1 gold standard chapters.
 
 #### Gold Standards
 

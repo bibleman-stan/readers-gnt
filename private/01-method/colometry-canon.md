@@ -1460,6 +1460,29 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 
 ---
 
+### 2026-04-26 (later⁴) — Adjacent-surface residue purged: CLAUDE.md + handoffs/
+
+After the canon residue audit (later³), Stan asked whether the cleanup implies anything mechanical needs checking, or just documentation drift. Honest answer: corpus is fine (substantive retirements were applied 2026-04-20 with empirical 0-impact validation), but ADJACENT documentation surfaces still carried retired-framework references. Sweep across validators/ (clean), scripts/ (one remaining residue at `scripts/diagnostic_scanner.py:249` — held per Stan's direction), CLAUDE.md, handoffs/, and memory active files (clean; archive/ entries are properly archived).
+
+**Purged this commit:**
+
+- **CLAUDE.md line 9** — "natural breath unit based on Greek grammatical structure" → "atomic thought-unit reflecting Greek grammatical structure". Stan called the descriptive use of "breath unit" muddying even when not invoked as methodological criterion; purged.
+- **handoffs/01-project-overview.md line 5** — same descriptive purge as CLAUDE.md line 9.
+- **handoffs/01-project-overview.md line 223** — "three core criteria (atomic thought, single image, breath unit)" → "framework's primary forces (atomic thought, single image), with syntax operating as a subtractive constraint rather than a primary driver". Reframes the historical v1-vs-v3 finding to current three-forces vocabulary.
+- **handoffs/01-project-overview.md line 239** — Universal Vocative Rule explanation: "an atomic thought (a complete address act) and a natural breath unit (pause before and after)" → "an atomic thought (a complete address act, with natural pause before and after)". Folds the breath-unit framing into the atomic-thought clause as a parenthetical phenomenological claim, not a methodological criterion.
+- **handoffs/01-project-overview.md line 257** — "The four core criteria (atomic thought, single image, breath unit, source-language syntax)" → "The framework's three forces (atomic thought, single image, syntax-as-constraint)". Internal consistency restored (the file had been using both "three core criteria" and "four core criteria" inconsistently).
+- **handoffs/03-architecture.md line 539** — diagnostic_scanner.py description: "Applies the three core colometric criteria to flag lines that fail atomic thought, single image, or breath unit tests" → "Applies the framework's forces to flag lines that fail atomic-thought or single-image tests. (Note: a residual breath-unit test in the script's source is residue from the retired Breath criterion; see canon §10 2026-04-20 retirement entry.)". Doc now states what the script SHOULD do; the script's stale test logic flagged for separate fix.
+- **handoffs/04-editorial-workflow.md lines 365, 440, 448** — same purges as 01-project-overview lines 223, 239, 257 (the two files carried near-duplicate content).
+
+**Held for separate fix:**
+- **scripts/diagnostic_scanner.py line 249** — "Test 3: Syllable count (breath unit)". Active script's stale test logic. Stan held: needs separate decision on whether to retire the test entirely, replace with a different metric, or leave the test logic but rename. Logged as carry-forward.
+
+**Audit-skippable per §6.5** — internal documentation cleanup + cross-reference updates that don't assert precedence. The substantive retirements (Breath, four-criteria framework) were made and audited 2026-04-20.
+
+**Going-forward discipline (continuation of carry-forward-inertia from later² + same-session sweep from later³):** every retirement triggers a same-session sweep across active sections AND adjacent documentation surfaces (CLAUDE.md, handoffs/, validators/, scripts/, memory). Per the carry-forward-inertia diagnostic: the deciding move was already made at the substantive retirement; downstream documentation residue is mechanical to fix at the same time, not a deliberation point.
+
+---
+
 ### 2026-04-26 (later³) — Residue audit pass: 5 more retired-framework references purged
 
 After the Breath Test removal (later²), Stan asked for another residue audit per the carry-forward-inertia discipline lesson — sweep for OTHER places where §X retired a thing but §Y still has dead text. Five active residues found and purged:

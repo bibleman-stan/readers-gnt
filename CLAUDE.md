@@ -6,7 +6,7 @@ Read this file completely before doing anything in this repo. It is your orienta
 
 ## What This Project Is
 
-A colometric reading edition of the Greek New Testament. The text is reformatted from standard prose paragraphs into **sense-lines (cola)** — each line is a natural breath unit based on Greek grammatical structure, designed for oral delivery and comprehension.
+A colometric reading edition of the Greek New Testament. The text is reformatted from standard prose paragraphs into **sense-lines (cola)** — each line is an atomic thought-unit reflecting Greek grammatical structure, designed for oral delivery and comprehension.
 
 The colometric methodology draws on ancient manuscript precedent (Codex Bezae, Claromontanus, Jerome's Vulgate *per cola et commata*) and the modern precedent of Skousen's sense-line analysis of the Book of Mormon, empirically extended by Stan to the GNT. Foundational premise: humans think, compose, and read in sense-lines. Full canon: `private/01-method/colometry-canon.md`.
 

@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A colometric reading edition of the Greek New Testament. The SBLGNT text is reformatted into **sense-lines (cola)** — each line is a natural breath unit based on Greek grammatical structure, designed for oral delivery and comprehension.
+A colometric reading edition of the Greek New Testament. The SBLGNT text is reformatted into **sense-lines (cola)** — each line is an atomic thought-unit reflecting Greek grammatical structure, designed for oral delivery and comprehension.
 
 The website is served from GitHub Pages. No custom domain yet — currently at `bibleman-stan.github.io/readers-gnt/`. Domain registration is through Cloudflare (same account as bomreader.com). Domain candidates under consideration: `gntreader.com`, `gnt-reader.com`.
 
@@ -220,7 +220,7 @@ Examples discovered:
 - Mark 4:1 — subject split from verb
 - Matt 16:25 — inconsistent conditional treatment
 
-Comparison showed that v1 (simple conjunction rules) got some verses RIGHT that v3 (sophisticated Macula-driven pipeline) BROKE. Root cause: v3 optimizes for grammar rules rather than the three core criteria (atomic thought, single image, breath unit). The v2/v3 layers were actively making some things worse — "polluting" v1's criteria-driven breaks.
+Comparison showed that v1 (simple conjunction rules) got some verses RIGHT that v3 (sophisticated Macula-driven pipeline) BROKE. Root cause: v3 optimizes for grammar rules rather than the framework's primary forces (atomic thought, single image), with syntax operating as a subtractive constraint rather than a primary driver. The v2/v3 layers were actively making some things worse — "polluting" v1's principle-driven breaks.
 
 This does not invalidate the v3 pipeline but establishes that automated sophistication is not automatically better. The v4 editorial pass is now understood as essential, not optional.
 
@@ -236,7 +236,7 @@ This eliminates the two-claim problem documented above. The English is not a tra
 
 #### Universal Vocative Rule
 
-All vocatives now get their own line — each is an atomic thought (a complete address act) and a natural breath unit (pause before and after). One exception: repeated vocatives (e.g., Κύριε κύριε) stay on one line. This supersedes the earlier three-category distinction (vocative attachment principle from session 4).
+All vocatives now get their own line — each is an atomic thought (a complete address act, with natural pause before and after). One exception: repeated vocatives (e.g., Κύριε κύριε) stay on one line. This supersedes the earlier three-category distinction (vocative attachment principle from session 4).
 
 #### Cross-Pollination from BOM Reader
 
@@ -254,7 +254,7 @@ Ten principles were ported and adapted for Greek colometry:
 
 #### Methodology Maturation
 
-The four core criteria (atomic thought, single image, breath unit, source-language syntax) are now supported by approximately 15 sub-principles, all tested against editorial practice in the Mark 4 and Acts 1 gold standard chapters. The methodology has moved from ad hoc rule accumulation to a principled framework with documented precedent for each sub-rule.
+The framework's three forces (atomic thought, single image, syntax-as-constraint) are now supported by approximately 15 sub-principles, all tested against editorial practice in the Mark 4 and Acts 1 gold standard chapters. The methodology has moved from ad hoc rule accumulation to a principled framework with documented precedent for each sub-rule.
 
 ---
 
