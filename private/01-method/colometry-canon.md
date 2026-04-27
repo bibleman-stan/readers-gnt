@@ -1464,6 +1464,24 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 
 ---
 
+### 2026-04-26 — CLAUDE.md tightening: required audit-status declaration in canon-touching commit messages
+
+Cross-project signal: BofM landed a content-aware commit-msg hook that blocks commits touching the BofM canon if the diff matches §7.3 trigger patterns (new closed-list rows, new rule sections, new merge-overrides, new dated principles, new triggers, new SCOPE-exclusion bullets) without audit-evidence in the commit message. Their precedent failure (an emotion-class extension smuggled into an audio-asset commit) would now block.
+
+Same gap exists for GNT in same shape: §6.5 trigger #1 audit dispatch is discretionary at commit time; if Claude skips, nothing catches. This session demonstrated the failure mode (the "judgment-handoff smuggling" catch earlier this week — caught by Stan, not by automation).
+
+GNT response, smaller than BofM's mechanical gate. Two reasons for the smaller response:
+
+1. **The pre-commit regression-baseline hook isn't buildable for GNT yet.** That hook depends on validators producing rule-violation counts. GNT validators are "under active build" per §0; until they produce baselines, that half of BofM's gating isn't available.
+
+2. **Recent commit-message practice is already mostly disciplined.** Spot-check of the last 11 canon-touching commits showed 10 of 11 explicitly declared audit-status (skippable + reason, or dispatched + evidence-location). One inconsistency, no failure. Marginal benefit of a full mechanical hook is real but smaller than BofM's situation.
+
+**Documentation tightening applied (this commit):** CLAUDE.md "Pre-commit adversarial-audit discipline" section extended with one paragraph requiring every canon-touching commit message to declare audit-status explicitly — either `Audit-skippable per §6.5 ([reason])` or `Audit dispatched: [evidence]`. Omission becomes a visible discipline failure in `git log`. Closes most of the gap without engineering investment. The mechanical hook (BofM-style content-aware commit-msg gate) remains a deferred option if drift recurs.
+
+**Audit-skippable per §6.5** (defensibility-capture addition to an already-settled rule — the existing pre-commit discipline — without scope change). No rule semantics modified.
+
+---
+
 ### 2026-04-25 (later⁷) — Voice cleanup pass 3: Foundational premise rewrite + §4 redundancy removal
 
 Stan rewrote the Foundational premise paragraph to give a more accurate "how did we get here" narrative (the actual sequence: Skousen's term → Stan expanded the concept → tested on BofM English → applied to GNT → universalist generalization). Web search confirmed Skousen's stated rationale in *The Earliest Text* is BofM-dictation-specific, not part of a "previous pioneers in colometry" tradition; bracketed claim removed accordingly. Per Stan's direction, then applied the slop-cleanup discipline to the rewritten paragraph + reviewed the rest of the document.

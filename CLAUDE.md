@@ -155,6 +155,8 @@ The distinction is important: gating rule-derivative changes on per-item approva
 
 **When uncertain.** Dispatch the audit. The cost of a false-positive audit (Stan reads a no-op audit result) is small; the cost of a false-negative audit (a fake rule commits) is large.
 
+**Required commit-message declaration.** Every commit message that touches `private/01-method/colometry-canon.md` must declare audit-status explicitly: either `Audit-skippable per §6.5 ([reason])` with the reason citing one of the named audit-skippable categories above, OR `Audit dispatched: [evidence]` with concrete reference (parallel-agent verdicts, §10 entry, prior-commit pointer). Omission is itself a discipline failure — visible at a glance in `git log`. This is a documentation requirement, not a mechanical hook; the hook (BofM-style content-aware commit-msg gate) remains a deferred engineering option.
+
 **Self-test to run pre-commit** (faster than full trigger-list scan):
 - Does this change include a scope claim, a precedence claim, a closed-list extension, or a named-category carve-out? → audit.
 - Does this change rest on spot-check evidence rather than a full-corpus classification? → audit.
