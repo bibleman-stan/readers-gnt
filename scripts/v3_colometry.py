@@ -992,7 +992,7 @@ def apply_multi_image_split(verse_lines, book_slug=None, verse_ref=None):
 
     Example — Heb 1:3 has three participial clauses (ὤν / φέρων / ποιησάμενος)
     each painting a distinct image. If merged onto one line, the reader loses
-    the breath-unit structure.
+    the per-image atomic-thought structure.
 
     Detection: match line words to Macula, group by clause_id, count clauses
     that contain a participial verb (role=v or role=vc) with substantial content.
@@ -3272,9 +3272,9 @@ def apply_long_line_subclause_splits(verse_lines, book_slug=None, verse_ref=None
     """Split lines >80 chars at Macula word-group boundaries.
 
     This is a FINAL DISPLAY OPTIMIZATION pass that runs after all merge rules.
-    It only splits lines that exceed the breath-unit threshold (~30 syllables
-    ≈ 80 chars of Greek). It uses Macula <wg> boundaries to find natural
-    sub-clause split points, with a heuristic fallback.
+    It only splits lines that exceed a display-length threshold (~80 chars of
+    Greek). It uses Macula <wg> boundaries to find natural sub-clause split
+    points, with a heuristic fallback.
 
     Guards:
     - Don't split between article and noun
@@ -3501,8 +3501,7 @@ def apply_all_patterns(verse_lines, book_slug=None, verse_ref=None):
     # FINAL PASS: Long-line sub-clause splits — break lines >80 chars at
     # Macula word-group boundaries. Runs LAST because it is a display
     # optimization pass, not a structural rule. All merge/split decisions
-    # have been finalized; this only subdivides lines that are too long
-    # for a single breath unit.
+    # have been finalized; this only subdivides display-overlong lines.
     lines = apply_long_line_subclause_splits(lines, book_slug=book_slug, verse_ref=verse_ref)
 
     # ABSOLUTE FINAL: Dangling word fix after long-line splits.

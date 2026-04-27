@@ -201,13 +201,12 @@ Pipeline: `v4-editorial/*/ → eng-gloss/*/ → books/*.html`
 
 **Authoritative canon:** `private/01-method/colometry-canon.md`. Fresh-read that file before any editorial or rule work — rules evolve fast and this summary drifts. The bullets below are orientation-at-load-time only, not rule reference.
 
-### Four Criteria (hierarchy)
-1. **Atomic Thought** (governs by default)
-2. **Single Image**
-3. **Breath Unit**
-4. **Source-Language Syntax**
+### Three forces (canon §1)
+1. **Generative — Propositions.** Default SPLIT at every proposition boundary; each proposition is an atomic thought.
+2. **Subtractive — Syntax.** Vetoes any break that would violate Koine break-legality (Layer 1) or complement/formula integrity. Syntax is the floor; no line may sit below it.
+3. **Diagnostic — Single image.** Sharpens ambiguous cases: a line carrying multiple distinct images forces a split.
 
-Collisions resolved via the "default + unless" mechanism (2026-04-16 reframe): criterion 1 wins by default; the four recognized structural justifications ("unless" cases) can override it when both cognitive and structural prongs are satisfied. See canon §1 for the current statement.
+The generative force proposes; the subtractive force vetoes; the diagnostic force adjudicates within the legal-break space. The mission is sense-driven; the method is syntax-constrained.
 
 ### Representative break points (non-exhaustive — canon is authoritative)
 - Subordinate clauses introduced by ἵνα, ὥστε, ὅτι, ὅταν
@@ -215,7 +214,7 @@ Collisions resolved via the "default + unless" mechanism (2026-04-16 reframe): c
 - Genitive absolutes (always own line)
 - Vocatives (universal rule — each is an atomic address act)
 
-Full break-point and merge-override inventory (R1–R28 with six numbers retired 2026-04-18 — see §9 of canon, M1–M4, the 11 governor classes for parallelism-consistency, and all worked examples) lives in `private/01-method/colometry-canon.md`. Do not rely on CLAUDE.md for rule lookups.
+Full inventory — five structural justifications (§2), four merge-overrides (M1–M4), R-rules (R1–R28 with retirements logged in §9), the 11 governor classes for parallelism-consistency, and all worked examples — lives in `private/01-method/colometry-canon.md`. Do not rely on CLAUDE.md for rule lookups.
 
 ---
 

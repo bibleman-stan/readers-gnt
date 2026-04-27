@@ -536,7 +536,7 @@ New directories:
 
 New and updated scripts:
 - **web_align.py** (new): Double-wire WEB alignment with spaCy dependency parsing validation. Approach: Greek to Macula English (perfect by construction) to WEB (LCS alignment). spaCy validates cut points to prevent splitting inside English phrases.
-- **diagnostic_scanner.py** (new): Line auditing tool. Applies the framework's forces to flag lines that fail atomic-thought or single-image tests. (Note: a residual breath-unit test in the script's source is residue from the retired Breath criterion; see canon §10 2026-04-20 retirement entry.)
+- **diagnostic_scanner.py** (new): Line auditing tool. Applies the framework's forces to flag lines that fail atomic-thought or single-image tests. (The script's prior breath-unit test was purged 2026-04-26 alongside the canon retirement; see canon §10 2026-04-26 final-residue-purge entry. Path discovery may still be stale — flagged for future review.)
 - **ylt_align_lcs.py** (new): Experimental LCS-based YLT alignment (R&D, superseded by web_align.py).
 - **ylt_align_double.py** (new): Experimental double-wire YLT alignment (R&D, superseded by web_align.py).
 - **build_books.py** (updated): Now checks v4-editorial before v3-colometric for Greek source (editorial hand takes priority). Checks eng-gloss before ylt-colometric for English source.

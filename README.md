@@ -4,7 +4,7 @@
 [![Code: MIT](https://img.shields.io/badge/Code-MIT-blue.svg)](LICENSE)
 [![Live](https://img.shields.io/badge/Live-gnt--reader.com-blue.svg)](https://gnt-reader.com)
 
-A complete colometric reading edition of the SBL Greek New Testament. All 27 books (260 chapters) are formatted into sense-lines — each line represents one atomic thought, one image, one breath unit, motivated by source-language syntax. The formatting recovers compositional architecture that prose paragraphs hide.
+A complete colometric reading edition of the SBL Greek New Testament. All 27 books (260 chapters) are formatted into sense-lines — each line is an atomic thought-unit reflecting Greek grammatical structure. The formatting recovers compositional architecture that prose paragraphs hide.
 
 **Live at [gnt-reader.com](https://gnt-reader.com)**
 
@@ -14,14 +14,13 @@ Colometric analysis of the Greek New Testament has a growing scholarly literatur
 
 ## Method
 
-Each line break is warranted by four convergent criteria:
+Line breaks are warranted by three convergent forces:
 
-1. **Atomic thought** — the line contains one complete propositional unit
-2. **Single image** — one mental picture per line
-3. **Breath unit** — a natural pause boundary for oral delivery
-4. **Source-language syntax** — the break falls at a Greek grammatical joint
+1. **Generative (propositional)** — each line carries one atomic thought-unit, one mental image
+2. **Subtractive (syntactic)** — Greek syntax constrains where breaks may legally fall
+3. **Diagnostic (single image)** — multiple distinct images on one line force a split
 
-These criteria are grounded in ancient rhetorical theory (Pseudo-Demetrius *On Style*, Aristotle *Rhetoric*, Cicero *Orator*), modern colometric scholarship (Marschall, Lee & Scott, Nasselqvist), and cognitive linguistics (Chafe's intonation units, Miller's chunking).
+The framework is grounded in cognitive linguistics (Chafe's intonation units, Miller's chunking) and ancient manuscript precedent for *per cola et commata* layout (Codex Bezae, Claromontanus, Jerome's Vulgate), with reference to modern colometric scholarship (Marschall, Lee & Scott, Nasselqvist).
 
 The pipeline uses **Macula Greek syntax trees** (Clear Bible, CC-BY-4.0) for clause boundary detection and **MorphGNT** morphological tagging for pattern classification, followed by editorial review.
 

@@ -18,7 +18,7 @@ mechanical-split class of bugs.
 Heuristics (each flag has a tag):
 
   1. LINE-END-DANGLING: line ends with a dangling function word that
-     almost never ends a breath unit:
+     is almost never line-final in well-formed English:
      - articles: the, a, an
      - prepositions: of, in, to, for, from, by, with, at, on, as,
        into, over, under, upon, through, against, before, after,

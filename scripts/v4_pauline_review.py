@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 v4 Editorial Review for Pauline Epistles
-Applies the four criteria + sub-principles from 02-colometry-method.md
+Applies the colometric framework codified in private/01-method/colometry-canon.md
 to all 87 Pauline epistle chapters.
 
 Only writes v4 files for chapters that actually change.

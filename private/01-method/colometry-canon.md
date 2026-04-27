@@ -1460,6 +1460,28 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 
 ---
 
+### 2026-04-26 (later⁶) — Final residue purge: README.md + 3 scripts + secondary doc/CLAUDE.md sweep
+
+After the later⁵ commit, a wider sweep surfaced more retired-framework residue across public-facing surfaces and helper scripts. Same carry-forward-inertia class as later² through later⁵; same audit-skippable rationale.
+
+Purged:
+
+- **`README.md`** — line 7 (project tagline) replaced four-criteria language ("one atomic thought, one image, one breath unit, motivated by source-language syntax") with "an atomic thought-unit reflecting Greek grammatical structure." Method section (lines 17-22) replaced the four-criteria enumeration ("1. Atomic thought / 2. Single image / 3. Breath unit / 4. Source-language syntax") with the canonical three-forces summary (generative / subtractive / diagnostic) plus precedent grounding.
+- **`CLAUDE.md`** — `## Colometric Principles (Orientation Only)` section: replaced `### Four Criteria (hierarchy)` block (with "Breath Unit" as criterion 3 and the "default + unless" 2026-04-16 reframe wording) with `### Three forces (canon §1)` summary matching current canon §1. Updated R-rule pointer line to drop the "default + unless" framing.
+- **`scripts/scan_english_drift.py:21`** — heuristic comment "almost never ends a breath unit" → "is almost never line-final in well-formed English."
+- **`scripts/v3_colometry.py`** — three methodological references (line 995 "loses the breath-unit structure" → "loses the per-image atomic-thought structure"; line 3275-3276 "exceed the breath-unit threshold (~30 syllables ≈ 80 chars of Greek)" → "exceed a display-length threshold (~80 chars of Greek)"; line 3505 "too long for a single breath unit" → "display-overlong lines").
+- **`scripts/v4_pauline_review.py:4`** — docstring "Applies the four criteria + sub-principles from 02-colometry-method.md" → "Applies the colometric framework codified in private/01-method/colometry-canon.md" (the referenced doc path was also stale).
+- **`handoffs/01-project-overview.md:118`** — descriptive use ("the author's own breath units are best preserved") → "the author's own atomic thought-units are best preserved." Stan's standing instruction (later⁴) explicitly extended the purge to descriptive uses, not just methodological ones.
+- **`handoffs/03-architecture.md:539`** — diagnostic_scanner.py description: the parenthetical claiming a "residual breath-unit test in the script's source" no longer matches the file (test was purged at later⁵). Updated to record the purge date and flag stale path discovery as a separate issue.
+
+Verified post-purge: `breath unit` / `breath-unit` only remain in two explicit historical retirement notes (canon §10 entries themselves and the audit-trail note in `scripts/diagnostic_scanner.py:11`); these are intentional. `four criteria` and `Breath Test` return zero matches across the repo.
+
+**Separate observations carried forward (not addressed this commit):** the input paths for `scripts/v3_colometry.py` (`data/text-files/v2-colometric/` → `v3-colometric/`) and `scripts/v4_pauline_review.py` (V3_DIR → V4_DIR) likely point at corpus stages that no longer exist as live working surfaces. Same vestigialness flag as `scripts/diagnostic_scanner.py` (later⁵). Stan to decide retire-vs-update for all three.
+
+**Audit-skippable per §6.5** — pure residue cleanup of public-facing and helper-script surfaces that operationalized retired framing. Substantive retirements (Breath as a force / four-criteria → three-forces) were made 2026-04-20 with empirical 0-impact validation and audit. No new precedence claims, scope claims, closed-list extensions, or category carve-outs.
+
+---
+
 ### 2026-04-26 (later⁵) — scripts/diagnostic_scanner.py breath-unit test purged
 
 Stan corrected my hedging: "if we're purging, we're purging, right" — the script's residual `Test 3: Syllable count (breath unit)` was the same residue class as the §4 Breath Test removed at later². No reason to hold for separate decision; carry-forward-inertia firing again.
