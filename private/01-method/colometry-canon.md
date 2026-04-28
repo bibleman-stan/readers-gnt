@@ -59,6 +59,20 @@ Some sections are dual-natured by design: §1 interleaves theoretical principles
 
 Sense-line breaks are governed by **three forces** operating in concert: a **generative** force that proposes where breaks should happen, a **subtractive** force that vetoes breaks that would violate Greek syntax, and a **diagnostic** force that sharpens ambiguous cases.
 
+### Step 0 — Input Filter
+
+Before the three forces apply, the editor reads the source text through an input filter that excludes editorial-overlay features from the evidence base. The following are **never the warrant** for a break decision in this methodology:
+
+1. **Editorial punctuation in SBLGNT** (commas, periods, semicolons, ano teleia, raised dots). *Detection-heuristic carve-out:* punctuation MAY be used to locate candidates of a named syntactic pattern (e.g., the ano teleia in §3.6 speech-intro detection), but the grammatical structure — not the mark — is the operative warrant. The corollary in this section ("punctuation may corroborate but cannot justify") governs.
+2. **Capitalization** — never a break signal.
+3. **Verse references** — never a break signal. Verse-position language in R-rules (e.g., R18.9 "verse-initial vocative") is detection shorthand for the underlying grammatical condition (no preceding 2p anchor in scope), not a versification-as-authority claim. The break fires on the grammar.
+4. **Quote marks** added by downstream editors or modern publishers — never a break signal.
+5. **Lectionary divisions / pericope numbers** — never a break signal.
+6. **Editorial paragraph divisions in printed GNT editions** (NA28 / UBS5 / SBLGNT typographic section breaks, ¶ marks, white-space section dividers) — never a break signal.
+7. **Manuscript line divisions in scholarly comparanda** (Codex Bezae, Claromontanus, etc.) — never an *authoritative* break warrant. Per §6 these are consulted as scholarly comparanda and treated as empirical data; the three forces decide breaks. The 61.3% Bezae-agreement metric is a datum about scribal sense-judgment, not a license to inherit Bezae's typographic decisions.
+
+This list is closed: each item is excluded from the evidence base by design. New items may be added only after a §6.5 mandatory-audit cycle and a recorded §10 update entry. Step 0 is the editor's first read of any verse before §1's three forces engage.
+
 ### Mission and Method — the Discipline Framing
 
 **Mission:** We are revealing sense-lines — atomic thoughts the reader can process as discrete units.
@@ -1457,6 +1471,25 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 *Purpose: **dual-natured** — chronological reasoning trail. Recent entries documenting active-rule provenance are operationally referenced (cross-project import status, audit findings, retirement dates); older entries are historical narrative. When an entry documents an active rule, it is the canonical source for that rule's WHY/HOW WE KNOW/SCOPE.*
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-28 (later) — Step 0 Input Filter added to canon §1
+
+Adapted from sibling Tanakh-Reader's "what is never a break signal" preamble in their decision procedure. We had the equivalent corollaries scattered across canon §1's "Imposing vs. Revealing" principle, memory `feedback_no_punctuation_criteria.md`, and `feedback_no_editorial_overlays_as_signal.md`. Promoting them to a closed-list Step 0 at the top of §1 makes the discipline discoverable on first read instead of leaving each editor to assemble it from scattered corollaries.
+
+**Audit dispatched:** Sonnet adversarial agent (parallel with hook-cascade architecture review) ran a four-question audit on the proposed list:
+
+1. *Closed-list completeness:* found one missing item — NA28/UBS5/SBLGNT editorial paragraph divisions (the direct GNT analogue of Tanakh's petucha/setuma). Added as item 6.
+2. *Conflict check:* flagged R18.9 "verse-initial vocative" as a potential conflict with item 3 (verse references never a signal). Resolved as not-a-conflict — verse-initial language is detection shorthand for "no preceding 2p anchor in scope," and the break fires on the grammar. Added that clarification to item 3 itself.
+3. *Closed-list discipline:* item 1 (punctuation) needs a detection-heuristic carve-out per §3.6 ano teleia practice. Added as a parenthetical to item 1.
+4. *Bezae item framing:* the original Tanakh-mirroring "never a break signal" was too strong — §6 explicitly treats Bezae as scholarly comparanda with a 61.3% agreement metric. Reframed item 7 from "never a break signal" to "never an *authoritative* break warrant; consult as comparanda."
+
+**Verdict applied:** PROCEED WITH MODIFICATIONS — all three modifications applied verbatim from audit findings.
+
+**Section placement:** §1, between the opening three-forces paragraph and "Mission and Method" subsection — preamble before the framework opens, per audit recommendation.
+
+**Audit-status for this commit per §6.5:** §6.5 trigger #3 (closed-list extension) — audit dispatched and applied per modifications above. The closed list itself is now part of canon §1, with explicit "new items may be added only after a §6.5 mandatory-audit cycle" gate to keep it closed.
 
 ---
 
