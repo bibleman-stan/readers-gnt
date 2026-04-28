@@ -1,19 +1,108 @@
 #!/bin/sh
-# GNT Reader pre-commit hook (regression-baseline gate)
-# Runs Layer 2 validators on commits that touch the canon, the syntax-reference
-# table, the editorial corpus, or the validator suite itself. Blocks commits
-# that INCREASE finding counts vs validators/.baseline.json.
+# GNT Reader pre-commit hook
+#
+# Two-phase gate (port-soft from Tanakh — detect stale derived layers but
+# do NOT auto-modify files):
+#
+# Phase 1 — Cascade-staleness detection
+#   When v4-editorial chapter files are staged, verify that the cascade was
+#   run: line counts match between staged v4 and the corresponding eng-gloss,
+#   and books/<slug>.html is also staged. If stale, block with an instructive
+#   message. This hook does NOT auto-modify files (per memory
+#   feedback_verify_cascade_output.md — regenerate_english.py's proportional-
+#   redistribute heuristic can produce misaligned output that needs hand-
+#   correction; auto-staging would bypass the two-check gate).
+#
+# Phase 2 — Validator regression gate
+#   Runs run_all.py --baseline-check on commits that touch the canon, the
+#   syntax-reference table, the editorial corpus, or the validator suite
+#   itself. Blocks if finding counts increase vs validators/.baseline.json.
 #
 # Install (one-time):
-#   ln -s ../../validators/hooks/pre-commit .git/hooks/pre-commit
-#   (or: cp validators/hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit)
+#   cp validators/hooks/pre-commit .git/hooks/pre-commit
+#   chmod +x .git/hooks/pre-commit
 #
 # Bypass (Stan-only, explicit decision):
 #   git commit --no-verify
 
 set -e
+REPO_ROOT=$(git rev-parse --show-toplevel)
+cd "$REPO_ROOT"
 
-# Only run if relevant files are staged
+# ── Phase 1: cascade-staleness detection ───────────────────────────────────
+
+V4_STAGED=$(git diff --cached --name-only --diff-filter=AM | grep -E "^data/text-files/v4-editorial/[^/]+/[^/]+\.txt$" || true)
+
+if [ -n "$V4_STAGED" ]; then
+    echo ""
+    echo "[pre-commit] v4-editorial chapters staged. Checking cascade freshness..."
+
+    BOOKS_AFFECTED=""
+    STALE_FOUND=0
+
+    for V4_FILE in $V4_STAGED; do
+        # path: data/text-files/v4-editorial/<NN-book>/<slug>-<NN>.txt
+        REL_PATH=${V4_FILE#data/text-files/v4-editorial/}
+        BOOK_SUBDIR=${REL_PATH%%/*}
+        FILENAME=${REL_PATH##*/}
+        SLUG=${FILENAME%%-*}
+
+        # Track unique books (for HTML-build check)
+        case " $BOOKS_AFFECTED " in
+            *" $SLUG "*) ;;
+            *) BOOKS_AFFECTED="$BOOKS_AFFECTED $SLUG" ;;
+        esac
+
+        # Line-count parity: staged v4 vs index eng-gloss
+        EN_PATH="data/text-files/eng-gloss/$BOOK_SUBDIR/$FILENAME"
+
+        if ! git cat-file -e ":$EN_PATH" 2>/dev/null; then
+            echo "[pre-commit]   STALE: $FILENAME — eng-gloss not tracked ($EN_PATH)"
+            STALE_FOUND=1
+            continue
+        fi
+
+        V4_LINES=$(git show ":$V4_FILE" | grep -cv "^$" || true)
+        EN_LINES=$(git show ":$EN_PATH" | grep -cv "^$" || true)
+
+        if [ "$V4_LINES" != "$EN_LINES" ]; then
+            echo "[pre-commit]   STALE: $FILENAME — v4=$V4_LINES non-blank lines, eng-gloss=$EN_LINES"
+            STALE_FOUND=1
+        fi
+    done
+
+    # HTML check: each affected book's HTML must be staged
+    HTML_STAGED=$(git diff --cached --name-only --diff-filter=AM | grep -E "^books/[^/]+\.html$" || true)
+
+    for BOOK in $BOOKS_AFFECTED; do
+        if ! echo "$HTML_STAGED" | grep -qx "books/$BOOK.html"; then
+            echo "[pre-commit]   STALE: books/$BOOK.html not staged (book had v4 edits)"
+            STALE_FOUND=1
+        fi
+    done
+
+    if [ "$STALE_FOUND" -ne 0 ]; then
+        echo ""
+        echo "[pre-commit] BLOCKED: cascade output is stale relative to v4-editorial edits."
+        echo "[pre-commit] Run the cascade for affected books, then re-stage:"
+        for BOOK in $BOOKS_AFFECTED; do
+            echo "    PYTHONIOENCODING=utf-8 py -3 scripts/regenerate_english.py --book $BOOK"
+            echo "    PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book $BOOK"
+        done
+        echo ""
+        echo "[pre-commit] Note: this hook does NOT auto-modify files."
+        echo "[pre-commit] After running the cascade, review the output (see memory:"
+        echo "[pre-commit] feedback_two_check_cascade.md) before re-staging."
+        echo ""
+        exit 1
+    fi
+
+    echo "[pre-commit] Cascade fresh. Proceeding to Phase 2."
+    echo ""
+fi
+
+# ── Phase 2: validator regression gate ──────────────────────────────────────
+
 RELEVANT=$(git diff --cached --name-only | grep -E "^(data/text-files/v4-editorial/|private/01-method/colometry-canon\.md|data/syntax-reference/|validators/)" || true)
 
 if [ -z "$RELEVANT" ]; then
@@ -23,9 +112,6 @@ fi
 echo ""
 echo "[pre-commit] Canon/corpus/validator files staged. Running run_all --baseline-check..."
 echo ""
-
-REPO_ROOT=$(git rev-parse --show-toplevel)
-cd "$REPO_ROOT"
 
 PYTHONIOENCODING=utf-8 py -3 validators/run_all.py --baseline-check
 RESULT=$?

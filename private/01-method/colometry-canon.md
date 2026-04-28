@@ -1474,6 +1474,18 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 
 ---
 
+### 2026-04-28 (later²) — Hook-automated cascade-staleness detection (port-soft from Tanakh)
+
+Pre-commit hook (`validators/hooks/pre-commit`) gained a new Phase 1: cascade-staleness detection. When `data/text-files/v4-editorial/` chapter files are staged, the hook now verifies that (a) the corresponding `eng-gloss/` file has matching non-blank line count and (b) `books/<slug>.html` is also staged. If stale, the hook blocks the commit with an instructive message naming the books affected and the cascade commands to run.
+
+**Architectural decision:** PORT-SOFT, not PORT-DIRECT. Tanakh's hook auto-runs `refresh_book.py` and auto-stages regenerated derived layers. The investigation agent flagged real hazards in adopting that pattern for GNT: `regenerate_english.py`'s proportional-redistribute heuristic produces misaligned output when line-counts change (memory `feedback_verify_cascade_output.md`), and auto-staging would commit that misaligned English before the two-check gate (`verify_word_order.py` + `scan_english_drift.py`) can catch it. The soft port detects staleness and blocks without modifying files; the editor runs the cascade and reviews output before re-staging.
+
+**Trade-off accepted:** the hook does NOT detect the rarer case where Greek edits don't change line count but content semantics shift (e.g., reword a line without splitting it). The two-check gate (memory `feedback_two_check_cascade.md`) still catches this; the hook is first line of defense, not exhaustive.
+
+**Audit-skippable:** code-only change, no canon claim. Architectural decision documented here for the audit trail.
+
+---
+
 ### 2026-04-28 (later) — Step 0 Input Filter added to canon §1
 
 Adapted from sibling Tanakh-Reader's "what is never a break signal" preamble in their decision procedure. We had the equivalent corollaries scattered across canon §1's "Imposing vs. Revealing" principle, memory `feedback_no_punctuation_criteria.md`, and `feedback_no_editorial_overlays_as_signal.md`. Promoting them to a closed-list Step 0 at the top of §1 makes the discipline discoverable on first read instead of leaving each editor to assemble it from scattered corollaries.
