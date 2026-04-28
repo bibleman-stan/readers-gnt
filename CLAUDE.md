@@ -107,7 +107,8 @@ Compaction-resume: still run the full CHECK-IN protocol when resuming from a com
 | `scripts/build_books.py` | Converts v4-editorial + eng-gloss → HTML fragments under `books/` |
 | `scripts/regenerate_english.py` | Regenerates English glosses after Greek edits (incremental, with skip-guard) |
 | `scripts/v4_auto_fix.py` | Mechanical fixes against v4-editorial (read/write in place) |
-| `scripts/morphgnt_lookup.py` | MorphGNT morphological backend (used by `validators/common.py`) |
+| `validators/_shared/morphgnt_lookup.py` | MorphGNT morphological backend (used by `validators/common.py`) |
+| `validators/_shared/macula_clauses.py` | Macula syntax-tree clause-boundary extractor (used by `validators/common.py`) |
 | `scripts/archive/` | Tier-producer scripts (v0–v3) frozen 2026-04-26; see `scripts/archive/README.md` |
 | `data/text-files/sblgnt-source/` | 27 raw SBLGNT source files — **NEVER EDIT** |
 | `data/text-files/v4-editorial/*/` | 260 chapter files in book subfolders — **single source of truth for Greek text** |
@@ -150,7 +151,7 @@ The distinction is important: gating rule-derivative changes on per-item approva
 
 ## Pre-commit adversarial-audit discipline
 
-**Before any commit that modifies `private/01-method/colometry-canon.md`, check whether the change matches a mandatory-audit trigger per canon §6.5.** The 11 triggers are listed in canon §6.5; re-read them when uncertain. If the change matches any trigger, audit evidence (hostile-agent dispatch + verdict + application) must be present in the commit message or the canon §10 Update Log entry.
+**Before any commit that modifies `private/01-method/colometry-canon.md`, check whether the change matches a mandatory-audit trigger per canon §6.5.** The 12 triggers are listed in canon §6.5; re-read them when uncertain. If the change matches any trigger, audit evidence (hostile-agent dispatch + verdict + application) must be present in the commit message or the canon §10 Update Log entry.
 
 **Audit-skippable.** Canon edits that do NOT match any trigger (typo fixes, cross-reference updates without precedence claims, deletions of same-session reverts, defensibility-capture additions to already-settled rules without scope changes, Category A mechanical corpus edits that are not part of a ≥5-instance sweep) proceed without audit.
 
@@ -170,6 +171,8 @@ The distinction is important: gating rule-derivative changes on per-item approva
 - Does this change rest on spot-check evidence rather than a full-corpus classification? → audit.
 - Does this change reclassify or delete previously-settled canon content? → audit.
 - If no to all three → probably skip-safe.
+
+**Parallelize audits by default.** When triggered, dispatch multiple audit dimensions in parallel (one assistant message, multiple Agent tool calls). Sequential only when audit A's verdict determines whether audit B should run. Same-trigger audits across distinct angles (discipline / scope / cross-project consistency / corpus impact) should fire in one batch, not in series. Memory `feedback_adversarial.md` and `feedback_parallelize.md` capture the operational discipline.
 
 This discipline complements (does NOT replace) the session-end **Canon self-consistency audit trigger** in the Session bookend protocol above. Pre-commit is per-change; self-consistency is session-rollup. See canon §3 "Scope/precedence/closed-list/carve-out diagnostic" for the Category-B-by-default rule this self-test instantiates, and canon §6.5 for the full trigger list.
 

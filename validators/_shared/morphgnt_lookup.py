@@ -15,7 +15,7 @@ import re
 from collections import defaultdict
 
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-_REPO_ROOT = os.path.dirname(_SCRIPT_DIR)
+_REPO_ROOT = os.path.dirname(os.path.dirname(_SCRIPT_DIR))
 _MORPHGNT_DIR = os.path.join(_REPO_ROOT, "research", "morphgnt-sblgnt")
 
 # MorphGNT file number -> our book slug

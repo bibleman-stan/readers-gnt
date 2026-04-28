@@ -29,17 +29,15 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Optional
 
-# ─── Make scripts/ importable ────────────────────────────────────────────────
+# ─── Path constants + _shared importable ─────────────────────────────────────
 
 _VALIDATORS_DIR = os.path.dirname(os.path.abspath(__file__))
 _REPO_ROOT = os.path.dirname(_VALIDATORS_DIR)
-_SCRIPTS_DIR = os.path.join(_REPO_ROOT, "scripts")
 
-if _SCRIPTS_DIR not in sys.path:
-    sys.path.insert(0, _SCRIPTS_DIR)
+if _VALIDATORS_DIR not in sys.path:
+    sys.path.insert(0, _VALIDATORS_DIR)
 
-import macula_clauses
-import morphgnt_lookup
+from _shared import macula_clauses, morphgnt_lookup  # noqa: E402
 
 # ─── Paths ───────────────────────────────────────────────────────────────────
 
@@ -114,7 +112,7 @@ def emit_candidate(
 def load_macula_chapter(book: str, chapter: int) -> dict:
     """Load Macula-Greek parse for a chapter.
 
-    Wraps scripts/macula_clauses.get_chapter_clauses_detailed.
+    Wraps validators/_shared/macula_clauses.get_chapter_clauses_detailed.
     Returns dict[verse_num: int, list[ClauseInfo]].
     Each ClauseInfo has:
       .text           — space-joined surface text of the clause
@@ -131,7 +129,7 @@ def load_macula_chapter(book: str, chapter: int) -> dict:
 def load_morphgnt_book(book_slug: str) -> dict:
     """Load MorphGNT data for a book.
 
-    Wraps scripts/morphgnt_lookup._load_book.
+    Wraps validators/_shared/morphgnt_lookup._load_book.
     Returns dict[(chapter: int, verse: int), list[tuple[word, pos, parsing]]].
       word    — surface form (may include punctuation)
       pos     — 2-char POS code ("V-", "N-", "RA", etc.)

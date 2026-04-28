@@ -1140,7 +1140,7 @@ Future additions are audited against this checklist — relevant for both day-to
 
 The "extensible only by worked examples + adversarial validation" requirement on new structural justifications (§2 line 236) and new merge-overrides (§2 line 352) is strengthened here to an explicit mandatory-audit trigger list at commit time. A canon proposal matching any of the following triggers MUST dispatch an adversarial audit (hostile agent or equivalent external skeptical review) and reflect its findings in the commit. Skipping audit on a triggered proposal is a protocol violation.
 
-**Mandatory-audit triggers (11 categories):**
+**Mandatory-audit triggers (12 categories):**
 
 1. **New named rules / sub-clauses / categories** — including precedence cross-references between rules (e.g., "Rule A trumps Rule B at X"). Shape-matches feel-tests, enumerated lists, and subjective carve-outs particularly.
 2. **Rule status promotions** — *proposed* → settled. Removes the hedge; stakes increase.
@@ -1457,6 +1457,26 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 *Purpose: **dual-natured** — chronological reasoning trail. Recent entries documenting active-rule provenance are operationally referenced (cross-project import status, audit findings, retirement dates); older entries are historical narrative. When an entry documents an active rule, it is the canonical source for that rule's WHY/HOW WE KNOW/SCOPE.*
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-28 — Cross-project port-back from Tanakh (pure wins)
+
+After completing the architecture-transition sweep (later⁷), Stan asked for a deep-dive comparison vs. the sibling Tanakh-Reader project — looking for opportunities to adopt patterns Tanakh has solved better. Three parallel Sonnet research agents scanned both projects' methodology canons, process discipline, and session-log parallelism profiles. The audit surfaced a small set of pure wins to port back this commit; substantive canon additions (Step 0 Input Filter, N=2 Adjudication Principle naming) and the larger architectural change (hook-automated cascade) are deferred to follow-up audits/sessions.
+
+**Ported this commit:**
+
+- **§6.5 trigger count consistency fix.** Header said "11 categories" but body enumerated 12 (artifact from when trigger #12 was ported from Tanakh on 2026-04-26 / later — see later entry). Header now says "12 categories." Same fix applied to `CLAUDE.md` line 153. Tanakh §7 already says 12; we now match.
+- **`CLAUDE.md`: "Parallelize audits by default" promoted from memory to surface text.** Tanakh `CLAUDE.md:232` states this discipline explicitly; ours had it only in `memory/feedback_adversarial.md` and `memory/feedback_parallelize.md`. Memory is invisible to fresh sessions on cold-start; CLAUDE.md is mandatory. Added a paragraph to the pre-commit adversarial-audit discipline section in `CLAUDE.md`.
+- **`validators/_shared/` convention adopted.** Tanakh has `validators/_shared/poetic_register.py` as a tested helper module. We had `morphgnt_lookup.py` and `macula_clauses.py` ad-hoc at `scripts/`. Both moved to `validators/_shared/` (with empty `__init__.py`). `validators/common.py` updated to use `from _shared import macula_clauses, morphgnt_lookup` after `sys.path.insert(0, _VALIDATORS_DIR)`. `_REPO_ROOT` resolution in both moved files updated to walk up two levels (was one level when in `scripts/`). Validator baseline-check passes (no regressions); helper imports verified.
+
+**Audit-status for this commit per §6.5:** typo fix (trigger count) + cross-reference update (CLAUDE.md surfacing of memory discipline) + architectural relocation (no canon claim). No new precedence claims, scope claims, closed-list extensions, or carve-outs. **Audit-skippable.**
+
+**Carry-forward (separate commits):**
+
+- **Step 0 — Input Filter** in canon §1 (closed-list addition; needs §6.5 trigger #3 audit before landing).
+- **Hook-automated cascade.** Tanakh's pre-commit hook auto-rebuilds derived layers via `refresh_book.py` and stages them atomically. Worth investigating but the architectural decision (auto-stage derived files vs. fail-with-message vs. status-quo manual cascade) needs Stan judgment — unilateral port could surprise the editor.
+- **N=2 Adjudication Principle** as a named, generalized principle in §1. We have the substance in M1 tie-breaker language; promoting it to a named principle is methodology work that deserves a dedicated session, not a casual port.
 
 ---
 

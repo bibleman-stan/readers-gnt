@@ -47,7 +47,8 @@ The active editorial loop and any scripts referenced by it remain in `scripts/`:
 
 - `regenerate_english.py` (active English-regen tool — replaces `generate_english_glosses.py`)
 - `build_books.py` (HTML generator; reads `v4-editorial/` only as of this commit)
-- `morphgnt_lookup.py` (used by `validators/common.py`)
+- `validators/_shared/morphgnt_lookup.py` (used by `validators/common.py`; relocated 2026-04-28 from `scripts/`)
+- `validators/_shared/macula_clauses.py` (used by `validators/common.py`; relocated 2026-04-28 from `scripts/`)
 - `v4_auto_fix.py` (mechanical fixes against `v4-editorial/`)
 - All `scan_*.py` / `apply_*.py` / `validate_*.py` / `sweep_*.py` scripts (validator-driven sweeps against `v4-editorial/`)
 - All `macula_*.py` scripts (Macula syntax-tree access)
