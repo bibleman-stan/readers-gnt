@@ -65,7 +65,7 @@ Before the three forces apply, the editor reads the source text through an input
 
 1. **Editorial punctuation in SBLGNT** (commas, periods, semicolons, ano teleia, raised dots). *Detection-heuristic carve-out:* punctuation MAY be used to locate candidates of a named syntactic pattern (e.g., the ano teleia in §3.6 speech-intro detection), but the grammatical structure — not the mark — is the operative warrant. The corollary in this section ("punctuation may corroborate but cannot justify") governs.
 2. **Capitalization** — never a break signal.
-3. **Verse references** — never a break signal. Verse-position language in R-rules (e.g., R18.9 "verse-initial vocative") is detection shorthand for the underlying grammatical condition (no preceding 2p anchor in scope), not a versification-as-authority claim. The break fires on the grammar.
+3. **Verse references** — never a break signal. R-rules fire on grammatical evidence, not on verse position. Where a validator docstring or didactic description uses "verse-initial" or similar positional language, the actual detection criterion is grammatical (morphological context, anchor presence/absence, etc.), not the position itself.
 4. **Quote marks** added by downstream editors or modern publishers — never a break signal.
 5. **Lectionary divisions / pericope numbers** — never a break signal.
 6. **Editorial paragraph divisions in printed GNT editions** (NA28 / UBS5 / SBLGNT typographic section breaks, ¶ marks, white-space section dividers) — never a break signal.
@@ -1471,6 +1471,21 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 *Purpose: **dual-natured** — chronological reasoning trail. Recent entries documenting active-rule provenance are operationally referenced (cross-project import status, audit findings, retirement dates); older entries are historical narrative. When an entry documents an active rule, it is the canonical source for that rule's WHY/HOW WE KNOW/SCOPE.*
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-04-28 (later³) — Step 0 item 3 correction: validator-implementation check after-the-fact
+
+After landing the Step 0 commit (later) and the hook-port-soft commit (later²), Stan asked whether the corpus needed any audit in light of the new modifications. A targeted Sonnet check on the R18 validator implementation (the rule my Step 0 item 3 example invoked) surfaced two factual errors in my Step 0 wording:
+
+1. **R18 in canon §3 (line 499)** is "Vocative rule (three-way refined)." Canon nowhere uses the phrase "verse-initial vocative." The phrase exists only in the validator docstring (`validators/colometry/check_r18_vocative.py:5`) and was imported into Step 0 as a fabricated canonical-sounding example.
+2. **Validator implementation** checks for same-line 2p-element absence (vocative + non-2p finite verb on same line + no 2p verb or 2p pronoun on same line) — `validators/colometry/check_r18_vocative.py:171-196`. My Step 0 framing "no preceding 2p anchor in scope" misstated the implementation: "scope" is same-line in the validator, not preceding-context.
+
+Both errors are the same class — Step 0 was solving a non-problem (R18 doesn't use verse-position as a signal in our canon) with a description that didn't match the implementation. The Step 0 item 3 wording is now simplified to drop the false specifics: "R-rules fire on grammatical evidence, not on verse position. Where a validator docstring or didactic description uses 'verse-initial' or similar positional language, the actual detection criterion is grammatical (morphological context, anchor presence/absence, etc.), not the position itself."
+
+**Process lesson:** when canon §1 cites implementation behavior, the §6.5 audit should include reading the implementation, not just canon and memory. The original Step 0 audit (later) was scoped to canon-only context per my prompt; it didn't read validator code, so the misstatement passed. Adding to mental discipline: canon-cites-implementation → audit must include implementation read.
+
+**Audit-skippable:** same-session correction of a factual misstatement about validator implementation. No methodology change, no new claims, no closed-list extension. The §6.5 self-test answer to "reclassify or delete previously-settled canon content" is borderline (the content was settled <60 minutes earlier in this session); declared skippable as same-session correction.
 
 ---
 
