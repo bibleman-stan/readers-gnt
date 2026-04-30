@@ -45,7 +45,7 @@
     max-width: 42em;
     margin: 0 auto;
     padding: 1em;
-    padding-top: 50px;
+    padding-top: 96px;  /* 44px topbar + ~46px layer-bar + 6px buffer */
     letter-spacing: var(--letter-spacing);
     word-spacing: var(--word-spacing);
   }
@@ -112,6 +112,65 @@
     font-style: italic;
     letter-spacing: 0.03em;
   }
+
+  /* === LAYER PILLBOX TOOLBAR (fixed, always visible) ===
+     Outer .layer-bar spans the viewport for full-width bg/blur; inner
+     .layer-bar-inner constrains the pill row to the body's 42em column. */
+  .layer-bar {
+    position: fixed;
+    top: 44px;          /* sits directly under the 44px topbar */
+    left: 0; right: 0;
+    background: rgba(28, 31, 36, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    z-index: 99;        /* below topbar (100) */
+  }
+  .layer-bar-inner {
+    max-width: 42em;
+    margin: 0 auto;
+    padding: 8px 14px;
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    justify-content: safe center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .layer-bar-inner::-webkit-scrollbar { display: none; }
+  .pill {
+    background: rgba(124, 175, 194, 0.08);
+    color: var(--text);
+    border: 1px solid rgba(124, 175, 194, 0.25);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font: 500 0.78em -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    user-select: none;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .pill:hover { background: rgba(124, 175, 194, 0.16); }
+  .pill.active {
+    background: rgba(124, 175, 194, 0.32);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  /* Refusal flash when toggleLayer rejects turning off the last visible
+     layer (silent rejection feels like a broken button). */
+  @keyframes pill-reject {
+    0%   { background: rgba(124, 175, 194, 0.08);
+           border-color: rgba(124, 175, 194, 0.25); }
+    25%  { background: rgba(220,  90,  90, 0.28);
+           border-color: rgba(220,  90,  90, 0.65); }
+    100% { background: rgba(124, 175, 194, 0.08);
+           border-color: rgba(124, 175, 194, 0.25); }
+  }
+  .pill.reject { animation: pill-reject 0.45s ease-out; }
 
   /* === NAV PANEL === */
   .nav-panel {
@@ -268,15 +327,21 @@
     padding-left: var(--wrap-indent);
   }
 
-  /* === DUAL-TEXT DISPLAY MODES === */
-  /* Default: Greek only */
-  .en { display: none; }
-  /* English only */
-  body.show-english .gk { display: none; }
-  body.show-english .en { display: inline; }
-  /* Both (interleaved) */
-  body.show-both .gk { display: block; }
-  body.show-both .en { display: block; font-style: italic; color: var(--text-dim); font-size: 0.88em; margin-top: 2px; }
+  /* === DUAL-TEXT DISPLAY MODES (independent layer toggles) === */
+  /* Both layers hidden by default; pill-bar setLayer adds show-gk / show-en
+     body classes to reveal each layer. With both layers on, Greek becomes
+     a block (forces line break) and English appears below it italic-dim. */
+  .gk, .en { display: none; }
+  body.show-gk .gk { display: inline; }
+  body.show-en .en { display: inline; }
+  body.show-gk.show-en .gk { display: block; }
+  body.show-gk.show-en .en {
+    display: block;
+    font-style: italic;
+    color: var(--text-dim);
+    font-size: 0.88em;
+    margin-top: 2px;
+  }
 
   /* === PUNCTUATION (hidden by default — editorial, not original) === */
   .punct {
@@ -953,8 +1018,10 @@
   }
 
   @media (max-width: 480px) {
-    body { padding: 0.5em; padding-top: 50px; }
+    body { padding: 0.5em; padding-top: 96px; }
     #content { padding: 16px; padding-top: 8px; }
+    .layer-bar-inner { padding: 6px 8px; gap: 5px; }
+    .pill { padding: 6px 11px; font-size: 0.74em; }
     .nav-book-row { padding: 10px 8px; font-size: 0.82em; }
     .settings-panel { right: 8px; }
   }
@@ -1062,6 +1129,16 @@
   </div>
 </div>
 
+<!-- Layer pillbox toolbar — fixed below topbar, always visible. Each pill
+     toggles its layer independently; setLayer guards against turning off
+     the last visible layer (shake animation on rejected click). -->
+<div class="layer-bar" id="layer-bar">
+  <div class="layer-bar-inner">
+    <button class="pill" data-layer="gk" onclick="toggleLayer(this)">Greek</button>
+    <button class="pill" data-layer="en" onclick="toggleLayer(this)">English</button>
+  </div>
+</div>
+
 <!-- Settings panel -->
 <div class="settings-panel" id="settings-panel">
   <label><input type="checkbox" id="setting-punct" onchange="togglePunct(this.checked)"> Show punctuation</label>
@@ -1082,14 +1159,6 @@
         <span class="label">Large</span>
       </button>
     </div>
-  </div>
-  <div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">
-    <div style="font-size:0.78em; color:var(--text-dim); margin-bottom:6px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">Display</div>
-    <select id="setting-display" onchange="setDisplayMode(this.value)" style="width:100%; padding:6px 8px; background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:6px; font-size:0.82em; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; cursor:pointer; outline:none;">
-      <option value="greek">Greek</option>
-      <option value="english">English</option>
-      <option value="both">Both</option>
-    </select>
   </div>
   <div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">
     <div style="display:flex; align-items:center; justify-content:space-between;">
@@ -1634,14 +1703,59 @@ function setTextSize(size) {
   });
 }
 
-function setDisplayMode(mode) {
-  document.body.classList.remove('show-english', 'show-both');
-  if (mode === 'english') document.body.classList.add('show-english');
-  else if (mode === 'both') document.body.classList.add('show-both');
-  localStorage.setItem('gnt-display-mode', mode);
-  // Update select element to match
-  const sel = document.getElementById('setting-display');
-  if (sel) sel.value = mode;
+// Two independent layer toggles: Greek / English. Each maps to a body
+// class (show-*) and a localStorage key (gnt-show-*). Default: Greek on,
+// English off (matches the previous "greek" default mode).
+const LAYER_DEFAULTS = { gk: true, en: false };
+
+function setLayer(layer, on, persist) {
+  document.body.classList.toggle('show-' + layer, on);
+  if (persist !== false) {
+    localStorage.setItem('gnt-show-' + layer, on ? '1' : '0');
+  }
+  const btn = document.querySelector('.pill[data-layer="' + layer + '"]');
+  if (btn) btn.classList.toggle('active', on);
+}
+
+function toggleLayer(btn) {
+  const layer = btn.dataset.layer;
+  const on = !btn.classList.contains('active');
+  // Don't allow turning off the last visible layer — leaves the reader
+  // looking blank ("did I break something?"). Brief refusal flash so the
+  // user sees the click registered but was overruled.
+  if (!on) {
+    const visibleLayers = Object.keys(LAYER_DEFAULTS).filter(
+      k => document.body.classList.contains('show-' + k)
+    );
+    if (visibleLayers.length <= 1) {
+      btn.classList.remove('reject');
+      void btn.offsetWidth;  // force reflow so animation restarts on repeat clicks
+      btn.classList.add('reject');
+      return;
+    }
+  }
+  setLayer(layer, on, true);
+}
+
+// One-time migration of legacy gnt-display-mode → independent gnt-show-gk /
+// gnt-show-en flags. Runs in loadSettings before the layer-init loop.
+function migrateLegacyDisplayMode() {
+  const legacy = localStorage.getItem('gnt-display-mode');
+  if (legacy === null) return;
+  if (localStorage.getItem('gnt-show-gk') === null && localStorage.getItem('gnt-show-en') === null) {
+    if (legacy === 'english') {
+      localStorage.setItem('gnt-show-gk', '0');
+      localStorage.setItem('gnt-show-en', '1');
+    } else if (legacy === 'both') {
+      localStorage.setItem('gnt-show-gk', '1');
+      localStorage.setItem('gnt-show-en', '1');
+    } else {
+      // 'greek' or any unknown value → Greek-only (the previous default)
+      localStorage.setItem('gnt-show-gk', '1');
+      localStorage.setItem('gnt-show-en', '0');
+    }
+  }
+  localStorage.removeItem('gnt-display-mode');
 }
 
 function loadSettings() {
@@ -1654,9 +1768,15 @@ function loadSettings() {
   // Load text size
   const savedSize = localStorage.getItem('gnt-text-size') || 'medium';
   setTextSize(savedSize);
-  // Load display mode
-  const savedDisplay = localStorage.getItem('gnt-display-mode') || 'greek';
-  setDisplayMode(savedDisplay);
+  // Migrate legacy gnt-display-mode key (one-time), then load each layer
+  // toggle from localStorage (or default). Don't re-persist defaults — that
+  // would lock returning users out of any future default change.
+  migrateLegacyDisplayMode();
+  for (const layer of Object.keys(LAYER_DEFAULTS)) {
+    const stored = localStorage.getItem('gnt-show-' + layer);
+    const on = stored === null ? LAYER_DEFAULTS[layer] : stored === '1';
+    setLayer(layer, on, false);
+  }
 }
 
 // --- Search (Boolean query parser + cross-book index) ---
@@ -1939,9 +2059,10 @@ function openSearch() {
   document.getElementById('search-overlay').classList.add('open');
   const input = document.getElementById('search-input');
   input.value = '';
-  // Set placeholder based on display mode
-  const dm = localStorage.getItem('gnt-display-mode') || 'greek';
-  input.placeholder = dm === 'english' ? 'Search English text...' : 'Search Greek text...';
+  // Set placeholder based on display mode (English-only = English search,
+  // any other state = Greek search — matches prior dropdown semantic).
+  const englishOnly = document.body.classList.contains('show-en') && !document.body.classList.contains('show-gk');
+  input.placeholder = englishOnly ? 'Search English text...' : 'Search Greek text...';
   input.focus();
   document.getElementById('search-status').textContent = '';
   document.getElementById('search-results').innerHTML = '';
@@ -2351,8 +2472,7 @@ function performSearch(query) {
   }
 
   const hits = [];
-  const displayMode = localStorage.getItem('gnt-display-mode') || 'greek';
-  const searchEnglish = (displayMode === 'english');
+  const searchEnglish = document.body.classList.contains('show-en') && !document.body.classList.contains('show-gk');
   const corpusAllowed = getCorpusAllowedBooks();
 
   for (const entry of searchIndex) {
@@ -2575,8 +2695,7 @@ function renderFilteredResults() {
     statusEl.textContent = totalCount + ' verse' + (totalCount !== 1 ? 's' : '') + ' found' + filterLabel;
   }
 
-  const displayMode = localStorage.getItem('gnt-display-mode') || 'greek';
-  const searchEnglish = (displayMode === 'english');
+  const searchEnglish = document.body.classList.contains('show-en') && !document.body.classList.contains('show-gk');
 
   const shown = Math.min(totalCount, displayLimit);
   for (let i = 0; i < shown; i++) {
