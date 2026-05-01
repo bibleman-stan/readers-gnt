@@ -172,6 +172,11 @@
   }
   .pill.reject { animation: pill-reject 0.45s ease-out; }
 
+  /* Hide layer bar on landing — nothing to toggle when there's no
+     Greek/English content yet. Trim body padding-top to match. */
+  body.landing-active .layer-bar { display: none; }
+  body.landing-active { padding-top: 50px; }
+
   /* === NAV PANEL === */
   .nav-panel {
     position: fixed;
@@ -2999,6 +3004,9 @@ function showLanding() {
   // Show landing, hide content
   document.getElementById('landing').classList.add('visible');
   document.getElementById('content').style.display = 'none';
+  // Body-level flag — CSS hides the layer-bar (no Greek/English content
+  // to toggle on landing) and trims the topbar-only padding-top.
+  document.body.classList.add('landing-active');
   // Update topbar
   document.getElementById('topbar-loc').style.display = 'none';
   document.getElementById('btn-home').style.display = 'none';
@@ -3016,6 +3024,7 @@ function showLanding() {
 function hideLanding() {
   document.getElementById('landing').classList.remove('visible');
   document.getElementById('content').style.display = '';
+  document.body.classList.remove('landing-active');
   document.getElementById('topbar-loc').style.display = '';
   document.getElementById('btn-home').style.display = '';
 }
