@@ -800,20 +800,6 @@
     font-style: italic;
   }
 
-  .landing-tagline {
-    font-size: 1.05em;
-    font-weight: 600;
-    color: #dce4ec;
-    margin: 0.8em 0 0.6em;
-  }
-
-  .landing-desc {
-    font-size: 0.92em;
-    line-height: 1.9;
-    color: #b8b2a8;
-    margin-bottom: 2em;
-  }
-
   .landing-books-label {
     font-size: 0.65em;
     text-transform: uppercase;
@@ -1223,6 +1209,8 @@
     <span class="help-title">Help</span>
   </div>
   <div class="help-body">
+    <p style="font-style: italic; color: var(--accent); font-size: 1.02em; margin: 0 0 1.4em;">The text as it was meant to be heard.</p>
+
     <h2>Reading Modes</h2>
     <div class="help-card">
       <div class="help-card-name">Greek (default)</div>
@@ -1236,7 +1224,7 @@
       <div class="help-card-name">Both</div>
       <div class="help-card-desc">Greek and English interleaved, with the English in dimmer italic below each Greek line.</div>
     </div>
-    <p>To switch modes: tap the settings gear in the top bar, then change the Display dropdown.</p>
+    <p>To switch modes: tap the Greek or English pill in the layer bar at the top of the screen. Both pills lit shows interleaved Greek + English; either pill alone shows only that layer. The reader prevents turning off the last visible layer (a brief refusal flash signals the click was registered but blocked).</p>
 
     <h2>What Are Sense-Lines?</h2>
     <p>Each line in this edition represents one thought, one breath, one image. The original texts of the New Testament were composed for oral delivery, not silent reading.</p>
@@ -1267,8 +1255,8 @@
       <li><strong>Punctuation:</strong> Show or hide editorial punctuation (hidden by default &mdash; it is not original to the text).</li>
       <li><strong>Verse numbers:</strong> Show or hide verse reference numbers.</li>
       <li><strong>Text size:</strong> Small, Medium, or Large.</li>
-      <li><strong>Display:</strong> Greek, English, or Both.</li>
     </ul>
+    <p>Greek/English layer toggles live in the layer bar at the top of the screen, not in this Settings panel.</p>
 
     <h2>About</h2>
     <p><strong>Base text:</strong> SBL Greek New Testament (SBLGNT), licensed under CC-BY-4.0.</p>
@@ -1292,8 +1280,6 @@
 <!-- Landing page -->
 <div class="landing" id="landing">
   <div class="landing-title">Greek New Testament<br><span class="landing-title-sub">Colometric Reading Edition</span></div>
-  <p class="landing-tagline">The text as it was meant to be heard.</p>
-  <p class="landing-desc">Sense-line formatting that reveals the compositional structure ancient audiences heard &mdash; one thought, one breath per line. Includes a structural English gloss tracking Greek clause order, and full-text search with lemma expansion and scholarly corpus filters.</p>
   <div class="landing-books-label">Select a book</div>
   <div class="landing-books" id="landing-books"></div>
 </div>
