@@ -56,7 +56,7 @@ Each chapter file in `v1-colometric/`:
 ```
 
 - Verse reference on its own line (e.g., `4:1`)
-- Sense-lines below, one per line
+- One atomic thought unit (ATU) per line
 - Blank line between verses
 - No header lines (auto-formatter output is clean)
 - No indentation (flat structure)
@@ -264,7 +264,7 @@ both men and women, he may bring them bound to Jerusalem.
 ```
 
 - Verse reference on its own line
-- Sense-lines below, one per line (matching Greek line count)
+- One ATU per line (matching Greek line count)
 - Blank line between verses
 - Same file naming convention: `{abbrev}-{chapter}.txt` in `data/text-files/ylt-colometric/`
 

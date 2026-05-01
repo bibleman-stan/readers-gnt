@@ -4,7 +4,7 @@
 [![Code: MIT](https://img.shields.io/badge/Code-MIT-blue.svg)](LICENSE)
 [![Live](https://img.shields.io/badge/Live-gnt--reader.com-blue.svg)](https://gnt-reader.com)
 
-A complete colometric reading edition of the SBL Greek New Testament. All 27 books (260 chapters) are formatted into sense-lines — each line is an atomic thought-unit reflecting Greek grammatical structure. The formatting recovers compositional architecture that prose paragraphs hide.
+A complete colometric reading edition of the SBL Greek New Testament. All 27 books (260 chapters) are formatted into **atomic thought units (ATUs)** — each line carries one ATU, a unit of thought defined by what a reader can process as a single complete thought. The formatting recovers compositional architecture that prose paragraphs hide.
 
 **Live at [gnt-reader.com](https://gnt-reader.com)**
 
@@ -16,7 +16,7 @@ Colometric analysis of the Greek New Testament has a growing scholarly literatur
 
 Line breaks are warranted by three convergent forces:
 
-1. **Generative (propositional)** — each line carries one atomic thought-unit, one mental image
+1. **Generative (propositional)** — each line carries one ATU, one mental image
 2. **Subtractive (syntactic)** — Greek syntax constrains where breaks may legally fall
 3. **Diagnostic (single image)** — multiple distinct images on one line force a split
 
@@ -26,11 +26,11 @@ The pipeline uses **Macula Greek syntax trees** (Clear Bible, CC-BY-4.0) for cla
 
 ## Structural English Gloss
 
-A toggleable English layer provides a structural gloss aligned by construction to the Greek sense-lines. This is not a published translation — each English line was written to track its corresponding Greek colon, making the compositional structure visible without requiring Greek fluency.
+A toggleable English layer provides a structural gloss aligned by construction to the Greek ATUs. This is not a published translation — each English line was written to track its corresponding Greek colon, making the compositional structure visible without requiring Greek fluency.
 
 ## Features
 
-- Dark-theme web reader with sense-line display
+- Dark-theme web reader with ATU-formatted display
 - Structural English gloss (toggle between Greek / English / Both)
 - Diacritic-free Greek search with lemma expansion
 - Boolean search operators (AND, OR, NOT, NEAR, `"phrases"`)

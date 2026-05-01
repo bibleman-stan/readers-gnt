@@ -2,13 +2,13 @@
 
 ## What This Is
 
-A colometric reading edition of the Greek New Testament. The SBLGNT text is reformatted into **sense-lines (cola)** — each line is an atomic thought-unit reflecting Greek grammatical structure, designed for oral delivery and comprehension.
+A colometric reading edition of the Greek New Testament. The SBLGNT text is reformatted into **atomic thought units (ATUs)** — cola where each line carries one ATU reflecting Greek grammatical structure, designed for oral delivery and comprehension.
 
 The website is served from GitHub Pages. No custom domain yet — currently at `bibleman-stan.github.io/readers-gnt/`. Domain registration is through Cloudflare (same account as bomreader.com). Domain candidates under consideration: `gntreader.com`, `gnt-reader.com`.
 
 ## Origin (2026-04-09)
 
-Stan identified a gap in the scholarly landscape: while colometric *analysis* of the GNT exists, no one has produced a complete, publicly accessible *reading edition* formatted into sense-lines. The project was conceived, researched, prototyped, scaffolded, and built to a working v1 state in a single session.
+Stan identified a gap in the scholarly landscape: while colometric *analysis* of the GNT exists, no one has produced a complete, publicly accessible *reading edition* formatted into ATUs. The project was conceived, researched, prototyped, scaffolded, and built to a working v1 state in a single session.
 
 ## The Scholarly Landscape
 
@@ -24,14 +24,14 @@ Stan identified a gap in the scholarly landscape: while colometric *analysis* of
 
 5. **OpenGNT (github.com/eliranwong/OpenGNT)** — Open-source Greek text tagged with Levinsohn discourse features, clause divisions marked with `°`. A dataset, not a reading app. Could be a useful data source.
 
-6. **Ancient manuscript practice** — Codex Bezae and Codex Claromontanus were written in sense-lines (colometric layout). The idea of formatting the GNT this way has ancient precedent.
+6. **Ancient manuscript practice** — Codex Bezae and Codex Claromontanus were written in ATUs (colometric layout). The idea of formatting the GNT this way has ancient precedent.
 
 ### What exists (reader's editions, not colometric):
 
 - **Bibliotheca** — Strips chapters/verses for aesthetic book feel, keeps conventional paragraph breaks.
 - **ESV Reader's Bible** — Similar approach, slightly more structured.
 - **NIV *Books of the Bible*** — Uses line breaks to indicate "breaks in thought flow," closest in spirit but based on English translation, not Greek grammar.
-- **Logos community** — A 2013 feature request for sense-line breaks for oral reading. Still not implemented 13 years later.
+- **Logos community** — A 2013 feature request for ATU breaks for oral reading. Still not implemented 13 years later.
 
 ### The gap this project fills:
 
@@ -41,18 +41,18 @@ Stan identified a gap in the scholarly landscape: while colometric *analysis* of
 
 Colometric formatting reveals compositional structure that standard prose formatting obscures:
 
-1. **Revealing authorial intent** — When you break Mark's parables into parallel cola, you see that Mark constructed carefully patterned oral compositions, not rambling narratives. The sense-lines make the composer visible behind the text.
+1. **Revealing authorial intent** — When you break Mark's parables into parallel cola, you see that Mark constructed carefully patterned oral compositions, not rambling narratives. The ATUs make the composer visible behind the text.
 
 2. **Revealing structure/consistency** — Once the text is in cola, you can count patterns: How does Mark's parable speech differ structurally from his narrative? The colometry becomes quantifiable data.
 
 At a high level, consistent colometric formatting across the entire GNT enables several categories of inquiry:
 
-- **Structural revelation** — compositional structures (tricolon, chiasm, parallel cola) become physically visible in the line layout without interpretive overlay. Structures hiding in prose formatting are exposed by the sense-lines.
+- **Structural revelation** — compositional structures (tricolon, chiasm, parallel cola) become physically visible in the line layout without interpretive overlay. Structures hiding in prose formatting are exposed by the ATU breaks.
 - **Exegetical architecture** — authors' rhetorical strategies (Paul's argumentation structure, Mark's oral patterning, Luke's periodic restructuring) are laid bare in the colon structure. The line breaks show where an author shifts from assertion to evidence, from narrative to speech, from parallel to climactic.
 - **Synoptic analysis** — when the same material appears in different Gospels, the colometric structure reveals how redactors transformed the compositional units. Mark's short paratactic cola vs. Luke's longer periodic reworking of the same content is measurable at the thought-unit level, not just the word level.
 - **Quantitative stylometry** — colon-length distributions, break-point classifications, and rhetorical pattern frequencies become author-discriminating data points. This operates at the oral-compositional level rather than the vocabulary level where traditional stylometry works.
 - **Discourse structure / pericope boundaries** — colometric shifts (short→long cola, paratactic→periodic) signal genre transitions within a text; may challenge traditional lectionary/pericope divisions
-- **Translation methodology** — colometric edition maps original thought architecture for translators; reveals how many sense-lines in modern translations correspond to the author's actual cola
+- **Translation methodology** — colometric edition maps original thought architecture for translators; reveals how many ATUs in modern translations correspond to the author's actual cola
 - **Oral performance reconstruction** — line length alternation is a performance score: short lines = emphasis/pause, long lines = momentum. Complete colometric data enables performance dynamics mapping across entire books.
 - **Intertextuality / quotation detection** — when OT is quoted in NT, does the quotation maintain its original colometric structure or get restructured? The structural contrast or assimilation is visible.
 - **Pedagogy** — Greek students get text formatted for comprehension (one thought per line) rather than for verse-lookup
@@ -63,7 +63,7 @@ Additional research directions tracked privately.
 
 ## Computational Opportunity Space: The Pre-Parsed Analytical Substrate
 
-The colometric edition creates something that has not previously existed for the Greek New Testament: a **pre-parsed analytical substrate** — every verse broken into syntactically-motivated sense-lines using consistent, documented criteria. This transforms problems that were previously trapped in close-reading methodology into computationally tractable tasks.
+The colometric edition creates something that has not previously existed for the Greek New Testament: a **pre-parsed analytical substrate** — every verse broken into syntactically-motivated ATUs using consistent, documented criteria. This transforms problems that were previously trapped in close-reading methodology into computationally tractable tasks.
 
 ### The Core Insight
 
@@ -71,9 +71,9 @@ In a standard paragraph-formatted GNT, any analytical task requires simultaneous
 
 ### Pauline Studies: Ellipsis, Anacoluthon, and Structural Compression
 
-Paul's letters are the richest test case. His frequent use of ellipsis (gapping) — where a verb or predicate is syntactically required but omitted because it is recoverable from context — becomes detectable when the text is in sense-lines. A line that lacks a verbal element in a context where one is required is a candidate for ellipsis. The question reduces to: "is this line syntactically complete?"
+Paul's letters are the richest test case. His frequent use of ellipsis (gapping) — where a verb or predicate is syntactically required but omitted because it is recoverable from context — becomes detectable when the text is broken into ATUs. A line that lacks a verbal element in a context where one is required is a candidate for ellipsis. The question reduces to: "is this line syntactically complete?"
 
-Example: Galatians 2:7 — the καθώς clause presupposes the entire verbal idea (πεπίστευμαι τὸ εὐαγγέλιον) from the previous line. In sense-line format, the gapped line is immediately visible as incomplete; in paragraph format, it's buried in a subordinate clause.
+Example: Galatians 2:7 — the καθώς clause presupposes the entire verbal idea (πεπίστευμαι τὸ εὐαγγέλιον) from the previous line. In ATU format, the gapped line is immediately visible as incomplete; in paragraph format, it's buried in a subordinate clause.
 
 Beyond ellipsis, the same substrate enables systematic detection of:
 - **Anacoluthon** — lines where Paul starts a construction and never finishes it (the colon just stops, and the next one picks up differently)
@@ -83,7 +83,7 @@ Beyond ellipsis, the same substrate enables systematic detection of:
 
 ### Structural Glosses as a Force Multiplier
 
-The structural English glosses (aligned by construction to Greek sense-lines) double the analytical surface. An agent can reason about both the Greek syntax and the English rendering simultaneously. For ellipsis detection specifically: a Greek line missing a verb paired with an English line that also lacks a verb is a high-confidence ellipsis candidate. A Greek line missing a verb but whose English line contains one reveals where the translator silently supplied the gapped element.
+The structural English glosses (aligned by construction to Greek ATUs) double the analytical surface. An agent can reason about both the Greek syntax and the English rendering simultaneously. For ellipsis detection specifically: a Greek line missing a verb paired with an English line that also lacks a verb is a high-confidence ellipsis candidate. A Greek line missing a verb but whose English line contains one reveals where the translator silently supplied the gapped element.
 
 ### Reframing Pauline Difficulty: Compression as Lucidity
 
@@ -91,7 +91,7 @@ The entire scholarly tradition has a bias toward "Paul-as-difficult." But ellips
 
 When the gapped elements are systematically reconstructed and found to be always recoverable from the immediate context — when Paul never actually leaves his audience without the information they need — then the "difficult Paul" reputation starts looking like a problem of prose formatting rather than a problem of Pauline thought. The colometric edition may show that Paul is one of the most disciplined composers in the NT — that his density is architectural precision, not muddled thinking.
 
-The practical implication: systematically distinguishing genuinely difficult passages (where the syntax is truly broken or ambiguous) from merely compressed passages (where the structure is tight enough to support ellipsis) would produce a much smaller, more precisely defined set of Pauline cruces than the tradition currently recognizes. That distinction has never been drawn systematically because the prerequisite work — consistent sense-line formatting across the entire corpus — didn't exist until now.
+The practical implication: systematically distinguishing genuinely difficult passages (where the syntax is truly broken or ambiguous) from merely compressed passages (where the structure is tight enough to support ellipsis) would produce a much smaller, more precisely defined set of Pauline cruces than the tradition currently recognizes. That distinction has never been drawn systematically because the prerequisite work — consistent ATU formatting across the entire corpus — didn't exist until now.
 
 ### Beyond Paul
 
@@ -153,7 +153,7 @@ This decision transforms the project from a Greek specialist tool into a platfor
 - **Pastors** without active Greek who want to see the text's compositional architecture
 - **Digital humanities researchers** analyzing oral performance, rhetorical structure, or translation methodology without requiring Greek fluency
 - **Literary scholars** interested in ancient compositional technique
-- **Translation theorists** evaluating how sense-line structure maps across languages
+- **Translation theorists** evaluating how ATU structure maps across languages
 
 The scholarly argument becomes **self-demonstrating**: a reader can toggle to English and immediately see that each line IS one thought. Instead of writing a paper that describes colometric principles, the site shows them.
 

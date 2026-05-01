@@ -1,6 +1,6 @@
 # Greek Break Legality — Layer 1
 
-**Layer 1** documents syntactic constraints on line breaks that hold for any Koine Greek edition, independent of editorial sense-line choices. A validator matches each row against parsed token data; a verdict of `REQUIRED-MERGE` or `REQUIRED-BREAK` flags a hard syntactic violation. `PERMITTED-EITHER` rows pass to Layer 3 editorial rules in `private/01-method/colometry-canon.md`.
+**Layer 1** documents syntactic constraints on line breaks that hold for any Koine Greek edition, independent of editorial atomic thought unit (ATU) choices. A validator matches each row against parsed token data; a verdict of `REQUIRED-MERGE` or `REQUIRED-BREAK` flags a hard syntactic violation. `PERMITTED-EITHER` rows pass to Layer 3 editorial rules in `private/01-method/colometry-canon.md`.
 
 Parse data sources: Macula-Greek (`github.com/Clear-Bible/macula-greek`, CC-BY 4.0) and MorphGNT (`github.com/morphgnt/sblgnt`, CC-BY-SA). Use dependency and POS fields; token position within line is the check surface.
 

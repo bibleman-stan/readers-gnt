@@ -6,9 +6,9 @@ Read this file completely before doing anything in this repo. It is your orienta
 
 ## What This Project Is
 
-A colometric reading edition of the Greek New Testament. The text is reformatted from standard prose paragraphs into **sense-lines (cola)** — each line is an atomic thought-unit reflecting Greek grammatical structure, designed for oral delivery and comprehension.
+A colometric reading edition of the Greek New Testament. The text is reformatted from standard prose paragraphs into **atomic thought units (ATUs)** (cola) — each line is one ATU reflecting Greek grammatical structure, designed for oral delivery and comprehension.
 
-The colometric methodology draws on ancient manuscript precedent (Codex Bezae, Claromontanus, Jerome's Vulgate *per cola et commata*) and the modern precedent of Skousen's sense-line analysis of the Book of Mormon, empirically extended by Stan to the GNT. Foundational premise: humans think, compose, and read in sense-lines. Full canon: `private/01-method/colometry-canon.md`.
+The colometric methodology draws on ancient manuscript precedent (Codex Bezae, Claromontanus, Jerome's Vulgate *per cola et commata*) and the modern precedent of Skousen's "sense-line" analysis of the Book of Mormon, empirically extended by Stan to the GNT. Foundational premise: humans think, compose, and read in ATUs. Full canon: `private/01-method/colometry-canon.md`.
 
 - **Repo:** github.com/bibleman-stan/readers-gnt (public)
 - **Live site:** gnt-reader.com (GitHub Pages, custom domain, HTTPS enforced)
@@ -54,7 +54,7 @@ The folder is the persistent write surface for the session. Session memory evapo
 
 **CONSULT-ON-TRIGGER (evaluate the trigger; do NOT silently skip):**
 - `private/01-method/colometry-canon.md` — **trigger:** ANY editorial, rule-interpretation, or methodology-touching work. **Skip when:** pure infrastructure / code / UX / deployment work with no canon touching.
-- `data/syntax-reference/greek-break-legality.md` — **trigger:** applying or authoring a rule that touches generic Koine break-legality (R2-R7 Layer 1). **Skip when:** purely editorial sense-line decisions within permitted syntax.
+- `data/syntax-reference/greek-break-legality.md` — **trigger:** applying or authoring a rule that touches generic Koine break-legality (R2-R7 Layer 1). **Skip when:** purely editorial ATU decisions within permitted syntax.
 - `private/README.md` — **trigger:** writing a new file under `private/` and don't already know the subdirectory layout. **Skip when:** only reading existing files or writing in standard locations.
 
 **Self-report before first substantive response**: one line per mandatory file (e.g., `- CLAUDE.md: read`). A silent skip is a check-in failure.

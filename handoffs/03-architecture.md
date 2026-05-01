@@ -26,7 +26,7 @@ readers-gnt/
   books/                                 # 27 generated HTML fragment files (dual-text)
     matt.html, mark.html, ... rev.html
   scripts/
-    auto_colometry.py                    # Tier 1: rule-based sense-line formatter
+    auto_colometry.py                    # Tier 1: rule-based ATU formatter
     v2_colometry.py                      # Tier 2: Macula syntax-tree-driven formatter
     macula_clauses.py                    # Clause boundary extractor from Macula XML
     v3_colometry.py                      # Tier 3: rhetorical patterns + merge rules
@@ -101,7 +101,7 @@ First line of each file is the Greek book title (e.g., `ΚΑΤΑ ΜΑΡΚΟΝ`).
 
 ### auto_colometry.py
 
-Rule-based sense-line formatter. Takes raw SBLGNT source and applies colometric line-breaking.
+Rule-based atomic thought unit (ATU) formatter. Takes raw SBLGNT source and applies colometric line-breaking.
 
 **Usage:**
 ```bash
@@ -215,7 +215,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark    # one book
 
 The colometric text files are the canonical substrate. Their format is minimal and fixed:
 - Verse numbers on their own lines (`9:1`, `9:2`, etc.)
-- One sense-line per intended colometric break
+- One ATU per intended colometric break
 - UTF-8 with polytonic Greek accents
 - Blank lines between verses
 
@@ -265,7 +265,7 @@ This is not optional. Skipping any step means the site serves stale or misaligne
 
 **When dispatching agents to edit Greek:** ALWAYS simultaneously dispatch agents to regenerate the corresponding English. When BOTH complete, rebuild ALL HTML, commit, and push. Never commit Greek changes without syncing English. Never push without rebuilding HTML.
 
-**English structural glosses are NOT an alignment algorithm.** They are purpose-built translations written to match Greek clause order by construction. When Greek lines change, English lines must be REWRITTEN (not redistributed, not script-processed). Each English line is a fresh translation of its corresponding Greek sense-line.
+**English structural glosses are NOT an alignment algorithm.** They are purpose-built translations written to match Greek clause order by construction. When Greek lines change, English lines must be REWRITTEN (not redistributed, not script-processed). Each English line is a fresh translation of its corresponding Greek ATU.
 
 **Verification after every cascade:** Run the line-count checker across all 260 files. Any mismatch means the cascade is incomplete.
 
@@ -739,7 +739,7 @@ data/text-files/
 
 **Transparency and reproducibility.** The previous structure buried v1/v2/v3 as flat directories while v4 was book-subfoldered, making cross-tier navigation awkward. The restructured layout lets anyone open the same chapter at all five stages of the pipeline by walking the same path in each tier, and the top-level `data/text-files/README.md` documents how to reproduce every mechanical tier (v0-v3) from source.
 
-**Honest framing of the project's starting point.** Unlike the Book of Mormon Reader (a sibling project that uses Royal Skousen's published sense-lines as its v1 tier), GNT Reader had no pre-existing scholar-annotated colometric edition to lean on. The three mechanical tiers (v1 pattern-matched, v2 Macula-tree-driven, v3 rhetorical-refined) are the record of how we bootstrapped our own starting point from raw SBLGNT prose plus external syntax-tree data. Preserving them in navigable form shows the mechanical baseline we built before any editorial decisions entered.
+**Honest framing of the project's starting point.** Unlike the Book of Mormon Reader (a sibling project that uses Royal Skousen's published "sense-lines" as its v1 tier), GNT Reader had no pre-existing scholar-annotated colometric edition to lean on. The three mechanical tiers (v1 pattern-matched, v2 Macula-tree-driven, v3 rhetorical-refined) are the record of how we bootstrapped our own starting point from raw SBLGNT prose plus external syntax-tree data. Preserving them in navigable form shows the mechanical baseline we built before any editorial decisions entered.
 
 **Reproducibility for external validation.** Every mechanical tier (v0, v1, v2, v3) is deterministic: given the same inputs (`sblgnt-source/` for v0/v1; `sblgnt-source/` + Macula Greek trees for v2; v2 output for v3), running the corresponding script produces a bit-exact copy of that tier. This is the "different persons analysing the same text" reproducibility standard that the broader scholarly colometric literature aspires to but rarely delivers. A skeptical scholar checking our work can literally re-run `auto_colometry.py`, `v2_colometry.py`, `v3_colometry.py` and confirm our mechanical output. The v3 → v4 transition is explicitly NOT deterministic — it is editorial hand work governed by the colometric methodology documented in the handoffs.
 
