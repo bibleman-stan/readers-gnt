@@ -199,6 +199,8 @@ _PUNCT_RE = re.compile(
     r"\u02BC"   # modifier letter apostrophe
     r"'`\(\)\[\]\{\}⟦⟧—–"
     r"⸀⸁⸂⸃⸄⸅"   # critical apparatus sigla
+    r"¹²³"          # ¹²³ (cross-verse markers; canon §10 2026-04-12)
+    r"⁰⁴-⁹"          # ⁰⁴⁵⁶⁷⁸⁹ (cross-verse markers)
     r"]",
     re.UNICODE,
 )

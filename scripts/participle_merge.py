@@ -22,6 +22,7 @@ import argparse
 import os
 import re
 import sys
+import unicodedata
 from collections import defaultdict
 
 # ---------- paths ----------
@@ -91,10 +92,93 @@ def _load_morphgnt(book_slug):
     return dict(verses)
 
 
+# ---------- inline cross-verse marker handling ----------
+
+# Superscript digits used as inline verse markers.
+# U+00B9 (¹), U+00B2 (²), U+00B3 (³), U+2074-U+2079 (⁴–⁹).
+# All nine are needed: e.g. ¹⁵ = verse 15, ³¹ = verse 31.
+_SUPERSCRIPT_DIGITS = {
+    '¹': '1',  # U+00B9
+    '²': '2',  # U+00B2
+    '³': '3',  # U+00B3
+    '⁴': '4',  # U+2074
+    '⁵': '5',  # U+2075
+    '⁶': '6',  # U+2076
+    '⁷': '7',  # U+2077
+    '⁸': '8',  # U+2078
+    '⁹': '9',  # U+2079
+}
+
+# Matches one or more consecutive superscript digits (e.g. ²⁴ → verse 24, ³¹ → verse 31)
+_INLINE_MARKER_RE = re.compile(
+    r'([¹²³⁴⁵⁶⁷⁸⁹]+)'
+)
+
+
+def _decode_superscript(s):
+    """Convert a superscript-digit string (e.g. '²⁴') to an int verse number."""
+    return int(''.join(_SUPERSCRIPT_DIGITS[ch] for ch in s))
+
+
+def _parse_line_with_verse_markers(line_text, primary_verse):
+    """Parse a v4-editorial line that may contain inline cross-verse markers.
+
+    Returns a list of (word, verse_num) pairs in line order, with all inline
+    markers stripped from the token stream.
+
+    Example:
+        line  = "κηρύσσων ἐν τῇ ἐρήμῳ τῆς Ἰουδαίας ²καὶ λέγων·"
+        result = [("κηρύσσων",1),("ἐν",1),("τῇ",1),("ἐρήμῳ",1),
+                  ("τῆς",1),("Ἰουδαίας",1),("καὶ",2),("λέγων·",2)]
+
+    Multiple consecutive markers are supported (e.g. ³⁶ → verse 36).
+    """
+    current_verse = primary_verse
+    result = []
+
+    for token in line_text.strip().split():
+        # A token may START with one or more superscript-digit groups that act
+        # as verse-transition markers, e.g. "²καὶ" or "³⁶ἔλαβεν".
+        # We peel them off the front before treating the rest as the word.
+        remainder = token
+        while remainder:
+            m = _INLINE_MARKER_RE.match(remainder)
+            if m:
+                current_verse = _decode_superscript(m.group(1))
+                remainder = remainder[m.end():]
+            else:
+                break
+        if remainder:
+            result.append((remainder, current_verse))
+
+    return result
+
+
+def _build_multi_verse_lookup(book_slug, chapter, verse_nums):
+    """Return a combined word-lookup covering all requested verse numbers.
+
+    verse_nums: iterable of integer verse numbers (primary + any cross-verse refs).
+    Returns: dict {cleaned_word: [(pos, parsing, lemma), ...]} pooled across all verses.
+
+    When the same cleaned form appears in multiple verses, entries are concatenated
+    so that both occurrences are visible to the classifier.
+    """
+    morph_data = _load_morphgnt(book_slug)
+    combined = defaultdict(list)
+    for vs in verse_nums:
+        for cw, pos, parsing, lemma in morph_data.get((chapter, vs), []):
+            combined[cw].append((pos, parsing, lemma))
+    return combined
+
+
 # ---------- line analysis ----------
 
 def _classify_words_on_line(line_text, book_slug, chapter, verse):
     """Classify each word on a line using MorphGNT data for this specific verse.
+
+    Handles inline cross-verse markers (²/³/⁴…) so that words belonging to a
+    neighbouring verse are looked up in that verse's MorphGNT data rather than
+    the primary verse's data.
 
     Returns dict with keys:
         has_finite_verb: bool
@@ -105,17 +189,15 @@ def _classify_words_on_line(line_text, book_slug, chapter, verse):
         finite_verb_count: int
         participle_count: int
     """
-    morph_data = _load_morphgnt(book_slug)
-    verse_words = morph_data.get((chapter, verse), [])
+    # Parse the line into (word, verse_num) pairs, stripping inline markers.
+    word_verse_pairs = _parse_line_with_verse_markers(line_text, verse)
 
-    # Build a lookup: cleaned_word -> list of (pos, parsing, lemma)
-    # We need to handle duplicate words in the verse carefully.
-    # Strategy: for each word on the line, find matching MorphGNT entries.
-    verse_lookup = defaultdict(list)
-    for cw, pos, parsing, lemma in verse_words:
-        verse_lookup[cw].append((pos, parsing, lemma))
+    # Collect all verse numbers referenced on this line.
+    all_verses = set(vs for _, vs in word_verse_pairs)
 
-    line_words = line_text.strip().split()
+    # Build a combined lookup across all referenced verses.
+    verse_lookup = _build_multi_verse_lookup(book_slug, chapter, all_verses)
+
     has_finite = False
     has_participle = False
     has_infinitive = False
@@ -123,7 +205,7 @@ def _classify_words_on_line(line_text, book_slug, chapter, verse):
     participle_count = 0
     total_words = 0
 
-    for w in line_words:
+    for w, _vs in word_verse_pairs:
         cleaned = _clean(w)
         if not cleaned:
             continue
@@ -242,16 +324,17 @@ FRAME_PARTICIPLE_LEMMAS = {
 
 
 def _get_participle_lemmas_on_line(line_text, book_slug, chapter, verse):
-    """Return set of lemmas for participles found on this line."""
-    morph_data = _load_morphgnt(book_slug)
-    verse_words = morph_data.get((chapter, verse), [])
+    """Return set of lemmas for participles found on this line.
 
-    verse_lookup = defaultdict(list)
-    for cw, pos, parsing, lemma in verse_words:
-        verse_lookup[cw].append((pos, parsing, lemma))
+    Handles inline cross-verse markers so words from neighbouring verses are
+    looked up in the correct MorphGNT verse bucket.
+    """
+    word_verse_pairs = _parse_line_with_verse_markers(line_text, verse)
+    all_verses = set(vs for _, vs in word_verse_pairs)
+    verse_lookup = _build_multi_verse_lookup(book_slug, chapter, all_verses)
 
     lemmas = set()
-    for w in line_text.strip().split():
+    for w, _vs in word_verse_pairs:
         cleaned = _clean(w)
         if not cleaned:
             continue
@@ -307,16 +390,16 @@ def _has_substantival_participle(line_text, book_slug, chapter, verse):
     Pattern: ὁ [δέ] + participle = "the one who does X" — functions as a noun
     phrase, not a circumstantial frame. Allows intervening postpositive
     particles (δέ, μέν, γάρ). Uses MorphGNT POS 'RA' for article detection.
+
+    Handles inline cross-verse markers via _build_multi_verse_lookup.
     """
-    words = line_text.strip().split()
+    word_verse_pairs = _parse_line_with_verse_markers(line_text, verse)
+    words = [w for w, _ in word_verse_pairs]
     if len(words) < 2:
         return False
 
-    morph_data = _load_morphgnt(book_slug)
-    verse_words = morph_data.get((chapter, verse), [])
-    verse_lookup = defaultdict(list)
-    for cw, pos, parsing, lemma in verse_words:
-        verse_lookup[cw].append((pos, parsing, lemma))
+    all_verses = set(vs for _, vs in word_verse_pairs)
+    verse_lookup = _build_multi_verse_lookup(book_slug, chapter, all_verses)
 
     def _is_article(clean_word):
         for pos, parsing, lemma in verse_lookup.get(clean_word, []):
@@ -358,6 +441,138 @@ def _has_substantival_participle(line_text, book_slug, chapter, verse):
     return False
 
 
+# ---------- canonized exception filters ----------
+
+# Gen-abs detection (R19: gen abs ALWAYS gets its own line)
+_NOMINAL_POS = {'N-', 'RP', 'RD', 'RI', 'RR', 'RS'}  # 'RA' (article) excluded — articles mark attributive phrases, not gen-abs subjects
+
+
+def _is_genitive_participle(pos, parsing):
+    return (
+        pos.startswith('V')
+        and len(parsing) >= 5
+        and parsing[3] == 'P'
+        and parsing[4] == 'G'
+    )
+
+
+def _is_genitive_nominal(pos, parsing):
+    return (
+        pos.strip() in _NOMINAL_POS
+        and len(parsing) >= 5
+        and parsing[4] == 'G'
+    )
+
+
+def is_genitive_absolute(line_text, book_slug, chapter, verse):
+    """True if the line is a genitive absolute (gen ptc + gen subject).
+
+    Per canon R19, gen abs ALWAYS get their own line. Cross-verse-aware
+    via _parse_line_with_verse_markers + _build_multi_verse_lookup.
+    """
+    word_verse_pairs = _parse_line_with_verse_markers(line_text, verse)
+    if not word_verse_pairs:
+        return False
+    all_verses = set(vs for _, vs in word_verse_pairs)
+    verse_lookup = _build_multi_verse_lookup(book_slug, chapter, all_verses)
+
+    has_gen_ptc = False
+    has_gen_nominal = False
+    for w, _vs in word_verse_pairs:
+        cleaned = _clean(w)
+        if not cleaned:
+            continue
+        for pos, parsing, lemma in verse_lookup.get(cleaned, []):
+            if _is_genitive_participle(pos, parsing):
+                has_gen_ptc = True
+            if _is_genitive_nominal(pos, parsing):
+                has_gen_nominal = True
+
+    return has_gen_ptc and has_gen_nominal
+
+
+# ὅτι-lead detection (canonized 2026-04-18, commit 2e3cf85: ὅτι LEADS its
+# complement clause; merging a participial frame INTO an ὅτι-lead line
+# would un-do the canonical placement)
+
+
+def _normalize_for_hoti(word):
+    """Lowercase + strip diacritics (NFKD decomposition) for accent-agnostic compare."""
+    nfkd = unicodedata.normalize('NFKD', word.lower())
+    return ''.join(c for c in nfkd if not unicodedata.combining(c))
+
+
+_HOTI_NORMALIZED = _normalize_for_hoti('ὅτι')
+
+
+def is_hoti_lead_target(next_line_words):
+    """True if the merge-target line starts with ὅτι (any accent/case form)."""
+    if not next_line_words:
+        return False
+    return _normalize_for_hoti(next_line_words[0]) == _HOTI_NORMALIZED
+
+
+# Parallel-list / formally-marked parallel-series detection (canon §2.1)
+
+_BEATITUDE_STEMS = {'μακάριοι', 'μακάριος', 'μακαρία', 'μακάριαι', 'μακάριόν', 'μακάριοί'}
+_KAI_FORMS = {'καί', 'καὶ', 'Καί', 'Καὶ'}
+
+
+def _first_word_clean(line_text):
+    words = line_text.strip().split()
+    return _clean(words[0]) if words else ''
+
+
+def _second_word_clean(line_text):
+    words = line_text.strip().split()
+    return _clean(words[1]) if len(words) >= 2 else ''
+
+
+def is_parallel_series_member(line_index, all_chapter_lines):
+    """True if the line at line_index is part of a formally-marked parallel
+    series (canon §2.1) — beatitudes, anaphoric stem repetition (3+ run),
+    or καί-led 3+ run with matching second word.
+    """
+    if line_index < 0 or line_index >= len(all_chapter_lines):
+        return False
+    line_text = all_chapter_lines[line_index]
+    first = _first_word_clean(line_text)
+    if not first:
+        return False
+
+    # Beatitude marker
+    if first in _BEATITUDE_STEMS:
+        return True
+
+    # Anaphoric stem run (≥3 consecutive lines sharing first word)
+    run_start = line_index
+    while run_start > 0 and _first_word_clean(all_chapter_lines[run_start - 1]) == first:
+        run_start -= 1
+    run_end = line_index
+    while run_end < len(all_chapter_lines) - 1 and _first_word_clean(all_chapter_lines[run_end + 1]) == first:
+        run_end += 1
+    if run_end - run_start + 1 >= 3:
+        return True
+
+    # καί-led 3+ run with matching second word
+    if first in _KAI_FORMS:
+        second = _second_word_clean(line_text)
+        run_start = line_index
+        while (run_start > 0
+               and _first_word_clean(all_chapter_lines[run_start - 1]) in _KAI_FORMS
+               and _second_word_clean(all_chapter_lines[run_start - 1]) == second):
+            run_start -= 1
+        run_end = line_index
+        while (run_end < len(all_chapter_lines) - 1
+               and _first_word_clean(all_chapter_lines[run_end + 1]) in _KAI_FORMS
+               and _second_word_clean(all_chapter_lines[run_end + 1]) == second):
+            run_end += 1
+        if run_end - run_start + 1 >= 3:
+            return True
+
+    return False
+
+
 # ---------- merge logic ----------
 
 def find_merge_candidates(filepath, book_slug):
@@ -376,6 +591,12 @@ def find_merge_candidates(filepath, book_slug):
     """
     verses = parse_chapter_file(filepath)
     candidates = []
+
+    # Precompute the chapter-wide flat content list (for parallel-series
+    # detection, which needs to see runs of lines across verse boundaries).
+    chapter_content_lines = []
+    for v in verses:
+        chapter_content_lines.extend([l for l in v['lines'] if l.strip()])
 
     for v in verses:
         ch = v['chapter']
@@ -417,9 +638,25 @@ def find_merge_candidates(filepath, book_slug):
             if _has_substantival_participle(line_cur, book_slug, ch, vs):
                 continue
 
+            # Genitive absolute (R19): gen ptc + gen subject = grammatically
+            # independent, ALWAYS its own line. Skip silently (canon-mandated
+            # exception, not a candidate for merge or flag).
+            if is_genitive_absolute(line_cur, book_slug, ch, vs):
+                continue
+
+            # Formally-marked parallel series (canon §2.1): each member is
+            # its own atomic thought-unit. Skip silently.
+            try:
+                ch_idx = chapter_content_lines.index(line_cur)
+            except ValueError:
+                ch_idx = -1
+            if ch_idx >= 0 and is_parallel_series_member(ch_idx, chapter_content_lines):
+                continue
+
             # If next line starts with a relative pronoun (ὃς, ἥ, ὅ, etc.),
             # it's a relative clause, not a resolution of the participle — flag
-            next_first_word = _clean(line_next.strip().split()[0]) if line_next.strip() else ''
+            next_line_tokens = line_next.strip().split()
+            next_first_word = _clean(next_line_tokens[0]) if next_line_tokens else ''
             if next_first_word in _RELATIVE_PRONOUNS:
                 candidates.append({
                     'file': filepath,
@@ -429,6 +666,21 @@ def find_merge_candidates(filepath, book_slug):
                     'resolution_line': line_next.strip(),
                     'action': 'flag',
                     'reason': f'Next line starts with relative pronoun ({next_first_word}) — not a direct resolution',
+                })
+                continue
+
+            # ὅτι-lead canon (2026-04-18, commit 2e3cf85): a line beginning
+            # with ὅτι is the ὅτι-clause in canonical lead position. Merging
+            # the participial frame INTO it would collapse the lead-placement.
+            if is_hoti_lead_target(next_line_tokens):
+                candidates.append({
+                    'file': filepath,
+                    'verse_ref': v['ref'],
+                    'line_idx': i,
+                    'participle_line': line_cur.strip(),
+                    'resolution_line': line_next.strip(),
+                    'action': 'flag',
+                    'reason': 'Resolution line starts with ὅτι (canonical lead position §3.5) — do not merge',
                 })
                 continue
 
