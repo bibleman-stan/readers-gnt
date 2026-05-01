@@ -1,16 +1,18 @@
 # Colometry Methodology Canon — Reader's GNT
 
-This document is the authoritative reference for the editorial methodology behind sense-line (colometric) formatting in the Reader's Greek New Testament at gnt-reader.com. It is the intellectual heart of the project: line-breaking decisions determine how the text reads, breathes, and communicates.
+This document is the authoritative reference for the editorial methodology behind the colometric reading edition of the Reader's Greek New Testament at gnt-reader.com. It is the intellectual heart of the project: line-breaking decisions determine how the text reads, breathes, and communicates.
 
 ## Foundational premise
 
-The project's working hypothesis is that humans think, compose, and deconstruct (read and hear) in "sense-lines" — a term Skousen used for the Book of Mormon. We use it here in an expanded sense: atomic thought-units that correspond to how ideas are generated, encoded, and recovered. This hypothesis was reached intuitively and analogically, triggered by Royal Skousen's demonstration that the Book of Mormon could be rendered in sense-lines (*The Earliest Text*, 2009/2022). Skousen's stated rationale was specific to the Book of Mormon: his sense-lines aim to convey "a dictated rather than a written text," approximating how the original translation might have sounded during Joseph Smith's dictation. Stan took Skousen's term as a starting point and expanded the concept to the definition above. He then experimented with line breaks in the English Book of Mormon text, where the expanded definition appeared to expose idea-units sometimes obscured by editorial punctuation, versification, and line-break decisions. Stan applied the same method to the GNT, reasoning by analogy that what is true for the Book of Mormon is likely true for the Greek New Testament — and perhaps *any* text.
+The project's working hypothesis is that humans think, compose, and deconstruct (read and hear) in **atomic thought units (ATUs)** — the cognitive units in which ideas are generated, encoded, and recovered. The premise was reached intuitively and analogically, triggered by Royal Skousen's demonstration that the Book of Mormon could be rendered in "sense-lines" (*The Earliest Text*, 2009/2022). Skousen's stated rationale was specific to the Book of Mormon: his sense-lines aim to convey "a dictated rather than a written text," approximating how the original translation might have sounded during Joseph Smith's dictation. Stan took Skousen's sense-line as the kernel and arrived at the present ATU model: a unit defined not by its scribal-tradition genre but by what a reader can process as a single complete thought. Retrospectively, the path passed through what is now recognizable as a "thought-line" framing — visible in the archived 2026-04-20 scholarly-framing document and in earlier session-dialogue uses of the phrase — before the criterion-based definition was articulated explicitly. "Thought-line" was never canonically named as a discrete stage at the time; it is a name applied here in retrospect to the framing that was operating before "atomic thought unit" was load-bearing. He then experimented with line breaks in the English Book of Mormon text, where the criterion-defined ATU appeared to expose idea-units sometimes obscured by editorial punctuation, versification, and line-break decisions. Stan applied the same method to the GNT, reasoning by analogy that what is true for the Book of Mormon is likely true for the Greek New Testament — and perhaps *any* text.
+
+A note on terminology: throughout this canon, **ATU** is the unit-of-cognition the method targets; **line** is the typographic display of an ATU. When prose discusses what each unit IS, "ATU" is the right word. When prose discusses how ATUs are rendered (line-wrap, line-final tokens, layout), "line" stays. The two terms have distinct jobs.
 
 The methodology itself — three forces, structural justifications, merge-overrides, rules — emerged from hands-on editorial experimentation across all 260 chapters of the GNT. It is pragmatic, not theory-derived.
 
 ## Posture
 
-The current phase is empirical: *where are the sense-lines, actually?* The method is instrumentation for answering that question. When the method produces a line that does not reveal a genuine sense-boundary, the method is wrong and gets revised. When the method produces a line that does, the method is working.
+The current phase is empirical: *where are the ATUs, actually?* The method is instrumentation for answering that question. When the method produces a line that does not reveal a genuine ATU boundary, the method is wrong and gets revised. When the method produces a line that does, the method is working.
 
 Scholarly alignment with cognitive-science, psycholinguistic, or classical-rhetorical frameworks may or may not emerge in a later consolidation phase. Any such alignment is opportunistic, not load-bearing. No framework external to the text is currently treated as the reason a rule works.
 
@@ -22,7 +24,7 @@ The colometric methodology sits on a three-layer architecture:
 
 **Layer 2 — Validators.** Mechanical checks that read Layer 1 and Layer 3 rules against Macula-Greek ([Clear-Bible/macula-greek](https://github.com/Clear-Bible/macula-greek), CC-BY 4.0) and MorphGNT ([morphgnt/sblgnt](https://github.com/morphgnt/sblgnt), CC-BY-SA) parse data. Two error classes: `MALFORMED` for Layer 1 violations (ungrammatical typography — must fix, Category A by default), `DEVIATION` for Layer 3 violations (grammatical but not our editorial convention — Category A/B/C gating per §3 Autonomy Boundary). Target directory split: `validators/syntax/` for Layer 1 checks, `validators/colometry/` for Layer 3 checks. Under active build.
 
-**Layer 3 — This canon.** Editorial sense-line methodology specific to the Reader's GNT. Where and why we diverge from or add to generic Koine syntax to reveal atomic thought. The three forces (§1), five structural justifications (§2), four merge-overrides (§2), rules (§3), operational tests (§4), register operationalization (§5), and Greek-specific application data (§8) all live here. The Subtractive force in §1 is the contract with Layer 1 — we never violate it.
+**Layer 3 — This canon.** Editorial ATU methodology specific to the Reader's GNT. Where and why we diverge from or add to generic Koine syntax to reveal atomic thought. The three forces (§1), five structural justifications (§2), four merge-overrides (§2), rules (§3), operational tests (§4), register operationalization (§5), and Greek-specific application data (§8) all live here. The Subtractive force in §1 is the contract with Layer 1 — we never violate it.
 
 The division matters because it separates *what Greek grammar requires of any editor* (Layer 1) from *what our project chooses to do editorially* (Layer 3).
 
@@ -57,7 +59,7 @@ Some sections are dual-natured by design: §1 interleaves theoretical principles
 
 *Purpose: theoretical foundation for the three-forces architecture and the imposing-vs-revealing posture. **Dual-natured by design** — operational corollaries (vocabulary watchlists, fronting paradox, Showcase Acts 1:9) are embedded throughout. Treat bolded paragraphs as load-bearing for editorial application.*
 
-Sense-line breaks are governed by **three forces** operating in concert: a **generative** force that proposes where breaks should happen, a **subtractive** force that vetoes breaks that would violate Greek syntax, and a **diagnostic** force that sharpens ambiguous cases.
+ATU breaks are governed by **three forces** operating in concert: a **generative** force that proposes where breaks should happen, a **subtractive** force that vetoes breaks that would violate Greek syntax, and a **diagnostic** force that sharpens ambiguous cases.
 
 ### Step 0 — Input Filter
 
@@ -75,7 +77,7 @@ This list is closed: each item is excluded from the evidence base by design. New
 
 ### Mission and Method — the Discipline Framing
 
-**Mission:** We are revealing sense-lines — atomic thoughts the reader can process as discrete units.
+**Mission:** We are revealing ATUs — the units the reader can process as discrete complete thoughts.
 
 **Method:** The framework below is syntax-constrained. This is **not** because syntax is primary to the mission — atomic thought is. It is because **syntactic violation is fatal while sense ambiguity is recoverable within the permitted space.** An ungrammatical line cannot be rescued by good sense. A grammatical line that isn't the ideal sense-boundary can still be read. The method therefore leads with the syntactic floor (subtractive force) so that editorial judgment (generative force) operates only within the legal-break space.
 
@@ -452,7 +454,7 @@ The framework is a default-merge with two closed lists of exceptions — five sp
 
 ### Autonomy Boundary (Read This First)
 
-When proposing sense-line changes, classify each change:
+When proposing ATU-level changes, classify each change:
 
 - **Category A — Editorial slippage:** suboptimal break, no theological or rhetorical stakes. Apply confidently.
 - **Category B — Rhetorical shape:** changing the break changes how the speaker builds an argument. Flag and ask Stan before applying.
@@ -511,7 +513,7 @@ Rules are classified as MECHANICAL (any trained editor would apply them identica
 
 ### 3.1 The No-Anchor Rule
 
-Every sense-line must carry at least one thought-marking anchor: (1) a finite verb, (2) an infinitive, (3) a participle standing as predicate, or (4) a substantive head that is the independently predicated topic of its own line.
+Every ATU must carry at least one thought-marking anchor: (1) a finite verb, (2) an infinitive, (3) a participle standing as predicate, or (4) a substantive head that is the independently predicated topic of its own line.
 
 *Serves:* the generative force (atomic thought / propositions) — this rule operationalizes the DEFAULT case of the generative force (the predication test).
 
@@ -900,7 +902,7 @@ A strong signal that coordination is at work: **aspect or tense shift across mem
 
 ### 3.17 Cross-Verse Continuity Merge
 
-**When a single atomic thought crosses a Stephanus 1551 verse boundary, the sense-line stays intact.** The verse boundary is an editorial overlay (imposed 1551 on a text that already had its own rhetorical structure); it does not constrain sense-line formation. The sense-line is formed by grammatical/rhetorical continuity, and the versification is carried along by an inline superscript marker.
+**When a single ATU crosses a Stephanus 1551 verse boundary, the line stays intact.** The verse boundary is an editorial overlay (imposed 1551 on a text that already had its own rhetorical structure); it does not constrain ATU formation. The ATU is formed by grammatical/rhetorical continuity, and the versification is carried along by an inline superscript marker.
 
 **Canonical example — Matt 3:1-2:**
 
@@ -913,16 +915,16 @@ A strong signal that coordination is at work: **aspect or tense shift across mem
 Μετανοεῖτε,
 ```
 
-The speech-intro `κηρύσσων ... καὶ λέγων·` is one atomic thought (a preaching-speech-intro bond). SBLGNT places `καὶ λέγων·` at the start of 3:2. The sense-line rule keeps `κηρύσσων ... καὶ λέγων·` as one breath unit; the `²` superscript preserves the versification reference.
+The speech-intro `κηρύσσων ... καὶ λέγων·` is one ATU (a preaching-speech-intro bond). SBLGNT places `καὶ λέγων·` at the start of 3:2. The cross-verse rule keeps `κηρύσσων ... καὶ λέγων·` as one ATU on a single line; the `²` superscript preserves the versification reference.
 
 **Procedure (per `handoffs/04-editorial-workflow.md`):**
 
 1. **Identify the boundary** — grammatical continuity indicator (participle chain, suspended main verb, subject/verb straddle, speech-intro straddle, discourse-adverb leading the next clause, etc.).
-2. **Merge in place** — the sense-line lives in the *earlier* verse's block (where its lead word sits), with the content that SBLGNT attributes to the later verse attached inline after a superscript digit (`²`/`³`/`⁴`/...) indicating where the later verse begins visually.
+2. **Merge in place** — the ATU lives in the *earlier* verse's block (where its lead word sits), with the content that SBLGNT attributes to the later verse attached inline after a superscript digit (`²`/`³`/`⁴`/...) indicating where the later verse begins visually.
 3. **Mirror in English** — the same merge, the same superscript position.
-4. **Cite using the earlier verse's reference** when referring to the merged colometric line.
+4. **Cite using the earlier verse's reference** when referring to the merged ATU.
 
-**Both directions apply.** The Matt 3:1-2 case has SBLGNT pushing a word *forward* into the next verse (`καὶ λέγων·` is SBLGNT-3:2 but sense-line-3:1). The John 4:35-36 case has the opposite: SBLGNT assigns `ἤδη` to the end of 4:35, but R8 makes `ἤδη` the lead of the clause in 4:36 (`ἤδη ὁ θερίζων μισθὸν λαμβάνει`). Same convention applies — keep the sense-line intact (in the earlier verse's block, where `ἤδη` sits), mark the versification boundary with a `³⁶` superscript before the post-boundary content:
+**Both directions apply.** The Matt 3:1-2 case has SBLGNT pushing a word *forward* into the next verse (`καὶ λέγων·` is SBLGNT-3:2 but ATU-3:1). The John 4:35-36 case has the opposite: SBLGNT assigns `ἤδη` to the end of 4:35, but R8 makes `ἤδη` the lead of the clause in 4:36 (`ἤδη ὁ θερίζων μισθὸν λαμβάνει`). Same convention applies — keep the ATU intact (in the earlier verse's block, where `ἤδη` sits), mark the versification boundary with a `³⁶` superscript before the post-boundary content:
 
 ```
 4:35
@@ -937,9 +939,9 @@ The speech-intro `κηρύσσων ... καὶ λέγων·` is one atomic thoug
 
 **Precedent:** This mirrors the Nestle-Aland typographic convention for inline verse numbering, ported down to the colometric-line level. NA28 renders `καὶ λέγων·` inline in its flowing Greek with a superscript `²` marking the verse-boundary; we follow the same surface convention and add the colometric justification.
 
-**Infrastructure:** `scripts/verify_word_order.py` recognizes these markers and splits a merged line at each superscript digit for per-verse word-order integrity comparison against SBLGNT. `scripts/build_books.py` renders superscripts as `<sup class="verse-marker">` HTML anchors so citation lookups still land at the exact inline location. A reader searching for "Matt 3:2" still finds `Μετανοεῖτε,` at the top of the 3:2 block; the superscript in 3:1's sense-line is an additional anchor for the mid-line boundary.
+**Infrastructure:** `scripts/verify_word_order.py` recognizes these markers and splits a merged line at each superscript digit for per-verse word-order integrity comparison against SBLGNT. `scripts/build_books.py` renders superscripts as `<sup class="verse-marker">` HTML anchors so citation lookups still land at the exact inline location. A reader searching for "Matt 3:2" still finds `Μετανοεῖτε,` at the top of the 3:2 block; the superscript in 3:1's line is an additional anchor for the mid-line boundary.
 
-**Why codify this in the canon?** Versification is not original. Sense-line formation is. When they collide, the rule is clear: sense-line wins, versification becomes a secondary annotation. This principle sits alongside "editorial punctuation is not original; hide in display" (see feedback_no_editorial_overlays_as_signal) and "don't let editorial overlays drive structural decisions" — the general posture of seeing past 1550s editorial conventions to the text's own structure.
+**Why codify this in the canon?** Versification is not original. ATU formation is. When they collide, the rule is clear: ATU wins, versification becomes a secondary annotation. This principle sits alongside "editorial punctuation is not original; hide in display" (see feedback_no_editorial_overlays_as_signal) and "don't let editorial overlays drive structural decisions" — the general posture of seeing past 1550s editorial conventions to the text's own structure.
 
 ---
 
@@ -970,7 +972,7 @@ Any pipeline change that breaks one of these four is suspect. If a change breaks
 
 ### The No-Anchor Test (Default Case of the Generative Force)
 
-**What it checks:** Does every sense-line carry at least one thought-marking anchor (finite verb, infinitive, predicate participle, or independently-predicated substantive head)?
+**What it checks:** Does every ATU carry at least one thought-marking anchor (finite verb, infinitive, predicate participle, or independently-predicated substantive head)?
 
 **How to run it:** For each line, look for one of the four anchor types. If none is present, the line is a candidate for merging with its neighbor — but check the two-prong exception test (Section 2) first.
 
@@ -1123,7 +1125,7 @@ We are not inventing a practice; we are recovering one with ancient and modern p
 
 ### Bezae as benchmark
 
-Codex Bezae's line breaks reflect a mixture of sense-line decisions and physical layout constraints. The column width (~25-30 characters) means many breaks are forced by writing space. Agreement metrics are meaningful but Bezae is not a colometric gold standard — it is one empirical datum.
+Codex Bezae's line breaks reflect a mixture of ATU-level decisions and physical layout constraints. The column width (~25-30 characters) means many breaks are forced by writing space. Agreement metrics are meaningful but Bezae is not a colometric gold standard — it is one empirical datum.
 
 ### Scope: what this project is NOT
 
@@ -1135,7 +1137,7 @@ Codex Bezae's line breaks reflect a mixture of sense-line decisions and physical
 
 ### Empirical standard for rule adoption
 
-A proposed rule or rule revision is adopted when it produces a more genuine sense-line in the passages it governs — not when it satisfies any theoretical framework. The test:
+A proposed rule or rule revision is adopted when it produces a more genuine ATU in the passages it governs — not when it satisfies any theoretical framework. The test:
 
 1. Does applying this rule produce a line that reveals an actual thought-boundary in the text?
 2. Is the rule mechanically applicable, or does it require judgment?
@@ -1320,7 +1322,7 @@ Each tier monotonically improves agreement. Notable: Matthew shows v1 closer to 
 
 ### Bezae Caveat
 
-Codex Bezae's line breaks reflect a mixture of sense-line decisions and physical layout constraints. The column width (~25-30 characters) means many breaks are forced by writing space. Agreement metrics are meaningful but Bezae cannot be treated as a colometric gold standard without this caveat.
+Codex Bezae's line breaks reflect a mixture of ATU-level decisions and physical layout constraints. The column width (~25-30 characters) means many breaks are forced by writing space. Agreement metrics are meaningful but Bezae cannot be treated as a colometric gold standard without this caveat.
 
 ### Standalone Verb Test
 
@@ -1347,7 +1349,7 @@ Transitive verbs and speech verbs CANNOT stand alone — they need their complem
 | Benchmark | What it tests | Limitation |
 |-----------|---------------|------------|
 | **Marschall** | Scholarly colometric analysis of Paul | Limited to 2 Cor 10-13 |
-| **Bezae** | Ancient scribal sense-line practice | Physical layout constraints |
+| **Bezae** | Ancient scribal ATU-level practice | Physical layout constraints |
 | **YLT alignment** | Whether breaks produce coherent English thoughts | YLT sometimes departs from Greek clause order |
 | **Hand-crafted tests** | Mark 4, Acts 17 gold standard | Only 2 chapters |
 
@@ -1471,6 +1473,31 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 *Purpose: **dual-natured** — chronological reasoning trail. Recent entries documenting active-rule provenance are operationally referenced (cross-project import status, audit findings, retirement dates); older entries are historical narrative. When an entry documents an active rule, it is the canonical source for that rule's WHY/HOW WE KNOW/SCOPE.*
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-05-01 — Terminology migration: "sense-line" → "atomic thought unit (ATU)"
+
+Stan greenlit a project-family-wide terminology migration after a sync with the BofM-Reader sibling project. Both terms had been treated as synonyms in canon §0, with "sense-line" as the historical-Skousen citation form and "atomic thought unit" as the internally-generated criterion-defined descriptor. Stan's reframe: the two are NOT synonymous in his model — sense-line carries Skousen's grammatical-unit framing; ATU names what the line actually IS in this method (a unit defined by what a reader can process as a single complete thought). The rename isn't a label swap; it's a claim about intellectual provenance and method distinctness.
+
+**Lineage now codified in §0 Genesis paragraph:** Skousen's "sense-line" → retrospectively-named "thought-line" framing (visible in the archived 2026-04-20 scholarly-framing document and earlier session dialogue, but never canonically named as a stage at the time) → present **atomic thought unit (ATU)** model. Skousen credit preserved with full citation; the historical kernel is acknowledged, but the unit name now matches the criterion that defines it. The "thought-line" intermediate is named in retrospect — the framing existed before the term ATU was load-bearing — not as a contemporaneously-recognized stage.
+
+**Stratification (per BofM-Reader's framing, adopted here):**
+
+- **Yes-rename territory (scholarship + method docs):** canon (this file), CLAUDE.md, handoffs/*, README.md, index.html help/landing copy, data/syntax-reference/greek-break-legality.md, research/citations/*. "Sense-line" → "atomic thought unit (ATU)" or just "ATU" after first-use definition per document.
+- **Leave-alone (internal plumbing):** CSS class names (.line, .gk, .en), data attributes, script filenames, v1/v2/v3-colometric/ directory paths, in-script comments and docstrings (unless scholarship-explanatory). These are internal-historical names; renaming them is high-cost CSS / build-pipeline / git-history churn for no reader benefit.
+- **Preserve as historical record:** §9 superseded formulations and §10 update entries dated before today retain their original "sense-line" wording. Rewriting history would falsify the chronological trail.
+
+**Term-discipline established for the new vocabulary:**
+
+- **Acronym convention:** spell out "atomic thought unit (ATU)" on first use within each document; abbreviate to "ATU" thereafter. Standard academic acronym discipline.
+- **Bare "line" preserved for typographic sense:** when prose discusses what each unit IS (the cognitive target), "ATU" is right; when prose discusses how ATUs are rendered (line-wrap, line-final tokens, layout), "line" stays. This mirrors how scholarly writing usually keeps the unit and its rendering as separate concepts.
+
+**Cross-project coordination:** This is a method-family rename across three repos (BofM-Reader, Tanakh-Reader, GNT-Reader). Each repo's canon-extension gate fires per its local §6.5 (or analogous) trigger; each canon's §10 entry should narrate the same Skousen → thought-line → ATU provenance story so future readers see one rationale, not three.
+
+**This commit's scope (GNT only):** active-prose rewrites in §§0-8. §9 and §10 historical entries preserved verbatim. Adjacent surfaces (CLAUDE.md, handoffs, README, index.html, etc.) follow in subsequent commits as the migration progresses.
+
+**Audit-status per §6.5:** Three triggers fired, not one. **Trigger #1 (new named category):** "thought-line" introduced as a named — albeit retrospectively-named — intermediate stage in the lineage taxonomy. **Trigger #2 (rule status promotion):** the criterion-defined ATU is promoted from clarifying parenthetical (in the prior §0 "We use it here in an expanded sense") to primary load-bearing term. **Trigger #11 (cross-project import):** this is a method-family rename adopted from the BofM-Reader sibling project's parallel discussion. GNT-internal precedent: the archived scholarly-framing document `private/01-method/archive/colometry-canon-scholarly-framing-2026-04-20.md` already used "atomic thought unit" language at line 83, providing GNT-internal grounding for the term independent of the cross-project sync. Audit dispatched in parallel with this commit; verdict was PROCEED WITH MODIFICATIONS; both required modifications applied: (a) "thought-line" hedged as retrospective naming in both §0 and this §10 entry, (b) trigger #11 explicitly addressed with the GNT-internal precedent citation above.
 
 ---
 
