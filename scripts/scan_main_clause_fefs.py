@@ -98,8 +98,23 @@ def _load_morphgnt(book_slug):
     return dict(verses)
 
 
-def _is_participle(pos, parsing):
-    return pos.startswith("V") and len(parsing) >= 4 and parsing[3] == "P"
+def _is_participle(pos, parsing, exclude_genitive=False):
+    """Return True if the token is a participle.
+
+    Args:
+        pos: MorphGNT part-of-speech tag (must start with 'V').
+        parsing: MorphGNT parsing string (index 3 == 'P' for participle).
+        exclude_genitive: if True, genitive-case participles (parsing[4] == 'G')
+            are excluded.  Pass exclude_genitive=True when scanning for
+            main-clause FEF candidates so that genitive-absolute participles
+            (canonically their own proposition under R19) do not produce false
+            positives.
+    """
+    if not (pos.startswith("V") and len(parsing) >= 4 and parsing[3] == "P"):
+        return False
+    if exclude_genitive and len(parsing) >= 5 and parsing[4] == "G":
+        return False
+    return True
 
 
 def _is_finite(pos, parsing):
@@ -143,7 +158,7 @@ def _line_words_with_morph(line_text, verse_words):
         if matches:
             pos, parsing, lemma = matches.pop(0)
             entry.update(pos=pos, parsing=parsing, lemma=lemma)
-            entry["is_ptc"] = _is_participle(pos, parsing)
+            entry["is_ptc"] = _is_participle(pos, parsing, exclude_genitive=True)
             entry["is_fin"] = _is_finite(pos, parsing)
             entry["is_inf"] = _is_infinitive(pos, parsing)
         result.append(entry)

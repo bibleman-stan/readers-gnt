@@ -7,8 +7,13 @@ Class instance: Matt 8:11 `λέγω δὲ ὑμῖν ὅτι πολλοὶ ἀπ
 δυσμῶν ἥξουσιν` — speech verb + ὅτι + quote content all on ONE line.
 
 R11 says speech-intros own their line; content follows on next line.
-The ὅτι is the natural split point (stays on the intro line, NEVER
-dropped — it's Greek text, not punctuation).
+The ὅτι LEADS the content line (ὅτι-LEAD canon, commit 2e3cf85 /
+2026-04-18). Split produces:
+    line 1:  speech-verb [+ particles/objects before ὅτι]
+    line 2:  ὅτι + content
+
+NOTE: ὅτι is NEVER dropped — it is Greek text, not punctuation.
+The only edit is where the line break falls.
 
 Signature:
   A single line contains:
@@ -161,9 +166,11 @@ def main():
                     r = find_jammed(line, bound)
                     if r:
                         hoti_idx, lemma, cognition = r
-                        # Split AFTER the ὅτι token
+                        # Split BEFORE the ὅτι token so ὅτι leads the next line
+                        # (ὅτι-LEAD canon, commit 2e3cf85 / 2026-04-18).
+                        # raw_tokens[hoti_idx][1] = start char of the ὅτι token.
                         raw_tokens = word_positions(line)
-                        split_char = raw_tokens[hoti_idx][2]
+                        split_char = raw_tokens[hoti_idx][1]
                         left = line[:split_char].rstrip()
                         right = line[split_char:].lstrip()
                         findings.append({
@@ -184,7 +191,7 @@ def main():
     lines.append(f"**Scanner:** `scripts/scan_hoti_jammed_speech_intro.py`\n")
     lines.append(f"**Count:** {len(findings)} candidates\n")
     lines.append("**Signature:** single line contains speech/declaration/cognition verb + mid-line ὅτι + ≥2 tokens of content past ὅτι. Class instance: Matt 8:11 `λέγω δὲ ὑμῖν ὅτι πολλοὶ ἀπὸ ἀνατολῶν καὶ δυσμῶν ἥξουσιν`.\n")
-    lines.append("**Proposed split:** after ὅτι. ὅτι stays on the intro line (never dropped).\n")
+    lines.append("**Proposed split:** before ὅτι. ὅτι LEADS the content line (ὅτι-LEAD canon). Never dropped — line break only.\n")
     lines.append(f"- Speech/declaration: {by_cog['speech_decl']}  → split (R11)")
     lines.append(f"- Cognition: {by_cog['cognition']}  → MERGE per R10 (already correct as-is; listed for audit only)")
     lines.append("")
