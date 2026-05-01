@@ -41,7 +41,7 @@ SPEECH_LEMMAS = {
 }
 
 def clean(w):
-    return re.sub(r'[,.\;\·\s⸀⸁⸂⸃⸄⸅\'\(\)\[\]⟦⟧—–\u037E\u0387\u00B7]', '', w)
+    return re.sub(r'[,.\;\·\s⸀⸁⸂⸃⸄⸅\'\(\)\[\]⟦⟧—–\u037E\u0387\u00B7¹²³⁰⁴⁵⁶⁷⁸⁹]', '', w)
 
 def load_morph(slug):
     if slug in _cache: return _cache[slug]

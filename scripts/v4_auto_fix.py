@@ -118,6 +118,7 @@ PARALLEL_CONJUNCTIONS = ['εἴτε', 'οὔτε', 'μήτε']
 
 def strip_punctuation(word):
     """Strip Greek punctuation from a word for comparison."""
+    word = re.sub(r'[¹²³⁰⁴⁵⁶⁷⁸⁹]', '', word)  # cross-verse markers
     return re.sub(r'[·;,.!?·:\'ʼ\u0387\u00B7\u2019\u02BC]+$', '', word).strip()
 
 

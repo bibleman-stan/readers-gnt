@@ -188,6 +188,16 @@ def parse_file(filepath: Path) -> List[dict]:
     return records
 
 
+# ─── cross-verse marker stripping ─────────────────────────────────────────────
+
+_CROSSVERSE_RE = re.compile(r'[¹²³⁰⁴⁵⁶⁷⁸⁹]')
+
+
+def _strip_crossverse(s: str) -> str:
+    """Strip inline cross-verse markers (e.g. ²καὶ → καὶ) before tokenizing."""
+    return _CROSSVERSE_RE.sub('', s)
+
+
 # ─── governor detection ───────────────────────────────────────────────────────
 
 def match_governor(content: str, token_map: dict) -> Optional[str]:
@@ -195,6 +205,7 @@ def match_governor(content: str, token_map: dict) -> Optional[str]:
     Return the canonical governor key if the line starts with a governor token.
     Returns None if no match.
     """
+    content = _strip_crossverse(content)
     for key, prefixes in token_map.items():
         for prefix in prefixes:
             if content.startswith(prefix):
@@ -219,6 +230,7 @@ ALL_GOVERNOR_PREFIXES: Set[str] = build_all_governor_prefixes(GOVERNOR_CLASSES)
 
 def starts_with_any_governor(content: str) -> bool:
     """Return True if the line starts with ANY governor prefix across all classes."""
+    content = _strip_crossverse(content)
     for p in ALL_GOVERNOR_PREFIXES:
         if content.startswith(p):
             return True
@@ -377,6 +389,7 @@ def first_word_lower(content: str) -> str:
     Return the first whitespace-delimited token, lowercased and stripped of
     trailing Greek punctuation.
     """
+    content = _strip_crossverse(content)
     parts = content.split()
     if not parts:
         return ''

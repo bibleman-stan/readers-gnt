@@ -63,7 +63,7 @@ def _clean(word):
     # ἀφʼ / ἀφ' / ἀφ’ all collapse to the same key.
     word = word.replace("\u02BC", "\u2019").replace("\u0027", "\u2019")
     return re.sub(
-        r'[,.\;\·\s⸀⸁⸂⸃⸄⸅\(\)\[\]⟦⟧—\u037E\u0387\u00B7]',
+        r'[,.\;\·\s⸀⸁⸂⸃⸄⸅\(\)\[\]⟦⟧—\u037E\u0387\u00B7¹²³⁰⁴⁵⁶⁷⁸⁹]',
         '',
         word,
     )

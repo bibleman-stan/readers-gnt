@@ -86,7 +86,7 @@ CONJUNCTION_LEMMAS = {
 def _clean(word):
     """Strip punctuation and critical apparatus markers."""
     return re.sub(
-        r'[,.\;\·\s⸀⸁⸂⸃⸄⸅\'\(\)\[\]⟦⟧—\u037E\u0387\u00B7]',
+        r'[,.\;\·\s⸀⸁⸂⸃⸄⸅\'\(\)\[\]⟦⟧—\u037E\u0387\u00B7¹²³⁰⁴⁵⁶⁷⁸⁹]',
         '',
         word,
     )

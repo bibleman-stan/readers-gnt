@@ -142,6 +142,8 @@ def tokenize_greek(line: str) -> List[str]:
     """Return list of Greek word tokens, stripping punctuation."""
     # Strip verse references (e.g. "11:27" at start)
     line = re.sub(r'^\d+:\d+\s*', '', line.strip())
+    # Strip cross-verse markers (e.g. ²καὶ → καὶ)
+    line = re.sub(r'[¹²³⁰⁴⁵⁶⁷⁸⁹]', '', line)
     # Split on whitespace, strip punctuation
     tokens = []
     for tok in line.split():

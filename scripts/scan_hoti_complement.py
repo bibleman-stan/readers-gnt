@@ -63,6 +63,7 @@ def strip_accents(s: str) -> str:
 def tokens(line: str) -> List[str]:
     """Split a line into word tokens, stripping punctuation."""
     import re
+    line = re.sub(r'[¹²³⁰⁴⁵⁶⁷⁸⁹]', '', line)
     words = re.findall(r"[\w\u0300-\u036f\u1f00-\u1fff\u0370-\u03ff]+", line, re.UNICODE)
     return words
 

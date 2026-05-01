@@ -48,7 +48,7 @@ _SLUG_TO_FILE = {v: k for k, v in _FILE_MAP.items()}
 def _clean(word):
     """Strip punctuation and critical apparatus markers."""
     return re.sub(
-        r'[,.\;\·\s⸀⸁⸂⸃⸄⸅\'\(\)\[\]⟦⟧—\u037E\u0387\u00B7]',
+        r'[,.\;\·\s⸀⸁⸂⸃⸄⸅\'\(\)\[\]⟦⟧—\u037E\u0387\u00B7¹²³⁰⁴⁵⁶⁷⁸⁹]',
         '',
         word,
     )

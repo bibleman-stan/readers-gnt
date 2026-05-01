@@ -18,7 +18,7 @@ SLUGS = {"61":"matt","62":"mark","63":"luke","64":"john","65":"acts","66":"rom",
 SLUG_TO_FN = {v:k for k,v in SLUGS.items()}
 _cache = {}
 
-def clean(w): return re.sub(r'[,.\;\·\s⸀⸁⸂⸃⸄⸅\'\(\)\[\]⟦⟧—–\u037E\u0387\u00B7]', '', w)
+def clean(w): return re.sub(r'[,.\;\·\s⸀⸁⸂⸃⸄⸅\'\(\)\[\]⟦⟧—–\u037E\u0387\u00B7¹²³⁰⁴⁵⁶⁷⁸⁹]', '', w)
 
 def load_morph(slug):
     if slug in _cache: return _cache[slug]

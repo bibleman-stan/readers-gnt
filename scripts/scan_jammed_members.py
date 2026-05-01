@@ -101,6 +101,7 @@ def text_lines_only(records: List[dict]) -> List[dict]:
 
 def tokenize(content: str) -> List[str]:
     """Split on whitespace; strip trailing punctuation for matching purposes."""
+    content = re.sub(r'[¹²³⁰⁴⁵⁶⁷⁸⁹]', '', content)
     return content.split()
 
 

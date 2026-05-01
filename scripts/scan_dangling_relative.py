@@ -94,6 +94,7 @@ POSTPOSITIVE_PARTICLES = {
 
 def line_tokens(line: str) -> List[str]:
     """Return word tokens from a line, stripping punctuation characters."""
+    line = re.sub(r'[\u00b9\u00b2\u00b3\u2070\u2074\u2075\u2076\u2077\u2078\u2079]', '', line)
     return re.findall(r"[\w\u0300-\u036f\u1f00-\u1fff\u0370-\u03ff]+", line, re.UNICODE)
 
 

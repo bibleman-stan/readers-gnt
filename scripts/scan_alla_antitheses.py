@@ -78,7 +78,7 @@ ALLA_FORMS = {_strip_accents(w) for w in _ALLA_RAW}
 
 # Punctuation/marker chars to strip from words for matching
 PUNCT_RE = re.compile(
-    r'[,.\;\·\s⸀⸁⸂⸃⸄⸅\(\)\[\]⟦⟧—\u037E\u0387\u00B7"\u201C\u201D\u2018\u2019]'
+    r'[,.\;\·\s⸀⸁⸂⸃⸄⸅\(\)\[\]⟦⟧—\u037E\u0387\u00B7"\u201C\u201D\u2018\u2019¹²³⁰⁴⁵⁶⁷⁸⁹]'
 )
 
 
@@ -86,7 +86,7 @@ def _clean_word(word):
     """Strip punctuation from a token (preserve apostrophe-elision marks)."""
     # Keep ʼ and ' since ἀλλʼ uses them
     return re.sub(
-        r'[,.\;\·⸀⸁⸂⸃⸄⸅\(\)\[\]⟦⟧—\u037E\u0387\u00B7"\u201C\u201D]',
+        r'[,.\;\·⸀⸁⸂⸃⸄⸅\(\)\[\]⟦⟧—\u037E\u0387\u00B7"\u201C\u201D¹²³⁰⁴⁵⁶⁷⁸⁹]',
         '',
         word,
     ).strip()

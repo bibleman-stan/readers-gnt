@@ -96,6 +96,7 @@ NON_FINITE_TOKENS = {
 
 
 def line_tokens(line: str) -> List[str]:
+    line = re.sub(r'[¹²³⁰⁴⁵⁶⁷⁸⁹]', '', line)
     return re.findall(r"[\w\u0300-\u036f\u1f00-\u1fff\u0370-\u03ff]+", line, re.UNICODE)
 
 
