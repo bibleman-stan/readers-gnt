@@ -81,10 +81,11 @@ Update after each significant event (every 5–10 dispatches or every Stan corre
 
 Produce in the session folder:
 
-1. **`full-transcript.md`** — verbatim dialogue extraction from the session JSONL. Dispatch a Sonnet agent with the JSONL path (`C:/Users/bibleman/.claude/projects/c--Users-bibleman-repos-readers-gnt/<session-id>.jsonl`) to stream-process and write the transcript. Format: numbered turns alternating Stan/Claude, strip tool_use and tool_result, strip `<system-reminder>` blocks.
-2. **`session-notes.md`** — session arc, what landed (commits), discipline observations with common-mode grouping, withdrawn proposals, workflow use-count, carry-forwards for next session.
-3. **`dialogue-notes.md`** — produce only for methodology-heavy sessions where the DIALOGUE arc itself is the work (vs. executing a pre-specified task). Captures the reasoning path that led to a decision, not just the decision.
-4. **`review-lists/`** (subfolder) — only when the session produced candidate lists requiring Stan review (e.g., N sweep candidates from a validator run). One markdown file per list with decision checkboxes.
+1. **`session-notes.md`** (mandatory) — session arc, what landed (commits), discipline observations with common-mode grouping, withdrawn proposals, workflow use-count, carry-forwards for next session.
+2. **`dialogue-notes.md`** — produce only for methodology-heavy sessions where the DIALOGUE arc itself is the work (vs. executing a pre-specified task). Captures the reasoning path that led to a decision, not just the decision.
+3. **`review-lists/`** (subfolder) — only when the session produced candidate lists requiring Stan review (e.g., N sweep candidates from a validator run). One markdown file per list with decision checkboxes.
+
+**`full-transcript.md` is on-request only, not default.** The JSONL at `C:/Users/bibleman/.claude/projects/c--Users-bibleman-repos-readers-gnt/<session-id>.jsonl` is the authoritative source for verbatim dialogue. The transcript artifact added rendering (numbered turns, stripped system noise, markdown) but no new content; cost > value. Produce only when Stan explicitly asks for it or the session genuinely warrants a parsed extract (e.g., publishing dialogue excerpts; deep cross-session methodology archaeology where JSONL parsing is the bottleneck).
 
 ### Canon self-consistency audit trigger
 
