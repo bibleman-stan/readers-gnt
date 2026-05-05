@@ -59,14 +59,23 @@ The folder is the persistent write surface for the session. Session memory evapo
 
 **Self-report before first substantive response**: one line per mandatory file (e.g., `- CLAUDE.md: read`). A silent skip is a check-in failure.
 
-### During the session
+**Carry-forward disposition (mandatory after reading prior session-notes).** Enumerate every carry-forward item from the prior session's `session-notes.md` and classify each as one of:
+- **(a) Executing this session** — picked up in current task surface
+- **(b) Explicitly retired** — name the rationale (no longer applicable, superseded by X, won't be done because Y)
+- **(c) Re-deferred** — name the trigger condition that would re-prioritize it (waiting on hook X, blocked on Stan-side verification, etc.)
 
-Log as things happen:
-- Discipline failures (with common-mode grouping when clusters form)
-- Withdrawn or discarded proposals (and why)
-- Workflow use-count running tally (agent dispatches, commits, memory changes, cascade runs)
+Without explicit disposition, items drift across sessions and silently disappear. The disposition table is a one-paragraph block in your check-in self-report — visible to Stan, who can correct if you re-deferred something he wanted executed.
 
-These can be drafted into a running `session-notes.md` throughout the session or assembled at WRAP-UP.
+### Intra-session log
+
+Maintain a running tally during the session in the session folder (`private/03-sessions/yyyy-mm-dd-*/intra-session-log.md`):
+
+- **Discipline failures** — Stan corrections received + memory file updates triggered (with common-mode grouping when clusters form)
+- **Withdrawn proposals** — things proposed and rolled back, with rationale
+- **Workflow use-count** — agent dispatches (with model-tier breakdown), commits, cascade runs, memory changes
+- **In-flight agents** — live count + IDs of background agents
+
+Update after each significant event (every 5–10 dispatches or every Stan correction). The log is a persistent artifact — created during the session, surviving wrap. At WRAP-UP, distill it into `session-notes.md` (the log captures raw chronology; session-notes captures the synthesis).
 
 ### WRAP-UP (at session end, or when context crosses ~60%)
 

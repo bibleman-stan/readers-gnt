@@ -123,6 +123,28 @@ SKIP_SAFE_KEYWORDS = [
     "skip-safe",
 ]
 
+# Negation guards — if any of these appear in the message, fail regardless
+# of any AUDIT_KEYWORDS or SKIP_SAFE_KEYWORDS substring match. Defends
+# against bypass patterns like "this commit was made WITHOUT audit evidence"
+# falsely passing because "audit" matches as a substring. Ported from the
+# Tanakh sibling project's check_canon_extensions.py 2026-05-01.
+NEGATION_PATTERNS = [
+    "no audit",
+    "without audit",
+    "needs audit",
+    "needs an audit",
+    "audit pending",
+    "audit later",
+    "skip audit",
+    "skipped audit",
+    "no §6.5",
+    "no trigger",
+    "no update log",
+    "todo: audit",
+    "todo audit",
+    "fake commit",
+]
+
 
 def get_canon_diff() -> str:
     """Return unified=0 diff of staged changes to any of the watched canon files."""
@@ -169,12 +191,20 @@ def detect_extensions(diff: str) -> list[tuple[str, str]]:
 
 
 def has_audit_evidence(message: str) -> bool:
+    """True if message contains a positive audit-evidence signal AND no
+    negation guard (e.g., "without audit") is present."""
     msg_lower = message.lower()
+    if any(neg in msg_lower for neg in NEGATION_PATTERNS):
+        return False
     return any(k in msg_lower for k in AUDIT_KEYWORDS)
 
 
 def has_skip_safe_claim(message: str) -> bool:
+    """True if message contains a skip-safe claim AND no negation guard
+    is present."""
     msg_lower = message.lower()
+    if any(neg in msg_lower for neg in NEGATION_PATTERNS):
+        return False
     return any(k in msg_lower for k in SKIP_SAFE_KEYWORDS)
 
 
