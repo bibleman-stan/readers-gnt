@@ -227,6 +227,22 @@ The colometric grid is **flat by design** — every line has equal visual status
 - **Gal 2:9 — split** (pillars characterization on own line): two distinct thoughts (the named persons vs. their ironic characterization). Subject + substantival-participial-phrase appositive, where the appositive is six words, non-trivial, and introduces the dokountes motif. Grammatical warrant for split is the substantival-participle-as-own-thought rule.
 - **Gal 2:10 — merge** (fronted ton ptochon kept with mnemoneuomen on one line): mnemoeneuo requires genitive for its object. The fronted genitive + restrictive monon create a marked word order whose rhetorical force depends on the grammatical unity staying intact.
 
+### N=2 Adjudication Principle
+
+**The problem this solves.** Several canon rules mandate MERGE for N=2 coordinate constructions — M1 gorgianic bonded pair (§2) and two-member coordinate clausal series. Simultaneously, structural justification 1 (formally-marked parallel series, §2) mandates SPLIT when each member earns its own atomic thought-unit. At N=2 both rules can fire on the same construction. This subsection establishes the cross-cutting tiebreaker. (Note: R8 short-coordinate default and R28 textual-asymmetry are NOT primary N=2 merge-triggers — R8 governs framing-marker attachment, R28 governs parallel-passage comparison; both appear in step 2 below as secondary merge protections to check before flipping to split, but neither generates the N=2 collision this principle adjudicates.)
+
+**The principle.** When a merge-mandating rule (M1 or two-member clausal series) and a split-mandating rule (structural justification 1) both fire on the same N=2 coordinate construction:
+
+1. **Test for synonymy / bonding.** If the two members are semantically synonymous, form a recognizable binomial idiom, or function as a hendiadys (single unified act expressed via two near-synonyms) → **merge-mandating rule wins → MERGE.** Example: `Δαιμόνιον ἔχει καὶ μαίνεται` (John 10:20) — one diagnostic judgment expressed via two complementary terms.
+2. **Distinct semantic domains.** If the two members belong to clearly different semantic domains AND each carries its own atomic thought, the merge-mandating rule's grounds for bonding are withdrawn — but the M1 strict-application caveat applies: **withdrawal of M1's protection does not by itself license a SPLIT.** Check whether any other merge-protection (M2 verb-object nucleus, M3 bare-governor, M4 fragmented-atomic-thought, R8 short-coordinate default, R11 speech-intro, R28 textual-asymmetry, default-merge for grammar ambiguity) fires before flipping to split.
+3. **Default to merge when ambiguous.** The canon's overall posture is merge-by-default; the cross-cutting N=2 Adjudication Principle is a merge levee, not a split license.
+
+**Does not apply at N=3+.** At N=3+ formally-marked parallel series, structural justification 1 wins regardless of whether a merge-mandating rule is also firing — the cognitive prong is formally recoverable from the series itself, and merge-rules defer. The N=2 vs. N=3+ cliff is principled: two items invite bonding (doublet reading); three or more invite cataloguing (series reading).
+
+**Does not apply to appositional constructions.** Appositives are semantically synonymous by definition — the second member re-names the first — so the synonymy test would mechanically fire "merge" on every appositive. The vocative-with-close-appositive case (vocative + divine-title appositive: e.g., *Κύριε Ἰησοῦ*) and the proper-name + epithet case are governed by their own rules (§3 vocative R18; §3 attributive-modifier handling), not the N=2 Principle.
+
+**Cross-project provenance.** This principle was named in the BofM-Reader canon (2026-04-23), ported to Tanakh-Reader (2026-04-26), and now codified in GNT (2026-05-02). The substance was already encoded in M1's tie-breaker language at §2; this subsection promotes it to a named, generalized cross-cutting principle for discoverability and consistency with sibling project canons. M1 retains its specific tie-breaker text; this subsection is the cross-cutting statement that M1's tie-breaker instantiates.
+
 ### Showcase — Acts 1:9
 
 ```
@@ -389,7 +405,7 @@ These override conditions are extensible only by worked examples + adversarial v
 
 **Contrast with the ≤3 qualifier rule** (Section 2, justification 1): the ≤3 rule covers triadic co-referential modifiers of ONE thing (stay). The gorgianic-pair rule covers N=2 specifically — two members whose bonding is the rhetorical point.
 
-**Tie-breaker when M1 and justification 1 both seem to apply (N=2 formally-marked pair):**
+**Tie-breaker when M1 and justification 1 both seem to apply (N=2 formally-marked pair):** This tie-breaker is the canonical specific case of the cross-cutting **N=2 Adjudication Principle** (§1). The same merge-vs-split logic applies wherever a merge-rule and structural justification 1 both fire at N=2.
 - If each member has a distinct finite verb AND the verbs are not synonymous, cognate, or intensification variants of each other → justification 1 wins → split. Example: `οὔτε γαμοῦσιν / οὔτε γαμίζονται` (Matt 22:30) — active and passive sides of distinct predications.
 - If the two verbs are semantically synonymous, form a recognizable binomial idiom, or function as a hendiadys (single unified act expressed via two near-synonyms) → M1 wins → merge. Example: `Δαιμόνιον ἔχει καὶ μαίνεται·` (John 10:20) — one diagnostic judgment expressed via two complementary terms.
 - The test is structural (verb semantic class) not intuitive. If the two verbs belong to clearly different semantic domains, they are not a gorgianic pair even if only N=2 and formally marked.
@@ -1473,6 +1489,29 @@ Earlier GNT formulations treated breath (oral-delivery fit) as a fourth criterio
 *Purpose: **dual-natured** — chronological reasoning trail. Recent entries documenting active-rule provenance are operationally referenced (cross-project import status, audit findings, retirement dates); older entries are historical narrative. When an entry documents an active rule, it is the canonical source for that rule's WHY/HOW WE KNOW/SCOPE.*
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-05-02 — N=2 Adjudication Principle named in §1
+
+Promoted the substance encoded in M1's existing tie-breaker language to a named, cross-cutting principle in §1 (between Imposing-vs-Revealing corollaries and the Acts 1:9 Showcase). Cross-project provenance: BofM-Reader coined the principle 2026-04-23; Tanakh-Reader ported 2026-04-26; GNT-Reader codifies 2026-05-02.
+
+**What the principle resolves.** Several canon rules mandate MERGE for N=2 coordinate constructions (M1 gorgianic pair, R8 short-coordinate default, R28 textual-asymmetry, two-member coordinate clausal series); structural justification 1 mandates SPLIT for formally-marked parallel series. At N=2 both rules can fire on the same construction. Pre-codification, this collision was handled by M1's local tie-breaker; post-codification, the cross-cutting principle generalizes the resolution.
+
+**The principle's logic** (full text in §1):
+1. Synonymy / hendiadys / binomial idiom → merge wins.
+2. Distinct semantic domains → M1's bonded-pair grounds withdraw, but the M1 strict-application caveat applies (check other merge protections — M2-M4, R8, R11, R28, default-merge — before flipping to split).
+3. Default to merge when ambiguous.
+
+**Scope boundaries:**
+- Does NOT apply at N=3+ (parallel series wins; cognitive prong recoverable from series itself).
+- Does NOT apply to appositional constructions (synonymy is definitional; appositives have own rules).
+
+**M1 retains its specific tie-breaker text;** the new §1 subsection is the cross-cutting statement that M1's tie-breaker instantiates. M1's tie-breaker now carries a forward reference to §1 N=2 Adjudication Principle.
+
+**Audit-status per §6.5:** Audit dispatched and applied. **Triggers fired:** #1 (named-category extension — promoting an implicit substance to a named, cross-cutting principle is a named-category change); #2 (rule status promotion — M1's tie-breaker substance now also exists at §1 cross-cutting level); #11 (cross-project import from BofM-Reader 2026-04-23 + Tanakh-Reader 2026-04-26). **Verdict: PROCEED WITH MODIFICATIONS** — two precision corrections to the "problem" paragraph applied: (a) R28 (textual asymmetry) removed from the lead list of merge-mandating rules — R28 governs parallel-passage comparison, not within-construction N=2 bonding; its proper home is step 2's secondary check-list. (b) R8 (framing-marker attachment) removed from the lead list and clarified in a parenthetical — R8 governs framing-marker attachment (ἰδού, διό, οὖν), not coordinate-pair bonding; it appears in step 2 as a secondary protection but does not generate the N=2 collision this principle adjudicates. Both modifications applied verbatim. The core principle (three-step logic, scope boundaries, cross-project provenance) audited as sound: substance matches M1 without over-extension; appositional exclusion accurately routes those cases to existing rules (R18, divine-title appositives); cross-project precedent verified against Tanakh canon line 1253 ("N=2 Adjudication Principle: from BoFM 2026-04-23") and Tanakh §1 named subsection.
+
+**Why named now:** discoverability. The substance has been encoded in M1's tie-breaker for some time but readers entering the canon at §1 had no signal that a generalized N=2 adjudication principle exists. The named subsection at §1 surfaces it; the cross-reference in M1 grounds it specifically. Cross-project parallel ensures readers consulting any of the three sibling canons see the same principle.
 
 ---
 
