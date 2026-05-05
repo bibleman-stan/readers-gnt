@@ -593,7 +593,10 @@ _RULE_NAMES: dict[str, str] = {
     "R11": "direct-speech introduction",
     "R18": "vocative own line",
     "R19": "genitive absolute own line",
-    "R25": "speech-frame absorption",
+    # R25 retired 2026-04-18 (folded into R11; see canon §9). No validator emits
+    # this code; entry preserved here only as a defensive fallback if older
+    # baseline.json data is encountered.
+    "R25": "[RETIRED] speech-frame absorption (folded into R11)",
     "M1":  "merge override (bonded pair)",
     "M2":  "merge override (coordinate pair)",
     "M3":  "merge override (FEF)",

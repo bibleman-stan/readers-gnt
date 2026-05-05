@@ -3,8 +3,10 @@
 validate_r11_speech_intro.py — R11 direct-speech-introduction validator.
 
 R11: speech-intro verb (λέγω, εἶπον, φημί + similar) + its frame (dative
-indirect object, any qualifying clause now absorbed per R25 fold) gets its
-own line. The quoted speech begins on the next line.
+indirect object, any qualifying clause) gets its own line. The quoted speech
+begins on the next line. (R25 retired 2026-04-18 and absorbed into R11; see
+canon §9. The R11 implementation here covers what was previously split between
+R11 and R25.)
 
 Violation signature:
   A line contains a speech-intro verb AND the line also carries content

@@ -221,6 +221,13 @@ def _is_in_already_opened_quote(line_index: int, v4_lines: list) -> bool:
     not introducing new speech.
 
     Returns False for line_index == 0 (no prior line).
+
+    Detection-heuristic note (canon §1 Step 0 item 1): · / : are editorial
+    punctuation and are NEVER the warrant for a break decision. They are used
+    here only as a *locator* for the structural state "already inside open
+    quotation"; the warrant is the embedded-speech-verb condition the
+    quotation-state induces. The mark identifies WHERE the structural state
+    lives; the structural state itself is the operative criterion.
     """
     if line_index == 0:
         return False

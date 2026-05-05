@@ -266,6 +266,13 @@ def scan_all():
                         continue
 
                     # Classify position
+                    # NOTE (canon §1 Step 0 item 3): "verse-initial" here is a
+                    # detection-shorthand label for the structural condition "no
+                    # preceding 2p anchor in scope within the verse." Verse position
+                    # is NOT the break warrant — the underlying grammatical condition
+                    # (anchor presence/absence, checked in the loops below) is. The
+                    # "verse-initial" label is positional within the file structure,
+                    # not a versification-as-authority claim.
                     if i == 0:
                         position = "verse-initial"
                     elif i == n - 1:
@@ -278,6 +285,11 @@ def scan_all():
                     # line ends with "·" (middle dot), we treat that as a speech
                     # boundary — 2p markers before the boundary belong to a different
                     # discourse layer than the vocative after it.
+                    # NOTE (canon §1 Step 0 item 1): · / : are editorial punctuation;
+                    # they are used here only to bound the 2p-anchor search window
+                    # (locator), not as a positive break warrant. The warrant is
+                    # the grammatical condition (absence of 2p anchor after the
+                    # boundary), not the punctuation mark itself.
                     preceding_has_2p_pron = False
                     preceding_has_2p_verb = False
                     preceding_pron_tokens = []

@@ -11,8 +11,12 @@ The Lowfat XML has nested <wg> elements:
   - <wg class="pp"> — prepositional phrases
   - <wg> without class — other phrase-level word groups
 
-Sibling <wg> boundaries within a clause represent natural breath points where
-a long line can be split without breaking grammatical cohesion.
+Sibling <wg> boundaries within a clause represent natural syntactic split
+points where a long line can be split without breaking grammatical cohesion.
+(The phrase "breath" earlier appeared here as descriptive prose; "Breath" as
+a methodological criterion was retired 2026-04-20 — see canon §9. This
+function returns syntactic word-group boundaries from the XML, not a
+methodological breath/cadence test.)
 
 Usage:
     from macula_wordgroups import find_wg_split_points_in_line

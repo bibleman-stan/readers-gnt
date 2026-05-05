@@ -1,9 +1,12 @@
 """
 check_r18_vocative.py — Layer 3 validator for Rule R18 (canon §3.9).
 
-R18 three-way refined treatment:
-  DEFAULT  — vocative owns its line (verse-initial, verse-final, post-speech-intro,
-             stacked parallel).
+R18 three-way refined treatment (criterion: same-line 2p-element absence;
+position language in informal descriptions is detection shorthand for the
+underlying grammatical condition, not a positive break warrant — see canon §1
+Step 0 item 3 and the 2026-04-29 (later³) §10 entry):
+  DEFAULT  — vocative owns its line when no 2p element (verb or pronoun) appears
+             on the same line as the vocative-plus-non-2p-finite-verb pair.
   SUBJECT-APPOSITIVE MERGE — vocative names implicit subject of a 2p finite verb.
   OBJECT-APPOSITIVE MERGE  — vocative restates an explicit 2p pronoun (σύ/ὑμεῖς).
   DISCOURSE-FRAME CLUSTER  — frame particle (Loipon etc.) + vocative co-lined: OK.

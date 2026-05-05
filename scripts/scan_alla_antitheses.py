@@ -3,6 +3,9 @@
 scan_alla_antitheses.py — Find lines where ἀλλά introduces a corrective/
 antithetical clause that should break to its own line.
 
+Governing rule: R14 (correlative-pair antithesis). R15 was folded into R14
+on 2026-04-18; this scanner detects patterns now governed by R14.
+
 Pattern (μή/οὐ ... ἀλλά antithesis):
     A line contains ἀλλά (or ἀλλʼ / ἀλλὰ) MID-LINE, AND the words before the
     ἀλλά on that line contain a negation (μή, οὐ, οὐχ, οὐκ, μηδέ, οὐδέ, etc.).
