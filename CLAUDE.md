@@ -294,3 +294,28 @@ This project is **publicly independent** — no cross-references to any other pr
 ## Update Protocol
 
 When updating handoff docs, append a dated block at the bottom — never overwrite history. After any session where decisions are made, principles are refined, or new patterns identified, update the relevant handoff file.
+
+---
+
+## Pending port from sibling Tanakh-Reader (2026-05-05)
+
+Sibling Tanakh-Reader hit a chokepoint where every commit ran a full-corpus `validators/run_all.py --baseline-check` — including pure-doc commits (canon prose edits, CLAUDE.md tweaks, handoff updates) that cannot affect validator output. Single doc commit was costing ~50s. Solution landed there as Tanakh commit `35b27ee7c`: incremental validation via tightened pre-commit Phase 2 trigger.
+
+**Current GNT-reader behavior** (verified 2026-05-05): `validators/hooks/pre-commit` line 106 has the same legacy regex shape, so canon-only commits pay the same full-corpus cost.
+
+**Port recipe** (mechanical, ~10 minutes):
+1. Open `validators/hooks/pre-commit`. Find the Phase 2 RELEVANT regex (around line 106).
+2. Replace the broad regex with a tighter "code or corpus" filter:
+   ```bash
+   CODE_OR_CORPUS=$(git diff --cached --name-only | grep -E "^(data/text-files/v4-editorial/|validators/.*\.(py|yaml)$|scripts/.*\.py$)" || true)
+   if [ -z "$CODE_OR_CORPUS" ]; then
+       echo "[pre-commit] Docs-only commit. Skipping baseline-check."
+       exit 0
+   fi
+   ```
+3. Reinstall: `cp validators/hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit`
+4. Test: trivial CLAUDE.md tweak commit should land in <1s.
+
+**Trade-off:** validator-code (`validators/*.py|*.yaml`) and engine-script (`scripts/*.py`) changes still pay full baseline-check cost (correct — could affect any chapter). v4-editorial chapter changes still pay full cost (per-chapter scoping requires per-book baseline format change — deferred). The win is on the docs-only path which is the most common commit shape during methodology work.
+
+**Measured impact on Tanakh-Reader:** ~85x speedup on docs-only commits (50s → 0.6s). Today's te'amim canon-revision commit hit 8 retry-with-different-error attempts driven entirely by this chokepoint.
