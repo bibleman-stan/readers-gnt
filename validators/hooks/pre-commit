@@ -14,9 +14,11 @@
 #   correction; auto-staging would bypass the two-check gate).
 #
 # Phase 2 — Validator regression gate
-#   Runs run_all.py --baseline-check on commits that touch the canon, the
-#   syntax-reference table, the editorial corpus, or the validator suite
-#   itself. Blocks if finding counts increase vs validators/.baseline.json.
+#   Runs run_all.py --baseline-check on commits that touch the editorial
+#   corpus, the syntax-reference table, or validator code (.py/.yaml).
+#   Canon-prose-only and other docs-only commits skip — they cannot affect
+#   validator candidate counts. Tightened 2026-05-05 (port from Tanakh).
+#   Blocks if finding counts increase vs validators/.baseline.json.
 #
 # Install (one-time):
 #   cp validators/hooks/pre-commit .git/hooks/pre-commit
@@ -103,9 +105,10 @@ fi
 
 # ── Phase 2: validator regression gate ──────────────────────────────────────
 
-RELEVANT=$(git diff --cached --name-only | grep -E "^(data/text-files/v4-editorial/|private/01-method/colometry-canon\.md|data/syntax-reference/|validators/)" || true)
+RELEVANT=$(git diff --cached --name-only | grep -E "^(data/text-files/v4-editorial/|data/syntax-reference/|validators/.*\.(py|yaml)$)" || true)
 
 if [ -z "$RELEVANT" ]; then
+    echo "[pre-commit] Docs-only commit. Skipping baseline-check."
     exit 0
 fi
 
