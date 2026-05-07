@@ -112,6 +112,62 @@ def _is_participle(pos, parsing):
     return parsing[3] == "P"
 
 
+# Per Canon §3.1 R1 + §3.10 R20: only participles "standing as predicate"
+# anchor a line. Adverbial/attributive participles do NOT anchor.
+# A non-genitive participle is treated as predicate-participle (anchor) only
+# if its lemma is a state/posture verb that reconstructs as own predication
+# via ellipsis of εἰμί (R20 split test). Conservative whitelist; extend on
+# evidence.
+PREDICATE_PTC_LEMMAS = {
+    "ἵστημι",      # stand (Luke 1:11 ἑστώς)
+    "κάθημαι",     # sit
+    "κεῖμαι",      # lie
+    "καθεύδω",     # sleep (Mark 4:38 καθεύδων)
+    "ἀνάκειμαι",   # recline
+    "κατάκειμαι",  # lie down
+    "παράκειμαι",  # lie nearby
+    "ἐπίκειμαι",   # lie upon
+    "πρόκειμαι",   # be set forth
+    "ἀντίκειμαι",  # be opposed
+    "σύγκειμαι",   # be composed of
+    "κρέμαμαι",    # hang
+}
+
+
+def _is_predicate_participle(word):
+    """True if the participle 'stands as predicate' per R1 §3.1 + R20 §3.10:
+    - genitive case (gen abs: own subject), OR
+    - lemma is a state/posture verb (predicate via ellipsis of εἰμί).
+    All other participles (adverbial / attributive / circumstantial)
+    do NOT anchor a line."""
+    if not word.get("pos") or not word.get("parsing"):
+        return False
+    if not _is_participle(word["pos"], word["parsing"]):
+        return False
+    case = _case_of(word["pos"], word["parsing"])
+    if case == "G":
+        return True
+    lemma = word.get("lemma", "")
+    if lemma in PREDICATE_PTC_LEMMAS:
+        return True
+    return False
+
+
+def _prev_line_has_finite(prev_words):
+    """True if the previous line carries a finite verb (used by the
+    substantive carve-out: a κaί-led / δέ-led substantive that follows a
+    finite-predicated line is a coordinated subject continuation, not an
+    independent anchor — per R1 'substantive head' carve-out)."""
+    if not prev_words:
+        return False
+    for w in prev_words:
+        if not w.get("pos") or not w.get("parsing"):
+            continue
+        if _is_finite_verb(w["pos"], w["parsing"]):
+            return True
+    return False
+
+
 def _is_preposition(pos):
     return pos == "P-"
 
@@ -154,15 +210,17 @@ def _line_words_with_morph(line_text, verse_queue):
     return result
 
 
-def _line_has_anchor(words):
+def _line_has_anchor(words, prev_words=None):
     """Return (has_anchor, reason) where reason is a short tag.
 
-    A line is anchored if it has:
+    Per Canon §3.1 R1 (with §3.10 R20 participle scope):
     - A finite verb (tag: 'fin-verb')
     - An infinitive (tag: 'inf')
-    - A participle (tag: 'ptc')
-    - A substantive in N/A/V case that is not preceded on the line by a
-      preposition whose object it is (tag: 'subst-NAV')
+    - A participle STANDING AS PREDICATE (gen abs OR state/posture-lemma) —
+      adverbial/attributive participles do NOT anchor (tag: 'pred-ptc')
+    - A substantive head in N/A/V case that is the INDEPENDENTLY PREDICATED
+      topic of its own line — NOT a list-object continuation or
+      appositional extension of a prior clause (tag: 'subst-NAV')
     """
     # First check verbs
     for w in words:
@@ -172,8 +230,33 @@ def _line_has_anchor(words):
             return True, f"fin-verb:{w['cleaned']}"
         if _is_infinitive(w["pos"], w["parsing"]):
             return True, f"inf:{w['cleaned']}"
-        if _is_participle(w["pos"], w["parsing"]):
-            return True, f"ptc:{w['cleaned']}"
+        if _is_predicate_participle(w):
+            return True, f"pred-ptc:{w['cleaned']}"
+
+    # R1 substantive carve-out (Canon §3.1): a κaί-led / δέ-led line whose
+    # first substantive is in nominative case, when the previous line already
+    # carries a finite-verb predication, is a coordinated subject continuation
+    # — NOT an "independently predicated topic of its own line." Block
+    # substantive anchors in this case. (e.g., John 8:9 "καὶ ἡ γυνὴ ἐν μέσῳ
+    # οὖσα." continues κατελείφθη's compound subject from prior line.)
+    if prev_words and _prev_line_has_finite(prev_words):
+        coord_conj_seen = False
+        first_subst_case = None
+        for w in words:
+            if not w.get("pos"):
+                continue
+            if (w["pos"].startswith("C") and
+                    w.get("cleaned") in ("καί", "δέ", "οὐδέ", "μηδέ",
+                                         "οὔτε", "μήτε")):
+                coord_conj_seen = True
+                continue
+            if w["pos"] == "RA":  # article — skip, look at head noun next
+                continue
+            if _is_substantive(w["pos"]):
+                first_subst_case = _case_of(w["pos"], w["parsing"])
+            break
+        if coord_conj_seen and first_subst_case == "N":
+            return False, "no-anchor (subj-continuation)"
 
     # Noun-phrase-led line: if the first significant content word
     # (skipping leading conjunctions, particles, and interjections) is
@@ -326,7 +409,9 @@ def scan_all(book_filter=None):
                 for i, line_words in enumerate(annotated):
                     if not line_words:
                         continue
-                    has_anchor, reason = _line_has_anchor(line_words)
+                    prev_words = annotated[i - 1] if i > 0 else None
+                    has_anchor, reason = _line_has_anchor(
+                        line_words, prev_words=prev_words)
                     if has_anchor:
                         continue
 
@@ -334,7 +419,9 @@ def scan_all(book_filter=None):
                     # anchored line in the same verse)
                     merge_target_idx = None
                     for j in range(i - 1, -1, -1):
-                        if _line_has_anchor(annotated[j])[0]:
+                        target_prev = annotated[j - 1] if j > 0 else None
+                        if _line_has_anchor(
+                                annotated[j], prev_words=target_prev)[0]:
                             merge_target_idx = j
                             break
 
