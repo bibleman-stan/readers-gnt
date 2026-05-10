@@ -57,10 +57,21 @@ Colometric formatting exposes compositional structure that standard formatting o
 
 ## How to Cite
 
+If you use this edition or build on it, please credit both the edition and the underlying methodology:
+
 ```
-[Author]. GNT Reader: A Colometric Reading Edition of the Greek New Testament.
-[Year]. Available at: https://gnt-reader.com
+Stan the Bible Man. GNT Reader: A Colometric Reading Edition of the
+Greek New Testament. 2026.
+https://github.com/bibleman-stan/readers-gnt
+https://gnt-reader.com
+
+Stan the Bible Man. ATU Method: Computational Colometry for Canonical
+Texts. 2026. https://github.com/bibleman-stan/atu-method
 ```
+
+For machine-readable citation, see [CITATION.cff](CITATION.cff) (auto-rendered by GitHub's "Cite this repository" widget).
+
+The methodology and Python apparatus that produced this edition live in [atu-method](https://github.com/bibleman-stan/atu-method) — the shared mechanical-layer repository consumed by this and sibling reader editions.
 
 ## License
 

@@ -1,0 +1,50 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+type: software
+title: "GNT Reader: A Colometric Reading Edition of the Greek New Testament"
+authors:
+  - name: "Stan the Bible Man"
+    email: "thebibleman77@gmail.com"
+date-released: "2026-05-10"
+repository-code: "https://github.com/bibleman-stan/readers-gnt"
+url: "https://gnt-reader.com"
+license: MIT
+abstract: >-
+  A complete colometric reading edition of the SBL Greek New Testament.
+  All 27 books (260 chapters) are formatted into atomic thought units
+  (ATUs) — each line carries one ATU, a unit defined by what a reader
+  can process as a single complete thought. The edition is produced via
+  the ATU apparatus (atu-method) — a proposition-first generative
+  framework with structural justifications, merge-overrides, and
+  Universal-Dependencies-driven mechanical validation. Consumes
+  Macula-Greek constituent trees and MorphGNT morphological tagging.
+keywords:
+  - Greek New Testament
+  - colometric edition
+  - reading edition
+  - atomic thought unit
+  - ATU
+  - sense-lines
+  - Koine Greek
+  - SBLGNT
+  - Macula
+references:
+  - type: software
+    title: "ATU Method: Computational Colometry for Canonical Texts"
+    authors:
+      - name: "Stan the Bible Man"
+        email: "thebibleman77@gmail.com"
+    repository-code: "https://github.com/bibleman-stan/atu-method"
+    notes: "Methodology and apparatus used to produce this edition."
+  - type: data
+    title: "SBLGNT"
+    notes: "Society of Biblical Literature Greek New Testament, CC-BY-4.0"
+    url: "https://github.com/morphgnt/sblgnt"
+  - type: data
+    title: "Macula Greek"
+    notes: "Clear Bible's lowfat XML treebank, CC-BY-4.0"
+    url: "https://github.com/Clear-Bible/macula-greek"
+  - type: data
+    title: "MorphGNT"
+    notes: "Morphological tagging of the SBLGNT, CC-BY-SA"
+    url: "https://github.com/morphgnt/sblgnt"
