@@ -524,6 +524,7 @@ This diagnostic catches the failure mode where a canon change is self-framed as 
 | R25 | ὥστε short-consecutive-result binding | Mechanical | 3.14a |
 | R27 | Authorial style principle (uniform criteria) | Principle | 3.15 |
 | R28 | Textual asymmetry overrides editorial symmetry | Principle | 3.7 |
+| M4-GNT-1 | Subject-orphan predicate completion (Greek instantiation) | Mechanical | 3.18 |
 
 *Retired (see §9):* R15 (folded into R14), R16 (folded into R8), R21 (absorbed as operational mechanism for R12/R13/R14), R25-old (folded into R11 — superseded 2026-05-11 by R25 ὥστε-binding; see §9), R26 (pure restatement of M2), R29 (pointer-only; M1–M4 stand on their own in Section 2).
 
@@ -1080,6 +1081,98 @@ The speech-intro `κηρύσσων ... καὶ λέγων·` is one ATU (a preac
 **Infrastructure:** `scripts/verify_word_order.py` recognizes these markers and splits a merged line at each superscript digit for per-verse word-order integrity comparison against SBLGNT. `scripts/build_books.py` renders superscripts as `<sup class="verse-marker">` HTML anchors so citation lookups still land at the exact inline location. A reader searching for "Matt 3:2" still finds `Μετανοεῖτε,` at the top of the 3:2 block; the superscript in 3:1's line is an additional anchor for the mid-line boundary.
 
 **Why codify this in the canon?** Versification is not original. ATU formation is. When they collide, the rule is clear: ATU wins, versification becomes a secondary annotation. This principle sits alongside "editorial punctuation is not original; hide in display" (see feedback_no_editorial_overlays_as_signal) and "don't let editorial overlays drive structural decisions" — the general posture of seeing past 1550s editorial conventions to the text's own structure.
+
+<!-- ===== M4-GNT-1 ===== -->
+### 3.18 M4-GNT-1: Subject-Orphan Predicate Completion (Greek Instantiation)
+
+**Status:** Active
+**Category:** A (Mechanical, mandatory) for closed-list-eligible subject shapes; B (Editorial) for length-backstop or multi-line restructuring cases
+**Decidability:** Surface-pattern + MorphGNT-aware (5 Greek-specific exclusions apply before firing)
+**Layer:** 3
+**Framework anchor:** Corpus-specific operational instantiation of framework M4 (fragmented atomic thought-unit; see [`atu-method/docs/framework.md §1.5`](../../atu-method/docs/framework.md)). GNT sibling of M4-BoFM-1 (codified 2026-05-11 in `readers-bofm`).
+
+**Rule.** When a v4-editorial line whose content is a **subject NP** (any of the closed-list-eligible shapes below) terminates in `,` or `·`, AND the immediately-next v4-editorial line is a **bare finite predicate** (starts with finite verb, has no leading connective, has no independent subject NP on the same line), the predicate-line MUST be merged onto the subject-line as a single ATU. The atomic-thought principle governs: a subject NP standing alone is not an atomic thought (no predication), a bare predicate standing alone is not an atomic thought (no anchor on the line), and the merged subject+predicate IS one atomic thought (one proposition / one image).
+
+**UD signature (surface-level).**
+~~~yaml
+trigger:
+  line_A:
+    role: subject_NP_of_eligible_shape  # see SUBJECT_SHAPES_M4_GNT1 closed list
+    terminal_punct: comma_or_ano_teleia
+    no_finite_verb_on_line_A: true      # G5 override for participial-only line A
+  line_B:
+    has_finite_root: true
+    no_independent_nsubj: true
+    no_leading_connective: true
+    no_G1_attributive_participle_lead: true
+    no_G3_periphrastic_lead: true
+action: MERGE_FORWARD
+length_backstop: merged > 130 chars -> REVIEW
+~~~
+
+**Closed lists (machine-readable).**
+~~~yaml
+SUBJECT_SHAPES_M4_GNT1:
+  - C1_vocative_address_NP      # household-code vocative subject: Αἱ γυναῖκες, / οἱ ἄνδρες, etc.
+  - C2_np_with_appositive       # NP-with-appositive subject: ὁ κύριος, ὁ θεὸς τῶν πνευμάτων,
+  - C3_np_with_participial      # NP-with-participial modifier (G5 override applies)
+  - C4_np_with_relcl            # NP-with-relative-clause subject
+  - C5_biographical_intro       # καί τις X ὀνόματι Y, [appositive,] [participle,]
+
+LEADING_CONNECTIVES_BLOCK_FIRE:
+  # Line B starts with any of these → NOT a bare-predicate orphan
+  - καί, δέ, γάρ, οὖν, ἀλλά, ἤ, εἰ, ὅτι, ἵνα, ὅταν, ὅτε, ὡς, ὥστε,
+    ὅπου, ὁ, ἡ, τό  # article lead = new phrase, not bare predicate
+~~~
+
+**Scope.** A v4-editorial line whose content is a subject NP of one of the closed-list-eligible shapes, with the matrix predicate orphaned on the immediately-next v4-editorial line. The rule applies after Tier 1 vetoes (Layer 1 break-legality), formula integrity (R6, R11), and complement integrity (§3.5 R10) have settled. M4-GNT-1 is the GNT-specific Tier 4 merge-override operationalization of framework M4.
+
+**Greek-specific exclusions (closed list — G-exclusions).**
+1. **G1: Attributive participle on line B** (modifier of the NP on line A, not the main-clause verb). When line B begins with a participial form that is attributive to the NP on line A (e.g., `ποιῶν ναοὺς` modifying `ἀργυροκόπος` on line A), the participle is a modifier continuation, not a bare finite predicate. **STAY-SPLIT.** Acts 19:24 canonical instance.
+2. **G2: Verbless nominal-sentence line A** (predicate NP or predicate ADJ; complete by Greek ellipsis). When line A is itself a complete verbless clause (implied `ἐστίν`), the following line is a separate predication, not the orphaned predicate of line A. **STAY-SPLIT.** Luke 1:38 `Ἰδοὺ ἡ δούλη κυρίου·` canonical instance.
+3. **G3: Periphrastic-construction line B** (ἦν/ἐστίν/ἔσται + participle forming a single periphrastic predicate). When line B is the verbal component of a periphrastic formed with a participle on line A or an immediately-prior line, the periphrastic is a Layer 1 indivisible unit (R5). **STAY-SPLIT** (handled by R5 before M4-GNT-1 fires).
+4. **G4: Doxological vocative-NP + infinitival-complement** (pattern: `Ἄξιος εἶ` + vocative NP + `λαβεῖν` infinitive). When line A is a doxological address unit and line B is the infinitival complement of a prior predicate, the infinitive is a complement (§3.5 Period Test governs), not a bare orphan predicate. **STAY-SPLIT.**
+5. **G5: Line A has only participial verbs (no finite indicative/subjunctive)** → eligible for merge *despite* the surface `a_verb` heuristic firing on line A. The participial-only line A is not a complete clause; its subject NP is still orphaned from the finite predicate on line B. M4-GNT-1 FIRES. Matt 1:19 canonical instance (`δίκαιος ὢν καὶ μὴ θέλων αὐτὴν δειγματίσαι,` / `ἐβουλήθη`).
+
+**Universal exclusions (same as M4-BoFM-1 cross-corpus variants).**
+6. **R7 vocative-only on line A.** When line A is a bare vocative address unit (e.g., `ἀδελφοί,`), the vocative is not the predicate's subject. R7 governs vocative indivisibility; M4-GNT-1 does NOT fire.
+7. **R11 / J3 speech-act parentheticals.** When line A ends in a speech-intro tag (e.g., `λέγει·`), the construction is R11-territory; not a subject-predicate orphan pattern.
+8. **Leading connective on line B** (καί, δέ, γάρ, etc.). Line B is a coordinate or subordinate clause, not a bare-predicate orphan. M4-GNT-1 does NOT fire.
+9. **Line A is a PP-object, not a grammatical subject.** When the NP on line A is governed by a preposition (e.g., object of `ἐν`, `διά`, `πρός`), it is not the subject of any following predicate. M4-GNT-1 does NOT fire.
+10. **Line A is already a complete clause** (contains its own finite subject + predicate). When line A has a full finite verb whose subject is explicitly stated, line B is a coordinate clause, not a predicate orphan. M4-GNT-1 does NOT fire.
+11. **R19 genitive-absolute on line B.** When line B begins with a genitive absolute (anarthrous gen ptc + agreeing gen subject), R19 governs and fires first. M4-GNT-1 does not layer on top.
+
+**Precedence.** Tier 4 merge-override (framework M4). Yields to Tier 1–3 rules (Layer 1 vetoes, formula integrity, complement integrity, vocative integrity R7, genitive-absolute R19). When R7 and M4-GNT-1 fire on the same locus (vocative NP + orphan predicate), R7's interpretation governs if line A is purely a vocative address; M4-GNT-1 governs if line A is a substantive subject NP that happens to be in the vocative or addressed form (household-code pattern: `Αἱ γυναῖκες,` is both a nominative subject and an addressed group — M4-GNT-1 fires because the nominative grammatical function dominates).
+
+**Examples.**
+
+- *Compliant (C1 household-code vocative-subject):* `Αἱ γυναῖκες, ὑποτάσσεσθε τοῖς ἀνδράσιν, ὡς ἀνῆκεν ἐν κυρίῳ.` (Col 3:18 after merge)
+- *Compliant (C1 household-code):* `οἱ ἄνδρες, ἀγαπᾶτε τὰς γυναῖκας` (Col 3:19, Eph 5:25 after merge)
+- *Compliant (C1 household-code):* `Τὰ τέκνα, ὑπακούετε τοῖς γονεῦσιν κατὰ πάντα,` (Col 3:20 after merge)
+- *Compliant (C1 household-code):* `οἱ δοῦλοι, ὑπακούετε κατὰ πάντα τοῖς κατὰ σάρκα κυρίοις,` (Col 3:22 after merge)
+- *Compliant (C1 adverbial-address):* `ὁμοίως, νεώτεροι, ὑποτάγητε πρεσβυτέροις.` (1 Pet 5:5 after merge)
+- *Compliant (C5 biographical-intro):* `καί τις γυνὴ ὀνόματι Λυδία, πορφυρόπωλις πόλεως Θυατείρων, σεβομένη τὸν θεόν, ἤκουεν,` (Acts 16:14 after merge)
+- *Compliant (C3 NP-with-participial, G5 override):* `Ἰωσὴφ δὲ ὁ ἀνὴρ αὐτῆς, δίκαιος ὢν καὶ μὴ θέλων αὐτὴν δειγματίσαι, ἐβουλήθη λάθρᾳ ἀπολῦσαι αὐτήν.` (Matt 1:19 after merge)
+- *Compliant (C2 NP-with-appositive, deity NP):* `ὅτι αὐτὸς ὁ κύριος ἐν κελεύσματι, ἐν φωνῇ ἀρχαγγέλου καὶ ἐν σάλπιγγι θεοῦ, καταβήσεται ἀπʼ οὐρανοῦ,` (1 Thess 4:16 after merge)
+- *Already compliant (C2 NP-with-appositive, deity NP):* `καὶ ὁ κύριος, ὁ θεὸς τῶν πνευμάτων τῶν προφητῶν, ἀπέστειλεν τὸν ἄγγελον αὐτοῦ` (Rev 22:6 — already one line; no merge required)
+- *Already compliant (C4 NP-with-appositive):* `Ὅθεν, ἀδελφοὶ ἅγιοι, κλήσεως ἐπουρανίου μέτοχοι, κατανοήσατε τὸν ἀπόστολον` (Heb 3:1 — already one line; no merge required)
+- *Excluded (G1 attributive-participle):* `Δημήτριος γάρ τις ὀνόματι, ἀργυροκόπος,` / `ποιῶν ναοὺς ἀργυροῦς Ἀρτέμιδος παρείχετο...` — line B `ποιῶν` is attributive participle of `ἀργυροκόπος`; G1 exclusion. STAY-SPLIT. (Acts 19:24)
+- *Excluded (G2 verbless nominal-sentence):* `Ἰδοὺ ἡ δούλη κυρίου·` — line A is a complete verbless clause by Greek ellipsis; `γένοιτό μοι` is a separate predication. G2 exclusion. STAY-SPLIT. (Luke 1:38)
+- *Excluded (R7 vocative):* bare `ἀδελφοί,` alone on a line — pure vocative address, not a grammatical subject. R7 governs; M4-GNT-1 does NOT fire.
+
+**Implementation.**
+
+- Validator: `validators/colometry/check_m4_gnt_1_subject_orphan.py` (surface-pattern with G1–G5 exclusions; MorphGNT-aware Stage 2 filter)
+- Applier: surface-pattern MERGE_FORWARD; 2026-05-11 sweep applied 11 clean Cat A merges across Col, Eph, 1 Pet, Acts, Matt, 1 Thess
+- Closed-list definitions: §SUBJECT_SHAPES_M4_GNT1 (inline above)
+- Audit trail: task `a0d7d74092a145179` (sweep audit completed 2026-05-11; ~149 surface candidates → ~15-20 clean Cat A after G-exclusions)
+- Cross-corpus: sibling of M4-BoFM-1 (`readers-bofm`); framework anchor at `atu-method/docs/framework.md §1.5`
+
+**Defensibility (WHY this rule exists).** The GNT canon's pre-existing rules handled complement integrity (R10 ὅτι-complements, §3.5 Period Test) and genitive-absolute own-line (R19) and participial discipline (R20), but did not operationally codify subject→predicate integrity — the dual of R10's predicate→complement integrity. The atomic-thought test in §1 served as foundational principle but was enforced editorially, not mechanically. The household-code cluster in Col 3 and Eph 5-6 exposed the pattern systematically: the apostolic household-code format consistently opens each directive with a bare nominative address NP (`Αἱ γυναῖκες,`, `οἱ ἄνδρες,`, `Τὰ τέκνα,`, `οἱ δοῦλοι,`) that is simultaneously the grammatical subject and the addressed group — and then places the imperative predicate on the next line. Split, each line fails the No-Anchor or atomic-thought test. Merged, each is one clear ATU: identity + directive. The biographical-introduction pattern (Acts 16:14, Matt 1:19) and deity-NP pattern (1 Thess 4:16) confirm the principle extends across the corpus beyond the household-code genre.
+
+**HOW WE KNOW.** Sweep audit task `a0d7d74092a145179` (2026-05-11): ~149 surface-pattern candidates across all 27 NT books, narrowed to ~15-20 clean Cat A cases after applying all 5 G-exclusions + universal exclusions. The household-code cluster (8 cases), biographical-introduction cluster (3 cases), and deity-NP cases (2) were identified as the cleanest instances. Acts 19:24 (G1) and Luke 1:38 (G2) were confirmed exclusions by structural analysis.
+
+**SCOPE.** A v4-editorial line pairing where: (a) line A carries a grammatical subject NP of one of the five closed-list shapes, terminating in `,` or `·`; (b) line B is a bare finite predicate with no leading connective and no independent subject; (c) none of the 11 exclusions (G1–G5 + 6 universal) fires. Does NOT cover: bare vocative addresses (R7 governs), periphrastic constructions (R5 governs), verbless nominal sentences complete by ellipsis (G2), attributive-participle continuations on line B (G1), or lines where a leading connective on line B signals coordinate/subordinate structure.
 
 ---
 
