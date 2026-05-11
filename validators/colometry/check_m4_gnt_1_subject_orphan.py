@@ -94,6 +94,27 @@ _LEADING_CONNECTIVES: frozenset[str] = frozenset({
     "τόν", "τῶν", "τοῖς", "ταῖς", "τούς", "τάς",
 })
 
+# Greek relative-pronoun forms that BLOCK firing on line B.
+# Line B beginning with a relative pronoun is a relative clause modifying
+# the NP on line A — it is NOT a bare orphan predicate.
+# (Stage 1 surface guard; Stage 2 RR-pos check catches remaining cases.)
+_RELATIVE_LEADS: frozenset[str] = frozenset({
+    # ὅς declension (including accent variants)
+    "ὅς", "ὃς", "ἥ", "ἣ", "ὅ", "ὃ",
+    "οὗ", "ἧς", "ᾧ", "ᾗ", "ὅν", "ὃν", "ἥν", "ἣν",
+    "οἵ", "οἳ", "αἵ", "αἳ", "ἅ", "ἃ",
+    "ὧν", "οἷς", "αἷς", "οὕς", "οὓς", "ἅς", "ἃς",
+    # ὅστις declension
+    "ὅστις", "ἥτις", "ὅτι", "οἵτινες", "αἵτινες", "ἅτινα", "ἃτινα",
+    "ὧντινων", "οἵστισιν", "ὅτου", "ὅτῳ",
+})
+
+# J3 speech-act verb lemmas: when line A contains one of these, it is a
+# speech-intro tag (λέγων αὐτοῖς·), not a subject NP.
+_SPEECH_LEMMAS: frozenset[str] = frozenset({
+    "λέγω", "λαλέω", "εἶπον", "ἀποκρίνομαι", "ἐρωτάω", "φημί",
+})
+
 # MorphGNT POS codes for participial forms (verb with VerbForm=Part)
 # MorphGNT parsing: pos starts "V", parsing[3] == 'P' → participle
 def _is_participle(pos: str, parsing: str) -> bool:
@@ -248,6 +269,86 @@ def _line_a_verbless_complete(morph_tokens_a: list[tuple]) -> bool:
     return not any(t[1].startswith("V") for t in morph_tokens_a)
 
 
+# ─── Stage 2 — additional GC-exclusion helpers ───────────────────────────────
+
+def _has_any_speech_verb(morph_tokens: list[tuple]) -> bool:
+    """J3: True if line A contains a speech-act verb lemma.
+
+    Lines like `λέγων αὐτοῖς·` or `προσευχόμενος καὶ λέγων·` are
+    speech-intro tags, not subject NPs. The presence of λέγω / φημί /
+    εἶπον on line A disqualifies M4-GNT-1 firing.
+    """
+    return any(t[3] in _SPEECH_LEMMAS for t in morph_tokens if t[1].startswith("V"))
+
+
+def _has_unanchored_nom_participle(morph_tokens: list[tuple]) -> bool:
+    """GC-ext: True if line A has a nominative participle NOT preceded by an article.
+
+    A nominative participle that follows an article (RA) is a substantival
+    participle — a genuine subject NP (e.g., `Ὁ καταλύων τὸν ναόν`).
+    A nominative participle WITHOUT a preceding article is a circumstantial
+    participle — a full adverbial clause (e.g., `λαβὼν τοὺς ἄρτους,`).
+    Circumstantial participles on line A = complete clauses; M4-GNT-1 cannot fire.
+
+    parsing[3] == 'P' (participle), parsing[4] == 'N' (nominative case).
+    """
+    prev_was_article = False
+    for t in morph_tokens:
+        if t[1] == "RA":
+            prev_was_article = True
+            continue
+        if (t[1].startswith("V") and len(t[2]) >= 5
+                and t[2][3] == "P" and t[2][4] == "N"):
+            if not prev_was_article:
+                return True
+        prev_was_article = False
+    return False
+
+
+def _has_infinitive_only_verbs(morph_tokens: list[tuple]) -> bool:
+    """G5-refined: True if all verbal tokens on line A are infinitives (no participles).
+
+    The original G5 eligibility check used _all_verbs_are_participial, which
+    inadvertently treated infinitives as participials (both are non-finite).
+    Infinitive-only lines like `ἢ εἰπεῖν·` are verb-phrase complements, not
+    subject NPs. This check blocks them from STRONG promotion.
+
+    Returns True (block) if at least one infinitive exists AND no participle exists.
+    Returns False (allow) if the only verbals are true participles.
+    """
+    verbs = [t for t in morph_tokens if t[1].startswith("V")]
+    if not verbs:
+        return False
+    has_inf = any(len(t[2]) >= 4 and t[2][3] == "N" for t in verbs)
+    has_ptc = any(len(t[2]) >= 4 and t[2][3] == "P" for t in verbs)
+    return has_inf and not has_ptc
+
+
+def _has_genitive_participle(morph_tokens: list[tuple]) -> bool:
+    """Genitive-absolute guard: True if line A contains a genitive participle.
+
+    A genitive participle (parsing[3]=='P', parsing[4]=='G') on line A signals
+    a genitive absolute construction — a complete adverbial clause in its own
+    right. M4-GNT-1 does NOT fire on genitive absolute line A.
+    (Complements G3's periphrastic check with a dedicated gen-abs check.)
+    """
+    return any(
+        t[1].startswith("V") and len(t[2]) >= 5 and t[2][3] == "P" and t[2][4] == "G"
+        for t in morph_tokens
+    )
+
+
+def _line_b_starts_with_relative(morph_tokens: list[tuple]) -> bool:
+    """True if line B's first token is a relative pronoun (MorphGNT pos == 'RR').
+
+    A line B beginning with a relative pronoun is a relative clause that
+    modifies the NP on line A — not a bare orphan predicate awaiting a subject.
+    """
+    for t in morph_tokens:
+        return t[1] == "RR"
+    return False
+
+
 # ─── Chapter-level checker ────────────────────────────────────────────────────
 
 def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
@@ -304,6 +405,12 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
             if _AXIOS_RE.search(line_a):
                 continue
 
+            # Stage 1: line B starts with a relative pronoun → relative clause,
+            # not a bare orphan predicate (surface guard; Stage 2 catches via RR pos)
+            b_lead = strip_punctuation(_leading_token(line_b))
+            if b_lead in _RELATIVE_LEADS:
+                continue
+
             # Line B must have at least one token that looks like a verb
             b_tokens_raw = [t for t in line_b.split() if strip_punctuation(t)]
             if not b_tokens_raw:
@@ -348,8 +455,44 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
                     stage2_reason = "B-no-finite-verb-lead"
                     continue
 
-                stage2_pass = True
-                stage2_reason = ""
+                # ── Additional GC-exclusion checks ────────────────────────────
+                # Require morph_a non-empty for STRONG (cannot confirm line A
+                # structure without morphological data for line A itself).
+                if not morph_a:
+                    stage2_reason = "no-morph-data-line-A"
+                    stage2_pass = False
+                    # Fall through to REVIEW-REQUIRED below — do NOT skip
+                else:
+                    # J3: line A has a speech-act verb (speech-intro tag)
+                    if _has_any_speech_verb(morph_a):
+                        stage2_reason = "J3-speech-verb-on-line-A"
+                        continue
+
+                    # GC-ext: line A has nominative participle without article
+                    # (circumstantial participle = full adverbial clause)
+                    if _has_unanchored_nom_participle(morph_a):
+                        stage2_reason = "GC-nom-participle-no-article-line-A"
+                        continue
+
+                    # G5-refined: line A has only infinitives, no participles
+                    # (infinitive complements ≠ subject NPs)
+                    if _has_infinitive_only_verbs(morph_a):
+                        stage2_reason = "G5-infinitive-only-line-A"
+                        continue
+
+                    # Genitive-absolute: line A has a genitive participle
+                    if _has_genitive_participle(morph_a):
+                        stage2_reason = "GC-genitive-absolute-line-A"
+                        continue
+
+                    # Relative-pronoun lead on B (stage 2 RR-pos check for
+                    # cases the stage-1 surface guard may have missed)
+                    if morph_b and _line_b_starts_with_relative(morph_b):
+                        stage2_reason = "GC-relative-clause-lead-B"
+                        continue
+
+                    stage2_pass = True
+                    stage2_reason = ""
 
             # ── Length backstop ───────────────────────────────────────────────
             merged = line_a.rstrip() + " " + line_b.lstrip()
