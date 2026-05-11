@@ -81,6 +81,21 @@ _PHASE_A_APPLIED: frozenset[tuple[str, int, int]] = frozenset({
     ("1thess",  1,  8),
 })
 
+# ─── Phase C skip-set — cross-verse merges applied 2026-05-11 ────────────────
+# These loci had their verse-initial ὥστε-clause merged onto the prior verse's
+# last line per §3.17 cross-verse merge procedure (audit task aae0b801a5130b535).
+
+_PHASE_C_APPLIED: frozenset[tuple[str, int, int]] = frozenset({
+    ("matt",   15, 31),  # ὥστε τὸν ὄχλον θαυμάσαι → merged onto v.30 last line
+    ("matt",   19,  6),  # ὥστε οὐκέτι εἰσὶν δύο → merged onto v.5 last line
+    ("acts",    5, 15),  # ὥστε καὶ εἰς τὰς πλατείας → merged onto v.14 last line
+    ("1cor",    1,  7),  # ὥστε ὑμᾶς μὴ ὑστερεῖσθαι → merged onto v.6 last line
+    ("heb",    13,  6),  # ὥστε θαρροῦντας ἡμᾶς λέγειν → merged onto v.5 last line
+})
+
+# Combined skip-set used in the chapter checker
+_ALL_APPLIED: frozenset[tuple[str, int, int]] = _PHASE_A_APPLIED | _PHASE_C_APPLIED
+
 # ─── Known illative-ὥστε loci — emit SPLIT-MAINTAINED ────────────────────────
 # These are unambiguous illative cases confirmed during Phase A audit.
 
@@ -89,6 +104,26 @@ _ILLATIVE_KNOWN: frozenset[tuple[str, int, int]] = frozenset({
     ("matt",  12, 12),  # ὥστε ἔξεστιν — new 3P declarative conclusion
     ("gal",    4,  7),  # ὥστε οὐκέτι εἶ δοῦλος — inferential 2P declarative
     ("gal",    4, 16),  # ὥστε ἐχθρὸς ὑμῶν γέγονα — rhetorical conclusion
+    # Phase C newly-confirmed illatives (2026-05-11, audit task aae0b801a5130b535)
+    ("mark",   2, 28),  # ὥστε κύριός ἐστιν — inferential declarative from argument
+    ("rom",    7, 12),  # ὥστε ὁ νόμος ἅγιος — inferential summary conclusion
+    ("rom",   13,  2),  # ὥστε ὁ ἀντιτασσόμενος — inferential consequence chain
+    ("1cor",   3,  7),  # ὥστε οὔτε ὁ φυτεύων — inferential negation of prior claim
+    ("1cor",   3, 21),  # ὥστε μηδεὶς καυχάσθω — 3p imperative conclusion
+    ("1cor",   4,  5),  # ὥστε μὴ πρὸ καιροῦ — negative imperative
+    ("1cor",   5,  8),  # ὥστε ἑορτάζωμεν — 1p hortatory subjunctive
+    ("1cor",   7, 38),  # ὥστε καὶ ὁ γαμίζων — inferential declarative
+    ("1cor",  10, 12),  # ὥστε ὁ δοκῶν ἑστάναι — warning-inferential declarative
+    ("1cor",  14, 22),  # ὥστε αἱ γλῶσσαι — inferential declarative claim
+    ("1cor",  14, 39),  # ὥστε ζηλοῦτε — 2p imperative exhortation
+    ("2cor",   2,  7),  # ὥστε τοὐναντίον — inferential reversal
+    ("2cor",   4, 12),  # ὥστε ὁ θάνατος — inferential contrast
+    ("2cor",   5, 17),  # ὥστε εἴ τις ἐν Χριστῷ — inferential new-creation declaration
+    ("gal",    3,  9),  # ὥστε οἱ ἐκ πίστεως — inferential conclusion to argument
+    ("gal",    3, 24),  # ὥστε ὁ νόμος παιδαγωγός — inferential summary
+    ("phil",   4,  1),  # ὥστε ἀδελφοί μου — vocative + 2p imperative
+    ("1thess", 4, 18),  # ὥστε παρακαλεῖτε — 2p imperative exhortation
+    ("1pet",   4, 19),  # ὥστε καὶ οἱ πάσχοντες — inferential hortatory
 })
 
 # ─── Illative surface heuristics ─────────────────────────────────────────────
@@ -160,8 +195,8 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
         vs_num = verse["vs"]
         lines: list[str] = verse["lines"]
 
-        # Skip Phase A already-applied loci
-        if (book, vs_ch, vs_num) in _PHASE_A_APPLIED:
+        # Skip already-applied loci (Phase A + Phase C)
+        if (book, vs_ch, vs_num) in _ALL_APPLIED:
             continue
 
         for idx, line in enumerate(lines):
@@ -179,26 +214,9 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
             book_cap = book[0].upper() + book[1:]
             verse_ref = f"{book_cap} {vs_ch}:{vs_num}"
 
-            # Cross-verse case: ὥστε is verse-initial (idx == 0) — matrix in prior verse
-            if idx == 0:
-                candidates.append(
-                    emit_candidate(
-                        verse_ref=verse_ref,
-                        line_index=idx,
-                        line_text=line.strip(),
-                        rule=RULE_ID,
-                        tag="REVIEW-REQUIRED",
-                        error_class=ERROR_CLASS,
-                        rationale=(
-                            "R25 cross-verse-defer: ὥστε is verse-initial (idx=0); "
-                            "matrix clause lives in the prior verse. "
-                            "Requires §3.17 cross-verse merge procedure — Phase B."
-                        ),
-                    )
-                )
-                continue
-
-            # Known illative loci
+            # Known illative loci — checked BEFORE cross-verse-defer so that
+            # verse-initial (idx=0) illatives classify as SPLIT-MAINTAINED rather
+            # than REVIEW-REQUIRED (idx=0 preemption bug fixed 2026-05-11).
             if (book, vs_ch, vs_num) in _ILLATIVE_KNOWN:
                 candidates.append(
                     emit_candidate(
@@ -220,7 +238,8 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
             # Word count (entire line, including ὥστε)
             word_count = len(tokens)
 
-            # Illative heuristic on unknown loci
+            # Illative heuristic on unknown loci — also runs before cross-verse-defer
+            # so verse-initial heuristic-illatives get SPLIT-MAINTAINED, not REVIEW-REQUIRED.
             tokens_after = tokens[1:]  # everything after ὥστε
             if _is_likely_illative(tokens_after):
                 candidates.append(
@@ -235,6 +254,26 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
                             "R25 illative-hoste (heuristic): surface markers suggest "
                             "ὥστε is inferential ('therefore'), not consecutive-result. "
                             "Verify manually; split is presumed correct."
+                        ),
+                    )
+                )
+                continue
+
+            # Cross-verse case: ὥστε is verse-initial (idx == 0) — matrix in prior verse.
+            # Placed after illative checks so illative idx=0 cases don't fall here.
+            if idx == 0:
+                candidates.append(
+                    emit_candidate(
+                        verse_ref=verse_ref,
+                        line_index=idx,
+                        line_text=line.strip(),
+                        rule=RULE_ID,
+                        tag="REVIEW-REQUIRED",
+                        error_class=ERROR_CLASS,
+                        rationale=(
+                            "R25 cross-verse-defer: ὥστε is verse-initial (idx=0); "
+                            "matrix clause lives in the prior verse. "
+                            "Requires §3.17 cross-verse merge procedure — Phase C."
                         ),
                     )
                 )
