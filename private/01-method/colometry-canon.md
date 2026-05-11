@@ -1006,6 +1006,18 @@ Full Phase A corpus: Matt 8:24, 10:1, 12:22, 13:2, 13:54, 27:1, 27:14; Mark 1:27
 | Gal 4:7 | illative-ὥστε | ὥστε οὐκέτι εἶ δοῦλος — new 2P declarative, inferential |
 | Mark 1:45 | word-count-exceeded | 9 words (μηκέτι αὐτὸν δύνασθαι φανερῶς εἰς πόλιν εἰσελθεῖν) |
 
+**Illative-ὥστε pattern clusters** (Phase C audit `aae0b801a5130b535` confirmed 22 corpus illatives; 4 named pattern clusters with canonical exemplars):
+
+1. **Hortatory imperative / prohibitive** — ὥστε immediately followed by 2p/3p imperative, prohibitive subjunctive, or 1p hortatory subjunctive. *Canonical exemplar:* **1 Cor 4:5** `ὥστε μὴ πρὸ καιροῦ τι κρίνετε` (direct 2p prohibition). Family includes: 1 Cor 3:21, 5:8, 10:12, 14:39; 1 Thess 4:18; 1 Pet 4:19.
+
+2. **Vocative + imperative opener** — ὥστε + direct vocative address + command. *Canonical exemplar:* **Phil 4:1** `ὥστε, ἀδελφοί μου ἀγαπητοί, οὕτως στήκετε ἐν κυρίῳ` (cross-chapter scope makes illative function undeniable). Family includes: 1 Cor 14:39.
+
+3. **New 3P doctrinal-principle declaration** — ὥστε + new indefinite or general subject + timeless-present predication; no action-continuity with matrix. *Canonical exemplar:* **Gal 3:24** `ὥστε ὁ νόμος παιδαγωγὸς ἡμῶν γέγονεν` (doctrinal summary with new subject, often followed by purpose clause). Family includes: Mark 2:28; Rom 7:12, 13:2; 1 Cor 3:7, 14:22; 2 Cor 4:12, 5:17; Gal 3:9.
+
+4. **Rhetorical inferential conclusion** — ὥστε + retrospective argument summary or rhetorical question; no narrative action to inherit. *Canonical exemplar:* **Gal 4:16** `ὥστε ἐχθρὸς ὑμῶν γέγονα ἀληθεύων ὑμῖν` (rhetorical question framing makes inferential function explicit). Family includes: 1 Cor 7:38; 2 Cor 2:7; Gal 4:7.
+
+These 22 illatives are encoded in the validator's `_ILLATIVE_KNOWN` set so they emit `SPLIT-MAINTAINED` directly. Future ὥστε occurrences exhibiting any of the four pattern cluster signatures should be classified as illative without per-instance re-litigation.
+
 **WHY (defensibility):** A ὥστε-infinitive consecutive-result clause is structurally dependent — it cannot stand alone and it names the outcome that the matrix clause caused. Cause + immediate short result = one cognitive image. The reader's eye-span covers both in a single perceptual unit. Splitting them imposes a line-break on a semantic boundary that doesn't exist in the author's composition.
 
 **HOW WE KNOW:** Phase A sweep across all NT books using Grep + manual evaluation of ~30 candidates. The 3-condition test (≤8, co-ref, no camera shift) correctly identified 20 clean merges and correctly excluded all illative cases and all word-count-exceeded cases under adversarial review (task `a894941c72f5cc4e2`).
