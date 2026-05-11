@@ -1,0 +1,30 @@
+STEPBible TAGNT — Attribution Notice
+=====================================
+
+Files in this directory:
+  TAGNT_Mat-Jhn.txt
+  TAGNT_Act-Rev.txt
+
+are the Translators Amalgamated Greek New Testament (TAGNT), produced by
+STEPBible.org and based on work at Tyndale House, Cambridge.
+
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+Source:  https://github.com/STEPBible/STEPBible-Data
+
+Per the CC BY 4.0 license terms and STEPBible's usage guidelines:
+
+  * This data is used here to fill gaps in the SBLGNT base text for the
+    readers-gnt project (bomreader.com Greek NT reader).
+  * STEPBible.org is credited as the source of the data.
+  * The data has NOT been redistributed; it is used locally to generate
+    derived output (gap-fill.json).
+  * Proposed corrections may be sent to STEPBibleATGmail.com.
+  * STEPBible.org is the canonical distribution source for the raw data.
+
+Original files downloaded 2026-05-11 from:
+  https://raw.githubusercontent.com/STEPBible/STEPBible-Data/master/
+    Translators%20Amalgamated%20OT%2BNT/
+    TAGNT%20Mat-Jhn%20-%20Translators%20Amalgamated%20Greek%20NT%20-%20STEPBible.org%20CC-BY.txt
+  https://raw.githubusercontent.com/STEPBible/STEPBible-Data/master/
+    Translators%20Amalgamated%20OT%2BNT/
+    TAGNT%20Act-Rev%20-%20Translators%20Amalgamated%20Greek%20NT%20-%20STEPBible.org%20CC-BY.txt
