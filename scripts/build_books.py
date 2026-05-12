@@ -26,7 +26,19 @@ REPO_ROOT = os.path.dirname(SCRIPT_DIR)
 GK_PRIMARY_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4-editorial")
 INPUT_DIR = GK_PRIMARY_DIR  # used by discover_books for globbing all chapters (subfoldered)
 EN_DIR = os.path.join(REPO_ROOT, "data", "text-files", "eng-gloss")
+EN_KJV_DIR = os.path.join(REPO_ROOT, "data", "text-files", "eng-gloss-kjv")
 OUTPUT_DIR = os.path.join(REPO_ROOT, "books")
+OUTPUT_KJV_DIR = os.path.join(REPO_ROOT, "books-kjv")
+
+# atu-method swap module (sibling repo, consistent with regenerate_english_kjv.py convention)
+_ATU_METHOD_ROOT = os.path.join(os.path.dirname(REPO_ROOT), "atu-method")
+if _ATU_METHOD_ROOT not in sys.path:
+    sys.path.insert(0, _ATU_METHOD_ROOT)
+
+# TAGNT angle-bracket pre-processing: strip <the>/<a>/<an> before apply_swaps.
+# Per Wave 3γ README: these are TAGNT article markers, not HTML — strip them
+# to plain text so the swap engine sees real English words.
+_TAGNT_ARTICLE_RE = re.compile(r'<(the|a|an)>', re.IGNORECASE)
 
 # Verse reference pattern: digits, colon, digits (e.g. "4:1", "17:33")
 VERSE_REF_RE = re.compile(r"^\d+:\d+$")
@@ -120,8 +132,27 @@ def _wrap_verse_markers(escaped_line, chapter_num):
     return _SUPERSCRIPT_RE.sub(repl, escaped_line)
 
 
-def build_chapter_html(chapter_num, gk_verses, en_lookup=None):
-    """Build HTML for one chapter with paired Greek/English lines."""
+def build_chapter_html(chapter_num, gk_verses, en_lookup=None,
+                       swap_pairs=None, quiet_set=None):
+    """Build HTML for one chapter with paired Greek/English lines.
+
+    Parameters
+    ----------
+    swap_pairs:
+        Pre-sorted list of (archaic, modern) tuples for KJV swap wrapping.
+        When provided, each English line is pre-processed through apply_swaps
+        before HTML escaping (archaic words become <span class="swap"> spans).
+        Pass None for the legacy path (no swap processing).
+    quiet_set:
+        Set of lowercase archaic strings that receive the ``swap-quiet`` CSS
+        class (no dotted underline). Only used when swap_pairs is provided.
+    """
+    # Lazy import — only needed for KJV path; keeps legacy path import-clean
+    if swap_pairs is not None:
+        from atu_method.swaps.apply_swaps import apply_swaps as _apply_swaps
+    else:
+        _apply_swaps = None
+
     parts = []
     parts.append(f'<div class="chapter" id="ch-{chapter_num}">')
 
@@ -147,9 +178,28 @@ def build_chapter_html(chapter_num, gk_verses, en_lookup=None):
 
             # Get corresponding English line (or empty string)
             en_text = en_lines[i] if i < len(en_lines) else ""
-            en_escaped = html.escape(en_text)
-            # Punct wrap first (same ordering reason as Greek above)
-            en_escaped = re.sub(r'([,.\;:!?\'"—\-])', r'<span class="punct">\1</span>', en_escaped)
+
+            if _apply_swaps is not None and en_text:
+                # KJV path: strip TAGNT <the>/<a>/<an> article markers first,
+                # then apply archaic-word swap spans BEFORE html.escape so the
+                # span markup is not entity-escaped by html.escape.
+                en_text = _TAGNT_ARTICLE_RE.sub(r'\1', en_text)
+                en_text = _apply_swaps(en_text, swap_pairs, quiet_set or set())
+                # html.escape the text portions only — swap spans are already
+                # valid HTML; re-escaping them would corrupt the markup.
+                # Strategy: escape the full string, then unescape the sentinel
+                # placeholders back — but apply_swaps already emits safe HTML
+                # with only data-orig/data-mod values needing escaping.
+                # Simpler: escape BEFORE apply_swaps, then call apply_swaps on
+                # escaped text. Reset and redo in correct order:
+                en_text = en_lines[i] if i < len(en_lines) else ""
+                en_text = _TAGNT_ARTICLE_RE.sub(r'\1', en_text)
+                en_escaped = html.escape(en_text)
+                en_escaped = _apply_swaps(en_escaped, swap_pairs, quiet_set or set())
+            else:
+                en_escaped = html.escape(en_text)
+                # Punct wrap first (same ordering reason as Greek above)
+                en_escaped = re.sub(r'([,.\;:!?\'"—\-])', r'<span class="punct">\1</span>', en_escaped)
             en_escaped = _wrap_verse_markers(en_escaped, chapter_num)
 
             parts.append(f'    <span class="line"><span class="gk">{gk_escaped}</span><span class="en">{en_escaped}</span></span>')
@@ -235,25 +285,45 @@ def resolve_greek_path(fpath):
     )
 
 
-def resolve_english_path(fpath):
-    """Return the English structural gloss path if it exists.
+def resolve_english_path(fpath, english_source="legacy"):
+    """Return the English gloss path if it exists.
+
+    Parameters
+    ----------
+    fpath:
+        Greek chapter file path (used to derive book prefix + filename).
+    english_source:
+        ``"legacy"`` → eng-gloss/ (default, live site);
+        ``"kjv"``    → eng-gloss-kjv/ (sandboxed KJV preview).
 
     Returns (path, label) or (None, None) if not found.
     """
     basename = os.path.basename(fpath)
     prefix = _book_prefix(fpath)
-    subdir = _find_book_subdir(EN_DIR, prefix)
+    base_dir = EN_KJV_DIR if english_source == "kjv" else EN_DIR
+    label = "KJV" if english_source == "kjv" else "EN"
+    subdir = _find_book_subdir(base_dir, prefix)
     if subdir:
-        en_path = os.path.join(EN_DIR, subdir, basename)
+        en_path = os.path.join(base_dir, subdir, basename)
         if os.path.isfile(en_path):
-            return en_path, "EN"
+            return en_path, label
     return None, None
 
 
-def build_book(prefix, chapter_files, output_dir):
+def build_book(prefix, chapter_files, output_dir, english_source="legacy",
+               swap_pairs=None, quiet_set=None):
     """Build and write the HTML file for one book.
 
-    Returns the number of chapters, verses, and English label.
+    Parameters
+    ----------
+    english_source:
+        ``"legacy"`` → read from eng-gloss/ (default, live site);
+        ``"kjv"``    → read from eng-gloss-kjv/ (sandboxed KJV preview).
+    swap_pairs / quiet_set:
+        KJV swap engine data (from load_corpus_swap_list). Passed through
+        to build_chapter_html only when english_source=="kjv".
+
+    Returns the number of chapters, verses, output path, and English labels.
     """
     all_chapter_html = []
     total_verses = 0
@@ -266,16 +336,20 @@ def build_book(prefix, chapter_files, output_dir):
         if chapter_num is None:
             chapter_num = _ch_num
 
-        # Resolve English source (WEB preferred over YLT)
+        # Resolve English source
         en_lookup = None
-        en_path, en_label = resolve_english_path(fpath)
+        en_path, en_label = resolve_english_path(fpath, english_source)
         if en_path:
             _, en_verses = parse_chapter(en_path)
             en_lookup = build_ylt_lookup(en_verses)
             en_labels.add(en_label)
 
         total_verses += len(gk_verses)
-        chapter_html = build_chapter_html(chapter_num, gk_verses, en_lookup)
+        chapter_html = build_chapter_html(
+            chapter_num, gk_verses, en_lookup,
+            swap_pairs=(swap_pairs if english_source == "kjv" else None),
+            quiet_set=(quiet_set if english_source == "kjv" else None),
+        )
         all_chapter_html.append(chapter_html)
 
     output_path = os.path.join(output_dir, f"{prefix}.html")
@@ -334,7 +408,20 @@ def main():
         action="store_true",
         help="Skip the SBLGNT word-order integrity check (NOT recommended).",
     )
+    parser.add_argument(
+        "--english-source",
+        default="legacy",
+        choices=["legacy", "kjv"],
+        help=(
+            "English source to use. "
+            "'legacy' (default): eng-gloss/ → books/ (live site, unchanged). "
+            "'kjv': eng-gloss-kjv/ → books-kjv/ (sandboxed KJV preview)."
+        ),
+    )
     args = parser.parse_args()
+
+    english_source = args.english_source
+    output_dir = OUTPUT_KJV_DIR if english_source == "kjv" else OUTPUT_DIR
 
     if not os.path.isdir(INPUT_DIR):
         print(f"ERROR: Input directory not found: {INPUT_DIR}", file=sys.stderr)
@@ -355,6 +442,21 @@ def main():
             sys.exit(2)
         print("  integrity check passed.\n")
 
+    # Load KJV swap list once for all books (only when needed)
+    swap_pairs = None
+    quiet_set = None
+    if english_source == "kjv":
+        try:
+            from atu_method.swaps.load_lists import load_corpus_swap_list
+            swap_pairs, quiet_set = load_corpus_swap_list("nt")
+            print(f"  Loaded NT swap list ({len(swap_pairs)} swap pairs, {len(quiet_set)} quiet).")
+        except ImportError as e:
+            print(
+                f"WARNING: Could not import atu_method.swaps ({e}). "
+                "Building KJV path without swap wrapping.",
+                file=sys.stderr,
+            )
+
     books = discover_books(INPUT_DIR, book_filter=args.book)
 
     if not books:
@@ -364,12 +466,16 @@ def main():
             print(f"No .txt files found in {INPUT_DIR}")
         sys.exit(1)
 
-    print(f"Building {len(books)} book(s)...\n")
+    source_label = f"[{english_source.upper()}]"
+    print(f"Building {len(books)} book(s)... {source_label}\n")
 
     for prefix in sorted(books.keys()):
         chapter_files = books[prefix]
         num_chapters, num_verses, output_path, en_labels = build_book(
-            prefix, chapter_files, OUTPUT_DIR
+            prefix, chapter_files, output_dir,
+            english_source=english_source,
+            swap_pairs=swap_pairs,
+            quiet_set=quiet_set,
         )
         rel_path = os.path.relpath(output_path, REPO_ROOT)
         en_marker = ""
@@ -377,7 +483,7 @@ def main():
             en_marker = " +" + "+".join(sorted(en_labels))
         print(f"  {prefix:<10} {num_chapters:>3} ch, {num_verses:>4} vv  -> {rel_path}{en_marker}")
 
-    print(f"\nDone. Output in {os.path.relpath(OUTPUT_DIR, REPO_ROOT)}/")
+    print(f"\nDone. Output in {os.path.relpath(output_dir, REPO_ROOT)}/")
 
 
 if __name__ == "__main__":

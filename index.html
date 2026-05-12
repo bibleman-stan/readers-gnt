@@ -1072,6 +1072,58 @@
   .help-body a { color: var(--accent); text-decoration: none; }
   .help-body a:hover { text-decoration: underline; }
   .help-back-link { display: inline-block; color: var(--accent); font-size: 0.9em; margin-top: 1.5em; cursor: pointer; }
+
+  /* === KJV SWAP SYSTEM (Wave 3α) ===
+     Active on ?source=kjv or #kjv-preview paths only.
+     The .swap spans are emitted by build_books.py --english-source=kjv.
+     On the legacy path no .swap spans exist, so these rules have zero cost. */
+
+  /* Archaic vocabulary words: dotted underline signals "tap to see modern" */
+  .swap {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: rgba(124,175,194,0.55);
+    text-underline-offset: 3px;
+  }
+  /* High-frequency grammar archaisms (thee/hath/unto): swappable but no visual noise */
+  .swap.swap-quiet {
+    text-decoration: none;
+  }
+  /* aid-active = Modern pill toggled ON: swap spans turn accent-colored */
+  .aid-active .swap {
+    color: #7cafc2 !important;
+    text-decoration: none !important;
+  }
+
+  /* Modern pill button — hidden unless body has .kjv-preview class */
+  #aid-pill {
+    display: none;
+    padding: 3px 10px;
+    border-radius: 12px;
+    border: 1px solid var(--text-faint);
+    background: none;
+    color: var(--text-faint);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.62em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body.kjv-preview #aid-pill {
+    display: inline-block;
+  }
+  #aid-pill:hover {
+    color: var(--text-dim);
+    border-color: var(--text-dim);
+  }
+  #aid-pill.active-aid {
+    color: #7cafc2;
+    border-color: #7cafc2;
+    background: rgba(124,175,194,0.12);
+  }
 </style>
 </head>
 <body>
@@ -1111,6 +1163,9 @@
     <button class="topbar-icon" id="btn-help" onclick="openHelp()" aria-label="Help" title="Help">
       <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
     </button>
+    <!-- Modern pill — visible only on kjv-preview path (body.kjv-preview);
+         CSS hides it on the legacy live site. -->
+    <button id="aid-pill" onclick="toggleAid()" aria-label="Modern words" title="Toggle modern words">Modern</button>
   </div>
 </div>
 
@@ -1763,6 +1818,49 @@ function loadSettings() {
     setLayer(layer, on, false);
   }
 }
+
+// === KJV SWAP SYSTEM — Modern pill toggle (Wave 3α) ===
+// aidOn tracks whether modern-word mode is active.
+// toggleAid() is called by the #aid-pill button in the topbar.
+// On the legacy live site: #aid-pill is CSS-hidden (body lacks .kjv-preview)
+// so this function is never reached. Zero cost to legacy path.
+var aidOn = false;
+
+window.toggleAid = function() {
+  aidOn = !aidOn;
+  document.querySelectorAll('.swap').forEach(function(el) {
+    if (aidOn) {
+      // Cache original innerHTML (preserves inner punct spans)
+      if (!el.hasAttribute('data-orig-html')) {
+        el.setAttribute('data-orig-html', el.innerHTML);
+      }
+      el.textContent = el.getAttribute('data-mod');
+    } else {
+      // Restore cached innerHTML with punct spans intact
+      var cached = el.getAttribute('data-orig-html');
+      if (cached) {
+        el.innerHTML = cached;
+      } else {
+        el.textContent = el.getAttribute('data-orig');
+      }
+    }
+  });
+  document.body.classList.toggle('aid-active', aidOn);
+  var aidPill = document.getElementById('aid-pill');
+  if (aidPill) {
+    aidPill.classList.toggle('active-aid', aidOn);
+  }
+};
+
+// KJV-preview activation: detect ?source=kjv query param or #kjv-preview hash.
+// Adds body.kjv-preview to expose the Modern pill CSS. Legacy path: no class added.
+(function initKjvPreview() {
+  var params = new URLSearchParams(window.location.search);
+  var hash = window.location.hash;
+  if (params.get('source') === 'kjv' || hash === '#kjv-preview') {
+    document.body.classList.add('kjv-preview');
+  }
+})();
 
 // --- Search (Boolean query parser + cross-book index) ---
 
