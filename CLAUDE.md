@@ -55,6 +55,7 @@ The folder is the persistent write surface for the session. Session memory evapo
 **CONSULT-ON-TRIGGER (evaluate the trigger; do NOT silently skip):**
 - `private/01-method/colometry-canon.md` — **trigger:** ANY editorial, rule-interpretation, or methodology-touching work. **Skip when:** pure infrastructure / code / UX / deployment work with no canon touching.
 - `data/syntax-reference/greek-break-legality.md` — **trigger:** applying or authoring a rule that touches generic Koine break-legality (R2-R7 Layer 1). **Skip when:** purely editorial ATU decisions within permitted syntax.
+- `../atu-method/docs/apparatus.md` + `../atu-method/docs/architecture.md` — **trigger:** English-layer migration work, swap-system port, or any work where the picture of the end-state matters more than the phase list. These tell you what the user sees on gnt-reader.com when the work is done (KJV English line-aligned per Greek ATU, modern-mode swap-pill, unified UX with bomreader and tanakh-reader). Pull back to them whenever an architectural fork appears (per `feedback_endstate_first_orientation`).
 - `private/README.md` — **trigger:** writing a new file under `private/` and don't already know the subdirectory layout. **Skip when:** only reading existing files or writing in standard locations.
 
 **Self-report before first substantive response**: one line per mandatory file (e.g., `- CLAUDE.md: read`). A silent skip is a check-in failure.
