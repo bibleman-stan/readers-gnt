@@ -158,6 +158,14 @@ Pipeline: `v4-editorial/*/ → eng-gloss/*/ → books/*.html`
 
 The script is a thin wrapper over `atu_method.kjv_alignment.align_verse()`; the alignment algorithm lives in `../atu-method`, not here. The English layer is KJV verbatim distributed per Greek ATU line via Strong's-number matching (TAGNT → MetaV).
 
+**The cascade is ONE atomic operation.** Greek edit → English regen → HTML rebuild → commit → push. If you change Greek without syncing English and rebuilding HTML in the same work unit, you have failed.
+
+**Two-check verification before any cascade commit:**
+- `py -3 scripts/verify_word_order.py` — integrity (every Greek word present in expected verse per SBLGNT)
+- `py -3 scripts/scan_english_drift.py --min-confidence high` — English-quality drift detector
+
+Both should return 0 before committing. If high-confidence drift hits are confirmed false positives (gen abs detector cases, known carve-outs), document the rationale in the commit message and proceed.
+
 ---
 
 ## Colometric Principles (Orientation Only)
@@ -191,6 +199,20 @@ When dispatching subagents via the Agent tool, match model to task complexity. D
 
 **When in doubt, Sonnet is the right default.** It handles most scoped tasks capably at a fraction of Opus cost. Reserve Opus for tasks where the reasoning quality directly determines the output's value. Stan should not have to think about this — the dispatching Claude makes the call.
 
+### Right-size the tool: scripts → bash → agents
+
+Before dispatching ANY agent, ask: *is this script-fixable?* Scripts run in milliseconds at zero token cost; agents take 60–300 seconds and consume context. If the pattern is deterministic (character/word replacement, regex match, structural edit that scales by line-count or fixed marker), write the Python or run a one-shot Bash command. Dispatch agents only when the task requires Greek-grammar interpretation, per-verse judgment, or editorial discretion the script can't encode.
+
+**Diagnostic:** if the agent prompt is "for each item, do X" and X is deterministic, you wanted a script. If X is "decide whether to do the thing," dispatch.
+
+### Parallelize by default
+
+If parallelism is possible, dispatch immediately — never ask "serial or parallel?" The bar is "is there a genuine data dependency preventing parallelism?" not "would Stan prefer it?" Only serialize when output of A must inform the design of B.
+
+**Corpus-wide split by genre group** (for XML parsing, MorphGNT lookup, rule-consistency audit, mass review): Mark / Matt / Luke-Acts / John (+Johannine epistles) / Pauline corpus / Hebrews / General Epistles / Revelation. Eight agents in parallel beats one agent on 27 books every time. **Threshold: any batch of ≥25 surgical fixes spanning 3+ genre groups MUST split by genre group.**
+
+**Two-phase pipeline for code changes:** Phase 1 = one agent for the code change (single file). Phase 2 = N agents for the corpus rebuild (split by genre group). Never combine — every violation has caused a bottleneck.
+
 ---
 
 ## What Stan Does / What Claude Does
@@ -208,7 +230,7 @@ When dispatching subagents via the Agent tool, match model to task complexity. D
 - Maintains documentation and handoffs
 - Quantitative analysis (colon counts, pattern detection)
 - Never touches source text without explicit approval
-- Commits when finished; Stan pushes
+- Commits when finished and pushes autonomously (see Git Workflow exceptions)
 
 ---
 
@@ -227,10 +249,12 @@ When dispatching subagents via the Agent tool, match model to task complexity. D
 
 ## Git Workflow
 
-- All work on `main` branch
-- Stan pushes from his local machine via GitHub Desktop
-- Claude Code prepares commits but cannot push (403 proxy error)
-- Stan's standing instruction: "whenever you finish, do a commit and I'll push"
+All work on `main`. After any clean commit, run `git push origin main` immediately — no "want me to push?" hedge. Stan authorized blanket autonomous push 2026-05-11 (SSH transport via `bibleman-windows-desktop` key, silent, no prompts). The prior "Stan reviews in GitHub Desktop before push" gate was replaced by branch-policy + commit-message discipline.
+
+**Exceptions** — still warrant Stan's confirmation BEFORE push:
+- Force-pushes (`--force`, `--force-with-lease`)
+- Any branch other than `main`
+- Commits containing agent-applied bulk corpus changes I haven't personally diff-reviewed (R1-sweep / canon-restructure / mass-edit class)
 
 ---
 
