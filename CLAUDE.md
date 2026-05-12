@@ -1,6 +1,6 @@
 # GNT Reader — Claude Code Instructions
 
-Read this file completely before doing anything in this repo. It is your orientation document for every session.
+Read this file completely before doing anything in this repo. It is your orientation document.
 
 ---
 
@@ -31,70 +31,28 @@ Before any substantive work, read the handoffs directory in order:
 
 ---
 
-## Session bookend protocol
+## Wake & standing issues
 
-The overseer apparatus was retired 2026-04-20. Stan is now the sole authority for this project. Session bookends produce artifacts in a per-session folder. Historical record: `private/OVERSEER-DIRECTIONS-retired-2026-04-20.md` (archived, not actively consulted).
+Work is continuous. There are no sessions — only the standing set of pending decisions, blocked items, and in-flight actions. Orient toward that set, not toward wrapping arbitrary time-slices.
 
-### Session folder convention
+**On wake (compaction-resume or new conversation):**
+1. Re-read the prior conversation JSONL at `C:/Users/bibleman/.claude/projects/c--Users-bibleman-repos-readers-gnt/<session-id>.jsonl` to re-acquire context — grep for the most recent activity, decisions, and unresolved items. The JSONL is the verbatim record of everything that's been said; treat it as your durable memory.
+2. `git log --oneline -10` for current code state.
+3. Self-report both reads in one line each before the first substantive response.
 
-Each Claude Code session (JSONL boundary) gets its own folder:
+**Consult on trigger (evaluate the trigger; do NOT silently skip):**
+- `private/01-method/colometry-canon.md` — ANY editorial / rule-interpretation / methodology-touching work.
+- `data/syntax-reference/greek-break-legality.md` — touching R2-R7 Layer 1 break-legality.
+- `../atu-method/docs/apparatus.md` + `../atu-method/docs/architecture.md` — English-layer / swap-system / cross-sibling architectural work; pull back to the picture when ambiguity surfaces.
+- `private/README.md` — writing a new file under `private/` and don't already know the layout.
 
-`private/03-sessions/yyyy-mm-dd-brief_description/`
-
-Use the **session start date**. A compaction-wake starts a new session; create a new folder with a new descriptor, even if the calendar date is the same as the pre-compaction folder. Multiple folders with the same date + different descriptors is correct and expected.
-
-The folder is the persistent write surface for the session. Session memory evaporates at compaction; the folder survives.
-
-### CHECK-IN (at session start)
-
-**MANDATORY (read every wake, including short "hey wake up" signals):**
-1. This CLAUDE.md in full
-2. The most recent `private/03-sessions/yyyy-mm-dd-*/` folder — `pending.md` if present (wake brief / carry-forwards), `intra-session-log.md` for chronology. Prior-session JSONL at `C:/Users/bibleman/.claude/projects/c--Users-bibleman-repos-readers-gnt/<session-id>.jsonl` is the authoritative verbatim record — grep when context is needed.
-3. `git log --oneline -10`
-
-**CONSULT-ON-TRIGGER (evaluate the trigger; do NOT silently skip):**
-- `private/01-method/colometry-canon.md` — **trigger:** ANY editorial, rule-interpretation, or methodology-touching work. **Skip when:** pure infrastructure / code / UX / deployment work with no canon touching.
-- `data/syntax-reference/greek-break-legality.md` — **trigger:** applying or authoring a rule that touches generic Koine break-legality (R2-R7 Layer 1). **Skip when:** purely editorial ATU decisions within permitted syntax.
-- `../atu-method/docs/apparatus.md` + `../atu-method/docs/architecture.md` — **trigger:** English-layer migration work, swap-system port, or any work where the picture of the end-state matters more than the phase list. These tell you what the user sees on gnt-reader.com when the work is done (KJV English line-aligned per Greek ATU, modern-mode swap-pill, unified UX with bomreader and tanakh-reader). Pull back to them whenever an architectural fork appears (per `feedback_endstate_first_orientation`).
-- `private/README.md` — **trigger:** writing a new file under `private/` and don't already know the subdirectory layout. **Skip when:** only reading existing files or writing in standard locations.
-
-**Self-report before first substantive response**: one line per mandatory file (e.g., `- CLAUDE.md: read`). A silent skip is a check-in failure.
-
-**Carry-forward disposition (mandatory after reading prior session's pending.md / JSONL).** Enumerate every carry-forward item from the prior session and classify each as one of:
-- **(a) Executing this session** — picked up in current task surface
-- **(b) Explicitly retired** — name the rationale (no longer applicable, superseded by X, won't be done because Y)
-- **(c) Re-deferred** — name the trigger condition that would re-prioritize it (waiting on hook X, blocked on Stan-side verification, etc.)
-
-Without explicit disposition, items drift across sessions and silently disappear. The disposition table is a one-paragraph block in your check-in self-report — visible to Stan, who can correct if you re-deferred something he wanted executed.
-
-### Intra-session log
-
-Maintain a running tally during the session in the session folder (`private/03-sessions/yyyy-mm-dd-*/intra-session-log.md`):
-
-- **Discipline failures** — Stan corrections received + memory file updates triggered (with common-mode grouping when clusters form)
-- **Withdrawn proposals** — things proposed and rolled back, with rationale
-- **Workflow use-count** — agent dispatches (with model-tier breakdown), commits, cascade runs, memory changes
-- **In-flight agents** — live count + IDs of background agents
-
-Update after each significant event (every 5–10 dispatches or every Stan correction). The log is a persistent artifact — created during the session, surviving across compactions.
-
-### End of session
-
-No wrap artifacts. Surface carry-forwards as text in the conversation when the session ends or a task arc closes. Write `pending.md` only for extended hand-offs (multi-session migrations); write `review-lists/` only when a candidate list needs Stan review. The JSONL is the verbatim record.
+**Surface standing issues** in the conversation when you find them — pending decisions, blocked items, things Stan needs to direct. Don't let items drift silently; the JSONL captures everything but visibility happens in the live conversation.
 
 ### Canon self-consistency audit trigger
 
-**After any session with ≥2 new canon codifications (new subsections or rule revisions), run a canon self-consistency audit before the session ends.** Not a time-based cadence — a content-trigger.
+After any commit batch with ≥2 new canon codifications (new subsections or rule revisions), run a canon self-consistency audit before the commit lands. Content-triggered, not time-triggered.
 
-**What the audit checks:**
-1. Do the new additions contradict existing canon sections? (grep for overlapping keywords; spot-read affected §§)
-2. Do the new additions satisfy the §6 defensibility capture (WHY / HOW WE KNOW / SCOPE)?
-3. Are there adjacent rules that should reference the new additions? (e.g., a new §3.7 subsection might warrant a cross-reference in M1 or R11)
-4. Does the handoffs documentation still match the canon? (if a rule migrated from handoffs to canon, the handoff version should either update or deprecate)
-
-**Light-touch**: this is a ~5-minute pass, not a full re-read. A single grep for the new subsection's key terms + spot-reads is usually sufficient. Flag contradictions or stale cross-references as session-end carry-forwards.
-
-Compaction-resume still runs the full CHECK-IN protocol; short-form "hey wake up" still requires the 3 mandatory reads. Context exhaustion doesn't lose state — JSONL preserves everything.
+The audit checks: do new additions contradict existing canon sections (grep for overlapping keywords + spot-read affected §§); do they satisfy §6 defensibility capture (WHY / HOW WE KNOW / SCOPE); are there adjacent rules that should cross-reference the new additions; does the handoffs documentation still match the canon. Light-touch — ~5-minute pass, not a full re-read.
 
 ---
 
@@ -138,7 +96,7 @@ The SBLGNT source files in `data/text-files/sblgnt-source/` are canonical refere
 
 Line-break changes come in two classes that require different gating.
 
-**Rule-derivative changes**: a line-break change that applies a codified MECHANICAL rule from the canon unambiguously. Example: R2 forbids line-final conjunction, a line ends on καί, the fix is a forced merge. **These do NOT require per-item Stan approval** — the canon's rule is the approval. Apply mechanically and report in the session's rollup summary.
+**Rule-derivative changes**: a line-break change that applies a codified MECHANICAL rule from the canon unambiguously. Example: R2 forbids line-final conjunction, a line ends on καί, the fix is a forced merge. **These do NOT require per-item Stan approval** — the canon's rule is the approval. Apply mechanically and report in the commit's rollup summary.
 
 **Ad-hoc changes**: a line-break change that is not directly licensed by a codified rule, or that applies an EDITORIAL/FUZZY rule (Category B), or that touches an exegetical hot spot (Category C). **These DO require Stan approval** before application — present the proposed change with its rationale and wait for explicit greenlight.
 
@@ -152,7 +110,7 @@ The distinction is important: gating rule-derivative changes on per-item approva
 
 **Before any commit that modifies `private/01-method/colometry-canon.md`, check whether the change matches a mandatory-audit trigger per canon §6.5.** The 12 triggers are listed in canon §6.5; re-read them when uncertain. If the change matches any trigger, audit evidence (hostile-agent dispatch + verdict + application) must be present in the commit message or the canon §10 Update Log entry.
 
-**Audit-skippable.** Canon edits that do NOT match any trigger (typo fixes, cross-reference updates without precedence claims, deletions of same-session reverts, defensibility-capture additions to already-settled rules without scope changes, Category A mechanical corpus edits that are not part of a ≥5-instance sweep) proceed without audit.
+**Audit-skippable.** Canon edits that do NOT match any trigger (typo fixes, cross-reference updates without precedence claims, deletions of same-batch reverts, defensibility-capture additions to already-settled rules without scope changes, Category A mechanical corpus edits that are not part of a ≥5-instance sweep) proceed without audit.
 
 **When uncertain.** Dispatch the audit. The cost of a false-positive audit (Stan reads a no-op audit result) is small; the cost of a false-negative audit (a fake rule commits) is large.
 
@@ -173,7 +131,7 @@ The distinction is important: gating rule-derivative changes on per-item approva
 
 **Parallelize audits by default.** When triggered, dispatch multiple audit dimensions in parallel (one assistant message, multiple Agent tool calls). Sequential only when audit A's verdict determines whether audit B should run. Same-trigger audits across distinct angles (discipline / scope / cross-project consistency / corpus impact) should fire in one batch, not in series. Memory `feedback_adversarial.md` and `feedback_parallelize.md` capture the operational discipline.
 
-This discipline complements (does NOT replace) the session-end **Canon self-consistency audit trigger** in the Session bookend protocol above. Pre-commit is per-change; self-consistency is session-rollup. See canon §3 "Scope/precedence/closed-list/carve-out diagnostic" for the Category-B-by-default rule this self-test instantiates, and canon §6.5 for the full trigger list.
+This discipline complements (does NOT replace) the **Canon self-consistency audit trigger** above. Pre-commit is per-change; self-consistency is batch-rollup (fires when ≥2 codifications accumulate). See canon §3 "Scope/precedence/closed-list/carve-out diagnostic" for the Category-B-by-default rule this self-test instantiates, and canon §6.5 for the full trigger list.
 
 ---
 
@@ -284,5 +242,5 @@ This project is **publicly independent** — no cross-references to any other pr
 
 ## Update Protocol
 
-When updating handoff docs, append a dated block at the bottom — never overwrite history. After any session where decisions are made, principles are refined, or new patterns identified, update the relevant handoff file.
+When updating handoff docs, append a dated block at the bottom — never overwrite history. After any work where decisions are made, principles are refined, or new patterns identified, update the relevant handoff file.
 
