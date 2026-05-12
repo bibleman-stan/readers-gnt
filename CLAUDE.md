@@ -49,7 +49,7 @@ The folder is the persistent write surface for the session. Session memory evapo
 
 **MANDATORY (read every wake, including short "hey wake up" signals):**
 1. This CLAUDE.md in full
-2. The most recent `private/03-sessions/yyyy-mm-dd-*/` folder — read `pending.md` if present (for carry-forwards + wake brief); read `intra-session-log.md` for chronology context. Prior-session synthesis lives in the prior session's JSONL at `C:/Users/bibleman/.claude/projects/c--Users-bibleman-repos-readers-gnt/<session-id>.jsonl` — grep for relevant terms if context is missing.
+2. The most recent `private/03-sessions/yyyy-mm-dd-*/` folder — `pending.md` if present (wake brief / carry-forwards), `intra-session-log.md` for chronology. Prior-session JSONL at `C:/Users/bibleman/.claude/projects/c--Users-bibleman-repos-readers-gnt/<session-id>.jsonl` is the authoritative verbatim record — grep when context is needed.
 3. `git log --oneline -10`
 
 **CONSULT-ON-TRIGGER (evaluate the trigger; do NOT silently skip):**
@@ -78,21 +78,13 @@ Maintain a running tally during the session in the session folder (`private/03-s
 
 Update after each significant event (every 5–10 dispatches or every Stan correction). The log is a persistent artifact — created during the session, surviving across compactions.
 
-### WRAP-UP (at session end, or when context crosses ~60%)
+### End of session
 
-**Wrap-up artifacts are no longer produced.** The session JSONL at `C:/Users/bibleman/.claude/projects/c--Users-bibleman-repos-readers-gnt/<session-id>.jsonl` is the authoritative session record. Deriving synthesis on demand via spot-grep or replay is cheaper than producing it up front. `session-notes.md`, `dialogue-notes.md`, and `full-transcript.md` are all retired.
-
-Surface in the conversation at session end:
-
-1. **Carry-forwards** as plain text — anything the next session needs to pick up, what's blocked on what. The next session pulls these from JSONL or from a fresh `pending.md` if one was written for an extended hand-off.
-2. **`pending.md`** (in the session folder) — produce only for extended hand-offs (multi-session migrations, multi-stage cleanups) where a structured wake-brief is genuinely useful. Most sessions don't need one.
-3. **`review-lists/`** (subfolder of the session folder) — only when the session produced candidate lists requiring Stan review (e.g., N sweep candidates from a validator run). One markdown file per list with decision checkboxes.
-
-`intra-session-log.md` is unaffected — keep maintaining the running chronology during the session.
+No wrap artifacts. Surface carry-forwards as text in the conversation when the session ends or a task arc closes. Write `pending.md` only for extended hand-offs (multi-session migrations); write `review-lists/` only when a candidate list needs Stan review. The JSONL is the verbatim record.
 
 ### Canon self-consistency audit trigger
 
-**After any session with ≥2 new canon codifications (new subsections or rule revisions), run a canon self-consistency audit before WRAP-UP.** Not a time-based cadence — a content-trigger.
+**After any session with ≥2 new canon codifications (new subsections or rule revisions), run a canon self-consistency audit before the session ends.** Not a time-based cadence — a content-trigger.
 
 **What the audit checks:**
 1. Do the new additions contradict existing canon sections? (grep for overlapping keywords; spot-read affected §§)
@@ -100,15 +92,9 @@ Surface in the conversation at session end:
 3. Are there adjacent rules that should reference the new additions? (e.g., a new §3.7 subsection might warrant a cross-reference in M1 or R11)
 4. Does the handoffs documentation still match the canon? (if a rule migrated from handoffs to canon, the handoff version should either update or deprecate)
 
-**Light-touch**: this is a ~5-minute pass, not a full re-read. A single grep for the new subsection's key terms + spot-reads is usually sufficient. Flag contradictions or stale cross-references in the session's carry-forwards.
+**Light-touch**: this is a ~5-minute pass, not a full re-read. A single grep for the new subsection's key terms + spot-reads is usually sufficient. Flag contradictions or stale cross-references as session-end carry-forwards.
 
-### Context-threshold discipline
-
-- **Green zone (0-60%)**: execute normally.
-- **Yellow zone (60-80%)**: consider wrapping at natural breakpoints; surface in-flight carry-forwards explicitly so they survive the context boundary.
-- **Red zone (80%+)**: stop new execution, surface carry-forwards, hand off.
-
-Compaction-resume: still run the full CHECK-IN protocol when resuming from a compaction summary. Short-form "hey wake up" still requires the 3 mandatory reads.
+Compaction-resume still runs the full CHECK-IN protocol; short-form "hey wake up" still requires the 3 mandatory reads. Context exhaustion doesn't lose state — JSONL preserves everything.
 
 ---
 
