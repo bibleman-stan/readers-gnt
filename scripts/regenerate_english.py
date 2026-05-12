@@ -32,6 +32,7 @@ Usage
 import argparse
 import re
 import sys
+import unicodedata
 from collections import defaultdict
 from pathlib import Path
 from typing import Optional
@@ -188,7 +189,18 @@ _GREEK_PUNCT = set(".,;:·—…!?·\"'()[]{}–—")
 
 
 def normalise_greek(s: str) -> str:
-    return s.rstrip("".join(_GREEK_PUNCT)).strip()
+    """Normalize a Greek token for surface comparison.
+
+    Strips trailing punctuation + applies Unicode NFC normalization.
+    NFC is load-bearing: v4/grc uses precomposed forms from the modern
+    Unicode Greek block (e.g., ε+acute = U+03AD), while TAGNT uses
+    legacy oxia forms (U+1F73). They render identically and are
+    canonically equivalent per Unicode, but compare unequal as raw
+    strings — without NFC normalization, the surface match fails and
+    the fallback-absorb path routes TAGNT tokens onto wrong lines,
+    producing wrong-line KJV attachment via Strong's leakage.
+    """
+    return unicodedata.normalize("NFC", s.rstrip("".join(_GREEK_PUNCT))).strip()
 
 
 def tokenise_atu_line(line: str) -> list[str]:

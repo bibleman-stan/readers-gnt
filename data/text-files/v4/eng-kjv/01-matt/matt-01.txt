@@ -22,8 +22,8 @@ and Booz begat Obed of Ruth;
 and Obed begat Jesse;
 
 1:6
-And Jesse begat David the king; the king begat
-and David Solomon of her that had been the wife of Urias;
+And Jesse begat David the king; the king
+and David begat Solomon of her that had been the wife of Urias;
 
 1:7
 And Solomon begat Roboam;
@@ -63,9 +63,9 @@ and Sadoc begat Achim;
 and Achim begat Eliud;
 
 1:15
-And Eliud begat Eleazar;
-and Eleazar begat Matthan;
-and Matthan begat Jacob;
+And Eliud begat Eleazar; Eleazar
+and begat Matthan; Matthan
+and begat Jacob;
 
 1:16
 And Jacob begat Joseph the husband of Mary,
@@ -114,6 +114,6 @@ and took unto him his wife:
 
 1:25
 And knew her not
-till she had brought forth
-her firstborn son: and he called his name JESUS.
+till she had brought forth son:
+her firstborn and he called his name JESUS.
 

@@ -1,8 +1,8 @@
 16:1
 Then came he to Derbe and Lystra: and,
-behold, a certain disciple was there,
+behold, a certain disciple was there, of a certain
 named Timotheus,
-the son of a certain woman, which was a Jewess, and believed;
+the son woman, which was a Jewess, and believed;
 but his father was a Greek:
 
 16:2
@@ -42,16 +42,16 @@ Come over into Macedonia, and help us.
 
 16:10
 And after he had seen the vision,
-immediately we endeavoured to go into
-Macedonia, assuredly gathering that the Lord had called us for to preach the gospel unto them.
+immediately we endeavoured to go into Macedonia,
+assuredly gathering that the Lord had called us for to preach the gospel unto them.
 
 16:11
 Therefore loosing from Troas, we came with a straight course to Samothracia,
 and the next day to Neapolis;
 
 16:12
-And from thence to Philippi, which is the chief city of that part of Macedonia,
-and a colony: and we were in that city abiding certain days.
+And from thence to Philippi, which is the chief city of that part of Macedonia, and a colony:
+and we were in that city abiding certain days.
 
 16:13
 And on the sabbath we went out of the city by a river side,
@@ -123,9 +123,9 @@ And the keeper of the prison awaking out of his sleep, and seeing the prison doo
 supposing that the prisoners had been fled.
 
 16:28
-But Paul cried with a loud voice, saying,
-Do thyself no harm:
-for we are all here.
+But Paul cried with a loud voice, saying, no
+Do thyself harm: all
+for we are here.
 
 16:29
 Then he called for a light, and sprang in,
@@ -171,8 +171,8 @@ but let them come themselves and fetch us out.
 
 16:38
 And the serjeants told these words unto the magistrates:
-and
-they feared, when they heard that they were Romans.
+and they feared,
+when they heard that they were Romans.
 
 16:39
 And they came and besought them,
