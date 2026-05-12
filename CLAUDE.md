@@ -49,7 +49,7 @@ The folder is the persistent write surface for the session. Session memory evapo
 
 **MANDATORY (read every wake, including short "hey wake up" signals):**
 1. This CLAUDE.md in full
-2. The most recent `private/03-sessions/yyyy-mm-dd-*/session-notes.md` (for carry-forwards and prior-session context)
+2. The most recent `private/03-sessions/yyyy-mm-dd-*/` folder — read `pending.md` if present (for carry-forwards + wake brief); read `intra-session-log.md` for chronology context. Prior-session synthesis lives in the prior session's JSONL at `C:/Users/bibleman/.claude/projects/c--Users-bibleman-repos-readers-gnt/<session-id>.jsonl` — grep for relevant terms if context is missing.
 3. `git log --oneline -10`
 
 **CONSULT-ON-TRIGGER (evaluate the trigger; do NOT silently skip):**
@@ -60,7 +60,7 @@ The folder is the persistent write surface for the session. Session memory evapo
 
 **Self-report before first substantive response**: one line per mandatory file (e.g., `- CLAUDE.md: read`). A silent skip is a check-in failure.
 
-**Carry-forward disposition (mandatory after reading prior session-notes).** Enumerate every carry-forward item from the prior session's `session-notes.md` and classify each as one of:
+**Carry-forward disposition (mandatory after reading prior session's pending.md / JSONL).** Enumerate every carry-forward item from the prior session and classify each as one of:
 - **(a) Executing this session** — picked up in current task surface
 - **(b) Explicitly retired** — name the rationale (no longer applicable, superseded by X, won't be done because Y)
 - **(c) Re-deferred** — name the trigger condition that would re-prioritize it (waiting on hook X, blocked on Stan-side verification, etc.)
@@ -76,17 +76,19 @@ Maintain a running tally during the session in the session folder (`private/03-s
 - **Workflow use-count** — agent dispatches (with model-tier breakdown), commits, cascade runs, memory changes
 - **In-flight agents** — live count + IDs of background agents
 
-Update after each significant event (every 5–10 dispatches or every Stan correction). The log is a persistent artifact — created during the session, surviving wrap. At WRAP-UP, distill it into `session-notes.md` (the log captures raw chronology; session-notes captures the synthesis).
+Update after each significant event (every 5–10 dispatches or every Stan correction). The log is a persistent artifact — created during the session, surviving across compactions.
 
 ### WRAP-UP (at session end, or when context crosses ~60%)
 
-Produce in the session folder:
+**Wrap-up artifacts are no longer produced.** The session JSONL at `C:/Users/bibleman/.claude/projects/c--Users-bibleman-repos-readers-gnt/<session-id>.jsonl` is the authoritative session record. Deriving synthesis on demand via spot-grep or replay is cheaper than producing it up front. `session-notes.md`, `dialogue-notes.md`, and `full-transcript.md` are all retired.
 
-1. **`session-notes.md`** (mandatory) — session arc, what landed (commits), discipline observations with common-mode grouping, withdrawn proposals, workflow use-count, carry-forwards for next session.
-2. **`dialogue-notes.md`** — produce only for methodology-heavy sessions where the DIALOGUE arc itself is the work (vs. executing a pre-specified task). Captures the reasoning path that led to a decision, not just the decision.
-3. **`review-lists/`** (subfolder) — only when the session produced candidate lists requiring Stan review (e.g., N sweep candidates from a validator run). One markdown file per list with decision checkboxes.
+Surface in the conversation at session end:
 
-**`full-transcript.md` is on-request only, not default.** The JSONL at `C:/Users/bibleman/.claude/projects/c--Users-bibleman-repos-readers-gnt/<session-id>.jsonl` is the authoritative source for verbatim dialogue. The transcript artifact added rendering (numbered turns, stripped system noise, markdown) but no new content; cost > value. Produce only when Stan explicitly asks for it or the session genuinely warrants a parsed extract (e.g., publishing dialogue excerpts; deep cross-session methodology archaeology where JSONL parsing is the bottleneck).
+1. **Carry-forwards** as plain text — anything the next session needs to pick up, what's blocked on what. The next session pulls these from JSONL or from a fresh `pending.md` if one was written for an extended hand-off.
+2. **`pending.md`** (in the session folder) — produce only for extended hand-offs (multi-session migrations, multi-stage cleanups) where a structured wake-brief is genuinely useful. Most sessions don't need one.
+3. **`review-lists/`** (subfolder of the session folder) — only when the session produced candidate lists requiring Stan review (e.g., N sweep candidates from a validator run). One markdown file per list with decision checkboxes.
+
+`intra-session-log.md` is unaffected — keep maintaining the running chronology during the session.
 
 ### Canon self-consistency audit trigger
 
@@ -98,13 +100,13 @@ Produce in the session folder:
 3. Are there adjacent rules that should reference the new additions? (e.g., a new §3.7 subsection might warrant a cross-reference in M1 or R11)
 4. Does the handoffs documentation still match the canon? (if a rule migrated from handoffs to canon, the handoff version should either update or deprecate)
 
-**Light-touch**: this is a ~5-minute pass, not a full re-read. A single grep for the new subsection's key terms + spot-reads is usually sufficient. Flag contradictions or stale cross-references in the session-notes carry-forwards.
+**Light-touch**: this is a ~5-minute pass, not a full re-read. A single grep for the new subsection's key terms + spot-reads is usually sufficient. Flag contradictions or stale cross-references in the session's carry-forwards.
 
 ### Context-threshold discipline
 
 - **Green zone (0-60%)**: execute normally.
-- **Yellow zone (60-80%)**: start drafting `session-notes.md` in the background; consider wrapping at natural breakpoints.
-- **Red zone (80%+)**: stop new execution, wrap up.
+- **Yellow zone (60-80%)**: consider wrapping at natural breakpoints; surface in-flight carry-forwards explicitly so they survive the context boundary.
+- **Red zone (80%+)**: stop new execution, surface carry-forwards, hand off.
 
 Compaction-resume: still run the full CHECK-IN protocol when resuming from a compaction summary. Short-form "hey wake up" still requires the 3 mandatory reads.
 
