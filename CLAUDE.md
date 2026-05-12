@@ -68,8 +68,8 @@ The audit checks: do new additions contradict existing canon sections (grep for 
 | `validators/_shared/macula_clauses.py` | Macula syntax-tree clause-boundary extractor (used by `validators/common.py`) |
 | `scripts/archive/` | Tier-producer scripts (v0–v3) frozen 2026-04-26; see `scripts/archive/README.md` |
 | `data/text-files/sblgnt-source/` | 27 raw SBLGNT source files — **NEVER EDIT** |
-| `data/text-files/v4-editorial/*/` | 260 chapter files in book subfolders — **single source of truth for Greek text** |
-| `data/text-files/eng-gloss/*/` | 260 chapter files in book subfolders — KJV verbatim per Greek ATU line (produced by `regenerate_english.py`) |
+| `data/text-files/v4/grc/*/` | 260 chapter files in book subfolders — **single source of truth for Greek text** |
+| `data/text-files/v4/eng-kjv/*/` | 260 chapter files in book subfolders — KJV verbatim per Greek ATU line (produced by `regenerate_english.py`) |
 | `books/` | 27 generated HTML fragment files (rebuilt from v4-editorial + eng-gloss) |
 
 ---
@@ -85,7 +85,7 @@ The SBLGNT source files in `data/text-files/sblgnt-source/` are canonical refere
 - Run any `scripts/archive/` tier-producer script (v0–v3) — they write to frozen scaffolding directories and almost never produce a desired outcome on a hand-edited corpus
 
 **ALWAYS:**
-- Work in `v4-editorial/` — the only editorial tool is where lines break
+- Work in `v4/grc/` — the only editorial tool is where lines break
 - Present proposed changes for review before finalizing
 - Preserve verse references for alignment with standard editions
 - Use `PYTHONIOENCODING=utf-8` when running Python scripts on Windows
@@ -139,7 +139,7 @@ This discipline complements (does NOT replace) the **Canon self-consistency audi
 
 The cascade rule: **Greek edit → English regen → HTML rebuild**.
 
-After editing a Greek chapter in `v4-editorial/`:
+After editing a Greek chapter in `v4/grc/`:
 1. Regenerate the English gloss for that chapter
 2. Rebuild the HTML
 
@@ -154,7 +154,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py
 PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark
 ```
 
-Pipeline: `v4-editorial/*/ → eng-gloss/*/ → books/*.html`
+Pipeline: `v4/grc/*/ → v4/eng-kjv/*/ → books/*.html`
 
 The script is a thin wrapper over `atu_method.kjv_alignment.align_verse()`; the alignment algorithm lives in `../atu-method`, not here. The English layer is KJV verbatim distributed per Greek ATU line via Strong's-number matching (TAGNT → MetaV).
 

@@ -16,7 +16,7 @@ Usage: PYTHONIOENCODING=utf-8 py -3 scripts/flip_hoti_to_lead.py [--apply]
 import os, sys, re
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V4 = os.path.join(REPO, "data", "text-files", "v4-editorial")
+V4 = os.path.join(REPO, "data", "text-files", "v4", "grc")
 
 VERSE_RE = re.compile(r"^\d+:\d+\s*$")
 

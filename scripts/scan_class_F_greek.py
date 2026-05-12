@@ -52,7 +52,7 @@ import unicodedata
 # ---------------------------------------------------------------------------
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4-editorial")
+V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4", "grc")
 
 # ---------------------------------------------------------------------------
 # Greek normalization + tokenizing

@@ -2,7 +2,7 @@
 
 This directory holds the complete pipeline by which the GNT Reader's colometric text was produced, from the canonical SBLGNT source to the methodology-applied reading edition currently served at gnt-reader.com.
 
-**Five tiers, one chapter at a time.** Every Greek chapter exists in every tier. Opening (for example) `v0-prose/08-2cor/2cor-06.txt`, `v1-colometric/08-2cor/2cor-06.txt`, `v2-colometric/08-2cor/2cor-06.txt`, `v3-colometric/08-2cor/2cor-06.txt`, and `v4-editorial/08-2cor/2cor-06.txt` shows the same chapter at five successive stages of our colometric method.
+**Five tiers, one chapter at a time.** Every Greek chapter exists in every tier. Opening (for example) `v0-prose/08-2cor/2cor-06.txt`, `v1-colometric/08-2cor/2cor-06.txt`, `v2-colometric/08-2cor/2cor-06.txt`, `v3-colometric/08-2cor/2cor-06.txt`, and `v4/grc/08-2cor/2cor-06.txt` shows the same chapter at five successive stages of our colometric method.
 
 ## The five tiers
 
@@ -12,13 +12,13 @@ This directory holds the complete pipeline by which the GNT Reader's colometric 
 | **v1** | `v1-colometric/` | First-pass mechanical atomic thought units (ATUs). Surface pattern matching on punctuation, known subordinators (ἵνα, ὥστε, ὅτι, ὅταν, …), discourse particles, speech introductions. Strips apparatus markers. | `scripts/archive/auto_colometry.py` |
 | **v2** | `v2-colometric/` | Syntax-tree-driven ATUs. Uses the scholar-annotated clause boundaries and participial-phrase brackets from the Macula Greek syntax trees to segment. Significant improvement over v1 for participial phrases, genitive absolutes, and embedded prose. | `scripts/archive/v2_colometry.py` |
 | **v3** | `v3-colometric/` | Rhetorical-pattern-refined ATUs. Adds parallelism detection, discourse-marker framing, and other rhetorical-pattern awareness on top of v2. The last machine tier. | `scripts/archive/v3_colometry.py` |
-| **v4** | `v4-editorial/` | Methodology-applied reading edition. The project's documented colometric methodology — atomic thought, cognitive hierarchy, register sensitivity, semantic grouping, the universal vocative rule, the no-anchor rule, and the other rules recorded in the canon — applied to the text. Changes land via a mix of systematic scan-and-apply tools for structurally-describable classes (the vocative pass, the no-anchor pass, the Goldilocks refinement, Class F audits) and case-by-case editorial decisions where rules conflict or underdetermine. **The single source of truth for the web app.** | Methodology application (systematic scanners + editorial judgment) |
+| **v4** | `v4/grc/` | Methodology-applied reading edition. The project's documented colometric methodology — atomic thought, cognitive hierarchy, register sensitivity, semantic grouping, the universal vocative rule, the no-anchor rule, and the other rules recorded in the canon — applied to the text. Changes land via a mix of systematic scan-and-apply tools for structurally-describable classes (the vocative pass, the no-anchor pass, the Goldilocks refinement, Class F audits) and case-by-case editorial decisions where rules conflict or underdetermine. **The single source of truth for the web app.** | Methodology application (systematic scanners + editorial judgment) |
 
 **v0–v3 producers archived 2026-04-26.** The four producer scripts now live at `scripts/archive/`. The tier directories themselves are preserved as frozen scaffolding; the scripts are preserved for provenance and re-derivability. See `scripts/archive/README.md`.
 
 Plus one non-Greek directory:
 
-- `eng-gloss/` — English structural glosses aligned line-for-line with `v4-editorial/`. The active English-regen tool is `scripts/regenerate_english.py` (incremental, with skip-guard). The original from-scratch seeder (`generate_english_glosses.py`) and a Pauline-only seeder variant (`generate_pauline_english.py`) were archived 2026-04-26 and live under `scripts/archive/`.
+- `v4/eng-kjv/` — English structural glosses aligned line-for-line with `v4/grc/`. The active English-regen tool is `scripts/regenerate_english.py` (incremental, with skip-guard). The original from-scratch seeder (`generate_english_glosses.py`) and a Pauline-only seeder variant (`generate_pauline_english.py`) were archived 2026-04-26 and live under `scripts/archive/`.
 
 And one untouched reference:
 
@@ -94,7 +94,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/archive/v2_colometry.py
 PYTHONIOENCODING=utf-8 py -3 scripts/archive/v3_colometry.py
 ```
 
-The producer scripts were moved to `scripts/archive/` on 2026-04-26 once `v4-editorial/` reached 260/260 coverage and the v0–v3 tiers were no longer in the active editorial loop. They are preserved unchanged for re-derivation; running them today will overwrite the frozen tier corpora.
+The producer scripts were moved to `scripts/archive/` on 2026-04-26 once `v4/grc/` reached 260/260 coverage and the v0–v3 tiers were no longer in the active editorial loop. They are preserved unchanged for re-derivation; running them today will overwrite the frozen tier corpora.
 
 v4 is not produced by a single reproducible script because rule application involves judgment calls at the margin. It is, however, methodologically checkable — see the two-reproducibility-regimes note above and `handoffs/04-editorial-workflow.md` for the editorial workflow and the rule set the editor applies.
 

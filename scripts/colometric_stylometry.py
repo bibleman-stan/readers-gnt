@@ -26,7 +26,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-V4_DIR = REPO_ROOT / "data" / "text-files" / "v4-editorial"
+V4_DIR = REPO_ROOT / "data" / "text-files" / "v4" / "grc"
 OUT_DIR = REPO_ROOT / "research" / "stylometry"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 

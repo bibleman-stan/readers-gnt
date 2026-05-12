@@ -30,7 +30,7 @@ import spacy
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
 
-ENG_DIR = REPO_ROOT / "data" / "text-files" / "eng-gloss"
+ENG_DIR = REPO_ROOT / "data" / "text-files" / "v4" / "eng-kjv"
 if not ENG_DIR.exists():
     print("ERROR: Cannot find English gloss directory.", file=sys.stderr)
     sys.exit(1)

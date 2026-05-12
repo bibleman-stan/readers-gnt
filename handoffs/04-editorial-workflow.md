@@ -2,7 +2,7 @@
 
 > **Universal-layer pointer (2026-05-12).** The editorial categories (A mechanical / B fuzzy / C exegetical), structural-justification taxonomy, and merge-override conditions documented below now live universally in [`../../atu-method/docs/framework.md`](../../atu-method/docs/framework.md) (§1 Three Forces + 5 Structural Justifications + 4 Merge-Overrides; §2 Categories A/B/C). The prose in this file is preserved for fast-read and to capture per-repo GNT-specific workflow detail; framework.md is the authoritative version of the universal taxonomy. When the two drift, framework.md wins.
 
-> **Update 2026-04-26 — Tier-producer archive sweep.** The v0–v3 tier producers and several adjacent one-time tools (`build_v0_prose.py`, `auto_colometry.py`, `v2_colometry.py`, `v3_colometry.py`, `diagnostic_scanner.py`, `generate_english_glosses.py`, `generate_pauline_english.py`, `v4_pauline_review.py`) were moved to `scripts/archive/`. The pipeline diagram below describes the original five-tier bootstrap; the active editorial loop is now `v4-editorial/ → regenerate_english.py → eng-gloss/ → build_books.py → books/*.html`. See `scripts/archive/README.md` and canon §10 (2026-04-26 later⁷).
+> **Update 2026-04-26 — Tier-producer archive sweep.** The v0–v3 tier producers and several adjacent one-time tools (`build_v0_prose.py`, `auto_colometry.py`, `v2_colometry.py`, `v3_colometry.py`, `diagnostic_scanner.py`, `generate_english_glosses.py`, `generate_pauline_english.py`, `v4_pauline_review.py`) were moved to `scripts/archive/`. The pipeline diagram below describes the original five-tier bootstrap; the active editorial loop is now `v4/grc/ → regenerate_english.py → v4/eng-kjv/ → build_books.py → books/*.html`. See `scripts/archive/README.md` and canon §10 (2026-04-26 later⁷).
 
 ## The Pipeline
 
@@ -76,7 +76,7 @@ Each chapter file in `v1-colometric/`:
 
 ## Protection of Hand-Edited Chapters
 
-**Resolved 2026-04-26.** This section originally warned that `auto_colometry.py` would overwrite hand-edited chapters in `v1-colometric/`. The concern was specific to an early phase when hand edits were landing directly in `v1-colometric/`. The project later moved to `v4-editorial/` as the dedicated hand-editing surface (with `v0`–`v3` tiers frozen as scaffolding), and on 2026-04-26 the tier-producer scripts were moved to `scripts/archive/`. There is no longer a way for a routine command to clobber hand-edited chapters: the active loop reads/writes `v4-editorial/` only.
+**Resolved 2026-04-26.** This section originally warned that `auto_colometry.py` would overwrite hand-edited chapters in `v1-colometric/`. The concern was specific to an early phase when hand edits were landing directly in `v1-colometric/`. The project later moved to `v4/grc/` as the dedicated hand-editing surface (with `v0`–`v3` tiers frozen as scaffolding), and on 2026-04-26 the tier-producer scripts were moved to `scripts/archive/`. There is no longer a way for a routine command to clobber hand-edited chapters: the active loop reads/writes `v4/grc/` only.
 
 ## Review Process
 
@@ -368,7 +368,7 @@ This does not mean v3 is worse overall — it is better on most verses. But "mor
 
 #### Mark 4 v4 Editorial Gold Standard
 
-Stan hand-edited Mark 4 as the first v4 editorial chapter. The `v4-editorial/` directory was created as the tier 4 (editorial hand) output location.
+Stan hand-edited Mark 4 as the first v4 editorial chapter. The `v4/grc/` directory was created as the tier 4 (editorial hand) output location.
 
 Five new colometric principles were established during this editing pass and documented in `02-colometry-method.md`:
 
@@ -396,7 +396,7 @@ SBLGNT source (canonical, never edit)
   v3_colometry.py (tier 3: rhetorical patterns + merge rules + safety guards)
         |
         v
-  v4-editorial/ (tier 4: Stan's hand edits — overrides v3 where present)
+  v4/grc/ (tier 4: Stan's hand edits — overrides v3 where present)
         |
         v
   web_align.py (double-wire WEB alignment with spaCy validation)
@@ -574,7 +574,7 @@ The `data/text-files/` directory now presents the project's text pipeline as a f
 
 For the editorial workflow specifically this means:
 
-- **The editorial source of truth is still `v4-editorial/`.** Nothing about the workflow has changed. All edits go to `v4-editorial/{NN-book}/{abbrev}-{NN}.txt`, cascade to `eng-gloss/`, then to `books/*.html`. The editorial workflow itself remains as documented elsewhere in this file — the update here is terminological precision, not a behavioral change.
+- **The editorial source of truth is still `v4/grc/`.** Nothing about the workflow has changed. All edits go to `v4/grc/{NN-book}/{abbrev}-{NN}.txt`, cascade to `v4/eng-kjv/`, then to `books/*.html`. The editorial workflow itself remains as documented elsewhere in this file — the update here is terminological precision, not a behavioral change.
 - **The mechanical tiers (v0-v3) are frozen artifacts.** They are the record of how the machine-produced baseline was built. They should not be edited by hand. If a mechanical script is re-run (e.g., `auto_colometry.py` against new `sblgnt-source/` content), it will write to the correct subfolder paths automatically — the scripts were updated in this restructure to use the new layout.
 - **For reproducibility work (Phase 2 defensibility and future methodology papers), the v0-v3 tiers are citable.** A skeptical reader can run the mechanical pipeline against the same source data and verify our mechanical output bit-exactly. The v3 → v4 diff is the editorial value-add and is governed by the colometric methodology canon.
 

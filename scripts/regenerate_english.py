@@ -18,7 +18,7 @@ Algorithm : atu_method.kjv_alignment.align_verse() — per-verse KJV
 
 Output
 ------
-data/text-files/eng-gloss/<NN-book>/<slug>-<NN>.txt
+data/text-files/v4/eng-kjv/<NN-book>/<slug>-<NN>.txt
 Format: verse marker "1:1", one English ATU line per Greek ATU line,
 blank-line separator between verses. Identical to Wave 2 format.
 
@@ -43,10 +43,10 @@ from typing import Optional
 REPO_ROOT    = Path(__file__).resolve().parent.parent       # readers-gnt/
 ATU_METHOD   = REPO_ROOT.parent / "atu-method"              # sibling repo
 
-V4_EDITORIAL = REPO_ROOT / "data" / "text-files" / "v4-editorial"
+V4_EDITORIAL = REPO_ROOT / "data" / "text-files" / "v4" / "grc"
 TAGNT_DIR    = REPO_ROOT / "data" / "text-files" / "tagnt-source"
 METAV_DIR    = ATU_METHOD / "data" / "kjv-strongs"
-OUTPUT_ROOT  = REPO_ROOT / "data" / "text-files" / "eng-gloss"
+OUTPUT_ROOT  = REPO_ROOT / "data" / "text-files" / "v4" / "eng-kjv"
 
 TAGNT_MAT_JHN = TAGNT_DIR / "TAGNT_Mat-Jhn.txt"
 TAGNT_ACT_REV = TAGNT_DIR / "TAGNT_Act-Rev.txt"

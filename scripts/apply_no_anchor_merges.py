@@ -29,8 +29,8 @@ import argparse
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPT_DIR)
-V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4-editorial")
-ENG_DIR = os.path.join(REPO_ROOT, "data", "text-files", "eng-gloss")
+V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4", "grc")
+ENG_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4", "eng-kjv")
 
 sys.path.insert(0, SCRIPT_DIR)
 from scan_no_anchor_lines import scan_all  # noqa: E402

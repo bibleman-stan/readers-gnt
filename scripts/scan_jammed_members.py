@@ -37,7 +37,7 @@ from typing import List, Dict, Set, Optional, Tuple
 
 # ─── paths ────────────────────────────────────────────────────────────────────
 REPO_ROOT = Path(__file__).parent.parent
-V4_DIR    = REPO_ROOT / "data" / "text-files" / "v4-editorial"
+V4_DIR    = REPO_ROOT / "data" / "text-files" / "v4" / "grc"
 OUTPUT    = REPO_ROOT / "private" / "scan-jammed-members-findings.md"
 
 # ─── parameters ───────────────────────────────────────────────────────────────
@@ -388,7 +388,7 @@ def write_report(candidates: List[dict]) -> None:
         "",
         "**Generated:** 2026-04-15",
         "**Scanner version:** v1 (two methods; no punctuation dependency)",
-        "**Corpus:** data/text-files/v4-editorial/ — all 260 chapters",
+        "**Corpus:** data/text-files/v4/grc/ — all 260 chapters",
         "",
         "## Detection methods",
         "",

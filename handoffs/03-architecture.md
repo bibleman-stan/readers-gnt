@@ -199,7 +199,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/ylt_align.py --book Acts --chapter 9  # one
 
 ### build_books.py
 
-Converts v4-editorial Greek + eng-gloss to dual-text HTML. Note: post-2026-05-12, `eng-gloss/` contains KJV verbatim (distributed per Greek ATU line by Strong's-number matching), not purpose-built structural glosses. The dual-text HTML now also injects `.swap` spans for KJV archaism modernization via the universal swap engine at `atu-method/atu_method/swaps/`.
+Converts v4-editorial Greek + eng-gloss to dual-text HTML. Note: post-2026-05-12, `v4/eng-kjv/` contains KJV verbatim (distributed per Greek ATU line by Strong's-number matching), not purpose-built structural glosses. The dual-text HTML now also injects `.swap` spans for KJV archaism modernization via the universal swap engine at `atu-method/atu_method/swaps/`.
 
 **Usage:**
 ```bash
@@ -213,7 +213,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark    # one book
 
 ## The Substrate-as-Stable-API Principle
 
-**The `v4-editorial/` text format is the API between the reader and any analytical tool built on top of it. It does not change shape by policy.**
+**The `v4/grc/` text format is the API between the reader and any analytical tool built on top of it. It does not change shape by policy.**
 
 The colometric text files are the canonical substrate. Their format is minimal and fixed:
 - Verse numbers on their own lines (`9:1`, `9:2`, etc.)
@@ -225,7 +225,7 @@ That is the entire grammar. Nothing richer lives in the substrate — no inline 
 
 ### Why the substrate stays simple
 
-**Third-party usability.** Any scholar who wants clean colometric Greek can grab `v4-editorial/` and use it without parsing project-specific annotations. That is valuable for external tools and future projects.
+**Third-party usability.** Any scholar who wants clean colometric Greek can grab `v4/grc/` and use it without parsing project-specific annotations. That is valuable for external tools and future projects.
 
 **Format stability forever.** There is nothing in the substrate that could change shape. Verse numbers, line breaks, text. That is the whole grammar.
 
@@ -246,7 +246,7 @@ Analytical tools built on the substrate live at `readers-gnt/analysis/<tool-name
 - `/analysis/style/` — Stylometry dashboard (planned)
 
 Each analytical layer:
-- Consumes `v4-editorial/` as read-only input
+- Consumes `v4/grc/` as read-only input
 - Lives in its own subdirectory with its own build process
 - Can evolve independently of the main reader
 - Shares the gnt-reader.com domain but not the main reader's UI
@@ -537,8 +537,8 @@ build_books.py        (reads v3-colometric/ + ylt-colometric/ -> dual-text books
 #### Repo Structure Changes
 
 New directories:
-- `data/text-files/v4-editorial/` — Tier 4 editorial hand output (Stan's hand-edited chapters)
-- `data/text-files/eng-gloss/` — WEB (World English Bible) aligned to colometric breaks (replaces ylt-colometric as active English layer)
+- `data/text-files/v4/grc/` — Tier 4 editorial hand output (Stan's hand-edited chapters)
+- `data/text-files/v4/eng-kjv/` — WEB (World English Bible) aligned to colometric breaks (replaces ylt-colometric as active English layer)
 
 New and updated scripts:
 - **web_align.py** (new): Double-wire WEB alignment with spaCy dependency parsing validation. Approach: Greek to Macula English (perfect by construction) to WEB (LCS alignment). spaCy validates cut points to prevent splitting inside English phrases.
@@ -558,7 +558,7 @@ v3_colometry.py       (unified predication + sentence boundaries + sub-clause sp
                        + merge rules + safety guards + valency checks)
        |
        v
-[v4-editorial/]       (Stan's hand edits — overrides v3 where present)
+[v4/grc/]       (Stan's hand edits — overrides v3 where present)
        |
        v
 web_align.py          (align WEB English to Greek colometric breaks via double-wire + spaCy)
@@ -703,7 +703,7 @@ This is the replacement for the "dispatch agents to do mass editorial work" appr
 
 ## Update — 2026-04-14 (text-pipeline restructure: five-tier arc with reproducibility framing)
 
-The `data/text-files/` directory was restructured to present the project's text pipeline as a **five-tier reproducibility arc**: v0 (canonical prose) → v1 (pattern-matched) → v2 (Macula syntax-tree-driven) → v3 (rhetorical refinement) → v4 (methodology-applied editorial layer). Every tier uses the same `{NN-book}/` subfolder layout as `v4-editorial/`, so a chapter is navigable at the same path across all five tiers.
+The `data/text-files/` directory was restructured to present the project's text pipeline as a **five-tier reproducibility arc**: v0 (canonical prose) → v1 (pattern-matched) → v2 (Macula syntax-tree-driven) → v3 (rhetorical refinement) → v4 (methodology-applied editorial layer). Every tier uses the same `{NN-book}/` subfolder layout as `v4/grc/`, so a chapter is navigable at the same path across all five tiers.
 
 **A precision note on v4.** v4 is NOT "hand editing" in the sense of a human manually typing out every break decision for every chapter. v4 is where the project's *documented colometric methodology* — atomic thought, cognitive hierarchy, register sensitivity, semantic grouping, the no-anchor rule, the universal vocative rule, the Goldilocks refinement, and the other rules recorded in the methodology canon — is *applied* to the text. Application happens through a mix of systematic scan-and-apply tools (the vocative pass, the no-anchor pass, adversarial-audit-driven merges, Class F audits, and similar mechanical passes that can be described structurally) and case-by-case editorial decisions where the rule set conflicts or underdetermines. The editor is the methodology's operator, not a manual typist. The project's contribution lives in the documented rule set; v4 is its application, not its stenography.
 
@@ -733,10 +733,10 @@ data/text-files/
     README.md
     01-matt/matt-01.txt ...
     ...
-  v4-editorial/                          # UNCHANGED — already in NN-book/ subfolders
+  v4/grc/                          # UNCHANGED — already in NN-book/ subfolders
     01-matt/matt-01.txt ...
     ...
-  eng-gloss/                             # UNCHANGED — structural English glosses aligned line-for-line with v4
+  v4/eng-kjv/                             # UNCHANGED — structural English glosses aligned line-for-line with v4
     01-matt/matt-01.txt ...
     ...
 ```
@@ -775,7 +775,7 @@ Four scripts had output path constants updated to reflect the new subfolder layo
 ### What this restructure did NOT change
 
 - No content changes to any Greek text file at any tier. v1, v2, v3, v4 all contain the exact same bytes they contained before the move (just in different locations).
-- No changes to `sblgnt-source/`, `v4-editorial/`, or `eng-gloss/` layout. Those directories were already correct.
+- No changes to `sblgnt-source/`, `v4/grc/`, or `v4/eng-kjv/` layout. Those directories were already correct.
 - No changes to the web app (`index.html`), the HTML fragment builds (`books/*.html`), or the live site.
 - No changes to the colometric methodology or any editorial decisions. This is purely a directory restructure plus documentation work.
 
@@ -817,7 +817,7 @@ Four scripts had output path constants updated to reflect the new subfolder layo
 - `handoffs/00-index.md` — stale `02-colometry-method.md` and `YLT-visualization.md` rows deleted; atu-method pointer added
 - `handoffs/01-project-overview.md` — 2026-05-12 KJV migration block appended
 - `handoffs/04-editorial-workflow.md` — universal-layer pointer block at top
-- `CLAUDE.md` — Key Files table updated for `regenerate_english.py` + `eng-gloss/`; Build Pipeline atu-method pointer; framework.md pointer in Colometric Principles
+- `CLAUDE.md` — Key Files table updated for `regenerate_english.py` + `v4/eng-kjv/`; Build Pipeline atu-method pointer; framework.md pointer in Colometric Principles
 - `scripts/build_books.py:34` — `regenerate_english_kjv.py` → `regenerate_english.py` in comment
 
 **Pending — separate commit.** Restructure of `private/01-method/colometry-canon.md` to mirror the bofm v3.0 framework-pointer-only pattern: seven §-subsections become pointer-only cross-references to `atu-method/docs/framework.md`, with GNT-specific rule body preserved intact. That work requires a §6.5 audit dispatch (named-category + cross-project triggers) and lives in its own commit with explicit audit-evidence.

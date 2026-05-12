@@ -20,7 +20,7 @@ from collections import defaultdict
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPT_DIR)
-V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4-editorial")
+V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4", "grc")
 SOURCE_DIR = os.path.join(REPO_ROOT, "data", "text-files", "sblgnt-source")
 
 # Map our book slug -> SBLGNT source filename (without .txt)

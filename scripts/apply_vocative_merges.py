@@ -22,7 +22,7 @@ import argparse
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPT_DIR)
-V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4-editorial")
+V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4", "grc")
 
 sys.path.insert(0, SCRIPT_DIR)
 from scan_vocative_apposition import scan_all  # noqa: E402
@@ -190,7 +190,7 @@ def main():
                 json.dump(slim, f, ensure_ascii=False, indent=2)
             print(f"Saved candidates to {args.save_candidates}\n")
 
-    target_dir = os.path.join(REPO_ROOT, "data", "text-files", "eng-gloss") \
+    target_dir = os.path.join(REPO_ROOT, "data", "text-files", "v4", "eng-kjv") \
         if args.english else V4_DIR
 
     # Group by file so we can apply all merges to a given file in reverse order

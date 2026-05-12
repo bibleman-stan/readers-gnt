@@ -20,7 +20,7 @@ from collections import defaultdict
 # Paths
 REPO = r"c:\Users\bibleman\repos\readers-gnt"
 MORPHGNT_DIR = os.path.join(REPO, "research", "morphgnt-sblgnt")
-V4_DIR = os.path.join(REPO, "data", "text-files", "v4-editorial")
+V4_DIR = os.path.join(REPO, "data", "text-files", "v4", "grc")
 
 # Book mapping: MorphGNT prefix -> v4-editorial folder name
 BOOK_MAP = {

@@ -20,7 +20,7 @@ from collections import defaultdict
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MORPHGNT_DIR = os.path.join(BASE, "research", "morphgnt-sblgnt")
-V4_DIR = os.path.join(BASE, "data", "text-files", "v4-editorial")
+V4_DIR = os.path.join(BASE, "data", "text-files", "v4", "grc")
 
 # Mapping from morphgnt file prefix to v4-editorial folder/file prefix
 BOOK_MAP = {

@@ -29,7 +29,7 @@ TIER_DIRS = {
     "v1": PROJECT_DIR / "data" / "text-files" / "v1-colometric",
     "v2": PROJECT_DIR / "data" / "text-files" / "v2-colometric",
     "v3": PROJECT_DIR / "data" / "text-files" / "v3-colometric",
-    "v4": PROJECT_DIR / "data" / "text-files" / "v4-editorial",
+    "v4": PROJECT_DIR / "data" / "text-files" / "v4" / "grc",
 }
 V3_DIR = TIER_DIRS["v3"]  # default
 

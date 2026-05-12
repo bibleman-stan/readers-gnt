@@ -2,7 +2,7 @@
 """
 scan_english_drift.py — Find probable English-alignment drift sites.
 
-The English glosses in data/text-files/eng-gloss/ are supposed to have
+The English glosses in data/text-files/v4/eng-kjv/ are supposed to have
 a 1:1 line correspondence with the Greek v4-editorial files. Over the
 project's history, multiple passes of proportional-regen have
 introduced mechanical splits that break English phrases mid-sentence:
@@ -51,8 +51,8 @@ from collections import defaultdict
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPT_DIR)
-ENG_DIR = os.path.join(REPO_ROOT, "data", "text-files", "eng-gloss")
-V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4-editorial")
+ENG_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4", "eng-kjv")
+V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4", "grc")
 
 # Greek subordinators — if the Greek line N+1 starts with one of these
 # (after any leading καί / δέ / γάρ), the English break at line N is

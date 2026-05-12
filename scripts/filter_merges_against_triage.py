@@ -22,7 +22,7 @@ import os
 import re
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4-editorial")
+V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4", "grc")
 RESULTS_DIR = os.path.join(REPO_ROOT, "private", "r1-sweep-results")
 DEMOTED_FILE = os.path.join(REPO_ROOT, "private", "r1-review-demoted.md")
 PHASE1 = os.path.join(REPO_ROOT, "scripts", "apply_r1_merges.py")
@@ -316,7 +316,7 @@ def main():
         f.write('"""apply_r1_merges_v2.py — verified clean MERGES list."""\n')
         f.write("import os, re, sys\n\n")
         f.write("REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))\n")
-        f.write('V4 = os.path.join(REPO, "data", "text-files", "v4-editorial")\n\n')
+        f.write('V4 = os.path.join(REPO, "data", "text-files", "v4", "grc")\n\n')
         f.write("MERGES = [\n")
         for e in verified:
             tgt_repr = repr(e["tgt"]) if e["tgt"] else "None"

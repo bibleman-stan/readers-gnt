@@ -3,7 +3,7 @@
 """
 scan_parallelism_consistency.py
 
-Walks data/text-files/v4-editorial/ looking for spans where N >= 3 parallel
+Walks data/text-files/v4/grc/ looking for spans where N >= 3 parallel
 coordinate members under a shared governor are broken into M != 1 different
 stack patterns (different line-counts per member), PLUS six structural-jam
 classes that detect list members crammed onto single lines.
@@ -47,7 +47,7 @@ from typing import List, Dict, Optional, Tuple, Set
 
 # ─── paths ────────────────────────────────────────────────────────────────────
 REPO_ROOT = Path(__file__).parent.parent
-V4_DIR = REPO_ROOT / "data" / "text-files" / "v4-editorial"
+V4_DIR = REPO_ROOT / "data" / "text-files" / "v4" / "grc"
 OUTPUT_FILE = REPO_ROOT / "private" / "scan-parallelism-v2-findings.md"
 
 # ─── parameters ───────────────────────────────────────────────────────────────
@@ -1186,7 +1186,7 @@ def write_report(candidates: List[dict], output_path: Path) -> None:
         "",
         "**Generated:** 2026-04-17",
         "**Scanner version:** v2 (eleven governor classes; six new jam-detection classes)",
-        "**Corpus:** data/text-files/v4-editorial/ — all 260 chapters",
+        "**Corpus:** data/text-files/v4/grc/ — all 260 chapters",
         "",
         "---",
         "",

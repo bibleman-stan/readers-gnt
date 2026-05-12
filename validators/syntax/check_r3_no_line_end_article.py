@@ -239,7 +239,7 @@ def _find_v4_path(book: str, chapter: int) -> str:
     import os
     _here = os.path.dirname(os.path.abspath(__file__))
     repo = os.path.dirname(os.path.dirname(_here))
-    v4_root = os.path.join(repo, "data", "text-files", "v4-editorial")
+    v4_root = os.path.join(repo, "data", "text-files", "v4", "grc")
     for entry in os.listdir(v4_root):
         parts = entry.split("-", 1)
         slug = parts[1] if len(parts) == 2 and parts[0].isdigit() else entry

@@ -49,7 +49,7 @@ from typing import List, Tuple, Dict
 
 # ─── paths ────────────────────────────────────────────────────────────────────
 REPO_ROOT   = Path(__file__).parent.parent
-V4_DIR      = REPO_ROOT / "data" / "text-files" / "v4-editorial"
+V4_DIR      = REPO_ROOT / "data" / "text-files" / "v4" / "grc"
 PRIVATE_DIR = REPO_ROOT / "private"
 OUT_FILE    = PRIVATE_DIR / "scan-dangling-relative-findings.md"
 

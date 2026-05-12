@@ -5,8 +5,8 @@
 # do NOT auto-modify files):
 #
 # Phase 1 — Cascade-staleness detection
-#   When v4-editorial chapter files are staged, verify that the cascade was
-#   run: line counts match between staged v4 and the corresponding eng-gloss,
+#   When v4/grc chapter files are staged, verify that the cascade was
+#   run: line counts match between staged v4 and the corresponding v4/eng-kjv,
 #   and books/<slug>.html is also staged. If stale, block with an instructive
 #   message. This hook does NOT auto-modify files (per memory
 #   feedback_verify_cascade_output.md — regenerate_english.py's proportional-
@@ -33,18 +33,18 @@ cd "$REPO_ROOT"
 
 # ── Phase 1: cascade-staleness detection ───────────────────────────────────
 
-V4_STAGED=$(git diff --cached --name-only --diff-filter=AM | grep -E "^data/text-files/v4-editorial/[^/]+/[^/]+\.txt$" || true)
+V4_STAGED=$(git diff --cached --name-only --diff-filter=AM | grep -E "^data/text-files/v4/grc/[^/]+/[^/]+\.txt$" || true)
 
 if [ -n "$V4_STAGED" ]; then
     echo ""
-    echo "[pre-commit] v4-editorial chapters staged. Checking cascade freshness..."
+    echo "[pre-commit] v4/grc chapters staged. Checking cascade freshness..."
 
     BOOKS_AFFECTED=""
     STALE_FOUND=0
 
     for V4_FILE in $V4_STAGED; do
-        # path: data/text-files/v4-editorial/<NN-book>/<slug>-<NN>.txt
-        REL_PATH=${V4_FILE#data/text-files/v4-editorial/}
+        # path: data/text-files/v4/grc/<NN-book>/<slug>-<NN>.txt
+        REL_PATH=${V4_FILE#data/text-files/v4/grc/}
         BOOK_SUBDIR=${REL_PATH%%/*}
         FILENAME=${REL_PATH##*/}
         SLUG=${FILENAME%%-*}
@@ -55,11 +55,11 @@ if [ -n "$V4_STAGED" ]; then
             *) BOOKS_AFFECTED="$BOOKS_AFFECTED $SLUG" ;;
         esac
 
-        # Line-count parity: staged v4 vs index eng-gloss
-        EN_PATH="data/text-files/eng-gloss/$BOOK_SUBDIR/$FILENAME"
+        # Line-count parity: staged v4 vs index v4/eng-kjv
+        EN_PATH="data/text-files/v4/eng-kjv/$BOOK_SUBDIR/$FILENAME"
 
         if ! git cat-file -e ":$EN_PATH" 2>/dev/null; then
-            echo "[pre-commit]   STALE: $FILENAME — eng-gloss not tracked ($EN_PATH)"
+            echo "[pre-commit]   STALE: $FILENAME — v4/eng-kjv not tracked ($EN_PATH)"
             STALE_FOUND=1
             continue
         fi
@@ -68,7 +68,7 @@ if [ -n "$V4_STAGED" ]; then
         EN_LINES=$(git show ":$EN_PATH" | grep -cv "^$" || true)
 
         if [ "$V4_LINES" != "$EN_LINES" ]; then
-            echo "[pre-commit]   STALE: $FILENAME — v4=$V4_LINES non-blank lines, eng-gloss=$EN_LINES"
+            echo "[pre-commit]   STALE: $FILENAME — v4=$V4_LINES non-blank lines, v4/eng-kjv=$EN_LINES"
             STALE_FOUND=1
         fi
     done
@@ -85,7 +85,7 @@ if [ -n "$V4_STAGED" ]; then
 
     if [ "$STALE_FOUND" -ne 0 ]; then
         echo ""
-        echo "[pre-commit] BLOCKED: cascade output is stale relative to v4-editorial edits."
+        echo "[pre-commit] BLOCKED: cascade output is stale relative to v4/grc edits."
         echo "[pre-commit] Run the cascade for affected books, then re-stage:"
         for BOOK in $BOOKS_AFFECTED; do
             echo "    PYTHONIOENCODING=utf-8 py -3 scripts/regenerate_english.py --book $BOOK"
@@ -105,7 +105,7 @@ fi
 
 # ── Phase 2: validator regression gate ──────────────────────────────────────
 
-RELEVANT=$(git diff --cached --name-only | grep -E "^(data/text-files/v4-editorial/|data/syntax-reference/|validators/.*\.(py|yaml)$)" || true)
+RELEVANT=$(git diff --cached --name-only | grep -E "^(data/text-files/v4/grc/|data/syntax-reference/|validators/.*\.(py|yaml)$)" || true)
 
 if [ -z "$RELEVANT" ]; then
     echo "[pre-commit] Docs-only commit. Skipping baseline-check."

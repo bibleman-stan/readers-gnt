@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import List, Tuple
 
 REPO = Path("c:/Users/bibleman/repos/readers-gnt")
-ENG_DIR = REPO / "data" / "text-files" / "eng-gloss"
+ENG_DIR = REPO / "data" / "text-files" / "v4" / "eng-kjv"
 OUT_PATH = REPO / "private" / "english-straddle-audit.txt"
 
 VERSE_RE = re.compile(r"^\s*(\d+):(\d+)\s*$")
@@ -336,7 +336,7 @@ def render(findings: List[dict]) -> str:
     out.append(f"Total candidates: {len(findings)}")
     out.append("")
     out.append("Detection-only. No files modified.")
-    out.append("Source: data/text-files/eng-gloss/**/*.txt")
+    out.append("Source: data/text-files/v4/eng-kjv/**/*.txt")
     out.append("")
 
     by_conf = {"HIGH": [], "MEDIUM": [], "LOW": []}

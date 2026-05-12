@@ -3,7 +3,7 @@
 """
 scan_gorgianic_pairs.py
 
-Scans data/text-files/v4-editorial/ for gorgianic pair candidates:
+Scans data/text-files/v4/grc/ for gorgianic pair candidates:
 N=2 coordinate members forming a unified rhetorical image (hendiadys)
 that may be over-split — M1 merge candidates per the new merge doctrine.
 
@@ -40,7 +40,7 @@ from typing import List, Dict, Optional, Tuple
 
 # ─── paths ────────────────────────────────────────────────────────────────────
 REPO_ROOT = Path(__file__).parent.parent
-V4_DIR = REPO_ROOT / "data" / "text-files" / "v4-editorial"
+V4_DIR = REPO_ROOT / "data" / "text-files" / "v4" / "grc"
 OUTPUT_FILE = REPO_ROOT / "private" / "scan-gorgianic-pairs-findings.md"
 
 # ─── parameters ───────────────────────────────────────────────────────────────

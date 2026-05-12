@@ -1,7 +1,7 @@
 """
 build_books.py — Generate HTML book files from colometric text sources.
 
-Reads chapter files from v4-editorial/*/ (Greek) and eng-gloss/*/ (English,
+Reads chapter files from v4/grc/*/ (Greek) and v4/eng-kjv/*/ (English,
 KJV-verbatim), and writes one HTML fragment per book into books/.
 
 Each .line span contains a .gk span (Greek) and a .en span (English),
@@ -26,9 +26,9 @@ from collections import defaultdict
 # Paths relative to this script's location
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPT_DIR)
-GK_PRIMARY_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4-editorial")
+GK_PRIMARY_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4", "grc")
 INPUT_DIR = GK_PRIMARY_DIR  # used by discover_books for globbing all chapters (subfoldered)
-EN_DIR = os.path.join(REPO_ROOT, "data", "text-files", "eng-gloss")
+EN_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4", "eng-kjv")
 OUTPUT_DIR = os.path.join(REPO_ROOT, "books")
 
 # atu-method swap module (sibling repo, consistent with regenerate_english.py convention)
@@ -287,7 +287,7 @@ def resolve_greek_path(fpath):
 
 
 def resolve_english_path(fpath):
-    """Return the English gloss path (KJV-verbatim, eng-gloss/) if it exists.
+    """Return the English gloss path (KJV-verbatim, v4/eng-kjv/) if it exists.
 
     Returns (path, "KJV") or (None, None) if not found.
     """
@@ -322,7 +322,7 @@ def build_book(prefix, chapter_files, output_dir, swap_pairs=None, quiet_set=Non
         if chapter_num is None:
             chapter_num = _ch_num
 
-        # Resolve English source (KJV-verbatim, eng-gloss/)
+        # Resolve English source (KJV-verbatim, v4/eng-kjv/)
         en_lookup = None
         en_path, en_label = resolve_english_path(fpath)
         if en_path:

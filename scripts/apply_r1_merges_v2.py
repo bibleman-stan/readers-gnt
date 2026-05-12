@@ -4,7 +4,7 @@
 import os, re, sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V4 = os.path.join(REPO, "data", "text-files", "v4-editorial")
+V4 = os.path.join(REPO, "data", "text-files", "v4", "grc")
 
 MERGES = [
     ('02-mark/mark-01.txt', '1:26', 'καὶ φωνῆσαν φωνῇ μεγάλῃ', 'καὶ σπαράξαν αὐτὸν τὸ πνεῦμα τὸ ἀκάθαρτον'),

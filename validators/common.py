@@ -41,7 +41,7 @@ from _shared import macula_clauses, morphgnt_lookup  # noqa: E402
 
 # ─── Paths ───────────────────────────────────────────────────────────────────
 
-_V4_ROOT = os.path.join(_REPO_ROOT, "data", "text-files", "v4-editorial")
+_V4_ROOT = os.path.join(_REPO_ROOT, "data", "text-files", "v4", "grc")
 _MORPHGNT_DIR = os.path.join(_REPO_ROOT, "research", "morphgnt-sblgnt")
 
 # ─── Book slug utilities (factored from validate_r18/r19/r11 boilerplate) ────

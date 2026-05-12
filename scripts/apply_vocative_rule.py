@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V4_DIR = os.path.join(BASE, "data", "text-files", "v4-editorial")
+V4_DIR = os.path.join(BASE, "data", "text-files", "v4", "grc")
 XML_DIR = os.path.join(BASE, "research", "macula-greek", "SBLGNT", "lowfat")
 
 BOOK_MAP = {

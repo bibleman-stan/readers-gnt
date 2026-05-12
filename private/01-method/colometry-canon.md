@@ -1482,7 +1482,7 @@ Both errors are the same class — Step 0 was solving a non-problem (R18 doesn't
 
 ### 2026-04-28 (later²) — Hook-automated cascade-staleness detection (port-soft from Tanakh)
 
-Pre-commit hook (`validators/hooks/pre-commit`) gained a new Phase 1: cascade-staleness detection. When `data/text-files/v4-editorial/` chapter files are staged, the hook now verifies that (a) the corresponding `eng-gloss/` file has matching non-blank line count and (b) `books/<slug>.html` is also staged. If stale, the hook blocks the commit with an instructive message naming the books affected and the cascade commands to run.
+Pre-commit hook (`validators/hooks/pre-commit`) gained a new Phase 1: cascade-staleness detection. When `data/text-files/v4/grc/` chapter files are staged, the hook now verifies that (a) the corresponding `v4/eng-kjv/` file has matching non-blank line count and (b) `books/<slug>.html` is also staged. If stale, the hook blocks the commit with an instructive message naming the books affected and the cascade commands to run.
 
 **Architectural decision:** PORT-SOFT, not PORT-DIRECT. Tanakh's hook auto-runs `refresh_book.py` and auto-stages regenerated derived layers. The investigation agent flagged real hazards in adopting that pattern for GNT: `regenerate_english.py`'s proportional-redistribute heuristic produces misaligned output when line-counts change (memory `feedback_verify_cascade_output.md`), and auto-staging would commit that misaligned English before the two-check gate (`verify_word_order.py` + `scan_english_drift.py`) can catch it. The soft port detects staleness and blocks without modifying files; the editor runs the cascade and reviews output before re-staging.
 
@@ -1533,7 +1533,7 @@ After completing the architecture-transition sweep (later⁷), Stan asked for a 
 
 ### 2026-04-26 (later⁷) — Architecture transition: tier-producer scripts archived
 
-After the later⁶ residue-purge commit, Stan asked whether the three vestigial scripts flagged as carry-forward (`diagnostic_scanner.py`, `v3_colometry.py`, `v4_pauline_review.py`) should be retired. I recommended **wide scope, framed as freeze-and-document rather than delete**: the project transitioned from a machine pipeline (v0→v1→v2→v3) to a hand-edited corpus (`v4-editorial/` as single source of truth) when v4 reached 260/260 coverage. The producer scripts have been operationally vestigial since then; the documentation hadn't caught up. Stan greenlit ("be very careful, redundant, and smart about paralleling/double-checking, but proceed").
+After the later⁶ residue-purge commit, Stan asked whether the three vestigial scripts flagged as carry-forward (`diagnostic_scanner.py`, `v3_colometry.py`, `v4_pauline_review.py`) should be retired. I recommended **wide scope, framed as freeze-and-document rather than delete**: the project transitioned from a machine pipeline (v0→v1→v2→v3) to a hand-edited corpus (`v4/grc/` as single source of truth) when v4 reached 260/260 coverage. The producer scripts have been operationally vestigial since then; the documentation hadn't caught up. Stan greenlit ("be very careful, redundant, and smart about paralleling/double-checking, but proceed").
 
 **Pre-flight audit (5 parallel Sonnet agents):**
 
@@ -1611,7 +1611,7 @@ Removed from `scripts/diagnostic_scanner.py`:
 
 Verified: script parses cleanly; no remaining `breath`/`FLAG_TOO`/syllable references except the docstring retirement note. handoffs/03-architecture.md:539 description (updated at later⁴) now matches the script.
 
-**Separate observation (not addressed this commit):** the script's input-discovery logic expects `data/text-files/v3-colometric/` paths that no longer exist (corpus structure migrated to `data/text-files/v4-editorial/`). Smoke test on `mark-04` chapter failed at file-discovery. Suggests the script may be vestigial overall, not just the breath-unit test. Logged as carry-forward — Stan to decide whether to retire the script entirely or update its path-resolution.
+**Separate observation (not addressed this commit):** the script's input-discovery logic expects `data/text-files/v3-colometric/` paths that no longer exist (corpus structure migrated to `data/text-files/v4/grc/`). Smoke test on `mark-04` chapter failed at file-discovery. Suggests the script may be vestigial overall, not just the breath-unit test. Logged as carry-forward — Stan to decide whether to retire the script entirely or update its path-resolution.
 
 **Audit-skippable per §6.5** — internal cleanup of code that operationalized a retired criterion. Substantive Breath retirement was made and audited 2026-04-20.
 

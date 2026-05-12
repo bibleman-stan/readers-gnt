@@ -9,7 +9,7 @@ writes the files back. Dry-run by default; --apply writes changes.
 import os, sys, json, re
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V4 = os.path.join(REPO, "data", "text-files", "v4-editorial")
+V4 = os.path.join(REPO, "data", "text-files", "v4", "grc")
 PRIV = os.path.join(REPO, "private")
 
 def find_book_dir(book):

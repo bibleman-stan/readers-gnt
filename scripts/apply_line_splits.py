@@ -24,7 +24,7 @@ import os, sys, json, glob, re
 from collections import defaultdict
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V4 = os.path.join(REPO, "data", "text-files", "v4-editorial")
+V4 = os.path.join(REPO, "data", "text-files", "v4", "grc")
 PRIV = os.path.join(REPO, "private")
 
 VERSE_RE = re.compile(r"^(\d+):(\d+)$")
