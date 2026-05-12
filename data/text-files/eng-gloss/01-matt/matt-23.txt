@@ -6,9 +6,9 @@ Saying,
 The scribes and the Pharisees sit in Moses' seat:
 
 23:3
-All therefore whatsoever they bid you observe, that observe and do;
-but do not ye after their works:
-for they say, and do not.
+All therefore whatsoever they bid you observe, that observe and
+do; but not ye after their works:
+do for they say, and do not.
 
 23:4
 For they bind heavy burdens
@@ -76,8 +76,8 @@ but whosoever sweareth by the gift that is upon it, he is guilty.
 
 23:19
 Ye fools
-and blind: for whether
-is greater, the gift, or the altar that sanctifieth the gift?
+and blind: for
+whether is greater, the gift, or the altar that sanctifieth the gift?
 
 23:20
 Whoso therefore shall swear by the altar,
@@ -151,9 +151,9 @@ Wherefore, behold, I send unto you
 prophets,
 and wise men,
 and scribes:
-and some of them ye shall kill
+some of them ye shall kill
 and crucify;
-and some of them shall ye scourge in your synagogues,
+and some of them shall ye scourge in your synagogues, and
 and persecute them from city to city:
 
 23:35

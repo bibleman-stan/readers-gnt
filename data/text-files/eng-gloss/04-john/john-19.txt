@@ -15,8 +15,8 @@ Hail, King of the Jews!
 and they smote him with their hands.
 
 19:4
-Pilate therefore went forth again, and
-saith unto them,
+Pilate therefore went forth
+again, and saith unto them,
 Behold, I bring him forth to you,
 that ye may know that I find no fault in him.
 
@@ -28,10 +28,10 @@ Behold the man!
 
 19:6
 When the chief priests therefore and officers saw him,
-they cried out, saying,
+they cried out, saying, saith
 Crucify
 him, crucify
-him. Pilate saith
+him. Pilate
 unto them, Take ye him, and crucify
 him: for I find no fault in him.
 
@@ -82,8 +82,8 @@ and he saith unto the Jews,
 Behold your King!
 
 19:15
-But they cried out,
-Away with
+
+But they cried out, Away with
 him, away with
 him, crucify him.
 Pilate saith unto them,
@@ -162,8 +162,8 @@ And from that hour that disciple took her unto his own home.
 After this, Jesus knowing that all things were now accomplished, that the scripture might be fulfilled, saith, I thirst.
 
 19:29
-Now there was set a vessel full of vinegar:
-and they filled a spunge with vinegar,
+there was set a vessel full of vinegar:
+Now and they filled a spunge with vinegar,
 and put it upon hyssop, and put it to his mouth.
 
 19:30

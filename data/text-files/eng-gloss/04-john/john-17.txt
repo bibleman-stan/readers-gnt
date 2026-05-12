@@ -1,10 +1,10 @@
 17:1
 These words spake Jesus,
-and lifted up his eyes to heaven, and
+and lifted up his eyes to heaven, and also
 said,
-Father, the hour is come;
-glorify thy Son,
-that thy Son also may glorify thee:
+Father, the hour
+is come; glorify thy Son,
+that thy Son may glorify thee:
 
 17:2
 As thou hast given him power over all flesh,
@@ -53,9 +53,9 @@ and thine are mine;
 and I am glorified in them.
 
 17:11
-And now I am no more in the world, but
-these are in the world, and
-I come to thee. Holy Father,
+And now I am no more in the world,
+but these are in the world,
+and I come to thee. Holy Father,
 keep through thine own name those
 whom thou hast given me,
 that they may be one, as we are.
@@ -88,8 +88,8 @@ They are not of the world,
 even as I am not of the world.
 
 17:17
-Sanctify them through truth:
-thy thy word is truth.
+Sanctify them through thy truth:
+thy word is truth.
 
 17:18
 As thou hast sent me into the world,
@@ -104,11 +104,11 @@ Neither pray I for these
 alone, but for them also which shall believe on me through their word;
 
 17:21
-That they all may be one;
+That they all may be one; may be
 as thou, Father, art in me,
 and I in thee,
 that they also one in us:
-may be that the world may believe that thou hast sent me.
+that the world may believe that thou hast sent me.
 
 17:22
 And the glory which thou gavest me I

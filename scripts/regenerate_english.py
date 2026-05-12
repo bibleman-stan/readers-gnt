@@ -289,11 +289,19 @@ def build_source_tokens_per_line(
                 greek_surface, col3, col11, col12 = tagnt_tokens[idx]
                 tagnt_norm = normalise_greek(greek_surface)
                 if tagnt_norm == atu_word:
-                    # Absorb any skipped tokens before this one
+                    # Advance the cursor past any skipped tokens, but DON'T
+                    # absorb their Strong's onto this line. Skipped tokens
+                    # via lookahead-match are orphan-class — TAGNT has them
+                    # but v4-editorial elides them (implicit subject, elided
+                    # speech verb, etc.). Absorbing their Strong's claims KJV
+                    # words whose vposes don't fit this line's range and
+                    # breaks cross-line KJV reading order. By leaving them
+                    # unclaimed, Pass C/D in distribute.py routes their KJV
+                    # equivalents to the nearest-vpos line via positional
+                    # proximity — which is the correct line by definition.
+                    # Canonical cases: Matt 4:23 (ὁ Ἰησοῦς orphan),
+                    # Acts 2:38 (φησὶν orphan).
                     for skip_idx in range(cursor + consumed, idx):
-                        sk_greek, sk_c3, sk_c11, sk_c12 = tagnt_tokens[skip_idx]
-                        sk_strongs = tuple(extract_strongs_from_tagnt_col(sk_c3, sk_c11, sk_c12))
-                        line_tokens.append(SourceToken(text=sk_greek, strongs_list=sk_strongs))
                         consumed += 1
                     # Consume the matched token
                     strongs = tuple(extract_strongs_from_tagnt_col(col3, col11, col12))
