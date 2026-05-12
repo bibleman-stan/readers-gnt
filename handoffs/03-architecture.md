@@ -1,5 +1,7 @@
 # 03 — Architecture & Build Pipeline
 
+> **Four-plane pointer (2026-05-12).** As of the cross-corpus migration, this repo occupies the **Delivery plane** of a four-plane architecture (Data / Specification / Tooling / Delivery) documented universally in [`../../atu-method/docs/architecture.md`](../../atu-method/docs/architecture.md). Shared-vs-per-repo plane ownership, interface contracts between planes, and drift-prevention discipline all live there. This handoff covers per-repo Delivery-plane details only — build pipeline, scripts, web app, deployment. Cross-references to `atu-method` are now load-bearing; do not duplicate or shadow the shared layer here.
+
 > **Update 2026-04-26 — Tier-producer archive sweep.** The v0–v3 tier producers (`build_v0_prose.py`, `auto_colometry.py`, `v2_colometry.py`, `v3_colometry.py`), the line-auditing tool (`diagnostic_scanner.py`), the original eng-gloss seeders (`generate_english_glosses.py`, `generate_pauline_english.py`), and the one-time Pauline review pass (`v4_pauline_review.py`) were moved to `scripts/archive/`. The `build_books.py` v3 fallback referenced in earlier blocks was confirmed dead in practice (v4-editorial: 260/260) and removed in the same commit. **The dated snapshots and update blocks below describe the architecture as of the date in their header.** For current `scripts/` layout, see `CLAUDE.md` Key Files table and `scripts/archive/README.md`. See canon §10 (2026-04-26 later⁷) for the audit trail.
 
 ## Repo Structure (as of 2026-04-09)
@@ -197,7 +199,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/ylt_align.py --book Acts --chapter 9  # one
 
 ### build_books.py
 
-Converts v4-editorial Greek + eng-gloss structural glosses to dual-text HTML.
+Converts v4-editorial Greek + eng-gloss to dual-text HTML. Note: post-2026-05-12, `eng-gloss/` contains KJV verbatim (distributed per Greek ATU line by Strong's-number matching), not purpose-built structural glosses. The dual-text HTML now also injects `.swap` spans for KJV archaism modernization via the universal swap engine at `atu-method/atu_method/swaps/`.
 
 **Usage:**
 ```bash
@@ -266,6 +268,8 @@ This is not optional. Skipping any step means the site serves stale or misaligne
 **When dispatching agents to edit Greek:** ALWAYS simultaneously dispatch agents to regenerate the corresponding English. When BOTH complete, rebuild ALL HTML, commit, and push. Never commit Greek changes without syncing English. Never push without rebuilding HTML.
 
 **English structural glosses are NOT an alignment algorithm.** They are purpose-built translations written to match Greek clause order by construction. When Greek lines change, English lines must be REWRITTEN (not redistributed, not script-processed). Each English line is a fresh translation of its corresponding Greek ATU.
+
+> **Superseded 2026-05-12.** The paragraph above describes the pre-migration eng-gloss pipeline (structural English glosses, retired Wave 6). The current cascade is **Greek edit → `regenerate_english.py` (KJV redistribution via Strong's-matching) → `build_books.py` (rebuild with `.swap` injection) → commit.** The eng-gloss layer is now KJV verbatim distributed per Greek ATU line by `atu_method.kjv_alignment.align_verse()`; when Greek lines change, KJV is redistributed (not rewritten). The cascade rule still holds — but the middle step has different semantics.
 
 **Verification after every cascade:** Run the line-count checker across all 260 files. Any mismatch means the cascade is incomplete.
 
@@ -683,6 +687,8 @@ The `--save-candidates` step is essential when running Greek-then-English: the E
 
 The `--force` flag bypasses the "skip if line counts match" guard and mechanically redistributes every verse's English content proportionally. When applied to already-aligned content, it reliably worsens alignment quality. **Never use `--force` on already-aligned content.** Plain `regenerate_english.py --book X` is the correct invocation — it only touches verses where Greek and English line counts differ.
 
+> **Retired 2026-05-12.** This lesson applied to the eflomal-driven / proportional-word-splitter pipeline (retired Wave 6, commit `9db32056`). The current `regenerate_english.py` is a thin wrapper over `atu_method.kjv_alignment.align_verse()` — it has different failure modes: TAGNT vs SBLGNT versification edge cases (Matt 3:1-2 mismatch), italic-attachment edge cases (Acts 2:38 source-data gap where TAGNT has φησὶν but v4-editorial does not), and Strong's-number mismatch on rare lemmas. The `--force` flag no longer has the same destructive semantics; the lesson is preserved here for audit trail value and as a reminder of why the project ultimately moved to deterministic Strong's-based distribution.
+
 #### The mechanical-merge pattern as future-standard
 
 The vocative pass (125 merges) and the no-anchor pass (860 merges) both demonstrate the same pattern:
@@ -782,3 +788,36 @@ Four scripts had output path constants updated to reflect the new subfolder layo
 - `data/text-files/v3-colometric/README.md`
 - This entry in `handoffs/03-architecture.md`
 - Corresponding update in `handoffs/04-editorial-workflow.md`
+
+---
+
+### Update — 2026-05-12 (KJV migration + four-plane architecture)
+
+**What changed.** A cross-corpus migration shipped this date, anchored from a bom-reader-led Claude Code session covering all four repos (`atu-method`, `readers-bofm`, `readers-gnt`, `readers-tanakh`). Universal infrastructure migrated to `atu-method/`; this repo's role narrowed to the Delivery plane of the new four-plane architecture (Data / Spec / Tooling / Delivery — see [`../../atu-method/docs/architecture.md`](../../atu-method/docs/architecture.md) and the top-of-file pointer added in this update).
+
+**Cascade rule semantics revised.** The cascade is still: Greek edit → `regenerate_english.py` → `build_books.py` → commit. But:
+
+- `regenerate_english.py` no longer rewrites English; it **redistributes KJV verbatim** via Strong's-number matching (TAGNT → MetaV). It is a ~200-line thin wrapper over `atu_method.kjv_alignment.align_verse()`.
+- `build_books.py` now injects `.swap` spans for KJV archaism modernization, consuming the universal swap engine at `atu-method/atu_method/swaps/`.
+- The Modern pill in the topbar is always visible (no URL gating); it toggles `.swap` markup in place.
+
+**Scripts retired in this migration.** `align_redistribute_english.py`, `run_eflomal_alignment.py`, `resync_english.py`, old `regenerate_english.py`. `data/alignment/corpus-alignment.json` (eflomal output) — deleted. The `--english-source=kjv|legacy` flag in `build_books.py` — removed (KJV is the only path).
+
+**Open items surfaced in migration that remain post-Wave-7:**
+
+- **Matt 3:1-2 versification mismatch.** SBLGNT places `καὶ λέγων` at the end of v3:1; KJV places "And saying" at the start of v3:2. Solvable by porting the offset-handling pattern from `../readers-tanakh/scripts/regenerate_english.py` (BHS-vs-English offset table). Wave-8 equivalent task.
+- **Acts 2:38 italic-attachment.** Source-data issue: v4-editorial lacks φησὶν but TAGNT has it; the extractor's surface-lookahead absorbs the orphan TAGNT token into cola 3. Fix in token-to-cola assignment logic in `scripts/regenerate_english.py`.
+
+**Files touched in this handoff update:**
+
+- This entry in `handoffs/03-architecture.md`
+- Top-of-file four-plane pointer in this file
+- Cascade-rule supersession block in §"The Cascade Rule" of this file
+- `--force is destructive` lesson annotated with 2026-05-12 retirement note (audit trail preserved)
+- `handoffs/00-index.md` — stale `02-colometry-method.md` and `YLT-visualization.md` rows deleted; atu-method pointer added
+- `handoffs/01-project-overview.md` — 2026-05-12 KJV migration block appended
+- `handoffs/04-editorial-workflow.md` — universal-layer pointer block at top
+- `CLAUDE.md` — Key Files table updated for `regenerate_english.py` + `eng-gloss/`; Build Pipeline atu-method pointer; framework.md pointer in Colometric Principles
+- `scripts/build_books.py:34` — `regenerate_english_kjv.py` → `regenerate_english.py` in comment
+
+**Pending — separate commit.** Restructure of `private/01-method/colometry-canon.md` to mirror the bofm v3.0 framework-pointer-only pattern: seven §-subsections become pointer-only cross-references to `atu-method/docs/framework.md`, with GNT-specific rule body preserved intact. That work requires a §6.5 audit dispatch (named-category + cross-project triggers) and lives in its own commit with explicit audit-evidence.

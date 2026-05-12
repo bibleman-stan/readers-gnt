@@ -116,14 +116,14 @@ Compaction-resume: still run the full CHECK-IN protocol when resuming from a com
 |------|---------|
 | `index.html` | Main web app — all CSS/JS inline (~2,500 lines), search, corpus filters, settings |
 | `scripts/build_books.py` | Converts v4-editorial + eng-gloss → HTML fragments under `books/` |
-| `scripts/regenerate_english.py` | Regenerates English glosses after Greek edits (incremental, with skip-guard) |
+| `scripts/regenerate_english.py` | Thin wrapper over `atu_method.kjv_alignment.align_verse()`; redistributes KJV verbatim per Greek ATU line via Strong's-number matching against TAGNT |
 | `scripts/v4_auto_fix.py` | Mechanical fixes against v4-editorial (read/write in place) |
 | `validators/_shared/morphgnt_lookup.py` | MorphGNT morphological backend (used by `validators/common.py`) |
 | `validators/_shared/macula_clauses.py` | Macula syntax-tree clause-boundary extractor (used by `validators/common.py`) |
 | `scripts/archive/` | Tier-producer scripts (v0–v3) frozen 2026-04-26; see `scripts/archive/README.md` |
 | `data/text-files/sblgnt-source/` | 27 raw SBLGNT source files — **NEVER EDIT** |
 | `data/text-files/v4-editorial/*/` | 260 chapter files in book subfolders — **single source of truth for Greek text** |
-| `data/text-files/eng-gloss/*/` | 260 chapter files in book subfolders — structural English glosses |
+| `data/text-files/eng-gloss/*/` | 260 chapter files in book subfolders — KJV verbatim per Greek ATU line (produced by `regenerate_english.py`) |
 | `books/` | 27 generated HTML fragment files (rebuilt from v4-editorial + eng-gloss) |
 
 ---
@@ -210,11 +210,13 @@ PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark
 
 Pipeline: `v4-editorial/*/ → eng-gloss/*/ → books/*.html`
 
+The script is a thin wrapper over `atu_method.kjv_alignment.align_verse()`; the alignment algorithm lives in `../atu-method`, not here. The English layer is KJV verbatim distributed per Greek ATU line via Strong's-number matching (TAGNT → MetaV).
+
 ---
 
 ## Colometric Principles (Orientation Only)
 
-**Authoritative canon:** `private/01-method/colometry-canon.md`. Fresh-read that file before any editorial or rule work — rules evolve fast and this summary drifts. The bullets below are orientation-at-load-time only, not rule reference.
+**Authoritative canon:** `private/01-method/colometry-canon.md` (GNT-specific rule body); universal framework at `../atu-method/docs/framework.md` (§0 Mission, §1 Three Forces + 5 Structural Justifications + 4 Merge-Overrides, §2 Categories A/B/C, §7 Change Protocol). Fresh-read both before any editorial or rule work — rules evolve fast and this summary drifts. The bullets below are orientation-at-load-time only, not rule reference.
 
 ### Three forces (canon §1)
 1. **Generative — Propositions.** Default SPLIT at every proposition boundary; each proposition is an atomic thought.

@@ -347,3 +347,43 @@ Beyond the strategic reframing, session 9 landed substantial operational work:
 - New private docs: `transfiguration-pilot-findings.md`, `colometric-application-debates.md`; expanded `scholarly-impact-opportunity-space.md` and `phd-prospectus-draft.md`
 
 **Final scanner state:** drift 0, no-anchor 0, vocative APPOSITION-CANDIDATE 0, cross-verse PARALLEL-PTC 2 held (edge cases). Corpus in its cleanest state ever — ready for the stylometric and synoptic work that follows.
+
+---
+
+### Update — 2026-05-12 (cross-corpus migration to KJV-anchored English)
+
+A cross-corpus migration shipped this date across all four repos in the project family (`atu-method`, `readers-bofm`, `readers-gnt`, `readers-tanakh`), anchored from a bom-reader-led Claude Code session.
+
+**What changed for readers-gnt specifically:**
+
+- The English layer rendered beneath each Greek ATU line is now **KJV verbatim** (1769 Cambridge edition, public domain) — no longer purpose-built structural glosses, no eflomal statistical alignment, no proportional-word splitter, no YLT/WEB.
+- KJV words are distributed per Greek ATU line by Strongs-number matching: TAGNT per-token Strong\s tags → MetaV (viz.bible CC-BY-SA 3.0) per-KJV-word Strong's tags. Italic KJV words (translator additions with no Greek backing) attach to the nearest non-italic neighbor.
+- The alignment algorithm lives universally in [`../atu-method/atu_method/kjv_alignment/`](../../atu-method/atu_method/kjv_alignment/). `scripts/regenerate_english.py` is now a thin (~200 line) wrapper that parses TAGNT and calls `align_verse()` per verse.
+- The Modern pill in the topbar is always visible and toggles KJV archaic → modern in place via `.swap` spans emitted by `build_books.py` (e.g., `hath`→`has`, `verily`→`truly`, `unto`→`to`, `begat`→`fathered`). Greek source-language layer never moves on toggle. No URL gating, no `--english-source` flag — KJV is the only path.
+
+**What this supersedes (Wave 6-7 retirements):**
+
+- `scripts/regenerate_english.py` OLD eflomal-driven version — DELETED.
+- `scripts/align_redistribute_english.py`, `scripts/run_eflomal_alignment.py`, `scripts/resync_english.py` — DELETED.
+- `data/alignment/corpus-alignment.json` (eflomal output) — DELETED.
+- `--english-source=kjv|legacy` flag in `scripts/build_books.py` — REMOVED.
+- URL gating in `index.html` (`KJV_MODE` / `?source=kjv` activation) — REMOVED.
+
+**Architectural shift — universal-layer infrastructure:**
+
+The repo now consumes a four-plane architecture (`atu-method/docs/architecture.md`) where universal infrastructure lives in `atu-method/`:
+- `atu_method/kjv_alignment/` — Strong's-based distribution algorithm
+- `atu_method/swaps/apply_swaps.py` + `load_lists.py` — universal swap engine
+- `data/kjv-strongs/MetaV_*.csv` — KJV source of truth
+- `data/lexicons/TBESG.txt` / `TBESH.txt` — Strong's brief glosses
+- `data/swaps/universal-kjv.json` + `nt-archaisms.json` — swap-lists
+- `docs/apparatus.md` / `architecture.md` / `framework.md` / `glossary.md` — picture-first + universal methodology
+
+`readers-gnt` now occupies the **Delivery plane** of this architecture; rule detail (`private/01-method/colometry-canon.md`) and language-specific Layer 1 syntax-floor remain per-repo.
+
+**Open items surfaced post-migration:**
+
+- Matt 3:1-2 versification mismatch (SBLGNT/KJV verse-boundary offset on `καὶ λέγων`) — solvable by porting the offset-handling pattern from `../readers-tanakh/scripts/regenerate_english.py`.
+- Acts 2:38 italic-attachment edge case — source-data issue (v4-editorial lacks φησὶν but TAGNT has it); fix in token-to-cola assignment logic.
+
+**Reference commits:** `b2b8f398` (Wave 3α — KJV-source build flag + swap-system UI), `73a7c65b` (Wave 4 full-corpus KJV extraction), `2f28e63e` (Wave 5c thin-wrapper extractor), `9db32056` (Wave 6 promote KJV to default + retire eflomal), `bff0961d` (Wave 7 full NT regenerate after `distribute()` fix).

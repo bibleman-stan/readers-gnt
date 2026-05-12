@@ -31,7 +31,7 @@ INPUT_DIR = GK_PRIMARY_DIR  # used by discover_books for globbing all chapters (
 EN_DIR = os.path.join(REPO_ROOT, "data", "text-files", "eng-gloss")
 OUTPUT_DIR = os.path.join(REPO_ROOT, "books")
 
-# atu-method swap module (sibling repo, consistent with regenerate_english_kjv.py convention)
+# atu-method swap module (sibling repo, consistent with regenerate_english.py convention)
 _ATU_METHOD_ROOT = os.path.join(os.path.dirname(REPO_ROOT), "atu-method")
 if _ATU_METHOD_ROOT not in sys.path:
     sys.path.insert(0, _ATU_METHOD_ROOT)

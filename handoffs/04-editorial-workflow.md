@@ -1,5 +1,7 @@
 # 04 — Editorial Workflow
 
+> **Universal-layer pointer (2026-05-12).** The editorial categories (A mechanical / B fuzzy / C exegetical), structural-justification taxonomy, and merge-override conditions documented below now live universally in [`../../atu-method/docs/framework.md`](../../atu-method/docs/framework.md) (§1 Three Forces + 5 Structural Justifications + 4 Merge-Overrides; §2 Categories A/B/C). The prose in this file is preserved for fast-read and to capture per-repo GNT-specific workflow detail; framework.md is the authoritative version of the universal taxonomy. When the two drift, framework.md wins.
+
 > **Update 2026-04-26 — Tier-producer archive sweep.** The v0–v3 tier producers and several adjacent one-time tools (`build_v0_prose.py`, `auto_colometry.py`, `v2_colometry.py`, `v3_colometry.py`, `diagnostic_scanner.py`, `generate_english_glosses.py`, `generate_pauline_english.py`, `v4_pauline_review.py`) were moved to `scripts/archive/`. The pipeline diagram below describes the original five-tier bootstrap; the active editorial loop is now `v4-editorial/ → regenerate_english.py → eng-gloss/ → build_books.py → books/*.html`. See `scripts/archive/README.md` and canon §10 (2026-04-26 later⁷).
 
 ## The Pipeline
