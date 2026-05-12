@@ -9,8 +9,8 @@ And they found the stone rolled away from the sepulchre.
 And they entered in, and found not the body of the Lord Jesus.
 
 24:4
-And it came to pass, as they were much perplexed thereabout,
-behold, two men stood by them in shining garments:
+And it came to pass, as they were much perplexed
+thereabout, behold, two men stood by them in shining garments:
 
 24:5
 And as they were afraid,
@@ -74,9 +74,9 @@ that ye have one to another, as ye walk,
 and are sad?
 
 24:18
-And the one of them, whose name was Cleopas, answering him,
-said unto Art thou there
-only a stranger in Jerusalem, and hast not known the things which are come to pass in these days?
+And the one of them, whose name was Cleopas, answering
+said unto him, Art thou
+only a stranger in Jerusalem, and hast not known the things which are come to pass there in these days?
 
 24:19
 And he said unto them, What things?
@@ -193,11 +193,11 @@ And they gave him a piece of a broiled fish, and of an honeycomb.
 And he took it, and did eat before them.
 
 24:44
-And he said unto them, unto
-These are the words which
-which I spake you,
+And he said unto them, These
+are the words
+which I spake unto you,
 while I was yet with you,
-that all things must be fulfilled, were written in the law of Moses, and in the prophets, and in the psalms, concerning me.
+that all things must be fulfilled, which were written in the law of Moses, and in the prophets, and in the psalms, concerning me.
 
 24:45
 Then opened he their understanding, that they might understand the scriptures,

@@ -89,8 +89,8 @@ Now in the morning as he returned into the city, he hungered.
 
 21:19
 And when he saw a fig tree in the way, he came to it,
-and found nothing thereon, but leaves unto it,
-only, and said
+and found nothing thereon, but leaves
+only, and said unto it,
 Let no fruit grow on thee henceforward for ever.
 And presently the fig tree withered away.
 
@@ -221,8 +221,8 @@ which shall render him the fruits in their seasons.
 Jesus saith unto them,
 Did ye never read in the scriptures,
 The stone which the builders rejected,
-the same is become the head of the corner:
-this is the Lord's doing,
+the same is become the head of the corner: this
+is the Lord's doing,
 and it is marvellous in our eyes?
 
 21:43
