@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Automatic mechanical fixer for v4-editorial colometric files.
+Automatic mechanical fixer for v4/grc colometric files.
 
 Fixes six pattern-matchable violations:
   1. Dangling conjunctions (postpositives at line end or orphaned at line start)
@@ -36,7 +36,7 @@ POSTPOSITIVES = {'δέ', 'γάρ', 'οὖν', 'τε'}
 # Subordinating conjunctions — break points for overlong lines
 SUBORDINATORS = ['ἵνα', 'ὅτι', 'ὥστε', 'ὅταν', 'ὅτε', 'ἐάν', 'μήποτε', 'διότι', 'καθώς', 'καθὼς']
 
-# Map from v4-editorial file prefix to Macula XML filename
+# Map from v4/grc file prefix to Macula XML filename
 PREFIX_TO_XML = {
     'matt':    '01-matthew.xml',
     'mark':    '02-mark.xml',
@@ -78,7 +78,7 @@ MACULA_ID_TO_PREFIX = {
     '3JN': '3john', 'JUD': 'jude', 'REV': 'rev',
 }
 
-# Map from v4-editorial file prefix to MorphGNT filename
+# Map from v4/grc file prefix to MorphGNT filename
 PREFIX_TO_MORPHGNT = {
     'matt':    '61-Mt-morphgnt.txt',
     'mark':    '62-Mk-morphgnt.txt',
@@ -249,7 +249,7 @@ def get_kai_finite_verb_positions(verse_words):
 
 def parse_v4_file(filepath):
     """
-    Parse a v4-editorial file into a list of verse blocks.
+    Parse a v4/grc file into a list of verse blocks.
     Each block is: { 'ref': '3:1', 'lines': ['line1', 'line2', ...] }
     Blank lines between verses are preserved as separators.
     """
@@ -913,7 +913,7 @@ def fix_parallel_lists(blocks, morphgnt_data, chapter_num):
 # ---------- main processing ----------
 
 def process_file(filepath, vocatives, chapter_num, morphgnt_data=None, dry_run=False):
-    """Process a single v4-editorial file. Returns list of fix records."""
+    """Process a single v4/grc file. Returns list of fix records."""
     blocks = parse_v4_file(filepath)
     all_fixes = []
     filename = os.path.basename(filepath)
@@ -966,15 +966,15 @@ def process_file(filepath, vocatives, chapter_num, morphgnt_data=None, dry_run=F
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Auto-fix mechanical colometric violations in v4-editorial files')
+    parser = argparse.ArgumentParser(description='Auto-fix mechanical colometric violations in v4/grc files')
     parser.add_argument('--dry-run', action='store_true', help='Report only, do not write changes')
     args = parser.parse_args()
 
     if not os.path.isdir(V4_DIR):
-        print(f"ERROR: v4-editorial directory not found: {V4_DIR}", file=sys.stderr)
+        print(f"ERROR: v4/grc directory not found: {V4_DIR}", file=sys.stderr)
         sys.exit(1)
 
-    # Gather all v4-editorial files from book subfolders
+    # Gather all v4/grc files from book subfolders
     files = []
     for book_dir in sorted(os.listdir(V4_DIR)):
         book_path = os.path.join(V4_DIR, book_dir)
@@ -983,13 +983,13 @@ def main():
         for fname in sorted(os.listdir(book_path)):
             if fname.endswith('.txt'):
                 files.append(fname)
-    print(f"Found {len(files)} v4-editorial files")
+    print(f"Found {len(files)} v4/grc files")
     if args.dry_run:
         print("DRY RUN — no files will be modified\n")
     else:
         print("LIVE RUN — files will be modified\n")
 
-    # Pre-load vocatives for all books that have v4-editorial files
+    # Pre-load vocatives for all books that have v4/grc files
     book_vocatives = {}
     book_prefixes_seen = set()
     for fname in files:
@@ -1006,7 +1006,7 @@ def main():
         if voc_count:
             print(f"  {prefix}: {voc_count} vocative words in {len(vocatives)} verses")
 
-    # Pre-load MorphGNT data for all books that have v4-editorial files
+    # Pre-load MorphGNT data for all books that have v4/grc files
     book_morphgnt = {}
     print("Loading MorphGNT morphology data...")
     for prefix in sorted(book_prefixes_seen):

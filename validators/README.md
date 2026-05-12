@@ -54,7 +54,7 @@ git; installed copies live at `.git/hooks/` (not tracked).
 
 ### `pre-commit` — regression-baseline gate
 
-Triggers when staged files include the canon, syntax-reference, v4-editorial
+Triggers when staged files include the canon, syntax-reference, v4/grc
 corpus, or validators themselves. Runs `validators/run_all.py
 --baseline-check` and blocks if any rule's candidate count INCREASED vs
 `validators/.baseline.json`.

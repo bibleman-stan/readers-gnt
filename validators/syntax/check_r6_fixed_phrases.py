@@ -3,11 +3,11 @@ check_r6_fixed_phrases.py — Layer 1 validator for Rule R6.
 
 R6: Fixed phrases stay together.
   Certain multi-word Greek expressions are idiomatic units; splitting them
-  across v4-editorial lines is MALFORMED.
+  across v4/grc lines is MALFORMED.
 
 Layer 1 break-legality rows 16, 17.
 
-Only v4-editorial surface forms are needed — no Macula token mapping.
+Only v4/grc surface forms are needed — no Macula token mapping.
 Longer phrases are checked before shorter sub-phrases to avoid duplicate flags.
 """
 

@@ -121,7 +121,7 @@ def _decode_superscript(s):
 
 
 def _parse_line_with_verse_markers(line_text, primary_verse):
-    """Parse a v4-editorial line that may contain inline cross-verse markers.
+    """Parse a v4/grc line that may contain inline cross-verse markers.
 
     Returns a list of (word, verse_num) pairs in line order, with all inline
     markers stripped from the token stream.
@@ -252,7 +252,7 @@ VERSE_REF_RE = re.compile(r'^(\d+):(\d+)$')
 
 
 def parse_chapter_file(filepath):
-    """Parse a v4-editorial chapter file.
+    """Parse a v4/grc chapter file.
 
     Returns list of verse dicts:
         [{"ref": "5:2", "chapter": 5, "verse": 2, "lines": ["...", ...]}, ...]
@@ -829,7 +829,7 @@ def get_book_slug(filename):
 
 
 def discover_files(book_filter=None):
-    """Discover all v4-editorial files, optionally filtered by book."""
+    """Discover all v4/grc files, optionally filtered by book."""
     files = []
     for book_dir in sorted(os.listdir(V4_DIR)):
         book_path = os.path.join(V4_DIR, book_dir)

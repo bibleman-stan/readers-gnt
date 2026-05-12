@@ -421,7 +421,7 @@ SBLGNT source (canonical, never edit)
 
 #### System-Wide v4 Editorial Review Completed
 
-120 chapters now have v4-editorial files, produced by 6 genre-group agents operating in parallel across the corpus. Approximately 944 line changes total. Most common fix patterns:
+120 chapters now have v4/grc files, produced by 6 genre-group agents operating in parallel across the corpus. Approximately 944 line changes total. Most common fix patterns:
 
 - **Fragment merges:** Short orphaned lines (articles, particles, prepositions) merged back into adjacent cola
 - **Dangling postpositive repairs:** Postpositive particles (δέ, γάρ, οὖν, μέν) that ended up at line-end moved to start of next line
@@ -454,11 +454,11 @@ The framework's three forces (atomic thought, single image, syntax-as-constraint
 
 ---
 
-### Update — 2026-04-11 (session 6: all 260 chapters v4-editorial)
+### Update — 2026-04-11 (session 6: all 260 chapters v4/grc)
 
 #### All 260 Chapters Now v4-Editorial
 
-The v4-editorial directory is now the single source of truth for all 260 chapters of the Greek New Testament. No gaps remain. The final 72 previously-unreviewed chapters were editorially reviewed by 9 parallel agents across genre groups.
+The v4/grc directory is now the single source of truth for all 260 chapters of the Greek New Testament. No gaps remain. The final 72 previously-unreviewed chapters were editorially reviewed by 9 parallel agents across genre groups.
 
 #### English Gloss Quality Audit
 

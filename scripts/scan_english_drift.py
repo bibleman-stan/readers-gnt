@@ -3,7 +3,7 @@
 scan_english_drift.py — Find probable English-alignment drift sites.
 
 The English glosses in data/text-files/v4/eng-kjv/ are supposed to have
-a 1:1 line correspondence with the Greek v4-editorial files. Over the
+a 1:1 line correspondence with the Greek v4/grc files. Over the
 project's history, multiple passes of proportional-regen have
 introduced mechanical splits that break English phrases mid-sentence:
 
@@ -192,7 +192,7 @@ _ENGLISH_TEMPORAL_STARTS = {
 
 
 def _load_greek_chapter(eng_file_rel):
-    """Given an eng-gloss relative path ('06-rom/rom-02.txt'), load the
+    """Given an v4/eng-kjv relative path ('06-rom/rom-02.txt'), load the
     corresponding Greek chapter. Returns dict: verse_ref -> list of lines."""
     greek_path = os.path.join(V4_DIR, *eng_file_rel.split("/"))
     if not os.path.exists(greek_path):

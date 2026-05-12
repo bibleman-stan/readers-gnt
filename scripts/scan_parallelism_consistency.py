@@ -147,7 +147,7 @@ VERSE_REF_RE = re.compile(r'^\d+:\d+$')
 
 def parse_file(filepath: Path) -> List[dict]:
     """
-    Parse a v4-editorial chapter file into a list of line records.
+    Parse a v4/grc chapter file into a list of line records.
 
     Record fields:
       line_no  — 1-based line number in file
@@ -1057,7 +1057,7 @@ def find_gen_dep_chains(records: List[dict]) -> List[dict]:
 # ─── corpus scan ──────────────────────────────────────────────────────────────
 
 def scan_corpus() -> List[dict]:
-    """Walk all v4-editorial chapters and collect drift candidates."""
+    """Walk all v4/grc chapters and collect drift candidates."""
     all_candidates: List[dict] = []
 
     book_dirs = sorted(V4_DIR.iterdir())
@@ -1327,7 +1327,7 @@ def print_summary(candidates: List[dict]) -> None:
 
 def main():
     if not V4_DIR.exists():
-        print(f"ERROR: v4-editorial directory not found: {V4_DIR}", file=sys.stderr)
+        print(f"ERROR: v4/grc directory not found: {V4_DIR}", file=sys.stderr)
         sys.exit(1)
 
     print("Scanning corpus...", flush=True)

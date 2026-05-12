@@ -2,7 +2,7 @@
 
 > **Four-plane pointer (2026-05-12).** As of the cross-corpus migration, this repo occupies the **Delivery plane** of a four-plane architecture (Data / Specification / Tooling / Delivery) documented universally in [`../../atu-method/docs/architecture.md`](../../atu-method/docs/architecture.md). Shared-vs-per-repo plane ownership, interface contracts between planes, and drift-prevention discipline all live there. This handoff covers per-repo Delivery-plane details only — build pipeline, scripts, web app, deployment. Cross-references to `atu-method` are now load-bearing; do not duplicate or shadow the shared layer here.
 
-> **Update 2026-04-26 — Tier-producer archive sweep.** The v0–v3 tier producers (`build_v0_prose.py`, `auto_colometry.py`, `v2_colometry.py`, `v3_colometry.py`), the line-auditing tool (`diagnostic_scanner.py`), the original eng-gloss seeders (`generate_english_glosses.py`, `generate_pauline_english.py`), and the one-time Pauline review pass (`v4_pauline_review.py`) were moved to `scripts/archive/`. The `build_books.py` v3 fallback referenced in earlier blocks was confirmed dead in practice (v4-editorial: 260/260) and removed in the same commit. **The dated snapshots and update blocks below describe the architecture as of the date in their header.** For current `scripts/` layout, see `CLAUDE.md` Key Files table and `scripts/archive/README.md`. See canon §10 (2026-04-26 later⁷) for the audit trail.
+> **Update 2026-04-26 — Tier-producer archive sweep.** The v0–v3 tier producers (`build_v0_prose.py`, `auto_colometry.py`, `v2_colometry.py`, `v3_colometry.py`), the line-auditing tool (`diagnostic_scanner.py`), the original v4/eng-kjv seeders (`generate_english_glosses.py`, `generate_pauline_english.py`), and the one-time Pauline review pass (`v4_pauline_review.py`) were moved to `scripts/archive/`. The `build_books.py` v3 fallback referenced in earlier blocks was confirmed dead in practice (v4/grc: 260/260) and removed in the same commit. **The dated snapshots and update blocks below describe the architecture as of the date in their header.** For current `scripts/` layout, see `CLAUDE.md` Key Files table and `scripts/archive/README.md`. See canon §10 (2026-04-26 later⁷) for the audit trail.
 
 ## Repo Structure (as of 2026-04-09)
 
@@ -199,7 +199,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/ylt_align.py --book Acts --chapter 9  # one
 
 ### build_books.py
 
-Converts v4-editorial Greek + eng-gloss to dual-text HTML. Note: post-2026-05-12, `v4/eng-kjv/` contains KJV verbatim (distributed per Greek ATU line by Strong's-number matching), not purpose-built structural glosses. The dual-text HTML now also injects `.swap` spans for KJV archaism modernization via the universal swap engine at `atu-method/atu_method/swaps/`.
+Converts v4/grc Greek + v4/eng-kjv to dual-text HTML. Note: post-2026-05-12, `v4/eng-kjv/` contains KJV verbatim (distributed per Greek ATU line by Strong's-number matching), not purpose-built structural glosses. The dual-text HTML now also injects `.swap` spans for KJV archaism modernization via the universal swap engine at `atu-method/atu_method/swaps/`.
 
 **Usage:**
 ```bash
@@ -207,7 +207,7 @@ PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py               # all books
 PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark    # one book
 ```
 
-**Source priority:** v4-editorial (primary) → v3-colometric (fallback) for Greek. eng-gloss for English structural glosses.
+**Source priority:** v4/grc (primary) → v3-colometric (fallback) for Greek. v4/eng-kjv for English structural glosses.
 
 ---
 
@@ -260,7 +260,7 @@ This is the Unix philosophy applied to a reading edition: simple things compose;
 **Every change to Greek breaks MUST cascade through the full pipeline:**
 
 ```
-Greek edit (v4-editorial) → English regen (eng-gloss) → HTML rebuild (books/) → commit → push
+Greek edit (v4/grc) → English regen (v4/eng-kjv) → HTML rebuild (books/) → commit → push
 ```
 
 This is not optional. Skipping any step means the site serves stale or misaligned content. The cascade is a single atomic operation — if you change Greek, you MUST sync English and rebuild HTML in the SAME work unit. Not "next session." Not "I'll get to it later."
@@ -269,7 +269,7 @@ This is not optional. Skipping any step means the site serves stale or misaligne
 
 **English structural glosses are NOT an alignment algorithm.** They are purpose-built translations written to match Greek clause order by construction. When Greek lines change, English lines must be REWRITTEN (not redistributed, not script-processed). Each English line is a fresh translation of its corresponding Greek ATU.
 
-> **Superseded 2026-05-12.** The paragraph above describes the pre-migration eng-gloss pipeline (structural English glosses, retired Wave 6). The current cascade is **Greek edit → `regenerate_english.py` (KJV redistribution via Strong's-matching) → `build_books.py` (rebuild with `.swap` injection) → commit.** The eng-gloss layer is now KJV verbatim distributed per Greek ATU line by `atu_method.kjv_alignment.align_verse()`; when Greek lines change, KJV is redistributed (not rewritten). The cascade rule still holds — but the middle step has different semantics.
+> **Superseded 2026-05-12.** The paragraph above describes the pre-migration v4/eng-kjv pipeline (structural English glosses, retired Wave 6). The current cascade is **Greek edit → `regenerate_english.py` (KJV redistribution via Strong's-matching) → `build_books.py` (rebuild with `.swap` injection) → commit.** The v4/eng-kjv layer is now KJV verbatim distributed per Greek ATU line by `atu_method.kjv_alignment.align_verse()`; when Greek lines change, KJV is redistributed (not rewritten). The cascade rule still holds — but the middle step has different semantics.
 
 **Verification after every cascade:** Run the line-count checker across all 260 files. Any mismatch means the cascade is incomplete.
 
@@ -542,10 +542,10 @@ New directories:
 
 New and updated scripts:
 - **web_align.py** (new): Double-wire WEB alignment with spaCy dependency parsing validation. Approach: Greek to Macula English (perfect by construction) to WEB (LCS alignment). spaCy validates cut points to prevent splitting inside English phrases.
-- **diagnostic_scanner.py** (new at the time of this dated block; **moved to `scripts/archive/diagnostic_scanner.py` on 2026-04-26**): Line auditing tool. Applied the framework's forces to flag lines that fail atomic-thought or single-image tests. The script's prior breath-unit test was purged earlier on 2026-04-26 alongside the canon retirement (see canon §10 2026-04-26 final-residue-purge entry). It was archived later that day after the audit confirmed v4-editorial as single source of truth and Layer 2 validators superseded its function. See canon §10 (2026-04-26 later⁷) for the archive sweep.
+- **diagnostic_scanner.py** (new at the time of this dated block; **moved to `scripts/archive/diagnostic_scanner.py` on 2026-04-26**): Line auditing tool. Applied the framework's forces to flag lines that fail atomic-thought or single-image tests. The script's prior breath-unit test was purged earlier on 2026-04-26 alongside the canon retirement (see canon §10 2026-04-26 final-residue-purge entry). It was archived later that day after the audit confirmed v4/grc as single source of truth and Layer 2 validators superseded its function. See canon §10 (2026-04-26 later⁷) for the archive sweep.
 - **ylt_align_lcs.py** (new): Experimental LCS-based YLT alignment (R&D, superseded by web_align.py).
 - **ylt_align_double.py** (new): Experimental double-wire YLT alignment (R&D, superseded by web_align.py).
-- **build_books.py** (updated): Now checks v4-editorial before v3-colometric for Greek source (editorial hand takes priority). Checks eng-gloss before ylt-colometric for English source.
+- **build_books.py** (updated): Now checks v4/grc before v3-colometric for Greek source (editorial hand takes priority). Checks v4/eng-kjv before ylt-colometric for English source.
 - **index.html** (updated): UI updated for WEB display, English punctuation hideable via toggle, landing page verse navigation popover.
 
 #### Updated Build Pipeline
@@ -564,11 +564,11 @@ v3_colometry.py       (unified predication + sentence boundaries + sub-clause sp
 web_align.py          (align WEB English to Greek colometric breaks via double-wire + spaCy)
        |
        v
-build_books.py        (reads v4-editorial > v3-colometric for Greek,
-                       eng-gloss > ylt-colometric for English -> books/*.html)
+build_books.py        (reads v4/grc > v3-colometric for Greek,
+                       v4/eng-kjv > ylt-colometric for English -> books/*.html)
 ```
 
-build_books.py priority chain: v4-editorial (if exists) > v3-colometric for Greek; eng-gloss (if exists) > ylt-colometric for English.
+build_books.py priority chain: v4/grc (if exists) > v3-colometric for Greek; v4/eng-kjv (if exists) > ylt-colometric for English.
 
 #### Domain and Deployment
 
@@ -584,8 +584,8 @@ build_books.py priority chain: v4-editorial (if exists) > v3-colometric for Gree
 #### Updated Pipeline Priority Chain
 
 The build pipeline now operates with the following priority:
-- **Greek:** v4-editorial (if exists) > v3-colometric
-- **English:** eng-gloss (structural glosses, purpose-built per line — no alignment algorithm)
+- **Greek:** v4/grc (if exists) > v3-colometric
+- **English:** v4/eng-kjv (structural glosses, purpose-built per line — no alignment algorithm)
 
 The English layer is no longer an aligned translation. Each structural gloss was written to match its Greek line, so alignment is guaranteed by construction. `web_align.py` and `ylt_align.py` are no longer in the active pipeline.
 
@@ -595,7 +595,7 @@ The English layer is no longer an aligned translation. Each structural gloss was
 
 #### v4 Editorial Coverage
 
-120 of 260 chapters now have v4-editorial files produced by the system-wide editorial review. Approximately 52 chapters flagged for second-pass work. The v4-editorial directory is the authoritative Greek source wherever it exists; v3-colometric remains the fallback for chapters not yet editorially reviewed.
+120 of 260 chapters now have v4/grc files produced by the system-wide editorial review. Approximately 52 chapters flagged for second-pass work. The v4/grc directory is the authoritative Greek source wherever it exists; v3-colometric remains the fallback for chapters not yet editorially reviewed.
 
 ---
 
@@ -603,7 +603,7 @@ The English layer is no longer an aligned translation. Each structural gloss was
 
 #### New scanners + appliers (scan-and-apply pattern)
 
-Session 9 introduced two new pairs of scanner+apply scripts that implement the "scan-then-mechanically-apply" pattern corpus-wide. Both operate on v4-editorial Greek and eng-gloss English in lockstep, avoiding the English-alignment drift that proportional regen introduces. This is a departure from the earlier "dispatch agents for mass editorial work" pattern, and should be preferred whenever a class of errors can be described structurally.
+Session 9 introduced two new pairs of scanner+apply scripts that implement the "scan-then-mechanically-apply" pattern corpus-wide. Both operate on v4/grc Greek and v4/eng-kjv English in lockstep, avoiding the English-alignment drift that proportional regen introduces. This is a departure from the earlier "dispatch agents for mass editorial work" pattern, and should be preferred whenever a class of errors can be described structurally.
 
 **`scripts/scan_vocative_apposition.py`** — classifies every vocative-only line in the corpus and emits merge candidates with grammatical justification:
 
@@ -615,7 +615,7 @@ Session 9 introduced two new pairs of scanner+apply scripts that implement the "
 
 Every APPOSITION-CANDIDATE cites the specific preceding pronoun or verb that licenses the merge. Reflect-not-impose: the grammatical justification is in the scan output.
 
-**`scripts/apply_vocative_merges.py`** — applies the APPOSITION-CANDIDATE merges. Supports `--english` (to apply to eng-gloss), `--save-candidates` / `--load-candidates` (to share the candidate list between Greek and English passes without re-scanning), and `--dry-run`. Processes merges within a verse in reverse order so that deletions don't shift earlier line indices.
+**`scripts/apply_vocative_merges.py`** — applies the APPOSITION-CANDIDATE merges. Supports `--english` (to apply to v4/eng-kjv), `--save-candidates` / `--load-candidates` (to share the candidate list between Greek and English passes without re-scanning), and `--dry-run`. Processes merges within a verse in reverse order so that deletions don't shift earlier line indices.
 
 **`scripts/scan_no_anchor_lines.py`** — finds every line in the corpus that lacks a thought-marking anchor (finite verb, infinitive, participle, or head substantive in N/A/D/V case). Features:
 
@@ -687,7 +687,7 @@ The `--save-candidates` step is essential when running Greek-then-English: the E
 
 The `--force` flag bypasses the "skip if line counts match" guard and mechanically redistributes every verse's English content proportionally. When applied to already-aligned content, it reliably worsens alignment quality. **Never use `--force` on already-aligned content.** Plain `regenerate_english.py --book X` is the correct invocation — it only touches verses where Greek and English line counts differ.
 
-> **Retired 2026-05-12.** This lesson applied to the eflomal-driven / proportional-word-splitter pipeline (retired Wave 6, commit `9db32056`). The current `regenerate_english.py` is a thin wrapper over `atu_method.kjv_alignment.align_verse()` — it has different failure modes: TAGNT vs SBLGNT versification edge cases (Matt 3:1-2 mismatch), italic-attachment edge cases (Acts 2:38 source-data gap where TAGNT has φησὶν but v4-editorial does not), and Strong's-number mismatch on rare lemmas. The `--force` flag no longer has the same destructive semantics; the lesson is preserved here for audit trail value and as a reminder of why the project ultimately moved to deterministic Strong's-based distribution.
+> **Retired 2026-05-12.** This lesson applied to the eflomal-driven / proportional-word-splitter pipeline (retired Wave 6, commit `9db32056`). The current `regenerate_english.py` is a thin wrapper over `atu_method.kjv_alignment.align_verse()` — it has different failure modes: TAGNT vs SBLGNT versification edge cases (Matt 3:1-2 mismatch), italic-attachment edge cases (Acts 2:38 source-data gap where TAGNT has φησὶν but v4/grc does not), and Strong's-number mismatch on rare lemmas. The `--force` flag no longer has the same destructive semantics; the lesson is preserved here for audit trail value and as a reminder of why the project ultimately moved to deterministic Strong's-based distribution.
 
 #### The mechanical-merge pattern as future-standard
 
@@ -806,7 +806,7 @@ Four scripts had output path constants updated to reflect the new subfolder layo
 **Open items surfaced in migration that remain post-Wave-7:**
 
 - **Matt 3:1-2 versification mismatch.** SBLGNT places `καὶ λέγων` at the end of v3:1; KJV places "And saying" at the start of v3:2. Solvable by porting the offset-handling pattern from `../readers-tanakh/scripts/regenerate_english.py` (BHS-vs-English offset table). Wave-8 equivalent task.
-- **Acts 2:38 italic-attachment.** Source-data issue: v4-editorial lacks φησὶν but TAGNT has it; the extractor's surface-lookahead absorbs the orphan TAGNT token into cola 3. Fix in token-to-cola assignment logic in `scripts/regenerate_english.py`.
+- **Acts 2:38 italic-attachment.** Source-data issue: v4/grc lacks φησὶν but TAGNT has it; the extractor's surface-lookahead absorbs the orphan TAGNT token into cola 3. Fix in token-to-cola assignment logic in `scripts/regenerate_english.py`.
 
 **Files touched in this handoff update:**
 

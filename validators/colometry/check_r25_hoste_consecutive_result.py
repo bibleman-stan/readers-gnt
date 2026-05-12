@@ -184,7 +184,7 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
             break
     if chapter_path is None:
         raise FileNotFoundError(
-            f"v4-editorial chapter not found: book={book!r} chapter={chapter}"
+            f"v4/grc chapter not found: book={book!r} chapter={chapter}"
         )
 
     verses = parse_chapter_file(chapter_path)

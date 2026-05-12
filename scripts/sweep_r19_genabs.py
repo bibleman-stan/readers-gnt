@@ -14,7 +14,7 @@ Split-point heuristic:
     - any non-gen non-prep content
 
 Dry-run mode (default): prints proposed diffs. Apply mode (--apply): writes
-v4-editorial files in place.
+v4/grc files in place.
 
 Usage:
   dry:   PYTHONIOENCODING=utf-8 py -3 scripts/sweep_r19_genabs.py

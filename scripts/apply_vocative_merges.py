@@ -4,7 +4,7 @@ apply_vocative_merges.py — Apply the APPOSITION-CANDIDATE merges
 identified by scan_vocative_apposition.py.
 
 For each candidate verse:
-  1. Locate the vocative-only line (v4-editorial Greek)
+  1. Locate the vocative-only line (v4/grc Greek)
   2. Merge it into the preceding line (append with space)
   3. Write back
 
@@ -164,7 +164,7 @@ def main():
     ap.add_argument("--dry-run", action="store_true",
                     help="Show what would be merged without writing")
     ap.add_argument("--english", action="store_true",
-                    help="Apply to eng-gloss files instead of v4-editorial")
+                    help="Apply to v4/eng-kjv files instead of v4/grc")
     ap.add_argument("--save-candidates", type=str, default=None,
                     help="Save the candidate list to a JSON file for later use")
     ap.add_argument("--load-candidates", type=str, default=None,

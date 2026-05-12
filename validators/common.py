@@ -2,7 +2,7 @@
 validators/common.py — Shared infrastructure for Layer 2 validators.
 
 All validators in validators/syntax/ and validators/colometry/ import from here.
-Provides: Candidate dataclass, data loaders, v4-editorial parser, token mapper,
+Provides: Candidate dataclass, data loaders, v4/grc parser, token mapper,
   punctuation stripper, and markdown report writer.
 
 Macula data shape:
@@ -45,7 +45,7 @@ _V4_ROOT = os.path.join(_REPO_ROOT, "data", "text-files", "v4", "grc")
 _MORPHGNT_DIR = os.path.join(_REPO_ROOT, "research", "morphgnt-sblgnt")
 
 # ─── Book slug utilities (factored from validate_r18/r19/r11 boilerplate) ────
-# v4-editorial dirs use the form "NN-slug" (e.g. "01-matt", "05-acts").
+# v4/grc dirs use the form "NN-slug" (e.g. "01-matt", "05-acts").
 # This map is the same SLUGS dict that every validator duplicates inline.
 
 BOOK_SLUGS: dict[str, str] = {
@@ -61,7 +61,7 @@ SLUG_TO_FILE_NUM: dict[str, str] = {v: k for k, v in BOOK_SLUGS.items()}
 
 # Map from v4 directory base name ("01-matt") to book slug ("matt")
 def _dir_to_slug(dirname: str) -> str:
-    """Strip optional leading "NN-" prefix from a v4-editorial directory name."""
+    """Strip optional leading "NN-" prefix from a v4/grc directory name."""
     parts = dirname.split("-", 1)
     if len(parts) == 2 and parts[0].isdigit():
         return parts[1]
@@ -237,7 +237,7 @@ def _compare_normalize(text: str) -> str:
     return unicodedata.normalize("NFC", stripped)
 
 
-# ─── v4-editorial loader ──────────────────────────────────────────────────────
+# ─── v4/grc loader ──────────────────────────────────────────────────────
 
 _VERSE_RE = re.compile(r"^(\d+):(\d+)$")
 
@@ -258,7 +258,7 @@ class V4Chapter:
 
 
 def _find_v4_file(book: str, chapter: int) -> str:
-    """Locate the v4-editorial file for a book/chapter.
+    """Locate the v4/grc file for a book/chapter.
 
     Handles both bare slug directories ("matt") and prefixed directories
     ("01-matt"). Returns the full path or raises FileNotFoundError.
@@ -278,13 +278,13 @@ def _find_v4_file(book: str, chapter: int) -> str:
             return fpath
 
     raise FileNotFoundError(
-        f"v4-editorial file not found for book={book!r} chapter={chapter}. "
+        f"v4/grc file not found for book={book!r} chapter={chapter}. "
         f"Searched in {_V4_ROOT!r}."
     )
 
 
 def load_v4_editorial(book: str, chapter: int) -> V4Chapter:
-    """Load a v4-editorial chapter file and parse it into V4Chapter.
+    """Load a v4/grc chapter file and parse it into V4Chapter.
 
     File format (UTF-8, plain text):
       - Lines matching "^\\d+:\\d+$" are verse-ref markers (e.g. "4:1").
@@ -337,7 +337,7 @@ class Token:
     lemma: str             # lemma from Macula
     morph: str             # full morph string (tense+voice+mood+case+number+gender)
     role: str              # syntactic role from Macula (s, o, v, adv, ...)
-    line_index: int        # v4-editorial line this token lives on (-1 = unmapped)
+    line_index: int        # v4/grc line this token lives on (-1 = unmapped)
     position_in_line: int  # 0-based position within that line (-1 = unmapped)
     verse_ref: str         # "Matt 4:1"
     macula_raw: dict = field(default_factory=dict)  # raw Macula word element attributes
@@ -389,7 +389,7 @@ def _flatten_macula_tokens(macula_chapter: dict) -> list[dict]:
 
 
 def map_tokens_to_lines(v4_chapter: V4Chapter, macula_chapter: dict) -> list[Token]:
-    """Map each Macula token to its v4-editorial line_index.
+    """Map each Macula token to its v4/grc line_index.
 
     Algorithm: sequential-consume queue.
     1. Build a flat queue of (line_index, position_in_line, stripped_word) from
@@ -475,10 +475,10 @@ def map_tokens_to_lines(v4_chapter: V4Chapter, macula_chapter: dict) -> list[Tok
     return result
 
 
-# ─── v4-editorial corpus iterator (factored from validate_* boilerplate) ─────
+# ─── v4/grc corpus iterator (factored from validate_* boilerplate) ─────
 
 def iter_v4_chapters():
-    """Yield (slug, chapter_num, filepath) for every v4-editorial chapter.
+    """Yield (slug, chapter_num, filepath) for every v4/grc chapter.
 
     Replaces the duplicated os.listdir(V4) + parse_chapter() pattern in
     validate_r18_vocative.py, validate_r19_genabs.py, validate_r11_speech_intro.py.
@@ -503,7 +503,7 @@ def iter_v4_chapters():
 
 
 def parse_chapter_file(filepath: str) -> list[dict]:
-    """Parse a v4-editorial chapter file into verse dicts.
+    """Parse a v4/grc chapter file into verse dicts.
 
     Factored from the identical parse_chapter() in validate_r18, r19, r11.
     Returns list of dicts:

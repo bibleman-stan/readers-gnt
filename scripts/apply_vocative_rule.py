@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Apply the universal vocative rule to all v4-editorial files.
+Apply the universal vocative rule to all v4/grc files.
 
-For every v4-editorial file, find any vocative that is NOT on its own line
+For every v4/grc file, find any vocative that is NOT on its own line
 and split it onto its own line. Exception: repeated vocatives like
 "Κύριε κύριε" stay together.
 

@@ -3,7 +3,7 @@
 apply_m1_merges.py — Apply M1 merges surviving adversarial Opus review.
 
 Reads the 22 v2 survivors from private/m1-v2-adv/adversarial.json, joins
-each candidate's line1 + line2 into a single line in v4-editorial, and
+each candidate's line1 + line2 into a single line in v4/grc, and
 writes the files back. Dry-run by default; --apply writes changes.
 """
 import os, sys, json, re

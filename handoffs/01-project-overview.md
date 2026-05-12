@@ -384,6 +384,6 @@ The repo now consumes a four-plane architecture (`atu-method/docs/architecture.m
 **Open items surfaced post-migration:**
 
 - Matt 3:1-2 versification mismatch (SBLGNT/KJV verse-boundary offset on `καὶ λέγων`) — solvable by porting the offset-handling pattern from `../readers-tanakh/scripts/regenerate_english.py`.
-- Acts 2:38 italic-attachment edge case — source-data issue (v4-editorial lacks φησὶν but TAGNT has it); fix in token-to-cola assignment logic.
+- Acts 2:38 italic-attachment edge case — source-data issue (v4/grc lacks φησὶν but TAGNT has it); fix in token-to-cola assignment logic.
 
 **Reference commits:** `b2b8f398` (Wave 3α — KJV-source build flag + swap-system UI), `73a7c65b` (Wave 4 full-corpus KJV extraction), `2f28e63e` (Wave 5c thin-wrapper extractor), `9db32056` (Wave 6 promote KJV to default + retire eflomal), `bff0961d` (Wave 7 full NT regenerate after `distribute()` fix).

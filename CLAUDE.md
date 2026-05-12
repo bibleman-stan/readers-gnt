@@ -14,7 +14,7 @@ The colometric methodology draws on ancient manuscript precedent (Codex Bezae, C
 - **Live site:** gnt-reader.com (GitHub Pages, custom domain, HTTPS enforced)
 - **Base text:** SBL Greek New Testament (SBLGNT) — CC-BY-4.0
 - **User:** Stan (thebibleman77@gmail.com)
-- **Stage:** v4-editorial complete — all 260 chapters hand-edited, structural English glosses for all 260, web app live at gnt-reader.com
+- **Stage:** v4/grc complete — all 260 chapters hand-edited, structural English glosses for all 260, web app live at gnt-reader.com
 
 ---
 
@@ -61,16 +61,16 @@ The audit checks: do new additions contradict existing canon sections (grep for 
 | File | Purpose |
 |------|---------|
 | `index.html` | Main web app — all CSS/JS inline (~2,500 lines), search, corpus filters, settings |
-| `scripts/build_books.py` | Converts v4-editorial + eng-gloss → HTML fragments under `books/` |
+| `scripts/build_books.py` | Converts v4/grc + v4/eng-kjv → HTML fragments under `books/` |
 | `scripts/regenerate_english.py` | Thin wrapper over `atu_method.kjv_alignment.align_verse()`; redistributes KJV verbatim per Greek ATU line via Strong's-number matching against TAGNT |
-| `scripts/v4_auto_fix.py` | Mechanical fixes against v4-editorial (read/write in place) |
+| `scripts/v4_auto_fix.py` | Mechanical fixes against v4/grc (read/write in place) |
 | `validators/_shared/morphgnt_lookup.py` | MorphGNT morphological backend (used by `validators/common.py`) |
 | `validators/_shared/macula_clauses.py` | Macula syntax-tree clause-boundary extractor (used by `validators/common.py`) |
 | `scripts/archive/` | Tier-producer scripts (v0–v3) frozen 2026-04-26; see `scripts/archive/README.md` |
 | `data/text-files/sblgnt-source/` | 27 raw SBLGNT source files — **NEVER EDIT** |
 | `data/text-files/v4/grc/*/` | 260 chapter files in book subfolders — **single source of truth for Greek text** |
 | `data/text-files/v4/eng-kjv/*/` | 260 chapter files in book subfolders — KJV verbatim per Greek ATU line (produced by `regenerate_english.py`) |
-| `books/` | 27 generated HTML fragment files (rebuilt from v4-editorial + eng-gloss) |
+| `books/` | 27 generated HTML fragment files (rebuilt from v4/grc + v4/eng-kjv) |
 
 ---
 
@@ -118,7 +118,7 @@ The distinction is important: gating rule-derivative changes on per-item approva
 
 **Validator hooks (installed 2026-04-26, ported from sibling Tanakh project):**
 
-- **`validators/hooks/pre-commit`** — runs `validators/run_all.py --baseline-check` when canon, syntax-reference, v4-editorial corpus, or validators are staged. Blocks commit if any rule's candidate count INCREASED vs `validators/.baseline.json`. Update the baseline after intentional changes: `PYTHONIOENCODING=utf-8 py -3 validators/run_all.py --update-baseline`.
+- **`validators/hooks/pre-commit`** — runs `validators/run_all.py --baseline-check` when canon, syntax-reference, v4/grc corpus, or validators are staged. Blocks commit if any rule's candidate count INCREASED vs `validators/.baseline.json`. Update the baseline after intentional changes: `PYTHONIOENCODING=utf-8 py -3 validators/run_all.py --update-baseline`.
 - **`validators/hooks/commit-msg`** — runs `validators/check_canon_extensions.py` against the proposed commit message. Detects canon extensions matching §6.5 trigger patterns (new rule subsections, merge-overrides, Layer 1 table rows, audit triggers, SCOPE bullets) and blocks the commit if no audit-evidence keyword OR skip-safe claim is present in the message.
 - **Bypass (Stan-only, explicit decision)**: `git commit --no-verify`.
 - **Install (one-time)**: `cp validators/hooks/pre-commit .git/hooks/pre-commit && cp validators/hooks/commit-msg .git/hooks/commit-msg && chmod +x .git/hooks/pre-commit .git/hooks/commit-msg` (already done in this clone; the source-of-truth scripts live in `validators/hooks/` and are tracked in git; the installed copies in `.git/hooks/` are not tracked).

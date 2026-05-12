@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-verify_word_order.py — Verify v4-editorial word order matches SBLGNT source.
+verify_word_order.py — Verify v4/grc word order matches SBLGNT source.
 
-For each verse in v4-editorial, concatenate the colometric lines and compare
+For each verse in v4/grc, concatenate the colometric lines and compare
 the word sequence against the canonical SBLGNT source. Any mismatch indicates
 a line-order error, missing word, or extra word.
 
@@ -140,7 +140,7 @@ def _split_line_at_verse_markers(line, current_verse):
 
 
 def load_v4_chapter(chapter_path):
-    """Parse a v4-editorial chapter file. Returns dict: verse_ref -> word list."""
+    """Parse a v4/grc chapter file. Returns dict: verse_ref -> word list."""
     verses = defaultdict(list)
     current_verse = None
     with open(chapter_path, "r", encoding="utf-8") as f:
@@ -215,7 +215,7 @@ def check_book(book_slug):
 
     subdir = find_book_subdir(book_slug)
     if subdir is None:
-        return [], f"v4-editorial subdir not found for {book_slug}"
+        return [], f"v4/grc subdir not found for {book_slug}"
 
     book_dir = os.path.join(V4_DIR, subdir)
     chapter_files = sorted(

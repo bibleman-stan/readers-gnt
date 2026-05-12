@@ -40,7 +40,7 @@ from validators.common import (
 RULE_ID = "R18"
 ERROR_CLASS = "DEVIATION"   # Layer 3 editorial
 
-# ─── Book slug table (matches v4-editorial dir names) ────────────────────────
+# ─── Book slug table (matches v4/grc dir names) ────────────────────────
 
 _BOOKS: list[str] = [
     "matt", "mark", "luke", "john", "acts",
@@ -134,7 +134,7 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
             break
     if chapter_path is None:
         raise FileNotFoundError(
-            f"v4-editorial chapter not found: book={book!r} chapter={chapter}"
+            f"v4/grc chapter not found: book={book!r} chapter={chapter}"
         )
 
     verses = parse_chapter_file(chapter_path)

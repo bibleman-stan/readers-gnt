@@ -2,7 +2,7 @@
 """
 apply_line_splits.py — Generic line-split applier.
 
-Reads adversarial-verdict files and applies SPLIT outcomes to v4-editorial.
+Reads adversarial-verdict files and applies SPLIT outcomes to v4/grc.
 For each candidate with an approved split, finds the current single line
 matching `line` under the verse ref and replaces it with two lines (`left`
 and `right`).

@@ -3,7 +3,7 @@ check_r28_speech_act_frame.py — Layer 3 colometry validator for R28-ext.
 
 R28-ext (canon §3.6 "Speech-Act Announcement After Frame"):
   When a finite speech verb (λέγω/εἶπον/φημί) that introduces direct speech
-  co-occurs on the same v4-editorial line with a substantive preceding
+  co-occurs on the same v4/grc line with a substantive preceding
   adverbial frame (temporal ὡς/ὅτε/ὅταν clause OR participial-absolute cluster
   ≥3 non-punctuation tokens), the line MUST be split: frame → line 1,
   speech verb + any dative-address → line 2.
@@ -260,7 +260,7 @@ def _build_context(verses: list[dict], ch: int, vs: int, target_line: str) -> st
 def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
     """Return Candidate objects flagging R28-ext violations in this chapter.
 
-    A violation is a v4-editorial line that:
+    A violation is a v4/grc line that:
       - ends with · or : (speech-intro marker)
       - contains a 3p-indicative speech verb
       - contains a substantive adverbial frame before the speech verb
@@ -279,7 +279,7 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
             break
     if chapter_file is None:
         raise FileNotFoundError(
-            f"v4-editorial file not found: book={book!r} chapter={chapter}"
+            f"v4/grc file not found: book={book!r} chapter={chapter}"
         )
 
     verses = parse_chapter_file(chapter_file)

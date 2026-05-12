@@ -2,7 +2,7 @@
 """
 scan_english_straddles.py
 
-Detection-only audit. Walks every eng-gloss chapter file and flags pairs of
+Detection-only audit. Walks every v4/eng-kjv chapter file and flags pairs of
 consecutive content lines (within the same verse) where the line break appears
 to straddle a phrase. Typical cause: regenerate_english.py split by proportional
 word count rather than by meaning, leaving a function word stranded at the end

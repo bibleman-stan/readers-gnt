@@ -8,7 +8,7 @@ correctly handles accusative objects of the gen ptc (τὸν λόγον in Matt
 13:19) but incorrectly absorbs main-clause predicates of infinitives
 (ποταποὺς in 2 Pet 3:11 ποταποὺς δεῖ ὑπάρχειν).
 
-Signature of the bug (in already-split v4-editorial state):
+Signature of the bug (in already-split v4/grc state):
   line N: contains a gen-case participle AND ends on an accusative token
   line N+1: starts with a finite verb
 

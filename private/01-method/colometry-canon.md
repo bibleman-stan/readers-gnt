@@ -13,7 +13,7 @@ This canon is the GNT-corpus instantiation of the ATU methodology framework. Uni
 
 **For humans** reviewing the method or wanting WHY-content: see [`atu-method/docs/framework.md`](../../atu-method/docs/framework.md) (universal framework) + [`atu-method/scholarship/gnt/`](../../atu-method/scholarship/gnt/) (per-rule rationale, grammatical grounding, empirical evidence, intellectual lineage, adversarial history).
 
-**For robots** applying the method to v4-editorial sources: read **Part II — Operating Rules** below (§3 Rule Index, §3.1–§3.18, §4 Operational Tests). The Rule Index lists each rule's type and autonomy category. Validator output is a **work queue**, not a review queue. Category A rules fire on unambiguous UD signatures and do not require per-item Stan approval; Category B/C items are the only flags requiring editorial judgment.
+**For robots** applying the method to v4/grc sources: read **Part II — Operating Rules** below (§3 Rule Index, §3.1–§3.18, §4 Operational Tests). The Rule Index lists each rule's type and autonomy category. Validator output is a **work queue**, not a review queue. Category A rules fire on unambiguous UD signatures and do not require per-item Stan approval; Category B/C items are the only flags requiring editorial judgment.
 
 **For updating this document:** see [`atu-method/docs/framework.md §7 Change Protocol`](../../atu-method/docs/framework.md) for the universal change protocol (12 mandatory-audit triggers, audit-skippable categories, commit-msg discipline). The GNT-specific mechanical gate for audit compliance is the `validators/hooks/commit-msg` pre-commit hook.
 
@@ -471,7 +471,7 @@ The solemnity-prefixed speech-intro formula **ἀμήν (ἀμήν) λέγω σ�
 **Layer:** 3 — sub-rule of §3.6 (R11 speech-intro discipline)
 **Port:** GNT adaptation of BofM R28 (Speech-Act Announcement After Frame, canon §5 R28)
 
-**Statement.** When a finite speech verb (λέγω, εἶπον/λέγω, φημί) that introduces direct speech co-occurs on the same v4-editorial line with a substantive preceding adverbial frame — temporal clause (ὅταν/ὅτε/ὡς + finite verb), causal clause, or participial absolute frame with its own subject/object content — the line MUST be split. The frame occupies line 1; the finite speech verb and its dative-object address (if any) occupy line 2. The speech verb's line 2 closes with the ano teleia (·) or colon (:) per R11.
+**Statement.** When a finite speech verb (λέγω, εἶπον/λέγω, φημί) that introduces direct speech co-occurs on the same v4/grc line with a substantive preceding adverbial frame — temporal clause (ὅταν/ὅτε/ὡς + finite verb), causal clause, or participial absolute frame with its own subject/object content — the line MUST be split. The frame occupies line 1; the finite speech verb and its dative-object address (if any) occupy line 2. The speech verb's line 2 closes with the ano teleia (·) or colon (:) per R11.
 
 **Rationale.** Each atomic thought unit encodes one predication. A substantive temporal frame (`ὡς δὲ ἐπαύσατο λαλῶν` — "when he stopped speaking") is a complete predication with its own verb and subject. The finite speech-intro (`εἶπεν πρὸς τὸν Σίμωνα·` — "he said to Simon:") is a separate complete predication. Co-lineating two complete predications violates the one-predication-per-line generative principle. This rule applies the same split-discipline already operative for genitive absolutes (R19) and adverbial subordinate clauses (R9) to the speech-intro context.
 
@@ -490,7 +490,7 @@ The solemnity-prefixed speech-intro formula **ἀμήν (ἀμήν) λέγω σ�
 
 4. **R19 genitive absolute already handled.** When the frame contains a genitive absolute (anarthrous gen ptc + agreeing gen subject), R19 fires first — the gen abs gets its own line independent of any speech-verb on the same colometric line. R28-ext is therefore redundant in that case and should not be layered on top of an R19 application.
 
-5. **Frame already on prior line (already compliant).** When the temporal/participial frame has already been placed on a separate line by a prior edit or is on a different v4-editorial line from the speech verb, R28-ext does not re-fire.
+5. **Frame already on prior line (already compliant).** When the temporal/participial frame has already been placed on a separate line by a prior edit or is on a different v4/grc line from the speech verb, R28-ext does not re-fire.
 
 **Precedence vs. other rules.**
 - **vs. R9 (subordinate-clause break):** R9 covers the general case of subordinate-clause introduction. R28-ext is more specific: it governs only the subclass where the subordinate clause is immediately followed by a direct-speech verb. Both rules mandate a split; R28-ext provides the specific STRONG-SPLIT label for validator output.
@@ -832,7 +832,7 @@ The speech-intro `κηρύσσων ... καὶ λέγων·` is one ATU (a preac
 **Layer:** 3
 **Framework anchor:** Corpus-specific operational instantiation of framework M4 (fragmented atomic thought-unit; see [`atu-method/docs/framework.md §1.5`](../../atu-method/docs/framework.md)). GNT sibling of M4-BoFM-1 (codified 2026-05-11 in `readers-bofm`).
 
-**Rule.** When a v4-editorial line whose content is a **subject NP** (any of the closed-list-eligible shapes below) terminates in `,` or `·`, AND the immediately-next v4-editorial line is a **bare finite predicate** (starts with finite verb, has no leading connective, has no independent subject NP on the same line), the predicate-line MUST be merged onto the subject-line as a single ATU. The atomic-thought principle governs: a subject NP standing alone is not an atomic thought (no predication), a bare predicate standing alone is not an atomic thought (no anchor on the line), and the merged subject+predicate IS one atomic thought (one proposition / one image).
+**Rule.** When a v4/grc line whose content is a **subject NP** (any of the closed-list-eligible shapes below) terminates in `,` or `·`, AND the immediately-next v4/grc line is a **bare finite predicate** (starts with finite verb, has no leading connective, has no independent subject NP on the same line), the predicate-line MUST be merged onto the subject-line as a single ATU. The atomic-thought principle governs: a subject NP standing alone is not an atomic thought (no predication), a bare predicate standing alone is not an atomic thought (no anchor on the line), and the merged subject+predicate IS one atomic thought (one proposition / one image).
 
 **UD signature (surface-level).**
 ~~~yaml
@@ -866,7 +866,7 @@ LEADING_CONNECTIVES_BLOCK_FIRE:
     ὅπου, ὁ, ἡ, τό  # article lead = new phrase, not bare predicate
 ~~~
 
-**Scope.** A v4-editorial line whose content is a subject NP of one of the closed-list-eligible shapes, with the matrix predicate orphaned on the immediately-next v4-editorial line. The rule applies after Tier 1 vetoes (Layer 1 break-legality), formula integrity (R6, R11), and complement integrity (§3.5 R10) have settled. M4-GNT-1 is the GNT-specific Tier 4 merge-override operationalization of framework M4.
+**Scope.** A v4/grc line whose content is a subject NP of one of the closed-list-eligible shapes, with the matrix predicate orphaned on the immediately-next v4/grc line. The rule applies after Tier 1 vetoes (Layer 1 break-legality), formula integrity (R6, R11), and complement integrity (§3.5 R10) have settled. M4-GNT-1 is the GNT-specific Tier 4 merge-override operationalization of framework M4.
 
 **Greek-specific exclusions (closed list — G-exclusions).**
 1. **G1: Attributive participle on line B** (modifier of the NP on line A, not the main-clause verb). When line B begins with a participial form that is attributive to the NP on line A (e.g., `ποιῶν ναοὺς` modifying `ἀργυροκόπος` on line A), the participle is a modifier continuation, not a bare finite predicate. **STAY-SPLIT.** Acts 19:24 canonical instance.
@@ -913,7 +913,7 @@ LEADING_CONNECTIVES_BLOCK_FIRE:
 
 **HOW WE KNOW.** Sweep audit task `a0d7d74092a145179` (2026-05-11): ~149 surface-pattern candidates across all 27 NT books, narrowed to ~15-20 clean Cat A cases after applying all 5 G-exclusions + universal exclusions. The household-code cluster (8 cases), biographical-introduction cluster (3 cases), and deity-NP cases (2) were identified as the cleanest instances. Acts 19:24 (G1) and Luke 1:38 (G2) were confirmed exclusions by structural analysis.
 
-**SCOPE.** A v4-editorial line pairing where: (a) line A carries a grammatical subject NP of one of the five closed-list shapes, terminating in `,` or `·`; (b) line B is a bare finite predicate with no leading connective and no independent subject; (c) none of the 11 exclusions (G1–G5 + 6 universal) fires. Does NOT cover: bare vocative addresses (R7 governs), periphrastic constructions (R5 governs), verbless nominal sentences complete by ellipsis (G2), attributive-participle continuations on line B (G1), or lines where a leading connective on line B signals coordinate/subordinate structure.
+**SCOPE.** A v4/grc line pairing where: (a) line A carries a grammatical subject NP of one of the five closed-list shapes, terminating in `,` or `·`; (b) line B is a bare finite predicate with no leading connective and no independent subject; (c) none of the 11 exclusions (G1–G5 + 6 universal) fires. Does NOT cover: bare vocative addresses (R7 governs), periphrastic constructions (R5 governs), verbless nominal sentences complete by ellipsis (G2), attributive-participle continuations on line B (G1), or lines where a leading connective on line B signals coordinate/subordinate structure.
 
 ---
 
@@ -940,7 +940,7 @@ Any pipeline change that breaks one of these four is suspect. If a change breaks
 
 **Why it's mandatory:** every new line break is a potential function-word orphan. The canon's "never split" list (article+noun, preposition+object, negation+verb, noun+genitive modifier, noun+possessive pronoun — see Layer 1 `data/syntax-reference/greek-break-legality.md`) is a forbidden-break set; a split pass can accidentally produce forbidden breaks if the scanner isn't perfectly tuned. The recheck is the safety net.
 
-**After any pipeline change (regen logic, scanner rewrite, validator update), manually diff the four gold-standard regression-test chapters above (Mark 4, Rom 2:12-13, Acts 1:1-4, Heb 1:3) — v4 + eng-gloss, before and after. If any of the four breaks, the pipeline change is suspect.**
+**After any pipeline change (regen logic, scanner rewrite, validator update), manually diff the four gold-standard regression-test chapters above (Mark 4, Rom 2:12-13, Acts 1:1-4, Heb 1:3) — v4 + v4/eng-kjv, before and after. If any of the four breaks, the pipeline change is suspect.**
 
 ### The No-Anchor Test (Default Case of the Generative Force)
 
@@ -1110,7 +1110,7 @@ We are not inventing a practice; we are recovering one with ancient and modern p
 A reproducibility distinction that matters for scholarly defensibility:
 
 - **v0–v3** (earlier stages of the text pipeline) are **bit-exactly reproducible** from source. Running the scripts on the source inputs produces byte-identical output.
-- **v4-editorial** is **methodologically checkable**, not bit-exactly reproducible. It is where the documented colometric methodology is *applied* through a mix of scan-and-apply tools (scripts), rule-application validators, and case-by-case editorial decisions where the rule set underdetermines. A different editor following the same canon should arrive at largely the same breaks — within the Category B/C bands of legitimate editorial variation.
+- **v4/grc** is **methodologically checkable**, not bit-exactly reproducible. It is where the documented colometric methodology is *applied* through a mix of scan-and-apply tools (scripts), rule-application validators, and case-by-case editorial decisions where the rule set underdetermines. A different editor following the same canon should arrive at largely the same breaks — within the Category B/C bands of legitimate editorial variation.
 
 **Implication:** v4 is not "hand-typed prose formatted nicely". It is the methodology *in operation*. Every line break in v4 either (a) applies a Category A rule mechanically, or (b) reflects a Category B/C editorial call traceable to a canon rule plus a defensibility rationale. The corpus is auditable against the canon; it is not reproducible from the canon alone, because the editorial calls require human (or Claude-with-Stan) judgment.
 
@@ -1279,7 +1279,7 @@ Transitive verbs and speech verbs CANNOT stand alone — they need their complem
 
 **Tier 3 — Rhetorical Pattern Layer (v3-colometric).** Applied on top of v2. Tricolon/bicolon stacking, men/de contrast display, climactic parallelism.
 
-**Tier 4 — Editorial Hand (v4-editorial).** Stan's hand editing. Makes final decisions. All 260 chapters hand-edited.
+**Tier 4 — Editorial Hand (v4/grc).** Stan's hand editing. Makes final decisions. All 260 chapters hand-edited.
 
 **Data sources:**
 - **Macula Greek** (github.com/Clear-Bible/macula-greek) — SBLGNT syntax trees, CC-BY 4.0
@@ -1537,10 +1537,10 @@ After the later⁶ residue-purge commit, Stan asked whether the three vestigial 
 
 **Pre-flight audit (5 parallel Sonnet agents):**
 
-1. **Live-readers audit:** Verified the scope claim "v4-editorial is single source of truth, v1/v2/v3 have no live readers." Outcome: scope claim holds — *with one caveat.* `scripts/build_books.py` had a silent runtime fallback to `v3-colometric/` (`GK_FALLBACK_DIR`, `resolve_greek_path()` lines 226–245) that returned a v3 path if a v4 file was missing. Practically dead given v4 completeness, but the code path was active.
+1. **Live-readers audit:** Verified the scope claim "v4/grc is single source of truth, v1/v2/v3 have no live readers." Outcome: scope claim holds — *with one caveat.* `scripts/build_books.py` had a silent runtime fallback to `v3-colometric/` (`GK_FALLBACK_DIR`, `resolve_greek_path()` lines 226–245) that returned a v3 path if a v4 file was missing. Practically dead given v4 completeness, but the code path was active.
 2. **Retirement-readiness for the 3 named scripts:** All three confirmed retire-ready — zero inbound module imports, all command-line references are doc-examples. Input paths point at `v3-colometric/` / `v2-colometric/`.
 3. **morphgnt_lookup.py + sibling-script status:** `morphgnt_lookup.py` is **ACTIVE** (used by `validators/common.py` as the morphological backend for the production validator suite — must NOT archive). `v4_auto_fix.py` is **ACTIVE**. Five additional scripts surfaced as same-class vestigial: `v2_colometry.py`, `auto_colometry.py`, `build_v0_prose.py`, `generate_english_glosses.py` (SEED-ONLY, predates `regenerate_english.py`), `generate_pauline_english.py` (zero inbound refs).
-4. **v4-editorial completeness:** 260/260 confirmed (27 books, all expected chapter counts present). The `build_books.py` fallback is unreachable on every normal build.
+4. **v4/grc completeness:** 260/260 confirmed (27 books, all expected chapter counts present). The `build_books.py` fallback is unreachable on every normal build.
 5. **English-gloss generator status:** `generate_english_glosses.py` is SEED-ONLY (predates incremental-regen tool); `generate_pauline_english.py` is fully vestigial (no inbound refs, V1_DIR fallback).
 
 **Archived this commit (8 scripts → `scripts/archive/`):**
@@ -1551,10 +1551,10 @@ After the later⁶ residue-purge commit, Stan asked whether the three vestigial 
 - `v3_colometry.py` (v3 producer; "last machine tier")
 - `diagnostic_scanner.py` (line-auditing tool, superseded by Layer 2 validators)
 - `v4_pauline_review.py` (one-time editorial review pass)
-- `generate_english_glosses.py` (eng-gloss seeder, superseded by `regenerate_english.py`)
+- `generate_english_glosses.py` (v4/eng-kjv seeder, superseded by `regenerate_english.py`)
 - `generate_pauline_english.py` (Pauline-subset seeder)
 
-**Defensive code change:** Removed the `GK_FALLBACK_DIR` v3-colometric fallback from `scripts/build_books.py`. `resolve_greek_path()` now raises `FileNotFoundError` with a clear message if a v4-editorial file is missing. Smoke-tested with `--book mark` and full-corpus build; both pass.
+**Defensive code change:** Removed the `GK_FALLBACK_DIR` v3-colometric fallback from `scripts/build_books.py`. `resolve_greek_path()` now raises `FileNotFoundError` with a clear message if a v4/grc file is missing. Smoke-tested with `--book mark` and full-corpus build; both pass.
 
 **Documentation aligned:**
 
@@ -1570,7 +1570,7 @@ After the later⁶ residue-purge commit, Stan asked whether the three vestigial 
 - `bezae_compare.py` reads multiple tiers analytically and may benefit from a similar fallback review, but it is a live web-app feature (not in the editorial loop) and its multi-tier reads are appropriate for its purpose. No action recommended at this time.
 - The frozen tier corpus directories (`v0-prose/`, `v1-colometric/`, `v2-colometric/`, `v3-colometric/`) remain in `data/text-files/`. They are inert but harmless; preserved for provenance and re-derivability per the data/text-files/README.md "two reproducibility regimes" framing.
 
-**Audit-status for this commit per §6.5:** This is a SCOPE claim about the project's architecture ("v4-editorial is single source of truth, v0–v3 are frozen scaffolding"). Per §6.5 trigger #2 (scope claim), an audit was warranted and was satisfied by the 5-agent pre-flight verification documented above. The audit-evidence is the agent verdicts + the §10 entry capturing them; the scope claim has the empirical basis Stan asked for.
+**Audit-status for this commit per §6.5:** This is a SCOPE claim about the project's architecture ("v4/grc is single source of truth, v0–v3 are frozen scaffolding"). Per §6.5 trigger #2 (scope claim), an audit was warranted and was satisfied by the 5-agent pre-flight verification documented above. The audit-evidence is the agent verdicts + the §10 entry capturing them; the scope claim has the empirical basis Stan asked for.
 
 ---
 
@@ -1677,7 +1677,7 @@ This commit removes §4 The Breath Test entirely. The cognitive-chunking work br
 
 Three port-backs from sibling Tanakh-reader project, where they had been built and validated. Cross-project audit (three parallel hostile audits — discipline machinery, three-layer architecture, voice quality) surfaced these as items GNT was missing. Stan greenlit the engineering investment.
 
-**1. Regression-baseline pre-commit hook.** Extended `validators/run_all.py` with three new modes — `--summary` (per-rule dashboard), `--baseline-check` (compare to `validators/.baseline.json`; exit 1 on regression), `--update-baseline` (capture current counts). Created `validators/.baseline.json` with all 9 GNT validators at 0 candidates each. Wrote `validators/hooks/pre-commit` shell script gating commits that touch the canon, syntax-reference, v4-editorial corpus, or validators/ — runs `--baseline-check` and blocks if any rule's candidate count increased. Installed to `.git/hooks/pre-commit`.
+**1. Regression-baseline pre-commit hook.** Extended `validators/run_all.py` with three new modes — `--summary` (per-rule dashboard), `--baseline-check` (compare to `validators/.baseline.json`; exit 1 on regression), `--update-baseline` (capture current counts). Created `validators/.baseline.json` with all 9 GNT validators at 0 candidates each. Wrote `validators/hooks/pre-commit` shell script gating commits that touch the canon, syntax-reference, v4/grc corpus, or validators/ — runs `--baseline-check` and blocks if any rule's candidate count increased. Installed to `.git/hooks/pre-commit`.
 
 **2. Content-aware commit-msg hook.** Wrote `validators/check_canon_extensions.py` adapted from Tanakh's `validators/check_canon_extensions.py` with GNT-specific changes: watches both `private/01-method/colometry-canon.md` AND `data/syntax-reference/greek-break-legality.md`; regex patterns updated for GNT §3.X rule numbering; audit-evidence keywords updated to GNT §-numbers (§6.5, §10); `NEW_DATED_PRINCIPLE_RE` loosened per cross-project audit-B finding (now detects any new `### ` heading whose text doesn't look like a §10 dated update-log entry, broadening recall at the cost of more false-positives that the skip-safe claim can clear). Wrote `validators/hooks/commit-msg` shell script. Installed to `.git/hooks/commit-msg`.
 
@@ -1729,7 +1729,7 @@ Foundational premise paragraph cleanups (7 internal edits within one paragraph):
 
 §4 Operational Tests redundancy removed:
 
-  - "Post-Split Function-Word Recheck" subsection had a duplicate gold-standard chapter list (already stated in the preceding "Gold-standard regression-test chapters — why these four" subsection). Replaced the duplicate list with an inline reference to the first list, preserving the operational instruction ("manually diff these four chapters' v4 + eng-gloss before and after").
+  - "Post-Split Function-Word Recheck" subsection had a duplicate gold-standard chapter list (already stated in the preceding "Gold-standard regression-test chapters — why these four" subsection). Replaced the duplicate list with an inline reference to the first list, preserving the operational instruction ("manually diff these four chapters' v4 + v4/eng-kjv before and after").
 
 Sections reviewed and found tight after prior cleanups (no edits this pass): §0 Posture, §0 Architecture, §0 What is this document (the "structure aims to keep the integration honest" sentence flagged 4× and kept by Stan stays), §1 Three Forces, §1 Priority Order, §1 Imposing-vs-Revealing, §2 Five Structural Justifications, §4 Two-Prong Exception Test, §6 Defensibility-capture (cleaned in pass 1 + pass 2).
 
@@ -2015,7 +2015,7 @@ Continuation of 2026-04-22's hidden-decision-point sweep. After Tier 1
 - `feedback_commit_format_mechanical.md` — mass-edit commit body format.
 - `feedback_check_existing_tooling.md` — MorphGNT/validator/Layer 1 check
   before building new scanners.
-- `project_substrate_stable_api.md` — v4-editorial as read-only API for
+- `project_substrate_stable_api.md` — v4/grc as read-only API for
   analytical tools (fork-don't-enrich).
 
 **CLAUDE.md** (session bookend):
@@ -2122,7 +2122,7 @@ generating principle: **N=2 coordinate members with unified rhetorical force
 stay on one line** — extended to cover cross-domain causal bonds.
 
 No corpus edits (these two verses were already correctly merged in
-v4-editorial; adding the canon protection prevents future adversarial flips
+v4/grc; adding the canon protection prevents future adversarial flips
 from over-applying the M1 tie-breaker).
 
 ---
@@ -2141,7 +2141,7 @@ patterns — same generating principle as M1 gorgianic-pair and R11 synonymous-
 doublet imperative. Added as §3.7 subsections with canonical cases, diagnostics,
 and relation to R12.
 
-No corpus edits (the 17 candidates were already correctly merged in v4-editorial;
+No corpus edits (the 17 candidates were already correctly merged in v4/grc;
 the scanner was over-flagging). This closes a canon gap revealed by the FP
 analysis.
 
@@ -2184,7 +2184,7 @@ Post-refinement R11 count: 0. Both former F5 REVIEW items filtered cleanly:
 Acts 25:22 via F5 (φησίν flanked by commas confirmed). John 18:4 also
 filtered by F5 — the _is_parenthetical_attribution function covered it.
 
-No v4-editorial text changes.
+No v4/grc text changes.
 
 ---
 
@@ -2213,7 +2213,7 @@ Post-refinement R11 count: 2 total candidates (down from 27 post-round-2). Both
 remaining are REVIEW-REQUIRED via F5 (parenthetical mid-speech attribution):
 John 18:4 and Acts 25:22. These are the final residue for Stan's review.
 
-No v4-editorial text changes. No corpus sweep needed — the 20+ OT-attribution
+No v4/grc text changes. No corpus sweep needed — the 20+ OT-attribution
 lines were already correctly merged in the corpus; the validator was over-flagging.
 
 F5 (parenthetical mid-speech attribution, Matt 14:8 class) retained as
@@ -2254,7 +2254,7 @@ Test evidence lives at `private/03-sessions/2026-04-20-foundational-reframing-an
 
 Sibling project (BofM) retired breath 2026-04-19 on parallel reasoning. GNT now aligned.
 
-No editorial output changes. No v4-editorial text touched.
+No editorial output changes. No v4/grc text touched.
 
 ### 2026-04-09 — Initial Methodology Document
 
@@ -2408,7 +2408,7 @@ Key changes:
 
 H3 (breath retirement) not yet decided. Breath demoted to "status under review — sanity check only, not a force in the framework." Empirical test pending: has breath ever been the deciding factor on any line break across 260 hand-edited chapters?
 
-No editorial output changes. No v4-editorial text touched. Pure methodology-framing refactor. Rules, merge-overrides, and structural justifications operationally unchanged.
+No editorial output changes. No v4/grc text touched. Pure methodology-framing refactor. Rules, merge-overrides, and structural justifications operationally unchanged.
 
 ### 2026-04-20 — Foundational Reframing and Scholarly-Framing Retirement
 

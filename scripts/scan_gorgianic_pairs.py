@@ -391,7 +391,7 @@ def triage(
 
 
 def scan_file(filepath: Path) -> List[Dict]:
-    """Scan one v4-editorial file and return list of candidate dicts."""
+    """Scan one v4/grc file and return list of candidate dicts."""
     candidates = []
     try:
         text = filepath.read_text(encoding='utf-8')
@@ -560,7 +560,7 @@ def scan_file(filepath: Path) -> List[Dict]:
 
 
 def scan_corpus() -> List[Dict]:
-    """Walk all v4-editorial files and collect candidates."""
+    """Walk all v4/grc files and collect candidates."""
     all_candidates = []
     txt_files = sorted(V4_DIR.glob("**/*.txt"))
     for fp in txt_files:

@@ -273,7 +273,7 @@ def _find_book_subdir(base_dir, prefix):
 
 
 def resolve_greek_path(fpath):
-    """Return the v4-editorial Greek source path. Raise if missing."""
+    """Return the v4/grc Greek source path. Raise if missing."""
     basename = os.path.basename(fpath)
     prefix = _book_prefix(fpath)
     subdir = _find_book_subdir(GK_PRIMARY_DIR, prefix)
@@ -282,7 +282,7 @@ def resolve_greek_path(fpath):
         if os.path.isfile(v4_path):
             return v4_path, "v4"
     raise FileNotFoundError(
-        f"v4-editorial Greek source missing for {basename} (looked under {GK_PRIMARY_DIR})"
+        f"v4/grc Greek source missing for {basename} (looked under {GK_PRIMARY_DIR})"
     )
 
 
@@ -316,7 +316,7 @@ def build_book(prefix, chapter_files, output_dir, swap_pairs=None, quiet_set=Non
     en_labels = set()
 
     for _ch_num, fpath in chapter_files:
-        # Resolve Greek source (v4-editorial preferred over v3-colometric)
+        # Resolve Greek source (v4/grc preferred over v3-colometric)
         gk_path, _gk_tag = resolve_greek_path(fpath)
         chapter_num, gk_verses = parse_chapter(gk_path)
         if chapter_num is None:
@@ -351,7 +351,7 @@ def _run_integrity_check(book_filter=None):
     """Run verify_word_order.py against SBLGNT source. Returns True if clean.
 
     This is the structural guard against silent text corruption: every build
-    verifies that v4-editorial word order matches the canonical source before
+    verifies that v4/grc word order matches the canonical source before
     producing HTML. Any line-order swap, missing word, or extra word aborts
     the build.
     """
@@ -406,7 +406,7 @@ def main():
     # This catches line-order swaps, missing/extra words, and word fusion
     # before they propagate through the English regen and HTML rebuild.
     if not args.skip_verify:
-        print("Verifying v4-editorial against SBLGNT source...")
+        print("Verifying v4/grc against SBLGNT source...")
         if not _run_integrity_check(args.book):
             print(
                 "\nERROR: word-order integrity check failed. "

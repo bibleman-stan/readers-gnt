@@ -93,7 +93,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--english", action="store_true",
-                    help="Apply to eng-gloss files instead of v4-editorial")
+                    help="Apply to v4/eng-kjv files instead of v4/grc")
     ap.add_argument("--book", default=None, help="Limit to one book slug (e.g., rom)")
     ap.add_argument("--limit-books", default=None,
                     help="Comma-separated list of book slugs to apply to")

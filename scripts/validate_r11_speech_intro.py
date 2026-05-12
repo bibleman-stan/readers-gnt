@@ -15,7 +15,7 @@ Violation signature:
   (speech-intro boundary marker) AND contains post-frame content after
   the verb + dative.
 
-This is a heuristic: editorial punctuation in v4-editorial is non-original,
+This is a heuristic: editorial punctuation in v4/grc is non-original,
 so we use it for structural inference only, not as the rule's basis.
 Primary signal: speech-intro verb present + line also contains imperative
 or direct-address predication beyond the frame.
