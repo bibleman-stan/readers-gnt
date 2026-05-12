@@ -54,7 +54,7 @@ _NOUN_LIKE = frozenset({"NOUN", "ADJ"})  # includes PROPN (also N-) and ADJ
 def _bare(w: str) -> str:
     """Strip punctuation AND diacritics for accent-tolerant matching.
 
-    MorphGNT and v4/grc occasionally differ in accent (e.g. νυκτὶ vs
+    MorphGNT and v4/grk occasionally differ in accent (e.g. νυκτὶ vs
     νυκτί). Stripping all combining marks (category Mn) after NFD decomposition
     gives a bare consonant+vowel string suitable for matching identity.
     """
@@ -72,7 +72,7 @@ BOOKS: list[tuple[str, int]] = [
 
 
 # ---------------------------------------------------------------------------
-# Token binding: map MorphGNT verse tokens onto v4/grc line indices
+# Token binding: map MorphGNT verse tokens onto v4/grk line indices
 # ---------------------------------------------------------------------------
 
 def _bind_verse_tokens(lines: list[str], morph_tokens: list[tuple]) -> list[dict]:
@@ -235,11 +235,11 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
 
 
 def _find_v4_path(book: str, chapter: int) -> str:
-    """Locate the v4/grc .txt file; raise FileNotFoundError if absent."""
+    """Locate the v4/grk .txt file; raise FileNotFoundError if absent."""
     import os
     _here = os.path.dirname(os.path.abspath(__file__))
     repo = os.path.dirname(os.path.dirname(_here))
-    v4_root = os.path.join(repo, "data", "text-files", "v4", "grc")
+    v4_root = os.path.join(repo, "data", "text-files", "v4", "grk")
     for entry in os.listdir(v4_root):
         parts = entry.split("-", 1)
         slug = parts[1] if len(parts) == 2 and parts[0].isdigit() else entry
@@ -247,7 +247,7 @@ def _find_v4_path(book: str, chapter: int) -> str:
             fpath = os.path.join(v4_root, entry, f"{book}-{chapter:02d}.txt")
             if os.path.exists(fpath):
                 return fpath
-    raise FileNotFoundError(f"v4/grc not found: {book} ch.{chapter}")
+    raise FileNotFoundError(f"v4/grk not found: {book} ch.{chapter}")
 
 
 # ---------------------------------------------------------------------------

@@ -10,7 +10,7 @@ Architecture
 Substrate : viz.bible MetaV CSV (CC-BY-SA 3.0) — per-KJV-word Strong's
             tagging. Loaded once via load_kjv_strongs_index() and cached.
             Lives at ../atu-method/data/kjv-strongs/.
-Source    : v4/grc Greek ATU files (one Greek ATU line per line).
+Source    : v4/grk Greek ATU files (one Greek ATU line per line).
 Token     : TAGNT rows for the verse; Strong's extracted via
             extract_strongs_from_tagnt_col(col3, col11, col12).
 Algorithm : atu_method.kjv_alignment.align_verse() — per-verse KJV
@@ -44,7 +44,7 @@ from typing import Optional
 REPO_ROOT    = Path(__file__).resolve().parent.parent       # readers-gnt/
 ATU_METHOD   = REPO_ROOT.parent / "atu-method"              # sibling repo
 
-V4_EDITORIAL = REPO_ROOT / "data" / "text-files" / "v4" / "grc"
+V4_EDITORIAL = REPO_ROOT / "data" / "text-files" / "v4" / "grk"
 TAGNT_DIR    = REPO_ROOT / "data" / "text-files" / "tagnt-source"
 METAV_DIR    = ATU_METHOD / "data" / "kjv-strongs"
 OUTPUT_ROOT  = REPO_ROOT / "data" / "text-files" / "v4" / "eng-kjv"
@@ -148,11 +148,11 @@ def load_tagnt_book(
 
 
 # ---------------------------------------------------------------------------
-# v4/grc parser (unchanged from Wave 2 — format is stable)
+# v4/grk parser (unchanged from Wave 2 — format is stable)
 # ---------------------------------------------------------------------------
 
 def parse_v4_file(path: Path) -> list[tuple[str, list[str]]]:
-    """Parse a v4/grc chapter file.
+    """Parse a v4/grk chapter file.
 
     Returns list of (verse_ref, [atu_line, ...]) preserving order.
     verse_ref is e.g. "1:1".
@@ -192,7 +192,7 @@ def normalise_greek(s: str) -> str:
     """Normalize a Greek token for surface comparison.
 
     Strips trailing punctuation + applies Unicode NFC normalization.
-    NFC is load-bearing: v4/grc uses precomposed forms from the modern
+    NFC is load-bearing: v4/grk uses precomposed forms from the modern
     Unicode Greek block (e.g., ε+acute = U+03AD), while TAGNT uses
     legacy oxia forms (U+1F73). They render identically and are
     canonically equivalent per Unicode, but compare unequal as raw
@@ -210,7 +210,7 @@ def tokenise_atu_line(line: str) -> list[str]:
 # ---------------------------------------------------------------------------
 # Cross-verse line-fold markers (§5.1)
 #
-# v4/grc uses superscript-digit runs to fold the start of the next
+# v4/grk uses superscript-digit runs to fold the start of the next
 # canonical verse onto the current line for colometric readability. Example
 # (Matt 3:1):
 #
@@ -304,7 +304,7 @@ def build_source_tokens_per_line(
                     # Advance the cursor past any skipped tokens, but DON'T
                     # absorb their Strong's onto this line. Skipped tokens
                     # via lookahead-match are orphan-class — TAGNT has them
-                    # but v4/grc elides them (implicit subject, elided
+                    # but v4/grk elides them (implicit subject, elided
                     # speech verb, etc.). Absorbing their Strong's claims KJV
                     # words whose vposes don't fit this line's range and
                     # breaks cross-line KJV reading order. By leaving them

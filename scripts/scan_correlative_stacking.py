@@ -46,7 +46,7 @@ from collections import defaultdict
 from typing import List, Dict
 
 REPO_ROOT   = Path(__file__).parent.parent
-V4_DIR      = REPO_ROOT / "data" / "text-files" / "v4" / "grc"
+V4_DIR      = REPO_ROOT / "data" / "text-files" / "v4" / "grk"
 PRIVATE_DIR = REPO_ROOT / "private"
 OUT_FILE    = PRIVATE_DIR / "scan-correlative-stacking-findings.md"
 

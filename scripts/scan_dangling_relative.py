@@ -25,7 +25,7 @@ HOW IT HAPPENED:
   did not include relative pronoun forms in its detection set.
 
 DETECTION:
-  For each text line in v4/grc, strip punctuation and check:
+  For each text line in v4/grk, strip punctuation and check:
     - HIGH: line content is exactly one token and that token is a relative
       pronoun form (rough-breathing ὅς-paradigm)
     - REVIEW: line content is exactly two tokens where the first is a
@@ -49,7 +49,7 @@ from typing import List, Tuple, Dict
 
 # ─── paths ────────────────────────────────────────────────────────────────────
 REPO_ROOT   = Path(__file__).parent.parent
-V4_DIR      = REPO_ROOT / "data" / "text-files" / "v4" / "grc"
+V4_DIR      = REPO_ROOT / "data" / "text-files" / "v4" / "grk"
 PRIVATE_DIR = REPO_ROOT / "private"
 OUT_FILE    = PRIVATE_DIR / "scan-dangling-relative-findings.md"
 
@@ -161,7 +161,7 @@ def scan_file(path: Path) -> List[Dict]:
 
 
 def scan_corpus() -> List[Dict]:
-    """Scan all v4/grc chapter files."""
+    """Scan all v4/grk chapter files."""
     all_candidates = []
     for book_dir in sorted(V4_DIR.iterdir()):
         if not book_dir.is_dir():

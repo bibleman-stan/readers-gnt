@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Colometric Stylometry for the Greek New Testament v4/grc corpus.
+Colometric Stylometry for the Greek New Testament v4/grk corpus.
 
 Measures per-book and per-chapter line-structure metrics that can serve as
 an authorial "voice waveform" for the prospectus. Based on stylometric
@@ -26,7 +26,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-V4_DIR = REPO_ROOT / "data" / "text-files" / "v4" / "grc"
+V4_DIR = REPO_ROOT / "data" / "text-files" / "v4" / "grk"
 OUT_DIR = REPO_ROOT / "research" / "stylometry"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -363,7 +363,7 @@ def write_csv(path, rows, fieldnames):
 
 
 def main():
-    print(f"Reading v4/grc from {V4_DIR}")
+    print(f"Reading v4/grk from {V4_DIR}")
     (chapter_rows, book_wcs, book_verses, book_lines,
      book_words, book_sub_lines, book_disc_lines) = collect()
 
@@ -428,7 +428,7 @@ def main():
     # --- human-readable summary ---
     summary_path = OUT_DIR / "gnt_stylometry_summary.txt"
     with open(summary_path, "w", encoding="utf-8") as f:
-        f.write("GNT COLOMETRIC STYLOMETRY - v4/grc corpus\n")
+        f.write("GNT COLOMETRIC STYLOMETRY - v4/grk corpus\n")
         f.write("=" * 72 + "\n\n")
         f.write("Methodology: line-structure metrics over hand-edited sense-lines.\n")
         f.write("Word count = whitespace tokens after stripping editorial punctuation.\n")

@@ -29,7 +29,7 @@ TIER_DIRS = {
     "v1": PROJECT_DIR / "data" / "text-files" / "v1-colometric",
     "v2": PROJECT_DIR / "data" / "text-files" / "v2-colometric",
     "v3": PROJECT_DIR / "data" / "text-files" / "v3-colometric",
-    "v4": PROJECT_DIR / "data" / "text-files" / "v4" / "grc",
+    "v4": PROJECT_DIR / "data" / "text-files" / "v4" / "grk",
 }
 V3_DIR = TIER_DIRS["v3"]  # default
 
@@ -337,7 +337,7 @@ def parse_v3_chapter(filepath):
 def load_v3_book(book_prefix, chapter_filter=None, input_dir=None):
     """Load all colometric chapters for a book from a given tier directory.
 
-    For v4/grc, falls back to v3-colometric for chapters not yet in v4.
+    For v4/grk, falls back to v3-colometric for chapters not yet in v4.
 
     Returns:
         dict: {(chapter, verse): [line_words_list, ...]}
@@ -346,7 +346,7 @@ def load_v3_book(book_prefix, chapter_filter=None, input_dir=None):
     fallback_dir = TIER_DIRS["v3"] if src_dir == TIER_DIRS["v4"] else None
     all_verses = {}
     pattern = f"{book_prefix}-*.txt"
-    # v4/grc uses book subfolders; other tiers are flat
+    # v4/grk uses book subfolders; other tiers are flat
     glob_pattern = f"{book_prefix}/{pattern}" if src_dir == TIER_DIRS["v4"] else pattern
 
     # Collect chapter files from primary dir

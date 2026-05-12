@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Apply the universal vocative rule to all v4/grc files.
+Apply the universal vocative rule to all v4/grk files.
 
-For every v4/grc file, find any vocative that is NOT on its own line
+For every v4/grk file, find any vocative that is NOT on its own line
 and split it onto its own line. Exception: repeated vocatives like
 "Κύριε κύριε" stay together.
 
@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V4_DIR = os.path.join(BASE, "data", "text-files", "v4", "grc")
+V4_DIR = os.path.join(BASE, "data", "text-files", "v4", "grk")
 XML_DIR = os.path.join(BASE, "research", "macula-greek", "SBLGNT", "lowfat")
 
 BOOK_MAP = {

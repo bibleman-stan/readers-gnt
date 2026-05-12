@@ -241,14 +241,14 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
     if not morph:
         return []
 
-    # Locate v4/grc chapter file via iter_v4_chapters
+    # Locate v4/grk chapter file via iter_v4_chapters
     chapter_file: Optional[str] = None
     for slug, ch_num, fpath in iter_v4_chapters():
         if slug == book and ch_num == chapter:
             chapter_file = fpath
             break
     if chapter_file is None:
-        raise FileNotFoundError(f"v4/grc file not found: book={book!r} chapter={chapter}")
+        raise FileNotFoundError(f"v4/grk file not found: book={book!r} chapter={chapter}")
 
     verses = parse_chapter_file(chapter_file)
     display_book = book[0].upper() + book[1:]

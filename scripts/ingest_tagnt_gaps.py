@@ -10,7 +10,7 @@ Reads TAGNT Mat-Jhn and Act-Rev TSV files. Filters for rows where:
 
 Outputs gap-fill.json mapping "Book CH:VS" → "Greek text (reconstructed)"
 
-Does NOT modify v4/grc. Hand-editorial ATU line-breaking is a
+Does NOT modify v4/grk. Hand-editorial ATU line-breaking is a
 separate step.
 
 Usage:
@@ -58,7 +58,7 @@ GAP_PASSAGES = [
     ("Act.15.34",  "Acts 15:34",   False),
     ("Act.24.7",   "Acts 24:7",    False),
     ("Act.28.29",  "Acts 28:29",   False),
-    # Rom 16:24 is present in v4/grc (SBL includes it via KO type).
+    # Rom 16:24 is present in v4/grk (SBL includes it via KO type).
     # Excluded here — not a gap.
     # 1John 5:7 Comma Johanneum — insert the TR-only words (K type)
     ("1Jn.5.7",    "1 John 5:7",   True),   # TR-only insertion words only

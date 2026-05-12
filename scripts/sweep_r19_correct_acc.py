@@ -8,7 +8,7 @@ correctly handles accusative objects of the gen ptc (τὸν λόγον in Matt
 13:19) but incorrectly absorbs main-clause predicates of infinitives
 (ποταποὺς in 2 Pet 3:11 ποταποὺς δεῖ ὑπάρχειν).
 
-Signature of the bug (in already-split v4/grc state):
+Signature of the bug (in already-split v4/grk state):
   line N: contains a gen-case participle AND ends on an accusative token
   line N+1: starts with a finite verb
 
@@ -21,7 +21,7 @@ import os, re, sys
 from collections import defaultdict
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V4 = os.path.join(REPO, "data", "text-files", "v4", "grc")
+V4 = os.path.join(REPO, "data", "text-files", "v4", "grk")
 MORPH = os.path.join(REPO, "research", "morphgnt-sblgnt")
 SLUGS = {"61":"matt","62":"mark","63":"luke","64":"john","65":"acts","66":"rom","67":"1cor","68":"2cor","69":"gal","70":"eph","71":"phil","72":"col","73":"1thess","74":"2thess","75":"1tim","76":"2tim","77":"titus","78":"phlm","79":"heb","80":"jas","81":"1pet","82":"2pet","83":"1john","84":"2john","85":"3john","86":"jude","87":"rev"}
 SLUG_TO_FN = {v:k for k,v in SLUGS.items()}

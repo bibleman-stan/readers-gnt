@@ -29,7 +29,7 @@ from collections import defaultdict
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_DIR = os.path.dirname(SCRIPT_DIR)
-V4_DIR = os.path.join(REPO_DIR, "data", "text-files", "v4", "grc")
+V4_DIR = os.path.join(REPO_DIR, "data", "text-files", "v4", "grk")
 MORPHGNT_DIR = os.path.join(REPO_DIR, "research", "morphgnt-sblgnt")
 
 _FILE_MAP = {

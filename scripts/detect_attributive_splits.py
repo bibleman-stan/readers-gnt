@@ -1,7 +1,7 @@
 """
 detect_attributive_splits.py
 
-Finds lines in v4/grc where an attributive participle (or adjective)
+Finds lines in v4/grk where an attributive participle (or adjective)
 has been split from its head noun across a line break.
 
 Pattern detected:
@@ -20,9 +20,9 @@ from collections import defaultdict
 # Paths
 REPO = r"c:\Users\bibleman\repos\readers-gnt"
 MORPHGNT_DIR = os.path.join(REPO, "research", "morphgnt-sblgnt")
-V4_DIR = os.path.join(REPO, "data", "text-files", "v4", "grc")
+V4_DIR = os.path.join(REPO, "data", "text-files", "v4", "grk")
 
-# Book mapping: MorphGNT prefix -> v4/grc folder name
+# Book mapping: MorphGNT prefix -> v4/grk folder name
 BOOK_MAP = {
     "61": "matt", "62": "mark", "63": "luke", "64": "john", "65": "acts",
     "66": "rom", "67": "1cor", "68": "2cor", "69": "gal", "70": "eph",
@@ -35,7 +35,7 @@ BOOK_MAP = {
 # Reverse: folder name -> morphgnt prefix
 FOLDER_TO_PREFIX = {v: k for k, v in BOOK_MAP.items()}
 
-# Folder number prefixes in v4/grc
+# Folder number prefixes in v4/grk
 FOLDER_NUM = {
     "matt": "01", "mark": "02", "luke": "03", "john": "04", "acts": "05",
     "rom": "06", "1cor": "07", "2cor": "08", "gal": "09", "eph": "10",
@@ -225,7 +225,7 @@ def cng_label(cng):
 
 
 def parse_v4_file(filepath):
-    """Parse a v4/grc file into verses with their lines.
+    """Parse a v4/grk file into verses with their lines.
     Returns list of (verse_ref, line_number, line_text) tuples.
     """
     results = []
@@ -261,7 +261,7 @@ def detect_splits():
 
     findings = []
 
-    # Iterate over all v4/grc files
+    # Iterate over all v4/grk files
     v4_folders = sorted(glob.glob(os.path.join(V4_DIR, "*-*")))
 
     for folder in v4_folders:

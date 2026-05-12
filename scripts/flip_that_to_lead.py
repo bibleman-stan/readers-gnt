@@ -7,7 +7,7 @@ When a Greek line-pair has been flipped from `... ὅτι / content` to `... /
 "that" (or the line-ending equivalent) from end of line N to start of
 line N+1, so English alignment continues to mirror Greek structure.
 
-Operates on v4/eng-kjv/ files. Reads corresponding v4/grc/ to find
+Operates on v4/eng-kjv/ files. Reads corresponding v4/grk/ to find
 which verses have ὅτι-leading-line-N+1, then finds the English line that
 ends in "that" / "that," / similar and flips.
 
@@ -16,7 +16,7 @@ Usage: PYTHONIOENCODING=utf-8 py -3 scripts/flip_that_to_lead.py [--apply]
 import os, sys, re
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V4 = os.path.join(REPO, "data", "text-files", "v4", "grc")
+V4 = os.path.join(REPO, "data", "text-files", "v4", "grk")
 ENG = os.path.join(REPO, "data", "text-files", "v4", "eng-kjv")
 
 VERSE_RE = re.compile(r"^(\d+):(\d+)\s*$")

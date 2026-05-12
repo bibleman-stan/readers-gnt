@@ -29,7 +29,7 @@ import argparse
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPT_DIR)
-V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4", "grc")
+V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4", "grk")
 ENG_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4", "eng-kjv")
 
 sys.path.insert(0, SCRIPT_DIR)
@@ -93,7 +93,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--english", action="store_true",
-                    help="Apply to v4/eng-kjv files instead of v4/grc")
+                    help="Apply to v4/eng-kjv files instead of v4/grk")
     ap.add_argument("--book", default=None, help="Limit to one book slug (e.g., rom)")
     ap.add_argument("--limit-books", default=None,
                     help="Comma-separated list of book slugs to apply to")

@@ -2,7 +2,7 @@
 """
 apply_line_splits.py — Generic line-split applier.
 
-Reads adversarial-verdict files and applies SPLIT outcomes to v4/grc.
+Reads adversarial-verdict files and applies SPLIT outcomes to v4/grk.
 For each candidate with an approved split, finds the current single line
 matching `line` under the verse ref and replaces it with two lines (`left`
 and `right`).
@@ -24,7 +24,7 @@ import os, sys, json, glob, re
 from collections import defaultdict
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V4 = os.path.join(REPO, "data", "text-files", "v4", "grc")
+V4 = os.path.join(REPO, "data", "text-files", "v4", "grk")
 PRIV = os.path.join(REPO, "private")
 
 VERSE_RE = re.compile(r"^(\d+):(\d+)$")

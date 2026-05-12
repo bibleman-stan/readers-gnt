@@ -3,7 +3,7 @@ check_m4_gnt_1_subject_orphan.py — Layer 3 validator for M4-GNT-1 (canon §3.1
 
 M4-GNT-1: Subject-Orphan Predicate Completion (Greek Instantiation)
 
-When a v4/grc line whose content is a subject NP (closed-list-eligible
+When a v4/grk line whose content is a subject NP (closed-list-eligible
 shape) terminates in `,' or `·`, AND the immediately-next line is a bare finite
 predicate (finite verb lead, no leading connective, no independent subject),
 the predicate-line MUST be merged onto the subject-line as a single ATU.
@@ -365,7 +365,7 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
             break
     if chapter_path is None:
         raise FileNotFoundError(
-            f"v4/grc chapter not found: book={book!r} chapter={chapter}"
+            f"v4/grk chapter not found: book={book!r} chapter={chapter}"
         )
 
     verses = parse_chapter_file(chapter_path)

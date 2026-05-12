@@ -48,7 +48,7 @@ from typing import List, Dict, Tuple, Optional
 
 # ─── paths ────────────────────────────────────────────────────────────────────
 REPO_ROOT   = Path(__file__).parent.parent
-V4_DIR      = REPO_ROOT / "data" / "text-files" / "v4" / "grc"
+V4_DIR      = REPO_ROOT / "data" / "text-files" / "v4" / "grk"
 PRIVATE_DIR = REPO_ROOT / "private"
 OUT_FILE    = PRIVATE_DIR / "scan-hoti-complement-findings.md"
 
@@ -323,7 +323,7 @@ def write_report(candidates: List[Dict]):
     lines.append("# ὅτι Complement Clause Scan — Findings Report\n")
     lines.append(f"**Generated:** 2026-04-15")
     lines.append(f"**Scanner:** scan_hoti_complement.py v1")
-    lines.append(f"**Corpus:** data/text-files/v4/grc/ — all 260 chapters\n")
+    lines.append(f"**Corpus:** data/text-files/v4/grk/ — all 260 chapters\n")
     lines.append("## Grammatical basis\n")
     lines.append(
         "Verbs of cognition, communication, perception, and belief govern a ὅτι\n"

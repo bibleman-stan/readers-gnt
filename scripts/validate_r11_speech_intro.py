@@ -15,7 +15,7 @@ Violation signature:
   (speech-intro boundary marker) AND contains post-frame content after
   the verb + dative.
 
-This is a heuristic: editorial punctuation in v4/grc is non-original,
+This is a heuristic: editorial punctuation in v4/grk is non-original,
 so we use it for structural inference only, not as the rule's basis.
 Primary signal: speech-intro verb present + line also contains imperative
 or direct-address predication beyond the frame.
@@ -32,7 +32,7 @@ import os, re
 from collections import defaultdict
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V4 = os.path.join(REPO, "data", "text-files", "v4", "grc")
+V4 = os.path.join(REPO, "data", "text-files", "v4", "grk")
 MORPH = os.path.join(REPO, "research", "morphgnt-sblgnt")
 SLUGS = {"61":"matt","62":"mark","63":"luke","64":"john","65":"acts","66":"rom","67":"1cor","68":"2cor","69":"gal","70":"eph","71":"phil","72":"col","73":"1thess","74":"2thess","75":"1tim","76":"2tim","77":"titus","78":"phlm","79":"heb","80":"jas","81":"1pet","82":"2pet","83":"1john","84":"2john","85":"3john","86":"jude","87":"rev"}
 SLUG_TO_FN = {v:k for k,v in SLUGS.items()}

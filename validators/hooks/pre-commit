@@ -5,7 +5,7 @@
 # do NOT auto-modify files):
 #
 # Phase 1 — Cascade-staleness detection
-#   When v4/grc chapter files are staged, verify that the cascade was
+#   When v4/grk chapter files are staged, verify that the cascade was
 #   run: line counts match between staged v4 and the corresponding v4/eng-kjv,
 #   and books/<slug>.html is also staged. If stale, block with an instructive
 #   message. This hook does NOT auto-modify files (per memory
@@ -33,18 +33,18 @@ cd "$REPO_ROOT"
 
 # ── Phase 1: cascade-staleness detection ───────────────────────────────────
 
-V4_STAGED=$(git diff --cached --name-only --diff-filter=AM | grep -E "^data/text-files/v4/grc/[^/]+/[^/]+\.txt$" || true)
+V4_STAGED=$(git diff --cached --name-only --diff-filter=AM | grep -E "^data/text-files/v4/grk/[^/]+/[^/]+\.txt$" || true)
 
 if [ -n "$V4_STAGED" ]; then
     echo ""
-    echo "[pre-commit] v4/grc chapters staged. Checking cascade freshness..."
+    echo "[pre-commit] v4/grk chapters staged. Checking cascade freshness..."
 
     BOOKS_AFFECTED=""
     STALE_FOUND=0
 
     for V4_FILE in $V4_STAGED; do
-        # path: data/text-files/v4/grc/<NN-book>/<slug>-<NN>.txt
-        REL_PATH=${V4_FILE#data/text-files/v4/grc/}
+        # path: data/text-files/v4/grk/<NN-book>/<slug>-<NN>.txt
+        REL_PATH=${V4_FILE#data/text-files/v4/grk/}
         BOOK_SUBDIR=${REL_PATH%%/*}
         FILENAME=${REL_PATH##*/}
         SLUG=${FILENAME%%-*}
@@ -85,7 +85,7 @@ if [ -n "$V4_STAGED" ]; then
 
     if [ "$STALE_FOUND" -ne 0 ]; then
         echo ""
-        echo "[pre-commit] BLOCKED: cascade output is stale relative to v4/grc edits."
+        echo "[pre-commit] BLOCKED: cascade output is stale relative to v4/grk edits."
         echo "[pre-commit] Run the cascade for affected books, then re-stage:"
         for BOOK in $BOOKS_AFFECTED; do
             echo "    PYTHONIOENCODING=utf-8 py -3 scripts/regenerate_english.py --book $BOOK"
@@ -105,7 +105,7 @@ fi
 
 # ── Phase 2: validator regression gate ──────────────────────────────────────
 
-RELEVANT=$(git diff --cached --name-only | grep -E "^(data/text-files/v4/grc/|data/syntax-reference/|validators/.*\.(py|yaml)$)" || true)
+RELEVANT=$(git diff --cached --name-only | grep -E "^(data/text-files/v4/grk/|data/syntax-reference/|validators/.*\.(py|yaml)$)" || true)
 
 if [ -z "$RELEVANT" ]; then
     echo "[pre-commit] Docs-only commit. Skipping baseline-check."

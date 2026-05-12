@@ -3,7 +3,7 @@
 """
 scan_parallelism_consistency.py
 
-Walks data/text-files/v4/grc/ looking for spans where N >= 3 parallel
+Walks data/text-files/v4/grk/ looking for spans where N >= 3 parallel
 coordinate members under a shared governor are broken into M != 1 different
 stack patterns (different line-counts per member), PLUS six structural-jam
 classes that detect list members crammed onto single lines.
@@ -47,7 +47,7 @@ from typing import List, Dict, Optional, Tuple, Set
 
 # ─── paths ────────────────────────────────────────────────────────────────────
 REPO_ROOT = Path(__file__).parent.parent
-V4_DIR = REPO_ROOT / "data" / "text-files" / "v4" / "grc"
+V4_DIR = REPO_ROOT / "data" / "text-files" / "v4" / "grk"
 OUTPUT_FILE = REPO_ROOT / "private" / "scan-parallelism-v2-findings.md"
 
 # ─── parameters ───────────────────────────────────────────────────────────────
@@ -147,7 +147,7 @@ VERSE_REF_RE = re.compile(r'^\d+:\d+$')
 
 def parse_file(filepath: Path) -> List[dict]:
     """
-    Parse a v4/grc chapter file into a list of line records.
+    Parse a v4/grk chapter file into a list of line records.
 
     Record fields:
       line_no  — 1-based line number in file
@@ -1057,7 +1057,7 @@ def find_gen_dep_chains(records: List[dict]) -> List[dict]:
 # ─── corpus scan ──────────────────────────────────────────────────────────────
 
 def scan_corpus() -> List[dict]:
-    """Walk all v4/grc chapters and collect drift candidates."""
+    """Walk all v4/grk chapters and collect drift candidates."""
     all_candidates: List[dict] = []
 
     book_dirs = sorted(V4_DIR.iterdir())
@@ -1186,7 +1186,7 @@ def write_report(candidates: List[dict], output_path: Path) -> None:
         "",
         "**Generated:** 2026-04-17",
         "**Scanner version:** v2 (eleven governor classes; six new jam-detection classes)",
-        "**Corpus:** data/text-files/v4/grc/ — all 260 chapters",
+        "**Corpus:** data/text-files/v4/grk/ — all 260 chapters",
         "",
         "---",
         "",
@@ -1327,7 +1327,7 @@ def print_summary(candidates: List[dict]) -> None:
 
 def main():
     if not V4_DIR.exists():
-        print(f"ERROR: v4/grc directory not found: {V4_DIR}", file=sys.stderr)
+        print(f"ERROR: v4/grk directory not found: {V4_DIR}", file=sys.stderr)
         sys.exit(1)
 
     print("Scanning corpus...", flush=True)

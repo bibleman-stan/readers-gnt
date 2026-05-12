@@ -3,7 +3,7 @@
 """
 scan_gorgianic_pairs.py
 
-Scans data/text-files/v4/grc/ for gorgianic pair candidates:
+Scans data/text-files/v4/grk/ for gorgianic pair candidates:
 N=2 coordinate members forming a unified rhetorical image (hendiadys)
 that may be over-split — M1 merge candidates per the new merge doctrine.
 
@@ -40,7 +40,7 @@ from typing import List, Dict, Optional, Tuple
 
 # ─── paths ────────────────────────────────────────────────────────────────────
 REPO_ROOT = Path(__file__).parent.parent
-V4_DIR = REPO_ROOT / "data" / "text-files" / "v4" / "grc"
+V4_DIR = REPO_ROOT / "data" / "text-files" / "v4" / "grk"
 OUTPUT_FILE = REPO_ROOT / "private" / "scan-gorgianic-pairs-findings.md"
 
 # ─── parameters ───────────────────────────────────────────────────────────────
@@ -391,7 +391,7 @@ def triage(
 
 
 def scan_file(filepath: Path) -> List[Dict]:
-    """Scan one v4/grc file and return list of candidate dicts."""
+    """Scan one v4/grk file and return list of candidate dicts."""
     candidates = []
     try:
         text = filepath.read_text(encoding='utf-8')
@@ -560,7 +560,7 @@ def scan_file(filepath: Path) -> List[Dict]:
 
 
 def scan_corpus() -> List[Dict]:
-    """Walk all v4/grc files and collect candidates."""
+    """Walk all v4/grk files and collect candidates."""
     all_candidates = []
     txt_files = sorted(V4_DIR.glob("**/*.txt"))
     for fp in txt_files:
