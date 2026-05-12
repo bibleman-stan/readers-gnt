@@ -109,7 +109,7 @@ BOOK_BY_SLUG = {m[1]: m for m in BOOK_META}
 # where col3 = Strong's+morph, col11 = bare Strong's, col12 = alt Strong's
 # ---------------------------------------------------------------------------
 
-_RE_TOKEN_ROW = re.compile(r"^([A-Z][a-z0-9]+\.\d+\.\d+)#\d+=")
+_RE_TOKEN_ROW = re.compile(r"^([0-9A-Z][a-zA-Z0-9]+\.\d+\.\d+)#\d+=")
 
 
 def load_tagnt_book(
