@@ -1,466 +1,195 @@
 # Colometry Methodology Canon — Reader's GNT
 
-This document is the authoritative reference for the editorial methodology behind the colometric reading edition of the Reader's Greek New Testament at gnt-reader.com. It is the intellectual heart of the project: line-breaking decisions determine how the text reads, breathes, and communicates.
-
-## Foundational premise
-
-The project's working hypothesis is that humans think, compose, and deconstruct (read and hear) in **atomic thought units (ATUs)** — the cognitive units in which ideas are generated, encoded, and recovered. The premise was reached intuitively and analogically, triggered by Royal Skousen's demonstration that the Book of Mormon could be rendered in "sense-lines" (*The Earliest Text*, 2009/2022). Skousen's stated rationale was specific to the Book of Mormon: his sense-lines aim to convey "a dictated rather than a written text," approximating how the original translation might have sounded during Joseph Smith's dictation. Stan took Skousen's sense-line as the kernel and arrived at the present ATU model: a unit defined not by its scribal-tradition genre but by what a reader can process as a single complete thought. Retrospectively, the path passed through what is now recognizable as a "thought-line" framing — visible in the archived 2026-04-20 scholarly-framing document and in earlier session-dialogue uses of the phrase — before the criterion-based definition was articulated explicitly. "Thought-line" was never canonically named as a discrete stage at the time; it is a name applied here in retrospect to the framing that was operating before "atomic thought unit" was load-bearing. He then experimented with line breaks in the English Book of Mormon text, where the criterion-defined ATU appeared to expose idea-units sometimes obscured by editorial punctuation, versification, and line-break decisions. Stan applied the same method to the GNT, reasoning by analogy that what is true for the Book of Mormon is likely true for the Greek New Testament — and perhaps *any* text.
-
-A note on terminology: throughout this canon, **ATU** is the unit-of-cognition the method targets; **line** is the typographic display of an ATU. When prose discusses what each unit IS, "ATU" is the right word. When prose discusses how ATUs are rendered (line-wrap, line-final tokens, layout), "line" stays. The two terms have distinct jobs.
-
-The methodology itself — three forces, structural justifications, merge-overrides, rules — emerged from hands-on editorial experimentation across all 260 chapters of the GNT. It is pragmatic, not theory-derived.
-
-## Posture
-
-The current phase is empirical: *where are the ATUs, actually?* The method is instrumentation for answering that question. When the method produces a line that does not reveal a genuine ATU boundary, the method is wrong and gets revised. When the method produces a line that does, the method is working.
-
-Scholarly alignment with cognitive-science, psycholinguistic, or classical-rhetorical frameworks may or may not emerge in a later consolidation phase. Any such alignment is opportunistic, not load-bearing. No framework external to the text is currently treated as the reason a rule works.
-
-## Architecture
-
-The colometric methodology sits on a three-layer architecture:
-
-**Layer 1 — Generic Koine break-legality.** Constraints any competent editor of any Koine Greek text would observe: article + noun stays together, preposition + object doesn't split, postpositives can't start a line, periphrastics stay whole. Lives as a shape-capped table at [`data/syntax-reference/greek-break-legality.md`](../../data/syntax-reference/greek-break-legality.md) — 24 rows of syntactic signature + legality verdict + BDF/Smyth/Wallace citation. Not our editorial doctrine; a pointer to generic Koine grammar facts. R2–R7 live here.
-
-**Layer 2 — Validators.** Mechanical checks that read Layer 1 and Layer 3 rules against Macula-Greek ([Clear-Bible/macula-greek](https://github.com/Clear-Bible/macula-greek), CC-BY 4.0) and MorphGNT ([morphgnt/sblgnt](https://github.com/morphgnt/sblgnt), CC-BY-SA) parse data. Two error classes: `MALFORMED` for Layer 1 violations (ungrammatical typography — must fix, Category A by default), `DEVIATION` for Layer 3 violations (grammatical but not our editorial convention — Category A/B/C gating per §3 Autonomy Boundary). Target directory split: `validators/syntax/` for Layer 1 checks, `validators/colometry/` for Layer 3 checks. Under active build.
-
-**Layer 3 — This canon.** Editorial ATU methodology specific to the Reader's GNT. Where and why we diverge from or add to generic Koine syntax to reveal atomic thought. The three forces (§1), five structural justifications (§2), four merge-overrides (§2), rules (§3), operational tests (§4), register operationalization (§5), and Greek-specific application data (§8) all live here. The Subtractive force in §1 is the contract with Layer 1 — we never violate it.
-
-The division matters because it separates *what Greek grammar requires of any editor* (Layer 1) from *what our project chooses to do editorially* (Layer 3).
+**Version:** 3.0 (2026-05-12 — framework extracted to atu-method/docs/framework.md)
+**Predecessors:**
+- v2.0 (2026-04-20) — superseded; framework material lived in §0/§1/§2/§6 prose. Now pointered to atu-method.
+- v1.0 (document created 2026-04-09; restructured 2026-04-16; consolidated 2026-04-18) — retained for reference via §10 Update Log; no longer authoritative as a version.
 
 ---
 
-**What is this document?**
+## How to use this document
 
-This document serves as a canon for laying out the main design philosophy (the *what / why / posture* of the project) as well as the pragmatic implementation rules and principles (the *how* — rules and tests Claude reads literally for editorial application). There are times when the line between design philosophy and operational implementation blends together. The structure aims to keep the integration honest while making the predominant character of each section legible at a glance.
+This canon is the GNT-corpus instantiation of the ATU methodology framework. Universal framework material (mission, generative principle, structural justifications, merge-overrides, decision procedure, change protocol) lives in [`atu-method/docs/framework.md`](../../atu-method/docs/framework.md); this document holds GNT-specific rule detail and operational artefacts.
 
-- **Part 1 (The Method, §§1-4)** is the constitutional core: theoretical foundation (§§1-2) and operational rule reference (§§3-4). Each section header discloses whether the section is mainly philosophical, mainly operational, or dual-natured.
-- **Part 2 (The Framework, §§5-8)** carries register operationalization, precedent and scope discipline, the change-protocol machinery (§6.5 Mandatory-audit triggers), and Greek-specific application supplements + scholarly material.
-- **Part 3 (The Record, §§9-10)** is the historical appendix — superseded formulations and the chronological update log.
-- **Layer 1 and Layer 2** are separate from this canon — see the Architecture section above. Layer 1 lives at `data/syntax-reference/greek-break-legality.md`. Layer 2 validators live at `validators/syntax/` and `validators/colometry/` (under active build).
+**For humans** reviewing the method or wanting WHY-content: see [`atu-method/docs/framework.md`](../../atu-method/docs/framework.md) (universal framework) + [`atu-method/scholarship/gnt/`](../../atu-method/scholarship/gnt/) (per-rule rationale, grammatical grounding, empirical evidence, intellectual lineage, adversarial history).
+
+**For robots** applying the method to v4-editorial sources: read **Part II — Operating Rules** below (§3 Rule Index, §3.1–§3.18, §4 Operational Tests). The Rule Index lists each rule's type and autonomy category. Validator output is a **work queue**, not a review queue. Category A rules fire on unambiguous UD signatures and do not require per-item Stan approval; Category B/C items are the only flags requiring editorial judgment.
+
+**For updating this document:** see [`atu-method/docs/framework.md §7 Change Protocol`](../../atu-method/docs/framework.md) for the universal change protocol (12 mandatory-audit triggers, audit-skippable categories, commit-msg discipline). The GNT-specific mechanical gate for audit compliance is the `validators/hooks/commit-msg` pre-commit hook.
+
+---
+
+# Part I — Method (pointer-only; framework material in atu-method)
+
+## 0. Purpose, Posture, and Architecture
+
+**Pointer to framework.** Universal mission, method (sense-driven mission + syntax-constrained method), pragmatic stance, and scope statements are codified at [`atu-method/docs/framework.md §0`](../../atu-method/docs/framework.md). This canon does not duplicate that prose.
+
+**GNT-specific intellectual lineage** (not in the universal framework): The project's working hypothesis was reached intuitively and analogically, triggered by Royal Skousen's demonstration that the Book of Mormon could be rendered in "sense-lines" (*The Earliest Text*, 2009/2022). Skousen's stated rationale was specific to the Book of Mormon: his sense-lines aim to convey "a dictated rather than a written text." Stan took Skousen's sense-line as the kernel and arrived at the present ATU model — a unit defined not by its scribal-tradition genre but by what a reader can process as a single complete thought. Stan applied the same method to the GNT, reasoning by analogy that what is true for the Book of Mormon is likely true for the Greek New Testament — and perhaps *any* text. The methodology itself — three forces, structural justifications, merge-overrides, rules — emerged from hands-on editorial experimentation across all 260 chapters of the GNT. It is pragmatic, not theory-derived.
+
+**GNT-specific architecture.** The four-plane model (Data / Specification / Tooling / Delivery) for the broader reader-family is documented universally at [`atu-method/docs/architecture.md`](../../atu-method/docs/architecture.md). Within the GNT repo, the per-corpus layer structure is:
+
+- **Layer 1 — Generic Koine break-legality.** Constraints any competent editor of any Koine Greek text would observe. Lives as a shape-capped table at [`data/syntax-reference/greek-break-legality.md`](../../data/syntax-reference/greek-break-legality.md) — 24 rows of syntactic signature + legality verdict + BDF/Smyth/Wallace citation. Parse data: Macula-Greek ([Clear-Bible/macula-greek](https://github.com/Clear-Bible/macula-greek), CC-BY 4.0) and MorphGNT ([morphgnt/sblgnt](https://github.com/morphgnt/sblgnt), CC-BY-SA). R2–R7 live here.
+- **Layer 2 — Validators.** Mechanical checks reading Layer 1 and Layer 3 rules against Macula + MorphGNT parse data. Two error classes: `MALFORMED` (Layer 1 — must fix, Category A), `DEVIATION` (Layer 3 — Category A/B/C per §3 Autonomy Boundary). `validators/syntax/` for Layer 1; `validators/colometry/` for Layer 3.
+- **Layer 3 — This canon.** GNT-specific ATU methodology. The Subtractive force in §1 is the contract with Layer 1 — we never violate it.
 
 **Reader's guide:**
-
-- **Editor making editorial decisions** (typically a Claude session working on the corpus): focus on §§3-4 and §6.5. Consult §§1-2 for grounding when proposing or evaluating rules.
-- **Scholar reading the method as a published artifact**: focus on §§0-1 (foundational premise + framework theory), §6 (precedent + scope), and §8 (Greek-specific application + exegetical convergence).
+- **Editor making editorial decisions**: focus on §§3-4 and §6.5. Consult §§1-2 for grounding when proposing or evaluating rules.
+- **Scholar reading the method as a published artifact**: focus on the GNT-specific framing below (§0 intellectual lineage + §8 Greek-specific application + exegetical convergence).
 - **Tracking how a decision evolved**: §§9-10 carry the reasoning trail.
-
-Some sections are dual-natured by design: §1 interleaves theoretical principles with their operational corollaries (e.g., the "reaching-for-split" vocabulary watchlist sits inside the Imposing-vs-Revealing philosophical principle); §2's five structural justifications each combine cognitive-prong (philosophical) with structural-prong (operational) arguments. **Treat bolded paragraphs as load-bearing** in those sections regardless of the surrounding prose's character. When revising philosophical prose in dual-natured sections, leave bolded paragraphs untouched unless the change is intentional and audited per §6.5.
 
 ---
 
-# Part 1: The Method
+## 1. The Framework — Proposition-First, Syntax-Constrained
 
-*Everything in Part 1 is authoritative and current. Sections 1 through 4 contain everything an editor needs to make line-break decisions.*
+**Pointer to framework.** The framework specification — generative principle (each proposition splits by default); three closed-list ways syntax forbids splits (Layer 1 mid-phrase prohibitions, complement integrity, formula integrity); image diagnostic (camera-angle test); five structural justifications J1–J5 (formally-marked parallel series, portrait accumulation, speech-act announcement, classical commata, substantive adjunct); four merge-overrides M1–M4 (Gorgianic bonded pair, verb-object clause-nucleus bond, bare-governor indivisibility, fragmented atomic thought-unit); the four forces summary; the five-step decision procedure; the application-order step-by-step (Step 0 input filter through Step 4 diagnostic); the N=2 Adjudication Principle and N=3+ cliff; the punctuation-not-a-signal and versification-not-a-signal stances; the Parallel-List Uniformity Principle; and the Authorial Asymmetry Principle — is codified at [`atu-method/docs/framework.md §1`](../../atu-method/docs/framework.md). This canon does not duplicate that prose.
+
+**GNT-corpus instantiations of the framework:**
+
+- **Step 0 input filter — GNT-specific exclusions.** In addition to the universal filters (punctuation, versification, verse position), GNT editing also excludes from the evidence base: manuscript line divisions in scholarly comparanda (Codex Bezae, Claromontanus — consulted as empirical comparanda, not authoritative warrants; see §6 below); editorial paragraph divisions in printed GNT editions (NA28/UBS5/SBLGNT ¶ marks — never a break signal); and lectionary/pericope divisions.
+
+- **Force 1 (Generative) — GNT resolution principle.** Atomic thought is relative to the author's resolution. For plainer narrative (Mark's simpler scenes), atomic usually means a complete sentence-level predication. For more literary authors (Luke, Paul, John at their most crafted), "atomic" often includes grammatically-independent sub-units — most notably genitive absolutes used as interjectory frames. See §8 for participial and FEF treatment.
+
+- **Force 2 (Subtractive) — GNT Layer 1 reference.** GNT Layer 1 break-legality lives at [`data/syntax-reference/greek-break-legality.md`](../../data/syntax-reference/greek-break-legality.md) (24-row table; R2–R7). Parse data: Macula-Greek + MorphGNT.
+
+- **Force 3 (Diagnostic) — GNT image test.** In GNT application: close your eyes and picture the scene. Does the line make you see ONE thing? Canonical cases: Gal 2:9 (split — two distinct thoughts: the named persons vs. their ironic characterization); Gal 2:10 (merge — fronted genitive + restrictive *μόνον* form a marked word order whose rhetorical force depends on grammatical unity staying intact). The full principle and case-study pair live at §8 **Marked Word Order (Fronting Paradox)** — relocated there in the 2026-05-12 restructure because it is GNT-specific operational content (Greek's case-marked freedom of word order), not universal framework.
+
+- **N=2 Adjudication Principle — GNT canonical cases.**
+  - MERGE: `Δαιμόνιον ἔχει καὶ μαίνεται·` (John 10:20) — one diagnostic judgment expressed via two complementary terms.
+  - MERGE: `κόπῳ καὶ μόχθῳ` (2 Cor 11:27) — "labor and toil" as one image of exhaustion.
+  - SPLIT: `οὔτε γαμοῦσιν / οὔτε γαμίζονται` (Matt 22:30) — active and passive sides of the marriage transaction; distinct predicates.
+
+- **M1 bonded-pair list (GNT corpus-attested):** `{κόπῳ, μόχθῳ}` (2 Cor 11:27 — labor+toil); `{χαίρειν μετὰ χαιρόντων, κλαίειν μετὰ κλαιόντων}` (Rom 12:15 — two classical-comma halves constituting one paraenetic command); `{Τολμηταί, αὐθάδεις}` (2 Pet 2:10 — asyndetic N=2 bonded adjective pair).
+
+- **J3 named patterns (speech-act announcement) — GNT instantiations.** Direct speech introduction: `καὶ ἔλεγεν αὐτοῖς:` / `καὶ εἶπεν αὐτῷ:` — each is a complete speech-act predication. See §3.6 (R11) for the full treatment.
+
+- **J5 substantive adjunct — GNT canonical cases.**
+  - Genitive absolute (R19 — always own line): `βλεπόντων αὐτῶν` (Acts 1:9) — camera shifts to disciples' perspective as interjectory frame.
+  - Prepositional catena: 2 Cor 6:4-7 ἐν-catena — each element on its own line.
+  - FEF periodic frame: Luke 3:1-2 — five genitive-phrase temporal adjuncts before the matrix ἐγένετο ῥῆμα θεοῦ.
+  - Fronted temporal existential: John 1:1 `ἐν ἀρχῇ` — only 2 words but carries the Gospel prologue's entire temporal frame (brevity-but-substance edge case).
+
+- **Showcase — Acts 1:9 (genitive absolute embedded within FEF).**
+  ```
+  καὶ ταῦτα εἰπών             <- aorist nominative ptc (FEF frame; subject = Jesus)
+  βλεπόντων αὐτῶν             <- GENITIVE ABSOLUTE (subject = disciples); interjectory
+  ἐπήρθη                      <- main verb resolving εἰπών
+  καὶ νεφέλη ὑπέλαβεν αὐτὸν ἀπὸ τῶν ὀφθαλμῶν αὐτῶν.
+  ```
+  The gen abs interrupts the FEF suspension with a camera shift to the disciples' perspective, then the main verb drops the resolution. **A gen abs embedded within an FEF should remain on its own line.**
+
+- **Container-not-originator (GNT-specific articulation).** The atomic thought is the primary, originating reality — language-invariant. Syntax is the container, not the originator. This is the classical distinction between *logos endiathetos* (the thought in the mind) and *logos prophorikos* (the thought as uttered). Colometric recovery targets the *endiathetos* through the *prophorikos* because the *prophorikos* is all we have. Paul's atomic thought units in Romans are the same units whether read in Greek, English, or Chinese. Only the container changes.
+
+- **Thought-marking syntax vs. structural syntax (GNT distinction).** *Thought-marking syntax* reveals where one atomic unit ends and the next begins: main-verb shifts, clause boundaries, subject changes. *Structural syntax* is fixed Koine Greek patterns that do not automatically map to thought boundaries but constrain them: conditionals, correlatives, result clauses. A μέν/δέ contrast earns a break when each limb is its own atomic claim, not just because μέν/δέ is present.
+
+- **Priority order when forces leave ambiguity:** Chunking > Oral > Rhetorical. When the three forces leave room for multiple valid choices, cognitive chunking wins over oral delivery wins over rhetorical-structure revelation.
+
+- **Imposing vs. Revealing — GNT scope discipline.** The boundary test: if a feature requires *interpretation* of authorial intent to detect, it is out of scope. If it can be identified by the grammar alone (case, mood, syntactic position, lexical markers), it is in scope. Out of scope for the GNT colometric grid: chiasm detection, klimax/gradatio identification, diatribe Q-A pair tagging, section headers / epistolary form criticism, anacolutha tagging, period-anchor + clause-depth indentation, authorial-intent inference. The grid is flat by design — every line has equal visual status. "Reaching-for-split" warning: when the grammatical case is borderline and you find yourself reaching for rhetorical-motif, oral-rhythm, theological-weight, or any non-grammatical category as tiebreaker, that is scope creep; prefer merge.
+
+---
+
+## 2. Autonomy Boundary — Categories A / B / C
+
+**Pointer to framework.** Categories A (Mechanical, mandatory), B (Editorial, judgment-required), C (Theological / textual-critical), the Mechanical-Rule Authority principle, the default-handling under uncertainty, and the Scope/Precedence/Closed-List Diagnostic are codified at [`atu-method/docs/framework.md §2`](../../atu-method/docs/framework.md). This canon does not duplicate that prose.
+
+Per-rule Category assignments are in each §3 rule entry's classification.
+
+**GNT-specific instances:**
+- **Category A:** A dangling article (τόν at line end) or a verb split from its direct object — mechanical error, fix confidently. 860 no-anchor merges applied across 26 books (corpus-wide scan result).
+- **Category B:** Phil 2:6-8 kenosis hymn — whether `θανάτου δὲ σταυροῦ` gets its own line changes how the descent structure reads.
+- **Category C:** Rom 9:5 — whether `ὁ ὢν ἐπὶ πάντων θεὸς εὐλογητός` attaches to `ὁ Χριστός` (Christological reading) or begins a new doxology (theistic reading). Break placement is a doctrinal decision. John 1:3-4 (ho gegonen placement) — colometry keeps `ὃ γέγονεν` with v.3; the relative clause governed by antecedent `ἕν` per complement-attachment rule.
+
+---
+
+# Part II — Operating Rules (for robots applying the method)
+
+*Everything in Part II is authoritative and current. Sections 3 through 5 contain everything an editor needs to make line-break decisions.*
 
 ---
 
 ## Section 1: The Framework
 
-*Purpose: theoretical foundation for the three-forces architecture and the imposing-vs-revealing posture. **Dual-natured by design** — operational corollaries (vocabulary watchlists, fronting paradox, Showcase Acts 1:9) are embedded throughout. Treat bolded paragraphs as load-bearing for editorial application.*
-
-ATU breaks are governed by **three forces** operating in concert: a **generative** force that proposes where breaks should happen, a **subtractive** force that vetoes breaks that would violate Greek syntax, and a **diagnostic** force that sharpens ambiguous cases.
-
-### Step 0 — Input Filter
-
-Before the three forces apply, the editor reads the source text through an input filter that excludes editorial-overlay features from the evidence base. The following are **never the warrant** for a break decision in this methodology:
-
-1. **Editorial punctuation in SBLGNT** (commas, periods, semicolons, ano teleia, raised dots). *Detection-heuristic carve-out:* punctuation MAY be used to locate candidates of a named syntactic pattern (e.g., the ano teleia in §3.6 speech-intro detection), but the grammatical structure — not the mark — is the operative warrant. The corollary in this section ("punctuation may corroborate but cannot justify") governs.
-2. **Capitalization** — never a break signal.
-3. **Verse references** — never a break signal. R-rules fire on grammatical evidence, not on verse position. Where a validator docstring or didactic description uses "verse-initial" or similar positional language, the actual detection criterion is grammatical (morphological context, anchor presence/absence, etc.), not the position itself.
-4. **Quote marks** added by downstream editors or modern publishers — never a break signal.
-5. **Lectionary divisions / pericope numbers** — never a break signal.
-6. **Editorial paragraph divisions in printed GNT editions** (NA28 / UBS5 / SBLGNT typographic section breaks, ¶ marks, white-space section dividers) — never a break signal.
-7. **Manuscript line divisions in scholarly comparanda** (Codex Bezae, Claromontanus, etc.) — never an *authoritative* break warrant. Per §6 these are consulted as scholarly comparanda and treated as empirical data; the three forces decide breaks. The 61.3% Bezae-agreement metric is a datum about scribal sense-judgment, not a license to inherit Bezae's typographic decisions.
-
-This list is closed: each item is excluded from the evidence base by design. New items may be added only after a §6.5 mandatory-audit cycle and a recorded §10 update entry. Step 0 is the editor's first read of any verse before §1's three forces engage.
-
-### Mission and Method — the Discipline Framing
-
-**Mission:** We are revealing ATUs — the units the reader can process as discrete complete thoughts.
-
-**Method:** The framework below is syntax-constrained. This is **not** because syntax is primary to the mission — atomic thought is. It is because **syntactic violation is fatal while sense ambiguity is recoverable within the permitted space.** An ungrammatical line cannot be rescued by good sense. A grammatical line that isn't the ideal sense-boundary can still be read. The method therefore leads with the syntactic floor (subtractive force) so that editorial judgment (generative force) operates only within the legal-break space.
-
-The mission is sense-driven. The method is syntax-constrained.
-
-### Framing Principle: Container, Not Originator
-
-**The atomic thought is the primary, originating reality.** It is what the author wants to say, prior to and independent of any particular language. Greek, Hebrew, Aramaic, English, and Chinese speakers all compose in thought units. The atomic-thought target is *language-invariant*.
-
-**Syntax is the container, not the originator.** Every atomic thought is *always already* shaped by the grammatical framework of the language it was born in — there is no unclothed "pure thought" underneath waiting to be extracted. The container constrains: Paul could not express his thought without choosing Greek syntactic patterns, and those patterns imposed fixed structural commitments (word-order possibilities, correlative pairs, conditional shapes, case government). But the container does not *originate* the thought. The thought exists first and fits itself into whatever vessel is available.
-
-This is the classical distinction between **logos endiathetos** (the thought in the mind) and **logos prophorikos** (the thought as uttered). Colometric recovery targets the endiathetos through the prophorikos because the prophorikos is all we have.
-
-**Consequences for the framework:**
-
-1. **Propositions (atomic thoughts) are the generative force because they are what we are recovering.**
-2. **Syntax is the subtractive force — the evidence surface through which propositions become visible in this particular language, and simultaneously the floor below which no line can legally sit.** Syntax both reveals where propositions end (thought-marking syntax) and constrains where breaks are legal (Layer 1 break-legality, complement integrity, formula integrity).
-3. **Grammar is bigger than syntax** — it includes lexicon, morphology, pragmatics, phonology. Most of these do not affect colometric decisions. "Syntactic" is more precise than "grammatical" when we describe the evidence we use. Morphology (case, mood, person, tense) is the surface we read syntax *off of* — vocative case tells us a word is in an address relation; 2p verb inflection tells us there is an implicit "you" subject that a vocative can name.
-4. **Cross-linguistic invariance is preserved.** Paul's atomic thought units in Romans are the same units whether read in Greek, English, or Chinese. Only the container changes. We are not imposing Greek syntax on English readers; we are recovering the shape Paul's thoughts actually had when he dictated them.
-
-### The Three Forces
-
-#### Force 1 — Generative: Propositions
-
-**Each proposition is an atomic thought. Default SPLIT at every proposition boundary.**
-
-A "proposition" is, at first pass, a complete predication — subject + finite verb + complement. This is the default operationalization. But predication is not the only form propositions take. The five closed-list structural justifications (Section 2) extend the generative force to cases where formal structure enables the reader to reconstruct the full thought even when overt predication is absent:
-
-1. Formally-marked parallel series
-2. Portrait-building attribute accumulation
-3. Speech-act announcement convention
-4. Classical comma
-5. Substantive adjunct as own focus
-
-The generative force proposes candidate breaks. Each candidate has to pass through the subtractive force before becoming an actual break.
-
-**Atomic thought is relative to the author's resolution.** "Atomic" is not a fixed unit size; it is the smallest chunk the author intended to be processed as a single, self-contained, coherent unit of thought-meaning.
-
-For plainer narrative (Mark's simpler scenes), atomic usually means a complete sentence-level predication. For more literary authors (Luke, Paul, John at their most crafted), "atomic" often is messier, where it can include grammatically-independent sub-units — most notably **genitive absolutes used as interjectory frames**.
-
-A gen abs is often able to pass the atomic-thought test on its own because it carries its own subject and its own predicate. It is "absolute" in the grammatical sense of being *loosened from* (Latin *absolutus*, Greek *apoluton*) the syntactic government of the main clause — its subject is not governed by any element in the main clause (Smyth §2070). The "dependency" on the main clause is narrative, not grammatical.
-
-Sophisticated authors build at a finer resolution because their audiences could track it — the colometric grid must track *their* sophistication, not impose a lowest-common-denominator rule.
-
-**Thought-marking syntax vs. structural syntax** (how propositions announce themselves):
-
-- **Thought-marking syntax** reveals where one atomic unit ends and the next begins: main-verb shifts, clause boundaries, subject changes, verb-subject binding (including vocative-as-subject), appositive coreference, camera-angle turns (proposition specification in the form of a new addressee, new speaker, new POV on a previous proposition). This is where the generative force finds its surface clues.
-
-- **Structural syntax** is fixed Koine Greek language patterns that do *not* automatically map to thought boundaries, but rather constrain them in a particular way for a Greek-speaking audience: conditionals (ei...X, [then] Y), correlatives (kai...kai, men...de, oute...oute), comparatives (mallon...e), result clauses tightly bound to their head. These have fixed shapes GNT authors, as Greek speakers writing to Greek-speaking audiences, had to use, but the thought may be atomic across them *or* may resolve into multiple units depending on what the clauses are doing.
-
-Defense against the obvious objection that "you're just breaking at every grammatical feature": we are breaking at the features that *mark thought boundaries*, not at every fixed Greek construction. These boundaries, however, often do intersect with each other. A men/de contrast earns a break when each limb is its own atomic claim, but it does not earn a break just because men/de is there.
-
-#### Force 2 — Subtractive: Syntax
-
-**Not every proposition-boundary split is legal. Greek syntax forbids some breaks.** This is the hard floor.
-
-Three closed-list veto classes:
-
-1. **Layer 1 break-legality** — generic Koine syntactic constraints documented in [`data/syntax-reference/greek-break-legality.md`](../../data/syntax-reference/greek-break-legality.md). Article + noun split, preposition + object split, periphrastic split, dangling conjunction, line-final negation, crasis, line-initial postpositive, etc. These are what any competent editor of any Koine text would observe regardless of our editorial choices. Rules R2-R7 are Layer 1.
-
-2. **Complement integrity.** A line whose atomic thought requires a syntactic complement to be grammatically complete cannot be split before that complement. Covered by R10 (cognition-verb ὅτι complement), R11 and R23 (speech-intro frames, dative-subject-of-infinitive), M2 (verb + direct-object clause-nucleus bond).
-
-3. **Formula integrity.** Fixed multi-word units function as single constituents. Covered by Layer 1 entries for fixed phrases plus complement-adjacent rules.
-
-When the subtractive force vetoes a proposition-boundary split, **merge wins**. Editorial judgment operates only within the space syntax permits.
-
-The merge-override framework (M1–M4 in Section 2) encodes additional subtractive cases — gorgianic bonded pair (M1), verb-object clause-nucleus bond (M2), bare-governor indivisibility (M3), fragmented atomic thought-unit (M4) — for situations where a split-trigger fires but syntactic or cognitive integrity would be ruptured by applying it.
-
-#### Force 3 — Diagnostic: Single Image
-
-**When the generative + subtractive forces leave ambiguity** — a candidate break is syntactically legal and a proposition-break plausibly exists, but it is not obvious whether to split or merge — **the image test sharpens the decision.**
-
-Each line should paint a single image or picture in the mind. Close your eyes and picture the scene. Does the line make you see ONE thing? If two distinct images, split is the right call. If one coherent image, merge is the right call.
-
-The image test operates within syntactic permission — it never overrides a syntactic veto. It is a sharpener, not a generator and not a floor.
-
-### The Framework in Practice
-
-```
-Generative  — Propositions  — default SPLIT at every proposition boundary
-Subtractive — Syntax        — forbids some splits: Layer 1 + complement integrity + formula integrity
-Diagnostic  — Image         — sharpens ambiguous cases within the permitted space
-```
-
-### Why Predication Is the Default (and When It Is Not Enough)
-
-Predication is the most common encoding of atomic thought — a complete clause with subject + finite verb + complement. It is the natural default operationalization of the generative force. But it is not the only encoding. Stacked attributes can paint one portrait; parallel series can stack members whose shared predicate is recoverable; classical commata can carry rhetorical weight without full predication; speech-act tags announce a complete communicative event.
-
-The two-prong exception test (Section 2) asks: (1) is there a sense-unit here? and (2) can the reader reconstruct it from the formal structure? When both answers are yes, the line is valid even without explicit predication.
-
-### The Priority Order When Forces Leave Ambiguity
-
-**Chunking > Oral > Rhetorical**
-
-When the three forces leave room for multiple valid choices:
-
-1. **Cognitive chunking** — line breaks first serve comprehension. Each line is a unit the reader can process as one cognitive bite. This is the foundational purpose of colometric formatting.
-2. **Oral delivery** — line breaks support read-aloud at natural breath pace.
-3. **Rhetorical structure revelation** — line breaks make the author's compositional architecture visible (parallels, escalation, climax, chiasm). This is the literary/scholarly purpose.
-
-When these conflict, chunking wins. A break that aids cognitive chunking but flattens some rhetoric is acceptable. A break that reveals rhetoric but creates a fragment that cannot be processed is not.
-
-### Imposing vs. Revealing — Scope Discipline
-
-**Line breaks follow structure that already exists in the text. If a rule produces a line that does not match the text's inherent structure, the rule is wrong.**
-
-- We do not impose visual structure that the grammar does not directly support.
-- We do not construct grammatical categories to justify editorial instincts.
-- If a break cannot be named in standard grammatical terms, it is an editorial decision — which is fine, but should be labeled honestly (Category B/C per §3).
-- If a proposed rule consistently produces lines that don't sound like the text, the rule is imposing rather than revealing and is rejected.
-
-**This is a presentational layer, not an analytical one.** Our job is to render the text so its grammatical and cognitive structure is visible at the line level. What scholars do on top of that — identify chiasms, mark rhetorical figures, perform discourse analysis, write commentary — is downstream work that our edition *enables* but does not perform.
-
-**The boundary test:** if a feature requires *interpretation* of authorial intent or rhetorical strategy to detect, it is out of scope. If it can be identified by the grammar alone (case, mood, syntactic position, lexical markers), it is in scope.
-
-**In scope (grammatical structure made visible):**
-- Clause boundaries (main, subordinate, participial)
-- Subordinator-introduced breaks (hina, hoti, hotan, hote, ean, hopos, hoste, etc.)
-- Discourse markers as signals (kai, de, gar, oun, alla)
-- Correlative pairs (men/de, me/alla, ou/alla)
-- Genitive and accusative absolutes (grammatically independent constructions)
-- Vocatives (refined three-way treatment — see Section 3)
-- Periphrastic constructions and their elliptical extensions
-- Dative subject of infinitive (chunks with the embedded proposition)
-- Asyndetic lists (each enumerated nominal is its own line)
-- Prepositional catenae (each prep phrase is its own constituent)
-- Parallel stacking, men/de contrast, kai + finite verb chains
-
-**Out of scope (analytical / interpretive overlay):**
-- Chiasm detection (research-grade rhetorical analysis)
-- Klimax / gradatio identification (rhetorical figure)
-- Diatribe Q-A pair tagging (discourse-pragmatic analysis)
-- Section headers / epistolary form criticism (salutation / thanksgiving / body / paraenesis)
-- Anacolutha tagging (e.g., Eph 3:1 -> 3:14 pause-and-resume)
-- Period anchor + clause-depth indentation (imposes a hierarchy reading; interpretive overlay)
-- Authorial intent inference, theological emphasis marking, parable structure annotation
-
-The colometric grid is **flat by design** — every line has equal visual status. We do not introduce hierarchy via indentation, font weight, color, or spatial offset, because hierarchy is interpretive.
-
-**Corollary — punctuation must not have deterministic force.** The commas, semicolons, colons, and dashes in the SBLGNT are editorial additions — not original to the text. They may corroborate a line-break decision but CANNOT justify one by themselves. Test: remove the punctuation mentally and ask whether the break still holds on purely grammatical grounds.
-
-**Corollary — the "reaching-for-split" warning.** When the grammatical case for a split is borderline and you find yourself reaching for rhetorical-motif, image-analysis, cognitive-predictive-processing, oral-rhythm, theological-weight, soteriological-significance, pastoral-force, narrative-climax, prosodic-emphasis, doctrinal-stakes, or any analogous non-grammatical category as a tiebreaker, **that is the signal that scope creep is happening.** The scope-disciplined default in a borderline case is to keep the grammatical constituent intact — i.e., **prefer merge to split** when the grammar is ambiguous. *See `feedback_rhetoric_bandwagon.md` catches list for examples of these terms in action.*
-
-**The fronting paradox — marked word order argues for MERGE, not split.** When a grammatically tight unit (verb + its required-case complement, or other bound constituent) appears in a *marked* word order — e.g., object fronted before its governing verb — the natural editorial instinct is to split at the fronted element as a way of "visualizing the emphasis." **This instinct is wrong.** The rhetorical effect of fronting depends on the grammatical unity *staying intact*. The marked arrangement is felt as emphatic precisely because the hearer processes the fronted element in a non-default position *within a single breath unit*. Splitting at the fronted-element boundary mechanizes the emphasis — it imposes a pause that was not in the original oral delivery — and paradoxically *diminishes* the rhetorical force.
-
-*Case studies:*
-- **Gal 2:9 — split** (pillars characterization on own line): two distinct thoughts (the named persons vs. their ironic characterization). Subject + substantival-participial-phrase appositive, where the appositive is six words, non-trivial, and introduces the dokountes motif. Grammatical warrant for split is the substantival-participle-as-own-thought rule.
-- **Gal 2:10 — merge** (fronted ton ptochon kept with mnemoneuomen on one line): mnemoeneuo requires genitive for its object. The fronted genitive + restrictive monon create a marked word order whose rhetorical force depends on the grammatical unity staying intact.
-
-### N=2 Adjudication Principle
-
-**The problem this solves.** Several canon rules mandate MERGE for N=2 coordinate constructions — M1 gorgianic bonded pair (§2) and two-member coordinate clausal series. Simultaneously, structural justification 1 (formally-marked parallel series, §2) mandates SPLIT when each member earns its own atomic thought-unit. At N=2 both rules can fire on the same construction. This subsection establishes the cross-cutting tiebreaker. (Note: R8 short-coordinate default and R28 textual-asymmetry are NOT primary N=2 merge-triggers — R8 governs framing-marker attachment, R28 governs parallel-passage comparison; both appear in step 2 below as secondary merge protections to check before flipping to split, but neither generates the N=2 collision this principle adjudicates.)
-
-**The principle.** When a merge-mandating rule (M1 or two-member clausal series) and a split-mandating rule (structural justification 1) both fire on the same N=2 coordinate construction:
-
-1. **Test for synonymy / bonding.** If the two members are semantically synonymous, form a recognizable binomial idiom, or function as a hendiadys (single unified act expressed via two near-synonyms) → **merge-mandating rule wins → MERGE.** Example: `Δαιμόνιον ἔχει καὶ μαίνεται` (John 10:20) — one diagnostic judgment expressed via two complementary terms.
-2. **Distinct semantic domains.** If the two members belong to clearly different semantic domains AND each carries its own atomic thought, the merge-mandating rule's grounds for bonding are withdrawn — but the M1 strict-application caveat applies: **withdrawal of M1's protection does not by itself license a SPLIT.** Check whether any other merge-protection (M2 verb-object nucleus, M3 bare-governor, M4 fragmented-atomic-thought, R8 short-coordinate default, R11 speech-intro, R28 textual-asymmetry, default-merge for grammar ambiguity) fires before flipping to split.
-3. **Default to merge when ambiguous.** The canon's overall posture is merge-by-default; the cross-cutting N=2 Adjudication Principle is a merge levee, not a split license.
-
-**Does not apply at N=3+.** At N=3+ formally-marked parallel series, structural justification 1 wins regardless of whether a merge-mandating rule is also firing — the cognitive prong is formally recoverable from the series itself, and merge-rules defer. The N=2 vs. N=3+ cliff is principled: two items invite bonding (doublet reading); three or more invite cataloguing (series reading).
-
-**Does not apply to appositional constructions.** Appositives are semantically synonymous by definition — the second member re-names the first — so the synonymy test would mechanically fire "merge" on every appositive. The vocative-with-close-appositive case (vocative + divine-title appositive: e.g., *Κύριε Ἰησοῦ*) and the proper-name + epithet case are governed by their own rules (§3 vocative R18; §3 attributive-modifier handling), not the N=2 Principle.
-
-**Cross-project provenance.** This principle was named in the BofM-Reader canon (2026-04-23), ported to Tanakh-Reader (2026-04-26), and now codified in GNT (2026-05-02). The substance was already encoded in M1's tie-breaker language at §2; this subsection promotes it to a named, generalized cross-cutting principle for discoverability and consistency with sibling project canons. M1 retains its specific tie-breaker text; this subsection is the cross-cutting statement that M1's tie-breaker instantiates.
-
-### Showcase — Acts 1:9
-
-```
-kai tauta eipon             <- aorist nominative ptc (FEF frame; subject = Jesus)
-bleponton auton             <- GENITIVE ABSOLUTE (subject = disciples); interjectory
-eperthee                    <- main verb resolving eipon
-kai nephele hupelaben auton apo ton ophthalmon auton.
-```
-The gen abs interrupts the FEF suspension with a camera shift to the disciples' perspective, then the main verb drops the resolution. Merging all three into one line destroys Luke's three-beat rhythm and flattens his voice. **A gen abs embedded within an FEF should remain on its own line.**
+*Framework material is in Part I above. See §0 (Purpose, Posture, Architecture), §1 (Framework pointer + GNT-corpus instantiations), and §2 (Autonomy Boundary pointer + GNT instances). The universal framework specification lives at [`atu-method/docs/framework.md §1`](../../atu-method/docs/framework.md).*
 
 ---
 
 ## Section 2: The Unless Conditions (Closed List)
 
-*Purpose: operational gating definitions for when exceptions to default-split apply. Five structural justifications (closed list) + four merge-overrides (closed list) + the complete decision procedure. **Dual-natured by design** — each justification interleaves cognitive-prong (philosophical) and structural-prong (operational) arguments at sub-paragraph granularity.*
+**Pointer to framework.** The five structural justifications (J1–J5) and four merge-override conditions (M1–M4), their generating principles, two-prong exception test, complete decision procedure, and the N=2 Adjudication Principle are codified at [`atu-method/docs/framework.md §1.4–§1.9`](../../atu-method/docs/framework.md). This canon does not duplicate that prose.
 
-When a line fails the strict predication test, it may still stand if it passes BOTH prongs of the exception test. If either prong fails, merge. The two-prong requirement prevents the exception from becoming a blank check — editorial intuition alone cannot override the predication default.
+**GNT-corpus instantiations (§2):**
 
-### The Two-Prong Exception Test
+### J1 — Formally-Marked Parallel Series: GNT Cases
 
-**Cognitive prong:** Is this a demonstrable atomic thought-unit — one new focus the reader processes as a single chunk?
+- **PASS — correlative with distinct predicates:** `οὔτε γαμοῦσιν / οὔτε γαμίζονται` (Matt 22:30 / Mark 12:25 / Luke 20:35) — two distinct predicates: active and passive sides of the marriage transaction. Each is a complete predication; each stands.
+- **PASS — triadic parallel series:** `εἴτε οὖν ἐσθίετε / εἴτε πίνετε / εἴτε τι ποιεῖτε` (1 Cor 10:31) — three distinct predicates, three distinct activities.
+- **PASS — triadic yield list:** `καὶ ἔφερεν ἓν τριάκοντα / καὶ ἓν ἑξήκοντα / καὶ ἓν ἑκατόν` (Mark 4:8, 4:20) — recoverable verb "bore" from first member.
+- **STAY — compound subject sharing one verb:** `οὔτε σὴς οὔτε βρῶσις ἀφανίζει` (Matt 6:19/20) — two subjects, one verb; compound-subject proposition, not two propositions.
+- **The ≤3 qualifier rule — triadic co-referential modifiers stay on one line:**
+  - `θυσίαν ζῶσαν ἁγίαν εὐάρεστον τῷ θεῷ` (Rom 12:1) — three adjectives on ONE sacrifice.
+  - `τὸ ἀγαθὸν καὶ εὐάρεστον καὶ τέλειον` (Rom 12:2) — three qualities of ONE will.
+  - `χρυσὸν καὶ λίβανον καὶ σμύρναν` (Matt 2:11) — three objects of ONE verb.
 
-**Structural prong:** Is there a formal justification for the reader to reconstruct the full thought?
+### J2 — Portrait-Building Attribute Accumulation: GNT Cases
 
-Both must pass. The cognitive prong without the structural prong is just "it feels like an idea unit" — not enough. The structural prong without the cognitive prong is just "there is a grammatical pattern" — not enough either.
+**Detectable signature:** No finite verb appears until a later verse; lines are successive characterizations of the same subject; each characterization could be extracted as a standalone description.
 
-### The Five Structural Justifications (Closed List)
-
-**Generating principle:** All five justifications are instances of a single underlying property: *formal structure in the text enables cognitive recovery of the full predication despite its absence from the line.* The reader can reconstruct "who did what" because the text provides machinery — parallel markers, accumulation patterns, speech-act conventions, brevity-as-emphasis, or peripherality-plus-substance — that makes the missing predicate recoverable or makes the adjunct its own focus. If no such machinery exists, the line is genuinely incomplete and must merge.
-
-This list is extensible only by worked examples + adversarial validation. Any proposed fifth justification must (a) demonstrate that it is a genuinely distinct instance of the generating principle, not a restatement of an existing justification, and (b) survive an adversarial challenge.
-
-#### 1. Formally-Marked Parallel Series
-
-**Definition:** Members of a series connected by formal markers (kai-linked, correlative particles eite/oute/mete, asyndetic parallel members) where the shared predicate is cognitively recoverable from the parallel structure. This is broader than just correlative particles — any formally-marked parallel series sharing a recoverable predicate qualifies.
-
-**Cognitive prong argument:** The reader does not experience each member as incomplete; they experience it as a beat in a series whose predicate is active in working memory. Each member reactivates the shared verb.
-
-**Structural prong argument:** The formal markers (repeated conjunction, elided verb, parallel grammatical structure) provide the reader with the machinery to reconstruct the full predication for each member.
-
-**PASS example — correlative with distinct predicates:**
-```
-oute gamousin
-oute gamizontai,
-```
-(Matt 22:30 / Mark 12:25 / Luke 20:35 — two distinct predicates: active and passive sides of the marriage transaction. Each is a complete predication; each stands.)
-
-**PASS example — triadic parallel series:**
-```
-eite oun esthiete
-eite pinete
-eite ti poieite,
-```
-(1 Cor 10:31 — three distinct predicates, three distinct activities. Each is a complete predication via the parallel structure.)
-
-**PASS example — triadic yield list:**
-```
-kai epheren hen triakonta
-kai hen hexekonta
-kai hen hekaton.
-```
-(Mark 4:8, 4:20 — each member has a recoverable verb "bore" from the first member.)
-
-**The test for stacking vs. staying:** Does each correlative/parallel member have its own DISTINCT predicate? The presence of a finite verb is necessary but not sufficient. The decisive question is whether the predicate belongs to that member alone, or whether a single predicate is shared across all members (as compound subjects, compound objects, or compound qualifiers). A shared predicate = one proposition = stay on one line.
-
-**Stay example — compound subject sharing one verb:**
-```
-oute ses oute brosis aphanizei
-```
-(Matt 6:20 / 6:19 — two subjects, one verb aphanizei; the series is a compound-subject proposition, not two propositions.)
-
-**The <=3 qualifier rule — triadic co-referential modifiers stay together.** Humans can hold three facets of one image as one thought unit. When a triad is three descriptors of ONE thing, they form a "three-in-one" thought and belong on one line:
-- `thysian zosan hagian euareston to theo` (Rom 12:1) — three adjectives on ONE sacrifice. One line.
-- `to agathon kai euareston kai teleion` (Rom 12:2) — three qualities of ONE will. One line.
-- `chryson kai libanon kai smyrnan` (Matt 2:11) — three objects of ONE verb. One line.
-
-#### 2. Portrait-Building Attribute Accumulation
-
-**Definition:** A stack of attributes painting a single portrait where the image, not the predicate, is the structural unit.
-
-**Cognitive prong argument:** A set of attributes building one portrait functions as one cognitive chunk even without an explicit verb, because the portrait IS the idea unit.
-
-**Structural prong argument:** The accumulation pattern (adjective, adjective, prepositional phrase) is a recognized grammatical form for predicate-complement stacking. The reader reconstructs "X is [attribute]" or "X who is [attribute]" from context. The diagnostic force (single image) provides the formal justification.
-
-**Detectable signature:** A verse or span where (a) no finite verb appears until a later verse, (b) the lines are successive characterizations of the same subject, and (c) each characterization could be extracted as a standalone description.
-
-**Canonical cases:**
-- **Acts 10:1-3** (Cornelius): `hekatontarches ek speires` / `eusebes kai phoboumenos ton theon` / `poion eleemosynas pollas to lao` — no finite verb until v.3 (eiden). Each line is one attribute of Cornelius.
-- **Pauline salutations** (Rom 1:1, 2 Cor 1:1, Gal 1:1, etc.): `Paulos apostolos` / `dia thelematos theou` — each credential on its own line.
+- **Acts 10:1-3** (Cornelius): `ἑκατοντάρχης ἐκ σπείρης` / `εὐσεβὴς καὶ φοβούμενος τὸν θεόν` / `ποιῶν ἐλεημοσύνας πολλὰς τῷ λαῷ` — no finite verb until v.3 (εἶδεν). Each line is one attribute of Cornelius.
+- **Pauline salutations** (Rom 1:1, 2 Cor 1:1, Gal 1:1, etc.): `Παῦλος ἀπόστολος` / `διὰ θελήματος θεοῦ` — each credential on its own line.
 
 *(Heb 1:3-4 was previously cited here; removed 2026-04-25 because the rule's detectable signature requires "no finite verb appears until a later verse" and Heb 1:3 has ἐκάθισεν within the verse. The split of Heb 1:3 L1's two distinct-image attributes is governed by §3.16 coordinating-syntax-with-distinct-images, not by this justification.)*
 
-#### 3. Speech-Act Announcement Convention
+### J3 — Speech-Act Announcement: GNT Cases
 
-**Definition:** Formulas that announce a speech act — speech-intro verbs (lego, phemi) as standalone lines — where the announcement of speech is itself a complete communicative act.
+- `καὶ ἔλεγεν αὐτοῖς:` — complete speech-act predication; speech content follows on next line.
+- `καὶ εἶπεν αὐτῷ:` — same pattern.
 
-**Cognitive prong argument:** The speech act IS the predication. The reader processes "he said" as a complete communicative event: someone spoke, to an audience. The content of the speech is a separate cognitive frame.
+See §3.6 (R11) for the full GNT speech-intro treatment.
 
-**Structural prong argument:** The speech formula is syntactically complete as a speech-act predication. The colon or ano teleia after the formula is the textual signal of a voice shift.
+### J4 — Classical Comma: GNT Case
 
-**PASS examples:**
-```
-kai elegen autois:
-```
-```
-kai eipen auto:
-```
-Each is a complete speech-act predication. The speech content follows on the next line.
+- `θανάτου δὲ σταυροῦ.` (Phil 2:8) — the escalating appendage. The δέ triggers a new line; the dramatic compression IS the rhetorical device.
 
-#### 4. Classical Comma
+### J5 — Substantive Adjunct as Own Focus: GNT Cases
 
-**Definition:** A very short emphatic unit with disproportionate semantic weight. The name preserves the classical Greek κόμμα ("cut, piece") — a short member of a larger unit.
+- **Genitive absolute** (R19 — always own line): `βλεπόντων αὐτῶν` (Acts 1:9) — camera shifts to disciples' perspective as interjectory frame.
+- **Prepositional catena** (§8): 2 Cor 6:4-7 ἐν-catena (ἐν ὑπομονῇ πολλῇ, ἐν θλίψεσιν, ἐν ἀνάγκαις, ἐν στενοχωρίαις...) — each element on its own line.
+- **FEF periodic frame** (§5, §8): Luke 3:1-2 — five genitive-phrase temporal adjuncts (ἐν ἔτει πεντεκαιδεκάτῳ τῆς ἡγεμονίας Τιβερίου Καίσαρος... ἐπὶ ἀρχιερέως Ἅννα καὶ Καϊάφα...) — the matrix ἐγένετο ῥῆμα θεοῦ lands only after the adjunct chain completes.
+- **Fronted temporal existential edge case:** John 1:1 `ἐν ἀρχῇ` — only 2 words but carries the Gospel prologue's entire temporal frame; substance overrides the ≤3-word default-merge caveat.
 
-**Cognitive prong argument:** These carry enough force to constitute a cognitive chunk despite lacking traditional predication structure. The reader processes each as a single, complete communicative beat.
+*Relation to R19, prep-catena (§8), FEF:* These are the mechanical operationalizations of J5 for specific GNT adjunct classes. J5 is the generating principle; R19 (gen abs), prep-catena treatment (§8), and FEF periodic-frame treatment (§5) are how it lands for those classes. A future adjunct pattern not covered by existing rules inherits its warrant from J5 rather than requiring a new top-level rule.
 
-**Structural prong argument:** The brevity itself is the structural justification. A one-word or two-word fragment that the author placed in isolation is doing rhetorical work that a longer elaboration would dilute.
+### M1 — Gorgianic Bonded Pair: GNT Cases
 
-**PASS example:** `thanatou de staurou.` (Phil 2:8) — the escalating appendage. The de triggers a new line; the dramatic compression IS the rhetorical device.
+- `κόπῳ καὶ μόχθῳ` (2 Cor 11:27) — "labor and toil" as one image of exhaustion → MERGE.
+- `χαίρειν μετὰ χαιρόντων, κλαίειν μετὰ κλαιόντων` (Rom 12:15) — two classical-comma halves constituting one paraenetic command → MERGE.
+- `Τολμηταί, αὐθάδεις` (2 Pet 2:10) — asyndetic N=2 bonded adjective pair, same person → MERGE.
 
-#### 5. Substantive Adjunct as Own Focus
+**Tie-breaker (N=2 formally-marked pair):**
+- SPLIT: `οὔτε γαμοῦσιν / οὔτε γαμίζονται` (Matt 22:30) — active and passive sides; distinct predicates; J1 wins.
+- MERGE: `Δαιμόνιον ἔχει καὶ μαίνεται·` (John 10:20) — one diagnostic judgment; M1 wins.
 
-**Definition:** A fronted or trailing adjunct (temporal PP, locative PP, causal PP, genitive absolute, participial frame, prepositional catena element) that is (a) grammatically peripheral to the matrix predication's core truth AND (b) carries substantial semantic content — enough that the reader processes it as an independent focus rather than background.
+**M1 strict-application caveat:** When M1's bonded-pair grounds are withdrawn ("different semantic domains"), that does NOT by itself license a split. Before flipping to SPLIT, check: M2 (verb-object bond), M3 (bare-governor), M4 (fragmented atomic thought), R11 (speech-intro), R8's καί-merge default, R28 textual-asymmetry, and default-merge when grammar is ambiguous. Split only when ALL merge protections are exhausted AND both fragments pass the atomic-thought test.
 
-**Cognitive prong argument:** The adjunct functions as its own cognitive focus. A reader processing "[in the fifteenth year of Tiberius's reign] / the word of God came" holds the dating adjunct as one frame and the main event as another. Merging them forces the reader to process temporal-frame + event as a single thought.
+### M2 — Verb-Object Clause-Nucleus Bond: GNT Cases
 
-**Structural prong argument:** Greek syntax treats these adjuncts as detachable — they can front, trail, or be omitted without rupturing the matrix predication. The genitive absolute construction is the sharpest case (literally "loosened from" the main clause by case disjunction — Smyth §2070). Prepositional phrases, participial frames, and catenae of semantically distinct PPs are detachable by weaker but still real grammatical warrant. When the content is substantial (not a 3-word trivial adverbial), the detachability becomes cognitively active.
+- `εἰπέ` / `ἵνα οἱ λίθοι οὗτοι ἄρτοι γένωνται` — reject split: εἰπέ needs its ἵνα complement (Matt 4:3).
+- `ἐγερθεῖσα / διηκόνει` — reject split: ἠγέρθη and διηκόνει form one narrative beat (Matt 8:15).
+- `τοὺς προφήτας / καὶ σοφοὺς / καὶ γραμματεῖς` at Matt 23:34 — accept split: ἀποστέλλω has multiple distinct objects with formal parallel marking (J1 overrides).
 
-**Test:** Can the adjunct be paraphrased as its own "when / where / why / how" clause that answers a question the matrix leaves open? If yes, it's a substantive adjunct and earns its own line. If the adjunct is short (≤3 words) and trivially adverbial, merge.
+### M3 — Bare-Governor Indivisibility: GNT Cases
 
-**Canonical cases:**
-- **Genitive absolute** (R19 — always own line). `blepontōn autōn` (Acts 1:9) — camera shifts to the disciples' perspective as an interjectory frame; core event (ἐπήρθη) continues on its own line.
-- **Prepositional catena** (§8). 2 Cor 6:4-7 ἐν-catena (ἐν ὑπομονῇ πολλῇ, ἐν θλίψεσιν, ἐν ἀνάγκαις, ἐν στενοχωρίαις...) — each element is a substantive adjunct on its own line.
-- **FEF periodic frame** (§5, §8). Luke 3:1-2 — five genitive-phrase temporal adjuncts (ἐν ἔτει πεντεκαιδεκάτῳ τῆς ἡγεμονίας Τιβερίου Καίσαρος... ἐπὶ ἀρχιερέως Ἅννα καὶ Καϊάφα...) — the matrix ἐγένετο ῥῆμα θεοῦ lands only after the adjunct chain completes.
-- **Fronted temporal existential.** John 1:1 `ἐν ἀρχῇ` — only 2 words but carries the Gospel prologue's entire temporal frame; the brevity-but-substance is the edge case flagged by the ≤3-word caveat above (substance can override length).
+- Rom 1:29 reversal: initially split as `μεστούς / φθόνου / φόνου / ...`; reverted to `μεστοὺς φθόνου, / φόνου / ...` — μεστούς alone is not a thought.
+- Heb 1:1 merge: `Πολυμερῶς καὶ πολυτρόπως` merged back with `πάλαι ὁ θεὸς λαλήσας...` — the adverb pair alone dangles.
+- Mark 1:6 merge: `καὶ ἦν ὁ Ἰωάννης / ἐνδεδυμένος τρίχας καμήλου` merged — bare `ἦν` without predicate is not a thought.
 
-**Relation to R19, prep-catena (§8), FEF:** These are the mechanical operationalizations of justification #5 for specific adjunct classes. Justification #5 is the generating principle; R19 (gen abs), prep-catena treatment (§8), and FEF periodic-frame treatment (§5) are how it lands for those classes. A future adjunct pattern not covered by the existing rules inherits its warrant from justification #5 rather than requiring a new top-level rule.
+### M4 — Fragmented Atomic Thought-Unit: GNT Cases
 
-**Contrast with the retired breath criterion:** justification #5 absorbs the cognitive work breath was loosely doing (long lines need breaking) — with a principled grammatical-peripherality test rather than an un-thresholded "feels too long" judgment. Breath itself is retired (§9 Superseded Formulations); substantive adjunct is the proposition-side replacement for the cognitive-chunking work breath was smuggling in.
+- Trailing adverbial modifiers orphaned from their predicate: `..., ὅτι X / ...` trailing phrase is not its own idea unit.
+- Dangling discourse particles: `ἀλλά` alone on a line without a complete clause.
+- Orphaned appositives separated from head noun when the appositive alone has no independent image.
 
----
-
-### Merge-Override Conditions (Closed List)
-
-**Symmetric counterpart to the five split-triggers above.** Where the five justifications describe cases in which the merge default is overridden to produce a split, the four merge-overrides below describe cases in which an apparent split-trigger is itself overridden, returning the members to one line. The default is still merge; these override conditions catch cases where a naive application of the split-triggers would fragment a unit that should stay whole.
-
-**Generating principle:** Even when a line looks like it could pass the structural prong (formal markers are present), merge wins when the resulting fragments would fail on more basic grounds — the chunk is not actually two propositions (M1), the clause nucleus would be ruptured (M2), the fragment cannot stand as atomic thought (M3), or the resulting pieces would fail the atomic-thought test that the structural prong was supposed to enable (M4).
-
-These override conditions are extensible only by worked examples + adversarial validation, same rule as the split-triggers.
-
-#### M1. Gorgianic Bonded Pair
-
-**Definition:** N=2 coordinate members forming a unified rhetorical image. The two members together constitute a single hendiadys rather than two distinct propositions. Even with formal καί-linkage (which would normally trigger justification 1), if the pair is bonded, merge.
-
-**Test:** Can the two members be paraphrased as a single hendiadys or unified image? Do they carry shared rhetorical weight without independent predicative force?
-
-**Canonical cases:**
-- `kopo kai mochtho` (2 Cor 11:27) — "labor and toil" as one image of exhaustion
-- `chairein meta chaironton, klaiein meta klaionton` (Rom 12:15) — two classical comma halves that together constitute one paraenetic command
-- `Tolmetai, authadeis` (2 Pet 2:10) — asyndetic N=2 pair of bonded adjectives, same person
-
-**Contrast with the ≤3 qualifier rule** (Section 2, justification 1): the ≤3 rule covers triadic co-referential modifiers of ONE thing (stay). The gorgianic-pair rule covers N=2 specifically — two members whose bonding is the rhetorical point.
-
-**Tie-breaker when M1 and justification 1 both seem to apply (N=2 formally-marked pair):** This tie-breaker is the canonical specific case of the cross-cutting **N=2 Adjudication Principle** (§1). The same merge-vs-split logic applies wherever a merge-rule and structural justification 1 both fire at N=2.
-- If each member has a distinct finite verb AND the verbs are not synonymous, cognate, or intensification variants of each other → justification 1 wins → split. Example: `οὔτε γαμοῦσιν / οὔτε γαμίζονται` (Matt 22:30) — active and passive sides of distinct predications.
-- If the two verbs are semantically synonymous, form a recognizable binomial idiom, or function as a hendiadys (single unified act expressed via two near-synonyms) → M1 wins → merge. Example: `Δαιμόνιον ἔχει καὶ μαίνεται·` (John 10:20) — one diagnostic judgment expressed via two complementary terms.
-- The test is structural (verb semantic class) not intuitive. If the two verbs belong to clearly different semantic domains, they are not a gorgianic pair even if only N=2 and formally marked.
-
-**Strict-application caveat — M1 rejection does not license split.** M1's "different semantic domains" tie-breaker *withdraws the gorgianic merge protection*; it does NOT by itself license a split. Before flipping to SPLIT, check whether another merge protection fires: M2 (verb-object bond), M3 (bare-governor), M4 (fragmented atomic thought), R11 (speech-intro / approach+touch), R8's καί-merge default for short coordinate clauses, R28 textual-asymmetry preservation when applicable, and default-merge when grammar is ambiguous. Split only when ALL merge protections are exhausted AND both resulting fragments pass the atomic-thought test. Rationale: the canon's overall posture is merge-by-default; M1 is one of several merge levees, and its failure signals "check the others", not "proceed to split".
-
-#### M2. Verb-Object Clause-Nucleus Bond
-
-**Definition:** A finite verb and its direct object (or obligatory complement) on short phrases stay on one line, even under split-trigger pressure. The clause nucleus is the minimal atomic predication and cannot be fragmented.
-
-**Test:** Would splitting strand the verb without its complement, or strand the object without its governor? If yes, merge.
-
-**Canonical cases:**
-- `eipe / hina hoi lithoi houtoi artoi genontai` — reject: εἰπέ needs its ἵνα complement (Matt 4:3)
-- `egertheisa / dieikonei` — reject: merging is correct because ἠγέρθη and διηκόνει form one narrative beat (Matt 8:15)
-- `ton prophetas / kai sophous / kai grammateis` on 23:34 — accept split because the verb ἀποστέλλω has multiple distinct objects with formal parallel marking (justification 1 overrides)
-
-The distinction from M1: M2 concerns verb + obligatory complement (transitive nucleus); M1 concerns coordinate members of a semantic pair.
-
-#### M3. Bare-Governor Indivisibility
-
-**Definition:** A head word — participial adjective (μεστούς, πλήρης, ἔνοχος), governing participle (εἰδότες, λέγοντες, εἰπών), discourse particle (ἀλλά, δέ, γάρ standalone) — cannot stand on its own line without at least one complement, object, or dependent. The bare governor fails the atomic-thought test because it is grammatical machinery awaiting content, not a complete predication.
-
-**Test:** Can the isolated head-word be read as a complete thought? Or does the reader's attention dangle forward, expecting completion on the next line?
-
-**Canonical cases:**
-- Session 18 Rom 1:29 reversal: initially split as `mestous / phthonou / phonou / ...`; reverted to `mestous phthonou, / phonou / ...` — μεστούς alone is not a thought
-- Session 19 Heb 1:1 merge: `Polymeros kai polytropos` merged back with `palai ho theos lalesas...` — the adverb pair alone dangles
-- Mark 1:6 merge: `kai en ho Ioannes / endedymenos trichas kamelou` merged — bare `en` without predicate is not a thought
-
-**Contrast with speech-intro (justification 3):** Finite speech-intro formulas (λέγει, εἶπεν + dative) ARE complete speech-act predications — the speech act itself is the content. Bare governors are not; they await content. Note: εἰπών in the M3 examples above is a participial form used as an introductory frame *without* dative or content — it dangle-awaits content. εἶπεν (finite) + dative is a complete speech act and falls under justification 3 / R11, not M3.
-
-#### M4. Fragmented Atomic Thought-Unit
-
-**Definition:** If splitting a line would produce fragments that individually fail the atomic-thought test, merge. This is the inverse of the cognitive prong: the cognitive prong requires each resulting chunk to be its own atomic thought for split to proceed; if any resulting fragment fails that test, the split is blocked.
-
-**Test:** Read each proposed resulting line aloud as a standalone unit. Does it constitute one focused-attention chunk with bounded information? If any resulting line fails, the split is over-fragmenting.
-
-**Canonical cases:**
-- Trailing adverbial modifiers orphaned from their predicate: `..., hoti X / ennou pheradoteros Y` — the trailing phrase is not its own idea unit
-- Dangling discourse particles: `alla` alone on a line without a complete clause
-- Orphaned appositives separated from their head noun when the appositive alone has no independent image
-
-**This is the adversarial auditor's primary over-split detection rule.** Most reversals (Rom 1:29, Luke 14:21, Phil 4:8, 2 Pet 2:10) trigger M4 alongside M1 or M3.
-
-### The Complete Framework
-
-Putting Section 2 and the merge-overrides together, the full decision procedure is:
-
-1. **Default:** merge (predication test — members sharing one predicate and not independently atomic stay on one line).
-2. **Split-trigger** (= any of justifications 1–4 firing): if BOTH the structural prong (one of justifications 1–4) AND the cognitive prong (atomic thought-unit) pass, the line splits.
-3. **Merge-override:** even when a split-trigger applies, if any merge-override (M1–M4) fires, the line returns to merged state. **When split-trigger and merge-override both fire on the same line, merge-override wins** — the merge-override list is the mechanism that prevents split-triggers from producing non-atomic or bonded-pair fragments. Note: M4 is the cognitive prong restated as a merge condition — step 2 requires the cognitive prong to pass for a split to proceed; M4 blocks a split when any resulting fragment fails that same test. They are the same test viewed from opposite directions; there is no logical gap between them.
-4. **Textual asymmetry override (R28):** where the author has chosen asymmetric treatment of parallel passages, preserve the author's structure regardless of editorial symmetry preferences. R28 operates at the split-trigger level — when the author's finite-verb count or structural choice differs between parallel passages, R28 blocks importing the richer passage's structure onto the sparser one, even when formal markers on the sparser side would otherwise trigger justification 1.
-
-The framework is a default-merge with two closed lists of exceptions — five split-triggers and four merge-overrides — plus a meta-principle (R28) governing cases where authorial and editorial symmetry conflict.
+**Primary over-split detection rule.** Most GNT reversals (Rom 1:29, Luke 14:21, Phil 4:8, 2 Pet 2:10) trigger M4 alongside M1 or M3.
 
 ---
 
@@ -1355,20 +1084,18 @@ The Greek equivalent of the Hebrew wayehi protasis is the **periodic sentence wi
 
 ## Section 6: Precedent and Scope
 
-*Purpose: **dual-natured** — scholarly grounding (Codex Bezae, Claromontanus, Skousen) and project scope discipline (mainly philosophical) PLUS the operational change-protocol machinery (Defensibility capture, §6.5 Mandatory-audit triggers — operational; Claude reads §6.5 literally before any canon commit).*
+**Pointer to framework.** Proposal requirements (defensibility capture — WHY / HOW WE KNOW / SCOPE), mandatory-audit triggers (12 categories), audit-skippable categories, audit-evidence in commit messages, self-test before commit, self-consistency audit trigger, and proposed-rule adoption protocol are codified at [`atu-method/docs/framework.md §7.2–§7.8`](../../atu-method/docs/framework.md). This canon does not duplicate that prose. The GNT-specific mechanical audit gate is the `validators/hooks/commit-msg` pre-commit hook (installed 2026-04-26; source at `validators/hooks/`).
+
+**GNT-specific provenance and scope:**
 
 ### Precedent for colometric layout
 
 We are not inventing a practice; we are recovering one with ancient and modern precedent.
 
-- **Codex Bezae (D 05), 5th c.** — Luke/Acts laid out colometrically; each line a sense unit. Empirical comparison is feasible (current corpus agrees with Bezae at 61.3% with caveat below).
+- **Codex Bezae (D 05), 5th c.** — Luke/Acts laid out colometrically; each line a sense unit. Empirical comparison: current corpus agrees with Bezae at **61.3%** (caveat: Bezae's column width ~25-30 characters means many breaks are forced by writing space; agreement metric is meaningful but Bezae is not a colometric gold standard — it is one empirical datum).
 - **Codex Claromontanus (Dp 06), 6th c.** — colometric Paul.
 - **Jerome's Latin Vulgate *per cola et commata*, 4th c.** — Jerome's preface to Isaiah explicitly describes laying out the prophetic books "by cola and commas" for ease of reading.
 - **Royal Skousen, *The Earliest Text* (2009/2022)** — modern precedent on the Book of Mormon; the trigger for this project's analogical extension to the GNT.
-
-### Bezae as benchmark
-
-Codex Bezae's line breaks reflect a mixture of ATU-level decisions and physical layout constraints. The column width (~25-30 characters) means many breaks are forced by writing space. Agreement metrics are meaningful but Bezae is not a colometric gold standard — it is one empirical datum.
 
 ### Scope: what this project is NOT
 
@@ -1377,57 +1104,6 @@ Codex Bezae's line breaks reflect a mixture of ATU-level decisions and physical 
 - Not manuscript comparison (Swanson et al.)
 - Not paragraph-level pagination (NA28, UBS5, SBLGNT — we rely on their text; everything about layout is ours)
 - Not a test of any particular psycholinguistic or rhetorical-theory framework — we are producing a reading edition; theoretical alignment is a downstream question that a later phase may ask
-
-### Empirical standard for rule adoption
-
-A proposed rule or rule revision is adopted when it produces a more genuine ATU in the passages it governs — not when it satisfies any theoretical framework. The test:
-
-1. Does applying this rule produce a line that reveals an actual thought-boundary in the text?
-2. Is the rule mechanically applicable, or does it require judgment?
-3. Does it improve corpus consistency?
-
-Rules that fail (1) — produce imposed or artificial breaks — are rejected regardless of theoretical elegance. Rules that pass (1) but fail (2) are documented as editorial (not mechanical) and gated per §3's Category A/B/C discipline. Rules that pass (1) and (2) but degrade (3) require a revision pass on the adjacent rules or cases that cause the degradation.
-
-**Defensibility capture for new canon additions.** Every new canon subsection or rule revision should include three elements in its codification:
-- **WHY** — what problem it solves, what case surfaced it
-- **HOW WE KNOW** — the empirical warrant (corpus instances, cross-reference, grammatical test)
-- **SCOPE** — where it applies and where it doesn't (test contrasts / non-examples)
-
-Future additions are audited against this checklist — relevant for both day-to-day consistency and for the PhD prospectus where each rule needs to carry its warrant. Retroactive audit of existing canon sections is future work; the requirement is prospective from 2026-04-22.
-
-### Mandatory-audit triggers for canon changes
-
-The "extensible only by worked examples + adversarial validation" requirement on new structural justifications (§2 line 236) and new merge-overrides (§2 line 352) is strengthened here to an explicit mandatory-audit trigger list at commit time. A canon proposal matching any of the following triggers MUST dispatch an adversarial audit (hostile agent or equivalent external skeptical review) and reflect its findings in the commit. Skipping audit on a triggered proposal is a protocol violation.
-
-**Mandatory-audit triggers (12 categories):**
-
-1. **New named rules / sub-clauses / categories** — including precedence cross-references between rules (e.g., "Rule A trumps Rule B at X"). Shape-matches feel-tests, enumerated lists, and subjective carve-outs particularly.
-2. **Rule status promotions** — *proposed* → settled. Removes the hedge; stakes increase.
-3. **Spot-check-based proposals** — any canon claim resting on less than full-corpus-sweep evidence. Claims like "I checked 30 instances and the pattern is uniform" must be verified by a full-corpus classification before codification.
-4. **Reclassification of canon-recorded Category B/C items** — once a verse, rule, or item is recorded as Category B/C in §10 Update Log or a session's pending list, subsequent sessions cannot silently reclassify it under a different rule-framing.
-5. **Rule deletions or SCOPE narrowings that retire live applications** — retiring a rule is as high-stakes as adding one; audit prevents discarding legitimate work. See §9 Superseded Formulations for the retirement trail.
-6. **Mechanical signature / validator changes under settled rules** — adding a verb class to a closed-list UD signature, refining a UD trigger, or changing validator conditions silently expands or contracts rule coverage.
-7. **Corpus sweeps ≥5 instances under a settled rule** — a sweep asserts "the rule fires cleanly here" N times; the collective scope-claim needs audit even when individual instances are Category A.
-8. **Canonical example additions to settled rules** — examples shape rule interpretation; a poorly-chosen example silently redefines the rule.
-9. **Meta-rule changes to this trigger list itself** — changes to this protocol must be audited.
-10. **Discipline-shifting memory file additions** — new `feedback_*.md` or `project_*.md` files that shape how Claude approaches canon work are behaviorally-governing, not just observations; they need the same scrutiny as canon.
-11. **Cross-project imports** (BofM ↔ GNT ↔ Tanakh) **or recoveries from retired canon** (§9 Superseded Formulations) — provenance from a sibling project or older version is not validation; the imported claim must have GNT corpus evidence independent of its source.
-12. **Corpus-fit verification — post-codification AND post-detection.**
-    - **(a) Post-codification.** A new rule, sub-clause, or named pattern is **not "closed" until a corpus-wide goal-fit audit has confirmed (i) all eligible instances conform OR (ii) all residuals are explicitly enumerated** in §10. This extends trigger #3 (spot-check-based proposals) temporally: full-corpus verification is required at codification AND once after, on the live corpus.
-    - **(b) Post-detection.** This trigger ALSO fires when Stan-eyeball or any audit surfaces a violation of an **existing** (settled) rule. Application drift accumulates as the corpus changes around long-codified rules. When a violation is detected, schedule a same-rule full-corpus re-sweep within the same session if practical, or as the next session's first task. (Inverse direction from #7, which gates operator-initiated sweeps.)
-    - **Audit dimensions to consider:** goal-fit (does corpus implement codified rules), application-consistency on formulaic phrases (καὶ ἐγένετο FEFs, λέγων-introduced speech, ἀπεκρίθη + εἶπεν redundant-speech, μέν/δέ pairing), application-consistency on parallel-list constructions (genealogies, beatitudes, woe-series, conditional pairs — see §9 Superseded Formulations entry on §3.7 retirement + R28 textual asymmetry), self-consistency (cross-references, defensibility triplets), judgment-handoff smuggling (named in `feedback_rhetoric_bandwagon.md`).
-
-**Audit dispatch protocol — parallel by default.** When a proposal triggers multiple audit dimensions (e.g., fake-rule test + full-corpus sweep + scope test), dispatch all in a single message with multiple Agent tool calls. Sequential only when audit A's verdict determines whether audit B should run. Parallelization substantially reduces friction and lowers the effective cost per audit.
-
-**Audit-skippable categories (all must hold for the proposal to bypass audit):**
-- Category A mechanical corpus edits per already-codified rules (sweep-scale ≥5 still triggers #7 regardless)
-- Typo fixes, cross-reference updates that don't assert precedence, internal formatting cleanups
-- Deletions of items already reverted in the same session (audit-trail cleanup)
-- Defensibility-capture additions (WHY / HOW WE KNOW / SCOPE) to already-settled rules without changing the rule's scope
-
-**Relationship to the self-consistency audit.** The pre-commit audit triggers above are per-change, before commit. The "≥2 canon codifications → light self-consistency audit before WRAP-UP" trigger in CLAUDE.md is session-rollup, after commits but before wrap. Both mechanisms coexist; neither replaces the other.
-
-**Provenance and rationale.** See §10 Update Log entry 2026-04-24 for the cross-project-import context, the audit dispatched before codification, and the GNT-side risk profile that earned the trigger list its place.
 
 ### v4 as methodology application (not hand typing)
 
@@ -1442,6 +1118,15 @@ This matters for:
 - **External reviewers** evaluating whether v4 is a "scholarly product" or a "personal annotation" — it is the former, grounded in an articulated methodology.
 - **Future Claudes** auditing whether a corpus edit is defensible: trace it to a canon rule + warrant. If it can't be traced, it's a methodology gap (add to canon) or a bug (fix in corpus).
 - **The scan-and-apply pattern**: mechanical sweeps ARE methodology application, not overrides of it. The script encodes a Category A rule; running it applies the rule at scale.
+
+### §6.5 — Mandatory-audit triggers for canon changes (GNT-specific pointer)
+
+**Pointer to framework.** The 12 mandatory-audit triggers, audit-skippable categories, commit-message declaration discipline, self-test, and audit-dispatch parallelization protocol are codified at [`atu-method/docs/framework.md §7.3–§7.6`](../../atu-method/docs/framework.md). Claude reads those sections literally before any GNT canon commit.
+
+**GNT-specific audit-trail conventions:**
+- Audit-evidence references in GNT commit messages cite parallel-agent verdicts and §10 Update Log entries.
+- The `validators/hooks/commit-msg` hook mechanically gates commit messages touching this canon file against §7.5 audit-evidence keywords.
+- Provenance note: the trigger list was codified in GNT on 2026-04-24 (see §10 Update Log entry 2026-04-24 for the cross-project-import context and GNT-side risk profile). It was subsequently promoted to the universal framework on 2026-05-12 (§7 in atu-method/docs/framework.md); this section now points to that universal statement.
 
 ---
 
@@ -1476,6 +1161,17 @@ A central finding validated across 137,554 words of the SBLGNT: syntactic clause
 - **Grammar under-splits.** A 200-character Pauline periodic sentence with three participial images is not one breath unit.
 
 The corrective layer — principled rules that merge fragments and split mega-lines — is the methodological contribution.
+
+### Marked Word Order (Fronting Paradox)
+
+**The fronting paradox — marked word order argues for MERGE, not split.** When a grammatically tight unit (verb + its required-case complement, or other bound constituent) appears in a *marked* word order — e.g., object fronted before its governing verb — the natural editorial instinct is to split at the fronted element as a way of "visualizing the emphasis." **This instinct is wrong.** The rhetorical effect of fronting depends on the grammatical unity *staying intact*. The marked arrangement is felt as emphatic precisely because the hearer processes the fronted element in a non-default position *within a single breath unit*. Splitting at the fronted-element boundary mechanizes the emphasis — it imposes a pause that was not in the original oral delivery — and paradoxically *diminishes* the rhetorical force.
+
+This subsection is the GNT-specific anti-scope-creep rule operationalizing the "reaching-for-split" warning under §1 Imposing-vs-Revealing scope discipline. It is not in the universal framework (no fronting / marked-word-order section in `framework.md`); it lives here because the rule is calibrated against Greek's case-marked freedom of word order — a per-language phenomenon.
+
+**Case studies:**
+
+- **Gal 2:9 — split** (pillars characterization on own line): two distinct thoughts (the named persons vs. their ironic characterization). Subject + substantival-participial-phrase appositive, where the appositive is six words, non-trivial, and introduces the *dokountes* motif. Grammatical warrant for split is the substantival-participle-as-own-thought rule.
+- **Gal 2:10 — merge** (fronted `τὸν πτωχόν` kept with `μνημονεύωμεν` on one line): `μνημονεύω` requires genitive for its object. The fronted genitive + restrictive `μόνον` create a marked word order whose rhetorical force depends on the grammatical unity staying intact.
 
 ### Exegetical Hot Spots
 
@@ -2732,4 +2428,25 @@ Pragmatic stance established: current phase is empirical — *where are the sens
 
 ---
 
-*Document created: 2026-04-09. Restructured: 2026-04-16. Canon consolidated: 2026-04-18. Foundational reframing: 2026-04-20.*
+### 2026-05-12 — v3.0 Framework-Pointer Restructure
+
+**What changed.** This canon was restructured from v2.0 (framework prose inline in §0/§1/§2/§6) to v3.0 (pointer-only for universal material; GNT-specific rule body preserved in full). The restructure mirrors the BoFM canon v3.0 pattern executed 2026-05-11 in the sibling readers-bofm repo.
+
+**Sections repointed:**
+- `## Foundational premise` + `## Posture` (v2.0 preamble) → Part I §0 pointer to `framework.md §0.1/§0.3`; GNT intellectual lineage (Skousen + Stan-arrival narrative) preserved in §0 GNT-specific framing.
+- `## Architecture` (three-layer model) → Part I §0 pointer to `framework.md` + `architecture.md` (four-plane model supersedes); GNT-specific Layer 1/Layer 2 details preserved in §0 GNT-specific architecture.
+- `## Section 1: The Framework` (three forces, Step 0 input filter, mission/method, container-not-originator, N=2 Adjudication Principle, Acts 1:9 Showcase) → stub pointer in §1; all GNT-specific worked examples (Gal 2:9/2:10, John 10:20, 2 Cor 11:27, Acts 1:9, Luke 3:1-2, John 1:1, etc.) preserved as GNT-corpus instantiations in Part I §1.
+- `## Section 2: The Unless Conditions` (five structural justifications + four merge-overrides + complete decision procedure) → pointer to `framework.md §1.4–§1.9`; all GNT-corpus worked examples (Matt 22:30, 1 Cor 10:31, Mark 4:8, Matt 6:19/20, Rom 12:1-2, Matt 2:11, Acts 10:1-3, Pauline salutations, Phil 2:8, Acts 1:9, 2 Cor 6:4-7, Luke 3:1-2, John 1:1, 2 Cor 11:27, Rom 12:15, 2 Pet 2:10, Matt 4:3, Matt 8:15, Matt 23:34, Rom 1:29, Heb 1:1, Mark 1:6) preserved as GNT-corpus instantiations in §2.
+- `## Section 6: Precedent and Scope` including §6.5 mandatory-audit triggers → pointer to `framework.md §7.2–§7.8`; GNT-specific provenance (Bezae 61.3% benchmark, Claromontanus, Jerome's Vulgate, Skousen citation, v4-as-methodology-application reproducibility distinction, `validators/hooks/commit-msg` gate, 2026-04-24 codification provenance) preserved in §6 GNT-specific sections.
+
+**Sections kept in full (not touched):** §3 (Rules R1–M4-GNT-1), §4 (Operational Tests), §5 (Register Operationalization), §7 (retired 2026-04-20, number preserved), §8 (Greek-Specific Application), §9 (Superseded Formulations).
+
+**Content NOT duplicated in this canon (pointered to framework.md):** universal mission, method discipline framing, pragmatic stance, scope statement, generative principle, three closed-list syntax-veto ways, image diagnostic, J1–J5 definitions and generating principles, M1–M4 definitions and generating principles, four forces summary table, five-step decision procedure, application-order step-by-step, N=2 Adjudication Principle (named statement), N=3+ cliff, Parallel-List Uniformity Principle, Authorial Asymmetry Principle, autonomy boundary (A/B/C) definitions, mechanical-rule authority, scope/precedence/closed-list diagnostic, 12 mandatory-audit triggers (exact text), audit-skippable categories, §7.5 commit-message discipline, §7.6 self-test, §7.7 self-consistency trigger, §7.8 proposed-rule adoption protocol.
+
+**Audit-status:** Audit dispatched per §6.5 (triggers #1 — named-category reframe "v3.0 pointer-only restructure"; #5 — inline framework prose retired as live content; #11 — structure mirrors bofm v3.0 cross-project import). See commit message for audit evidence.
+
+**Line count:** v2.0 was 2735 lines; v3.0 is ~2459 lines. Reduction of ~276 lines is pure universal-prose retirement plus one GNT-specific relocation (no deletion). The "Marked Word Order (Fronting Paradox)" subsection — Gal 2:9/2:10 case-study pair plus the anti-scope-creep principle that marked word order argues for MERGE not split — was relocated from the retired §1 prose into §8 Greek-Specific Application (its correct home, since the principle is calibrated against Greek's case-marked freedom of word order and is not universal framework content). The §1 Force 3 bullet pointer was updated to reference the new §8 subsection. This relocation was the only modification required by the audit verdict; all other content is either preserved as GNT-corpus instantiation bullets or genuinely universal and now correctly pointered to `framework.md`.
+
+---
+
+*Document created: 2026-04-09. Restructured: 2026-04-16. Canon consolidated: 2026-04-18. Foundational reframing: 2026-04-20. Framework-pointer restructure (v3.0): 2026-05-12.*
