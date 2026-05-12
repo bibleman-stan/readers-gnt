@@ -1073,10 +1073,9 @@
   .help-body a:hover { text-decoration: underline; }
   .help-back-link { display: inline-block; color: var(--accent); font-size: 0.9em; margin-top: 1.5em; cursor: pointer; }
 
-  /* === KJV SWAP SYSTEM (Wave 3α) ===
-     Active on ?source=kjv or #kjv-preview paths only.
-     The .swap spans are emitted by build_books.py --english-source=kjv.
-     On the legacy path no .swap spans exist, so these rules have zero cost. */
+  /* === KJV SWAP SYSTEM (Wave 3α / Wave 6 default) ===
+     .swap spans are emitted by build_books.py (KJV-verbatim, always on).
+     Modern pill toggles archaic→modern in place. */
 
   /* Archaic vocabulary words: dotted underline signals "tap to see modern" */
   .swap {
@@ -1096,9 +1095,9 @@
     text-decoration: none !important;
   }
 
-  /* Modern pill button — hidden unless body has .kjv-preview class */
+  /* Modern pill button — always visible (KJV is now the default) */
   #aid-pill {
-    display: none;
+    display: inline-block;
     padding: 3px 10px;
     border-radius: 12px;
     border: 1px solid var(--text-faint);
@@ -1111,9 +1110,6 @@
     transition: all 0.15s;
     letter-spacing: 0.02em;
     -webkit-tap-highlight-color: transparent;
-  }
-  body.kjv-preview #aid-pill {
-    display: inline-block;
   }
   #aid-pill:hover {
     color: var(--text-dim);
@@ -1163,8 +1159,7 @@
     <button class="topbar-icon" id="btn-help" onclick="openHelp()" aria-label="Help" title="Help">
       <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
     </button>
-    <!-- Modern pill — visible only on kjv-preview path (body.kjv-preview);
-         CSS hides it on the legacy live site. -->
+    <!-- Modern pill — always visible; toggles archaic→modern KJV English. -->
     <button id="aid-pill" onclick="toggleAid()" aria-label="Modern words" title="Toggle modern words">Modern</button>
   </div>
 </div>
@@ -1819,11 +1814,10 @@ function loadSettings() {
   }
 }
 
-// === KJV SWAP SYSTEM — Modern pill toggle (Wave 3α) ===
+// === KJV SWAP SYSTEM — Modern pill toggle (Wave 3α / Wave 6 default) ===
 // aidOn tracks whether modern-word mode is active.
 // toggleAid() is called by the #aid-pill button in the topbar.
-// On the legacy live site: #aid-pill is CSS-hidden (body lacks .kjv-preview)
-// so this function is never reached. Zero cost to legacy path.
+// Modern pill is always visible; KJV-verbatim English is the default path.
 var aidOn = false;
 
 window.toggleAid = function() {
@@ -1852,15 +1846,7 @@ window.toggleAid = function() {
   }
 };
 
-// KJV-preview activation: detect ?source=kjv query param or #kjv-preview hash.
-// Adds body.kjv-preview to expose the Modern pill CSS. Legacy path: no class added.
-(function initKjvPreview() {
-  var params = new URLSearchParams(window.location.search);
-  var hash = window.location.hash;
-  if (params.get('source') === 'kjv' || hash === '#kjv-preview') {
-    document.body.classList.add('kjv-preview');
-  }
-})();
+// KJV is the default path (Wave 6). URL-gating removed — Modern pill always visible.
 
 // --- Search (Boolean query parser + cross-book index) ---
 

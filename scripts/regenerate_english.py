@@ -1,533 +1,406 @@
-#!/usr/bin/env python3
 """
-Regenerate English structural glosses for all v4-editorial files.
+regenerate_english.py — KJV English extractor for readers-gnt.
+Thin wrapper over atu_method.kjv_alignment.align_verse() (Wave 5b).
 
-Each English line corresponds 1:1 to a Greek line.
-Strategy:
-1. Where verse line counts match, keep existing English unchanged.
-2. Where counts differ, merge all existing English for the verse,
-   then redistribute across the new Greek line structure using
-   proportional word allocation (based on Greek word counts per line).
-3. For vocative-only lines, use a known translation rather than proportional split.
+This is the sole English-generation script. KJV-verbatim English is the
+only pipeline; the eflomal-based legacy (Wave 2) has been retired (Wave 6).
+
+Architecture
+------------
+Substrate : viz.bible MetaV CSV (CC-BY-SA 3.0) — per-KJV-word Strong's
+            tagging. Loaded once via load_kjv_strongs_index() and cached.
+            Lives at ../atu-method/data/kjv-strongs/.
+Source    : v4-editorial Greek ATU files (one Greek ATU line per line).
+Token     : TAGNT rows for the verse; Strong's extracted via
+            extract_strongs_from_tagnt_col(col3, col11, col12).
+Algorithm : atu_method.kjv_alignment.align_verse() — per-verse KJV
+            distribution preserving KJV word order within each ATU line.
+
+Output
+------
+data/text-files/eng-gloss/<NN-book>/<slug>-<NN>.txt
+Format: verse marker "1:1", one English ATU line per Greek ATU line,
+blank-line separator between verses. Identical to Wave 2 format.
+
+Usage
+-----
+  python scripts/regenerate_english.py --book matt
+  python scripts/regenerate_english.py --all
+  python scripts/regenerate_english.py --book matt --force
 """
 
-import os
+import argparse
 import re
 import sys
-from collections import OrderedDict, defaultdict
+from pathlib import Path
+from typing import Optional
 
-BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V4_DIR = os.path.join(BASE, "data", "text-files", "v4-editorial")
-WEB_DIR = os.path.join(BASE, "data", "text-files", "eng-gloss")
+# ---------------------------------------------------------------------------
+# Path configuration
+# ---------------------------------------------------------------------------
 
-# Alignment map for drop-in aligned redistribution (2026-04-21).
-# Loaded lazily on first use; None means fallback to proportional heuristic.
-_ALIGNMENT_MAP = None
-_ALIGNMENT_MAP_LOADED = False  # sentinel: True once a load attempt has been made
+REPO_ROOT    = Path(__file__).resolve().parent.parent       # readers-gnt/
+ATU_METHOD   = REPO_ROOT.parent / "atu-method"              # sibling repo
 
+V4_EDITORIAL = REPO_ROOT / "data" / "text-files" / "v4-editorial"
+TAGNT_DIR    = REPO_ROOT / "data" / "text-files" / "tagnt-source"
+METAV_DIR    = ATU_METHOD / "data" / "kjv-strongs"
+OUTPUT_ROOT  = REPO_ROOT / "data" / "text-files" / "eng-gloss"
 
-def _get_alignment_map():
-    """Load corpus-alignment.json once; return dict or None on failure."""
-    global _ALIGNMENT_MAP, _ALIGNMENT_MAP_LOADED
-    if _ALIGNMENT_MAP_LOADED:
-        return _ALIGNMENT_MAP
-    _ALIGNMENT_MAP_LOADED = True
-    try:
-        import json
-        from pathlib import Path
-        path = Path(__file__).resolve().parent.parent / "data" / "alignment" / "corpus-alignment.json"
-        if not path.exists():
-            return None
-        with path.open(encoding="utf-8") as f:
-            _ALIGNMENT_MAP = json.load(f)
-        return _ALIGNMENT_MAP
-    except Exception:
-        return None
+TAGNT_MAT_JHN = TAGNT_DIR / "TAGNT_Mat-Jhn.txt"
+TAGNT_ACT_REV = TAGNT_DIR / "TAGNT_Act-Rev.txt"
 
+# ---------------------------------------------------------------------------
+# Wire in atu_method (sibling repo, no install needed)
+# ---------------------------------------------------------------------------
 
-def strip_punct(word):
-    return word.rstrip('\u00b7,;.!?\u0387:\u037E')
+sys.path.insert(0, str(ATU_METHOD))
 
+from atu_method.kjv_alignment import (     # noqa: E402
+    SourceToken,
+    align_verse as _align_verse_universal,
+    extract_strongs_from_tagnt_col,
+    load_kjv_strongs_index,
+)
 
-# Full vocative phrase translations (Greek line -> English line)
-VOCATIVE_PHRASE_MAP = {
-    'ἀδελφοί,': 'brothers,',
-    'ἀδελφοί·': 'brothers;',
-    'Ἀδελφοί,': 'Brothers,',
-    'ἀδελφέ,': 'brother,',
-    'ἀδελφέ.': 'brother.',
-    'ἀδελφοί μου,': 'my brothers,',
-    'ἀγαπητοί μου,': 'my beloved,',
-    'ἀγαπητοί,': 'beloved,',
-    'ἀγαπητοί.': 'beloved.',
-    'Ἀγαπητοί,': 'Beloved,',
-    'Κύριε,': 'Lord,',
-    'κύριε·': 'Lord;',
-    'κύριε.': 'Lord.',
-    'Πάτερ,': 'Father,',
-    'πάτερ,': 'father,',
-    'Τέκνον,': 'Child,',
-    'τέκνα μου,': 'my children,',
-    'τέκνον μου,': 'my child,',
-    'Ῥαββί,': 'Rabbi,',
-    'Ἐπιστάτα,': 'Master,',
-    'Διδάσκαλε,': 'Teacher,',
-    'Ἄνθρωπε,': 'Man,',
-    'Σατανᾶ·': 'Satan!',
-    'Φίλε,': 'Friend,',
-    'γύναι,': 'wife,',
-    'ἄνερ,': 'husband,',
-    'θάνατε,': 'death,',
-    'ἄφρονες,': 'fools,',
-    'ἄφρων,': 'fool,',
-    'ὑποκριτά,': 'hypocrite,',
-    'μοιχαλίδες,': 'adulteresses,',
-    'ἁμαρτωλοί,': 'sinners,',
-    'δίψυχοι.': 'double-minded.',
-    'κεχαριτωμένη,': 'favored one,',
-    'Ζαχαρία,': 'Zechariah,',
-    'Μαριάμ,': 'Mary,',
-    'Ἰατρέ,': 'Physician,',
-    'παιδίον,': 'child,',
-    'Ἁνανία,': 'Ananias,',
-    'Αἰνέα,': 'Aeneas,',
-    'Ταβιθά,': 'Tabitha,',
-    'Κύριε Ἰησοῦ,': 'Lord Jesus,',
-    'Σαοὺλ Σαούλ,': 'Saul, Saul,',
-    'Σαοὺλ ἀδελφέ,': 'Brother Saul,',
-    'Ἄνδρες Ἰσραηλῖται,': 'Men of Israel,',
-    'Ἄνδρες,': 'Men,',
-    'Αἱ γυναῖκες,': 'Wives,',
-    'Αἱ γυναῖκες': 'Wives',
-    'οἱ ἄνδρες,': 'Husbands,',
-    'Οἱ ἄνδρες,': 'Husbands,',
-    'Τὰ τέκνα,': 'Children,',
-    'οἱ πατέρες,': 'Fathers,',
-    'Καὶ οἱ πατέρες,': 'And fathers,',
-    'οἱ δοῦλοι,': 'Servants,',
-    'Οἱ δοῦλοι,': 'Servants,',
-    'οἱ κύριοι,': 'Masters,',
-    'Καὶ οἱ κύριοι,': 'And masters,',
-    'ὁ καθεύδων,': 'you who sleep,',
-    'γνήσιε σύζυγε,': 'true companion,',
-    'Φιλιππήσιοι,': 'Philippians,',
-    'Κορίνθιοι,': 'Corinthians,',
-    'πάντα τὰ ἔθνη,': 'all nations,',
-    'ἔθνη,': 'nations,',
-    'Πάτερ Ἀβραάμ,': 'Father Abraham,',
-    'πάτερ Ἀβραάμ,': 'father Abraham,',
-    'ὦ ἄνθρωπε θεοῦ,': 'O man of God,',
-    'Ὦ Τιμόθεε,': 'O Timothy,',
-    'ὦ ἄνθρωπε πᾶς ὁ κρίνων·': 'O man, every one who judges!',
-    'ὦ ἄνθρωπε ὁ κρίνων': 'O man who judges',
-    'ὦ ἄνθρωπε,': 'O man,',
-    'τέκνον Τιμόθεε,': 'child Timothy,',
-    'ἀδελφοὶ ἅγιοι, κλήσεως ἐπουρανίου μέτοχοι,': 'holy brothers, partakers of a heavenly calling,',
-    'ἀδελφοὶ ἠγαπημένοι ὑπὸ θεοῦ,': 'brothers beloved by God,',
-    'ἀδελφοὶ ἠγαπημένοι ὑπὸ κυρίου,': 'brothers beloved by the Lord,',
-    'Αββα ὁ πατήρ·': 'Abba, Father!',
-    'Αββα ὁ πατήρ.': 'Abba, Father.',
-    'Βηθλέεμ γῆ Ἰούδα,': 'Bethlehem, land of Judah,',
-    'Γεννήματα ἐχιδνῶν,': 'Brood of vipers,',
-    'υἱὲ τοῦ θεοῦ;': 'Son of God?',
-    'Ἰησοῦ Ναζαρηνέ;': 'Jesus of Nazareth?',
-    'Ἰησοῦ υἱὲ τοῦ θεοῦ τοῦ ὑψίστου;': 'Jesus, Son of the Most High God?',
-    'κύριε καρδιογνῶστα πάντων,': 'Lord, knower of all hearts,',
-    'οἶκος Ἰσραήλ;': 'house of Israel?',
-    'Κύριε κύριε,': 'Lord, Lord,',
-    'Ἐπιστάτα ἐπιστάτα,': 'Master, Master,',
-    'Ἡ παῖς,': 'Little girl,',
-    'Ῥακά,': 'Raca,',
-    'Μωρέ,': 'Fool,',
-    'οἱ ὑπὸ νόμον θέλοντες εἶναι,': 'you who want to be under the law,',
-    'οἱ ἐμπεπλησμένοι νῦν,': 'you who are full now,',
-    'οἱ γελῶντες νῦν,': 'you who laugh now,',
-    'ὁ κρίνων τὸν πλησίον;': 'you who judge your neighbor?',
-    'οἱ λέγοντες·': 'you who say:',
-    'Υἱέ μου,': 'My son,',
-    'Ἀδελφέ,': 'Brother,',
-    'ὁ κύριος καὶ ὁ θεὸς ἡμῶν,': 'our Lord and God,',
-    'ἀδελφοί μου ἀγαπητοί,': 'my beloved brothers,',
-    'ἀδελφοί μου ἀγαπητοὶ καὶ ἐπιπόθητοι,': 'my beloved and longed-for brothers,',
-    'χαρὰ καὶ στέφανός μου,': 'my joy and crown,',
-    'στεῖρα ἡ οὐ τίκτουσα,': 'O barren one who does not bear,',
-    'ἡ οὐκ ὠδίνουσα·': 'you who are not in labor!',
-}
+# ---------------------------------------------------------------------------
+# Book metadata (27 NT books)
+# 4-tuple: (dir_name, slug, tagnt_prefix, tagnt_file)
+# tagnt_prefix is the 3-letter TAGNT book code; align_verse() accepts both
+# TAGNT aliases (Mat) and full OSIS (Matt) transparently.
+# ---------------------------------------------------------------------------
+
+BOOK_META = [
+    ("01-matt",   "matt",   "Mat", TAGNT_MAT_JHN),
+    ("02-mark",   "mark",   "Mrk", TAGNT_MAT_JHN),
+    ("03-luke",   "luke",   "Luk", TAGNT_MAT_JHN),
+    ("04-john",   "john",   "Jhn", TAGNT_MAT_JHN),
+    ("05-acts",   "acts",   "Act", TAGNT_ACT_REV),
+    ("06-rom",    "rom",    "Rom", TAGNT_ACT_REV),
+    ("07-1cor",   "1cor",   "1Co", TAGNT_ACT_REV),
+    ("08-2cor",   "2cor",   "2Co", TAGNT_ACT_REV),
+    ("09-gal",    "gal",    "Gal", TAGNT_ACT_REV),
+    ("10-eph",    "eph",    "Eph", TAGNT_ACT_REV),
+    ("11-phil",   "phil",   "Php", TAGNT_ACT_REV),
+    ("12-col",    "col",    "Col", TAGNT_ACT_REV),
+    ("13-1thess", "1thess", "1Th", TAGNT_ACT_REV),
+    ("14-2thess", "2thess", "2Th", TAGNT_ACT_REV),
+    ("15-1tim",   "1tim",   "1Ti", TAGNT_ACT_REV),
+    ("16-2tim",   "2tim",   "2Ti", TAGNT_ACT_REV),
+    ("17-titus",  "titus",  "Tit", TAGNT_ACT_REV),
+    ("18-phlm",   "phlm",   "Phm", TAGNT_ACT_REV),
+    ("19-heb",    "heb",    "Heb", TAGNT_ACT_REV),
+    ("20-jas",    "jas",    "Jas", TAGNT_ACT_REV),
+    ("21-1pet",   "1pet",   "1Pe", TAGNT_ACT_REV),
+    ("22-2pet",   "2pet",   "2Pe", TAGNT_ACT_REV),
+    ("23-1john",  "1john",  "1Jn", TAGNT_ACT_REV),
+    ("24-2john",  "2john",  "2Jn", TAGNT_ACT_REV),
+    ("25-3john",  "3john",  "3Jn", TAGNT_ACT_REV),
+    ("26-jude",   "jude",   "Jud", TAGNT_ACT_REV),
+    ("27-rev",    "rev",    "Rev", TAGNT_ACT_REV),
+]
+
+BOOK_BY_SLUG = {m[1]: m for m in BOOK_META}
+
+# ---------------------------------------------------------------------------
+# TAGNT loader — returns per-verse token lists for one book
+# Returns {verse_ref -> [(greek_surface, col3, col11, col12), ...]}
+# where col3 = Strong's+morph, col11 = bare Strong's, col12 = alt Strong's
+# ---------------------------------------------------------------------------
+
+_RE_TOKEN_ROW = re.compile(r"^([A-Z][a-z0-9]+\.\d+\.\d+)#\d+=")
 
 
-def parse_verses(path):
-    with open(path, 'r', encoding='utf-8') as f:
-        content = f.read()
-    lines = content.replace('\r\n', '\n').split('\n')
-    verses = OrderedDict()
-    current = None
-    for line in lines:
-        s = line.rstrip()
-        m = re.match(r'^(\d+:\d+)$', s)
-        if m:
-            current = m.group(1)
-            verses[current] = []
-            continue
-        if not s: continue
-        if current: verses[current].append(s)
+def load_tagnt_book(
+    tagnt_path: Path, tagnt_prefix: str
+) -> dict[str, list[tuple[str, str, str, str]]]:
+    """Parse TAGNT file for one book.
+
+    Returns {verse_ref -> [(greek_surface, col3, col11, col12), ...]}
+    verse_ref example: "Mat.1.2"
+    Columns (0-indexed): 1=Greek(translit), 3=Strong+morph, 11=bare Strong, 12=alt Strong.
+    """
+    verses: dict[str, list[tuple[str, str, str, str]]] = {}
+    with open(tagnt_path, encoding="utf-8", errors="replace") as fh:
+        for line in fh:
+            line = line.rstrip("\n")
+            m = _RE_TOKEN_ROW.match(line)
+            if not m:
+                continue
+            verse_ref = m.group(1)
+            if not verse_ref.startswith(tagnt_prefix + "."):
+                continue
+            parts = line.split("\t")
+            if len(parts) < 12:
+                continue
+            # col1: "Ἀβραὰμ (Abraam)" — strip transliteration in parens
+            greek_raw = parts[1].strip()
+            greek_surface = re.sub(r"\s*\([^)]+\)\s*$", "", greek_raw).strip()
+            col3  = parts[3].strip()  if len(parts) > 3  else ""  # G0011=N-NSM-P
+            col11 = parts[11].strip() if len(parts) > 11 else ""  # G0011
+            col12 = parts[12].strip() if len(parts) > 12 else ""  # alt Strong's (may be absent)
+            if verse_ref not in verses:
+                verses[verse_ref] = []
+            verses[verse_ref].append((greek_surface, col3, col11, col12))
     return verses
 
 
-def parse_file_structure(path):
-    with open(path, 'rb') as f:
-        raw = f.read()
-    content = raw.decode('utf-8')
-    le = '\r\n' if '\r\n' in content else '\n'
-    lines = content.replace('\r\n', '\n').split('\n')
-    structure = []
-    current_verse = None
-    for line in lines:
-        stripped = line.rstrip()
-        vm = re.match(r'^(\d+:\d+)\s*$', stripped)
-        if vm:
-            current_verse = vm.group(1)
-            structure.append(('verse', current_verse))
-            continue
-        if not stripped:
-            structure.append(('blank',))
-            continue
-        if current_verse:
-            structure.append(('content', stripped, current_verse))
-    return structure, le
+# ---------------------------------------------------------------------------
+# v4-editorial parser (unchanged from Wave 2 — format is stable)
+# ---------------------------------------------------------------------------
 
+def parse_v4_file(path: Path) -> list[tuple[str, list[str]]]:
+    """Parse a v4-editorial chapter file.
 
-def _split_strength(token, next_token=''):
-    """Return priority for splitting AFTER this token (lower = stronger boundary)."""
-    t = token.rstrip()
-    # Strong punctuation boundaries
-    if t.endswith(('—', '–', ';', ':')):
-        return 0
-    if t.endswith(','):
-        return 1
-    # Coordinating conjunctions at start of next token
-    nt_low = next_token.lower().lstrip()
-    if nt_low in ('and', 'but', 'or', 'nor', 'yet', 'for', 'so'):
-        return 2
-    # Subordinating conjunctions / relative markers at start of next token
-    if nt_low in ('that', 'which', 'who', 'whom', 'whose', 'when', 'where',
-                  'because', 'since', 'if', 'though', 'although', 'while',
-                  'until', 'unless', 'as', 'after', 'before', 'once', 'lest'):
-        return 3
-    return 99  # word-count fallback
-
-
-def _find_phrase_splits(text, n):
-    """Split *text* into exactly *n* segments at the best phrase boundaries.
-
-    Scans all inter-word positions for split-point strength, then uses a
-    greedy balanced-partition algorithm: pick the N-1 boundaries whose
-    positions are most evenly spaced across the text while preferring
-    stronger boundary types.  Falls back to equal word-count if no
-    phrase boundaries exist.
-
-    Returns a list of n strings.
+    Returns list of (verse_ref, [atu_line, ...]) preserving order.
+    verse_ref is e.g. "1:1".
     """
-    words = text.split()
-    total = len(words)
+    verses: list[tuple[str, list[str]]] = []
+    current_verse: Optional[str] = None
+    current_lines: list[str] = []
 
-    if n <= 1 or total == 0:
-        return [text] if n <= 1 else [text] + [''] * (n - 1)
+    with open(path, encoding="utf-8") as fh:
+        for raw in fh:
+            line = raw.rstrip("\n")
+            if re.match(r"^\d+:\d+$", line.strip()):
+                if current_verse is not None:
+                    verses.append((current_verse, current_lines))
+                current_verse = line.strip()
+                current_lines = []
+            elif line.strip() == "":
+                pass
+            else:
+                if current_verse is not None:
+                    current_lines.append(line.strip())
 
-    if total <= n:
-        # Not enough words to fill every line; pad with empties
-        return [w for w in words] + [''] * (n - total)
+    if current_verse is not None and current_lines:
+        verses.append((current_verse, current_lines))
 
-    # Build candidate split-point list: (position_after_word, strength)
-    # position_after_word is the index i such that a split puts words[:i]
-    # on one side and words[i:] on the other.  Valid range: 1 .. total-1.
-    candidates = []
-    for i in range(1, total):
-        strength = _split_strength(words[i - 1], words[i])
-        candidates.append((i, strength))
-
-    # Choose N-1 split points.  Strategy: for each of the N-1 slots, pick
-    # the available candidate nearest the ideal even-spacing position,
-    # breaking ties by strength (lower = better), then by proximity.
-    ideal_step = total / n
-    chosen = []
-    used = set()
-    for slot in range(1, n):
-        target = slot * ideal_step
-        # Score candidates: prefer closer to target, then stronger boundary
-        best = min(
-            ((i, s) for i, s in candidates if i not in used),
-            key=lambda x: (x[1], abs(x[0] - target)),
-            default=None,
-        )
-        if best is None:
-            break
-        chosen.append(best[0])
-        used.add(best[0])
-
-    chosen.sort()
-
-    # Slice words into segments at the chosen split points
-    segments = []
-    prev = 0
-    for pos in chosen:
-        segments.append(' '.join(words[prev:pos]))
-        prev = pos
-    segments.append(' '.join(words[prev:]))
-
-    # Pad to exactly n (safety — shouldn't normally be needed)
-    while len(segments) < n:
-        segments.append('')
-
-    return segments
+    return verses
 
 
-def redistribute_verse(greek_lines, english_lines, force=False, book=None, verse_ref=None):
-    """Redistribute English text to match the Greek line count.
+# ---------------------------------------------------------------------------
+# Greek surface normaliser (for token matching)
+# ---------------------------------------------------------------------------
 
-    Strategy:
-    1. Identify vocative-only Greek lines and assign known translations.
-    2. Identify which existing English lines are vocative translations to exclude.
-    3. Merge remaining English and split across non-vocative lines using
-       alignment-driven redistribution (if alignment map available) or the
-       legacy phrase-aware heuristic as fallback.
+_GREEK_PUNCT = set(".,;:·—…!?·\"'()[]{}–—")
 
-    When force=True, always redistribute — even when Greek and English line
-    counts match. This is necessary when line-order was changed without
-    changing line count (phrase-aware redistribution gives a better starting
-    point; the English may still need manual polish afterward).
 
-    book and verse_ref (e.g. "matt", "4:1") enable the alignment-driven path.
+def normalise_greek(s: str) -> str:
+    return s.rstrip("".join(_GREEK_PUNCT)).strip()
+
+
+def tokenise_atu_line(line: str) -> list[str]:
+    return [normalise_greek(t) for t in line.split() if t]
+
+
+# ---------------------------------------------------------------------------
+# Per-verse token alignment: maps TAGNT tokens onto ATU lines
+# Returns list[list[SourceToken]] — one inner list per ATU line
+# ---------------------------------------------------------------------------
+
+def build_source_tokens_per_line(
+    atu_lines: list[str],
+    tagnt_tokens: list[tuple[str, str, str, str]],
+) -> list[list[SourceToken]]:
+    """Assign TAGNT tokens to ATU lines by sequential Greek-surface consumption.
+
+    For each ATU line, count its Greek words, then consume that many TAGNT
+    tokens in order. Each token becomes a SourceToken(text, strongs_list)
+    where strongs_list comes from extract_strongs_from_tagnt_col(col3, col11, col12).
+
+    Returns list[list[SourceToken]] — parallel to atu_lines.
     """
-    n_greek = len(greek_lines)
-    n_english = len(english_lines)
+    result: list[list[SourceToken]] = []
+    cursor = 0
+    n_tagnt = len(tagnt_tokens)
 
-    if n_greek == n_english and not force:
-        # Even when counts match, fix vocative-only lines to use canonical translations
-        result = list(english_lines)
-        for i, gl in enumerate(greek_lines):
-            stripped = gl.strip()
-            if stripped in VOCATIVE_PHRASE_MAP:
-                result[i] = VOCATIVE_PHRASE_MAP[stripped]
-        return result
+    for atu_line in atu_lines:
+        atu_words = tokenise_atu_line(atu_line)
+        n_words = len(atu_words)
+        line_tokens: list[SourceToken] = []
 
-    # Identify vocative Greek lines
-    vocative_indices = {}
-    for i, gl in enumerate(greek_lines):
-        stripped = gl.strip()
-        if stripped in VOCATIVE_PHRASE_MAP:
-            vocative_indices[i] = VOCATIVE_PHRASE_MAP[stripped]
+        consumed = 0
+        for atu_word in atu_words:
+            if cursor + consumed >= n_tagnt:
+                # Ran out of TAGNT tokens; pad with empty SourceToken
+                line_tokens.append(SourceToken(text=atu_word, strongs_list=()))
+                continue
 
-    # Build reverse lookup: known vocative English translations
-    known_voc_english = set()
-    for eng in VOCATIVE_PHRASE_MAP.values():
-        known_voc_english.add(eng.strip())
-        known_voc_english.add(eng.strip().rstrip('.,;:!?'))
+            # Try to match by surface form (with up to 2-position lookahead)
+            matched = False
+            for lookahead in range(3):
+                idx = cursor + consumed + lookahead
+                if idx >= n_tagnt:
+                    break
+                greek_surface, col3, col11, col12 = tagnt_tokens[idx]
+                tagnt_norm = normalise_greek(greek_surface)
+                if tagnt_norm == atu_word:
+                    # Absorb any skipped tokens before this one
+                    for skip_idx in range(cursor + consumed, idx):
+                        sk_greek, sk_c3, sk_c11, sk_c12 = tagnt_tokens[skip_idx]
+                        sk_strongs = tuple(extract_strongs_from_tagnt_col(sk_c3, sk_c11, sk_c12))
+                        line_tokens.append(SourceToken(text=sk_greek, strongs_list=sk_strongs))
+                        consumed += 1
+                    # Consume the matched token
+                    strongs = tuple(extract_strongs_from_tagnt_col(col3, col11, col12))
+                    line_tokens.append(SourceToken(text=greek_surface, strongs_list=strongs))
+                    consumed += 1
+                    matched = True
+                    break
 
-    # Filter out English lines that are vocative translations
-    non_voc_english = []
-    for el in english_lines:
-        stripped = el.strip()
-        if stripped in known_voc_english or stripped.rstrip('.,;:!?') in known_voc_english:
-            continue
-        non_voc_english.append(el)
+            if not matched:
+                # No surface match — consume next TAGNT token anyway (best-effort)
+                if cursor + consumed < n_tagnt:
+                    greek_surface, col3, col11, col12 = tagnt_tokens[cursor + consumed]
+                    strongs = tuple(extract_strongs_from_tagnt_col(col3, col11, col12))
+                    line_tokens.append(SourceToken(text=greek_surface, strongs_list=strongs))
+                    consumed += 1
+                else:
+                    line_tokens.append(SourceToken(text=atu_word, strongs_list=()))
 
-    # Merge non-vocative English
-    remaining_english = ' '.join(non_voc_english).strip()
-    remaining_english = re.sub(r'\s+', ' ', remaining_english)
-
-    # Non-vocative Greek line indices
-    non_voc_indices = [i for i in range(n_greek) if i not in vocative_indices]
-    n_non_voc = len(non_voc_indices)
-
-    if n_non_voc == 0:
-        result = [''] * n_greek
-        for i, eng in vocative_indices.items():
-            result[i] = eng
-        return result
-
-    # Aligned redistribution path (2026-04-21): try eflomal alignment first.
-    segments = None
-    if book is not None and verse_ref is not None:
-        alignment_map = _get_alignment_map()
-        if alignment_map is not None:
-            try:
-                import sys as _sys
-                import os as _os
-                _scripts_dir = _os.path.dirname(_os.path.abspath(__file__))
-                if _scripts_dir not in _sys.path:
-                    _sys.path.insert(0, _scripts_dir)
-                from align_redistribute_english import align_redistribute
-                ch_str, vs_str = verse_ref.split(":")
-                ch, vs = int(ch_str), int(vs_str)
-                # Build the non-vocative greek lines for alignment
-                non_voc_greek_lines = [greek_lines[i] for i in non_voc_indices]
-                result_aligned = align_redistribute(
-                    book, ch, vs, non_voc_greek_lines, non_voc_english, alignment_map
-                )
-                if result_aligned is not None:
-                    segments = result_aligned
-            except Exception:
-                pass  # Fall through to legacy heuristic
-
-    # Legacy phrase-aware heuristic fallback
-    if segments is None:
-        segments = _find_phrase_splits(remaining_english, n_non_voc)
-    distributed = {nvi: segments[j] for j, nvi in enumerate(non_voc_indices)}
-
-    result = []
-    for i in range(n_greek):
-        if i in vocative_indices:
-            result.append(vocative_indices[i])
-        elif i in distributed:
-            result.append(distributed[i])
-        else:
-            result.append('')
+        cursor += consumed
+        result.append(line_tokens)
 
     return result
 
 
-def check_vocative_quality(greek_lines, english_lines):
-    """Check if any vocative-only Greek lines have wrong English translations."""
-    for i, gl in enumerate(greek_lines):
-        stripped = gl.strip()
-        if stripped in VOCATIVE_PHRASE_MAP:
-            if i < len(english_lines) and english_lines[i].strip() != VOCATIVE_PHRASE_MAP[stripped]:
-                return True
-    return False
+# ---------------------------------------------------------------------------
+# Per-book generation
+# ---------------------------------------------------------------------------
 
+def generate_book(
+    dir_name: str,
+    slug: str,
+    tagnt_prefix: str,
+    tagnt_path: Path,
+    force: bool = False,
+) -> dict:
+    """Generate eng-gloss-kjv output for all chapters of one book."""
+    src_dir = V4_EDITORIAL / dir_name
+    if not src_dir.exists():
+        print(f"  SKIP: {dir_name} — source dir not found", file=sys.stderr)
+        return {}
 
-def process_file(v4_file, book_prefix, force=False):
-    v4_path = os.path.join(V4_DIR, book_prefix, v4_file)
-    web_path = os.path.join(WEB_DIR, book_prefix, v4_file)
-    if not os.path.exists(web_path):
-        return 0
+    out_dir = OUTPUT_ROOT / dir_name
+    out_dir.mkdir(parents=True, exist_ok=True)
 
-    v4_structure, le = parse_file_structure(v4_path)
-    v4_verses = parse_verses(v4_path)
-    web_verses = parse_verses(web_path)
+    print(f"  Loading TAGNT for {tagnt_prefix}...")
+    tagnt_verses = load_tagnt_book(tagnt_path, tagnt_prefix)
 
-    new_english = OrderedDict()
-    changes = 0
+    chapter_files = sorted(
+        src_dir.glob(f"{slug}-*.txt"),
+        key=lambda p: int(re.search(r"-(\d+)", p.stem).group(1)),
+    )
 
-    # Derive book slug (e.g. "01-matt" -> "matt") for alignment lookup.
-    book_slug = re.sub(r'^\d+-', '', book_prefix)
+    stats = {"chapters": 0, "verses": 0, "lines": 0, "empty_lines": 0}
 
-    for verse_ref, greek_lines in v4_verses.items():
-        existing = web_verses.get(verse_ref, [])
-        new_lines = redistribute_verse(greek_lines, existing, force=force,
-                                       book=book_slug, verse_ref=verse_ref)
-        if new_lines != existing:
-            changes += 1
-        new_english[verse_ref] = new_lines
+    for ch_path in chapter_files:
+        out_path = out_dir / ch_path.name
+        if out_path.exists() and not force:
+            print(f"  SKIP (exists): {out_path.name} — use --force to overwrite")
+            continue
 
-    if changes == 0:
-        return 0
+        verses = parse_v4_file(ch_path)
+        output_blocks: list[str] = []
 
-    # Reconstruct output following v4 structure
-    output_lines = []
-    verse_line_idx = defaultdict(int)
-    for item in v4_structure:
-        if item[0] == 'verse':
-            output_lines.append(item[1])
-        elif item[0] == 'blank':
-            output_lines.append('')
-        elif item[0] == 'content':
-            vr = item[2]
-            idx = verse_line_idx[vr]
-            eng = new_english.get(vr, [])
-            if idx < len(eng):
-                output_lines.append(eng[idx])
+        for verse_ref, atu_lines in verses:
+            ch_str, vs_str = verse_ref.split(":")
+            chapter = int(ch_str)
+            verse   = int(vs_str)
+
+            tagnt_key = f"{tagnt_prefix}.{chapter}.{verse}"
+            tagnt_tokens = tagnt_verses.get(tagnt_key, [])
+
+            if not tagnt_tokens:
+                # No TAGNT data — output empty lines
+                eng_lines = [""] * len(atu_lines)
             else:
-                output_lines.append('')
-            verse_line_idx[vr] += 1
+                source_tokens_per_line = build_source_tokens_per_line(
+                    atu_lines, tagnt_tokens
+                )
+                try:
+                    eng_lines = _align_verse_universal(
+                        tagnt_prefix,   # accepts TAGNT alias directly
+                        chapter,
+                        verse,
+                        source_tokens_per_line,
+                        METAV_DIR,
+                    )
+                except KeyError as e:
+                    # Verse absent from MetaV (very rare): fall back to empty
+                    print(f"  WARNING: MetaV miss for {tagnt_key}: {e}", file=sys.stderr)
+                    eng_lines = [""] * len(atu_lines)
 
-    new_content = le.join(output_lines)
-    with open(web_path, 'wb') as f:
-        f.write(new_content.encode('utf-8'))
+            # Pad / trim to match ATU line count defensively
+            while len(eng_lines) < len(atu_lines):
+                eng_lines.append("")
+            eng_lines = eng_lines[: len(atu_lines)]
 
-    return changes
+            output_blocks.append(verse_ref)
+            for el in eng_lines:
+                output_blocks.append(el)
+                stats["lines"] += 1
+                if not el:
+                    stats["empty_lines"] += 1
+            output_blocks.append("")  # blank-line separator
+            stats["verses"] += 1
+
+        out_path.write_text("\n".join(output_blocks) + "\n", encoding="utf-8")
+        stats["chapters"] += 1
+        print(
+            f"  Wrote {out_path.relative_to(REPO_ROOT)} "
+            f"({stats['verses']} verses cumulative)"
+        )
+
+    return stats
 
 
-def _book_matches(dir_name, book_filter):
-    """Match a v4-editorial subdirectory against a --book filter.
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
 
-    Accepts either the full dir name ('21-1pet') or the short prefix ('1pet').
-    """
-    if dir_name == book_filter:
-        return True
-    parts = dir_name.split('-', 1)
-    if len(parts) == 2 and parts[0].isdigit() and parts[1] == book_filter:
-        return True
-    return False
-
-
-def main():
-    import argparse
+def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Regenerate English structural glosses for v4-editorial."
+        description="Generate KJV-verbatim English gloss files via atu_method.kjv_alignment."
     )
-    parser.add_argument(
-        "--book",
-        default=None,
-        help="Process only this book (e.g. 'mark', '1cor'). Default: all books.",
-    )
-    parser.add_argument(
-        "--force",
-        action="store_true",
-        help="Force regeneration even when verse line counts match.",
-    )
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--book", metavar="SLUG",
+                       help="Single book slug (e.g. matt, mark, rom)")
+    group.add_argument("--all", action="store_true",
+                       help="Process all 27 NT books")
+    parser.add_argument("--force", action="store_true",
+                        help="Overwrite existing output files")
+
     args = parser.parse_args()
 
-    total_changes = 0
-    files_changed = 0
+    # Warm the MetaV cache once before any book loop
+    print(f"Loading MetaV KJV Strong's index from {METAV_DIR} …")
+    load_kjv_strongs_index(METAV_DIR)
+    print("MetaV cache warm.")
 
-    for book_dir in sorted(os.listdir(V4_DIR)):
-        book_path = os.path.join(V4_DIR, book_dir)
-        if not os.path.isdir(book_path):
-            continue
-        if args.book and not _book_matches(book_dir, args.book):
-            continue
-        for v4_file in sorted(os.listdir(book_path)):
-            if not v4_file.endswith('.txt'):
-                continue
-            changes = process_file(v4_file, book_dir, force=args.force)
-            if changes > 0:
-                files_changed += 1
-                total_changes += changes
-                print(f"{v4_file}: {changes} verses redistributed")
+    if args.book:
+        slug = args.book.lower()
+        if slug not in BOOK_BY_SLUG:
+            print(f"Unknown book slug '{slug}'. Known slugs: {list(BOOK_BY_SLUG.keys())}")
+            sys.exit(1)
+        dir_name, slug, tagnt_prefix, tagnt_path = BOOK_BY_SLUG[slug]
+        print(f"\nProcessing {dir_name}...")
+        stats = generate_book(dir_name, slug, tagnt_prefix, tagnt_path, args.force)
+        print(f"Done: {stats}")
 
-    print(f"\n{'='*60}")
-    print(f"Files changed: {files_changed}")
-    print(f"Total verses redistributed: {total_changes}")
-
-
-def _self_test():
-    """Quick smoke-test: show phrase-aware split for Matt 8:20 (3 Greek lines).
-
-    Greek (v4-editorial Matt 8): 3 lines for verse 20.
-    Expected English roughly:
-      line 1: "Foxes have dens"
-      line 2: "and the birds of the sky have nests,"
-      line 3: "but the Son of Man has nowhere to lay his head."
-    Old word-count split straddled "have / nests" mid-phrase.
-    """
-    greek = [
-        'αἱ ἀλώπεκες φωλεοὺς ἔχουσιν',
-        'καὶ τὰ πετεινὰ τοῦ οὐρανοῦ κατασκηνώσεις,',
-        'ὁ δὲ υἱὸς τοῦ ἀνθρώπου οὐκ ἔχει ποῦ τὴν κεφαλὴν κλίνῃ.',
-    ]
-    english_flat = [
-        'Foxes have dens and the birds of the sky have nests, but the Son of Man has nowhere to lay his head.'
-    ]
-    result = redistribute_verse(greek, english_flat)
-    print("Self-test — Matt 8:20 phrase-aware split:")
-    for i, line in enumerate(result):
-        print(f"  [{i+1}] {line}")
+    elif args.all:
+        total = {"chapters": 0, "verses": 0, "lines": 0, "empty_lines": 0}
+        import time
+        t0 = time.time()
+        for dir_name, slug, tagnt_prefix, tagnt_path in BOOK_META:
+            print(f"\nProcessing {dir_name}...")
+            stats = generate_book(dir_name, slug, tagnt_prefix, tagnt_path, args.force)
+            for k in total:
+                total[k] += stats.get(k, 0)
+        elapsed = time.time() - t0
+        print(f"\nAll 27 books done in {elapsed:.1f}s: {total}")
 
 
-if __name__ == '__main__':
-    import sys
-    if len(sys.argv) > 1 and sys.argv[1] == '--self-test':
-        _self_test()
-    else:
-        main()
+if __name__ == "__main__":
+    main()

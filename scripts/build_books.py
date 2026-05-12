@@ -1,11 +1,14 @@
 """
 build_books.py — Generate HTML book files from colometric text sources.
 
-Reads chapter files from v4-editorial/*/ (Greek) and optionally from
-eng-gloss/*/ (English), and writes one HTML fragment per book into books/.
+Reads chapter files from v4-editorial/*/ (Greek) and eng-gloss/*/ (English,
+KJV-verbatim), and writes one HTML fragment per book into books/.
 
-Each .line span contains a .gk span (Greek) and optionally a .en span
-(English), enabling Greek/English/Both display modes in the web app.
+Each .line span contains a .gk span (Greek) and a .en span (English),
+enabling Greek/English/Both display modes in the web app.
+
+The KJV-anchored English layer is the sole path (Wave 6). The legacy
+eflomal-based pipeline has been retired.
 
 Usage:
     py -3 scripts/build_books.py              # build all books
@@ -26,9 +29,7 @@ REPO_ROOT = os.path.dirname(SCRIPT_DIR)
 GK_PRIMARY_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4-editorial")
 INPUT_DIR = GK_PRIMARY_DIR  # used by discover_books for globbing all chapters (subfoldered)
 EN_DIR = os.path.join(REPO_ROOT, "data", "text-files", "eng-gloss")
-EN_KJV_DIR = os.path.join(REPO_ROOT, "data", "text-files", "eng-gloss-kjv")
 OUTPUT_DIR = os.path.join(REPO_ROOT, "books")
-OUTPUT_KJV_DIR = os.path.join(REPO_ROOT, "books-kjv")
 
 # atu-method swap module (sibling repo, consistent with regenerate_english_kjv.py convention)
 _ATU_METHOD_ROOT = os.path.join(os.path.dirname(REPO_ROOT), "atu-method")
@@ -285,43 +286,28 @@ def resolve_greek_path(fpath):
     )
 
 
-def resolve_english_path(fpath, english_source="legacy"):
-    """Return the English gloss path if it exists.
+def resolve_english_path(fpath):
+    """Return the English gloss path (KJV-verbatim, eng-gloss/) if it exists.
 
-    Parameters
-    ----------
-    fpath:
-        Greek chapter file path (used to derive book prefix + filename).
-    english_source:
-        ``"legacy"`` → eng-gloss/ (default, live site);
-        ``"kjv"``    → eng-gloss-kjv/ (sandboxed KJV preview).
-
-    Returns (path, label) or (None, None) if not found.
+    Returns (path, "KJV") or (None, None) if not found.
     """
     basename = os.path.basename(fpath)
     prefix = _book_prefix(fpath)
-    base_dir = EN_KJV_DIR if english_source == "kjv" else EN_DIR
-    label = "KJV" if english_source == "kjv" else "EN"
-    subdir = _find_book_subdir(base_dir, prefix)
+    subdir = _find_book_subdir(EN_DIR, prefix)
     if subdir:
-        en_path = os.path.join(base_dir, subdir, basename)
+        en_path = os.path.join(EN_DIR, subdir, basename)
         if os.path.isfile(en_path):
-            return en_path, label
+            return en_path, "KJV"
     return None, None
 
 
-def build_book(prefix, chapter_files, output_dir, english_source="legacy",
-               swap_pairs=None, quiet_set=None):
+def build_book(prefix, chapter_files, output_dir, swap_pairs=None, quiet_set=None):
     """Build and write the HTML file for one book.
 
     Parameters
     ----------
-    english_source:
-        ``"legacy"`` → read from eng-gloss/ (default, live site);
-        ``"kjv"``    → read from eng-gloss-kjv/ (sandboxed KJV preview).
     swap_pairs / quiet_set:
-        KJV swap engine data (from load_corpus_swap_list). Passed through
-        to build_chapter_html only when english_source=="kjv".
+        KJV swap engine data (from load_corpus_swap_list).
 
     Returns the number of chapters, verses, output path, and English labels.
     """
@@ -336,9 +322,9 @@ def build_book(prefix, chapter_files, output_dir, english_source="legacy",
         if chapter_num is None:
             chapter_num = _ch_num
 
-        # Resolve English source
+        # Resolve English source (KJV-verbatim, eng-gloss/)
         en_lookup = None
-        en_path, en_label = resolve_english_path(fpath, english_source)
+        en_path, en_label = resolve_english_path(fpath)
         if en_path:
             _, en_verses = parse_chapter(en_path)
             en_lookup = build_ylt_lookup(en_verses)
@@ -347,8 +333,8 @@ def build_book(prefix, chapter_files, output_dir, english_source="legacy",
         total_verses += len(gk_verses)
         chapter_html = build_chapter_html(
             chapter_num, gk_verses, en_lookup,
-            swap_pairs=(swap_pairs if english_source == "kjv" else None),
-            quiet_set=(quiet_set if english_source == "kjv" else None),
+            swap_pairs=swap_pairs,
+            quiet_set=quiet_set,
         )
         all_chapter_html.append(chapter_html)
 
@@ -408,20 +394,9 @@ def main():
         action="store_true",
         help="Skip the SBLGNT word-order integrity check (NOT recommended).",
     )
-    parser.add_argument(
-        "--english-source",
-        default="legacy",
-        choices=["legacy", "kjv"],
-        help=(
-            "English source to use. "
-            "'legacy' (default): eng-gloss/ → books/ (live site, unchanged). "
-            "'kjv': eng-gloss-kjv/ → books-kjv/ (sandboxed KJV preview)."
-        ),
-    )
     args = parser.parse_args()
 
-    english_source = args.english_source
-    output_dir = OUTPUT_KJV_DIR if english_source == "kjv" else OUTPUT_DIR
+    output_dir = OUTPUT_DIR
 
     if not os.path.isdir(INPUT_DIR):
         print(f"ERROR: Input directory not found: {INPUT_DIR}", file=sys.stderr)
@@ -442,20 +417,19 @@ def main():
             sys.exit(2)
         print("  integrity check passed.\n")
 
-    # Load KJV swap list once for all books (only when needed)
+    # Load KJV swap list once for all books
     swap_pairs = None
     quiet_set = None
-    if english_source == "kjv":
-        try:
-            from atu_method.swaps.load_lists import load_corpus_swap_list
-            swap_pairs, quiet_set = load_corpus_swap_list("nt")
-            print(f"  Loaded NT swap list ({len(swap_pairs)} swap pairs, {len(quiet_set)} quiet).")
-        except ImportError as e:
-            print(
-                f"WARNING: Could not import atu_method.swaps ({e}). "
-                "Building KJV path without swap wrapping.",
-                file=sys.stderr,
-            )
+    try:
+        from atu_method.swaps.load_lists import load_corpus_swap_list
+        swap_pairs, quiet_set = load_corpus_swap_list("nt")
+        print(f"  Loaded NT swap list ({len(swap_pairs)} swap pairs, {len(quiet_set)} quiet).")
+    except ImportError as e:
+        print(
+            f"WARNING: Could not import atu_method.swaps ({e}). "
+            "Building without swap wrapping.",
+            file=sys.stderr,
+        )
 
     books = discover_books(INPUT_DIR, book_filter=args.book)
 
@@ -466,14 +440,12 @@ def main():
             print(f"No .txt files found in {INPUT_DIR}")
         sys.exit(1)
 
-    source_label = f"[{english_source.upper()}]"
-    print(f"Building {len(books)} book(s)... {source_label}\n")
+    print(f"Building {len(books)} book(s)... [KJV]\n")
 
     for prefix in sorted(books.keys()):
         chapter_files = books[prefix]
         num_chapters, num_verses, output_path, en_labels = build_book(
             prefix, chapter_files, output_dir,
-            english_source=english_source,
             swap_pairs=swap_pairs,
             quiet_set=quiet_set,
         )
