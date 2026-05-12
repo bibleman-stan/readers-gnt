@@ -32,6 +32,7 @@ Usage
 import argparse
 import re
 import sys
+from collections import defaultdict
 from pathlib import Path
 from typing import Optional
 
@@ -195,6 +196,58 @@ def tokenise_atu_line(line: str) -> list[str]:
 
 
 # ---------------------------------------------------------------------------
+# Cross-verse line-fold markers (§5.1)
+#
+# v4-editorial uses superscript-digit runs to fold the start of the next
+# canonical verse onto the current line for colometric readability. Example
+# (Matt 3:1):
+#
+#     Ἐν δὲ ταῖς ἡμέραις … τῆς Ἰουδαίας ²καὶ λέγων·
+#
+# The ² marker means "καὶ λέγων· belongs to verse 3:2 in canonical
+# versification." TAGNT/MetaV key those tokens under Mat.3.2, not Mat.3.1.
+# The marker handler routes pre-marker tokens to the current verse's
+# align_verse call and post-marker tokens to the target verse's call (as a
+# phantom line 0), then folds the phantom's English back onto the original
+# marked line. 22 instances across the NT corpus (inventory: 2026-05-12).
+# ---------------------------------------------------------------------------
+
+_SUPERSCRIPT_TO_DIGIT = {
+    "⁰": 0, "¹": 1, "²": 2, "³": 3, "⁴": 4,
+    "⁵": 5, "⁶": 6, "⁷": 7, "⁸": 8, "⁹": 9,
+}
+_SUPERSCRIPT_RE = re.compile(
+    "[" + "".join(_SUPERSCRIPT_TO_DIGIT.keys()) + "]+"
+)
+
+
+def _superscript_run_to_int(s: str) -> int:
+    return int("".join(str(_SUPERSCRIPT_TO_DIGIT[c]) for c in s))
+
+
+def segment_atu_line(line: str, current_verse: int) -> list[tuple[int, str]]:
+    """Split an ATU line at cross-verse markers.
+
+    Returns a list of (target_verse, segment_text) tuples in textual order.
+    Lines without markers return a single segment tagged with current_verse.
+    A line that begins with a marker yields no leading current-verse segment.
+    """
+    segments: list[tuple[int, str]] = []
+    cursor = 0
+    target = current_verse
+    for m in _SUPERSCRIPT_RE.finditer(line):
+        pre = line[cursor:m.start()].strip()
+        if pre:
+            segments.append((target, pre))
+        target = _superscript_run_to_int(m.group(0))
+        cursor = m.end()
+    tail = line[cursor:].strip()
+    if tail:
+        segments.append((target, tail))
+    return segments
+
+
+# ---------------------------------------------------------------------------
 # Per-verse token alignment: maps TAGNT tokens onto ATU lines
 # Returns list[list[SourceToken]] — one inner list per ATU line
 # ---------------------------------------------------------------------------
@@ -302,48 +355,123 @@ def generate_book(
             continue
 
         verses = parse_v4_file(ch_path)
-        output_blocks: list[str] = []
+
+        # Pre-pass: segment every ATU line by cross-verse markers.
+        # Most lines have no markers and produce a single segment tagged
+        # with the current verse; lines with markers split into multiple
+        # segments tagged with their target verses.
+        segmented_by_verse: dict[str, list[list[tuple[int, str]]]] = {}
+        for verse_ref, atu_lines in verses:
+            current_vs = int(verse_ref.split(":")[1])
+            segmented_by_verse[verse_ref] = [
+                segment_atu_line(line, current_vs) for line in atu_lines
+            ]
+
+        # Phantom map: target_verse_ref -> [(source_verse_ref, source_line_idx, text), ...]
+        # When a marker in source_verse_ref's line N targets a different
+        # verse, the post-marker text becomes a phantom line for the
+        # target verse's alignment call.
+        phantoms_into: dict[str, list[dict]] = defaultdict(list)
+        for verse_ref, segmented in segmented_by_verse.items():
+            ch_str, vs_str = verse_ref.split(":")
+            current_vs = int(vs_str)
+            for line_idx, segments in enumerate(segmented):
+                for tv, text in segments:
+                    if tv != current_vs:
+                        target_ref = f"{ch_str}:{tv}"
+                        phantoms_into[target_ref].append({
+                            "source_verse_ref": verse_ref,
+                            "source_line_idx": line_idx,
+                            "text": text,
+                        })
+
+        # Per-verse English buffer (rendered after all alignments complete).
+        verse_eng: dict[str, list[str]] = {
+            vr: [""] * len(atu_lines) for vr, atu_lines in verses
+        }
 
         for verse_ref, atu_lines in verses:
             ch_str, vs_str = verse_ref.split(":")
             chapter = int(ch_str)
             verse   = int(vs_str)
 
+            # Build the modified atu_lines for align_verse:
+            # phantoms_from_prior_verses + current-verse-only segments per line.
+            modified_atu_lines: list[str] = []
+            # Each entry: ("phantom"|"current", target_verse_ref, target_line_idx)
+            line_targets: list[tuple[str, str, int]] = []
+
+            # Phantom lines first (in source-line order — TAGNT for this
+            # verse keys these tokens at the start of the canonical verse).
+            for phantom in phantoms_into.get(verse_ref, []):
+                modified_atu_lines.append(phantom["text"])
+                line_targets.append((
+                    "phantom",
+                    phantom["source_verse_ref"],
+                    phantom["source_line_idx"],
+                ))
+
+            # Current-verse content per ATU line (skip marker-targeted segments).
+            for line_idx, segments in enumerate(segmented_by_verse[verse_ref]):
+                current_text = " ".join(
+                    text for (tv, text) in segments if tv == verse
+                )
+                modified_atu_lines.append(current_text)
+                line_targets.append(("current", verse_ref, line_idx))
+
             tagnt_key = f"{tagnt_prefix}.{chapter}.{verse}"
             tagnt_tokens = tagnt_verses.get(tagnt_key, [])
 
-            if not tagnt_tokens:
-                # No TAGNT data — output empty lines
-                eng_lines = [""] * len(atu_lines)
+            if not tagnt_tokens or all(not t for t in modified_atu_lines):
+                eng_lines = [""] * len(modified_atu_lines)
             else:
                 source_tokens_per_line = build_source_tokens_per_line(
-                    atu_lines, tagnt_tokens
+                    modified_atu_lines, tagnt_tokens
                 )
                 try:
                     eng_lines = _align_verse_universal(
-                        tagnt_prefix,   # accepts TAGNT alias directly
+                        tagnt_prefix,
                         chapter,
                         verse,
                         source_tokens_per_line,
                         METAV_DIR,
                     )
                 except KeyError as e:
-                    # Verse absent from MetaV (very rare): fall back to empty
                     print(f"  WARNING: MetaV miss for {tagnt_key}: {e}", file=sys.stderr)
-                    eng_lines = [""] * len(atu_lines)
+                    eng_lines = [""] * len(modified_atu_lines)
 
-            # Pad / trim to match ATU line count defensively
-            while len(eng_lines) < len(atu_lines):
+            while len(eng_lines) < len(modified_atu_lines):
                 eng_lines.append("")
-            eng_lines = eng_lines[: len(atu_lines)]
+            eng_lines = eng_lines[: len(modified_atu_lines)]
 
+            # Distribute eng_lines back to verse_eng buffer.
+            # Phantom English appends to the source line (concatenates with
+            # whatever pre-marker English already lives there); current
+            # English fills the target line (may have a phantom already
+            # appended if processing order has phantom first).
+            for english, (kind, ref, line_idx) in zip(eng_lines, line_targets):
+                existing = verse_eng[ref][line_idx]
+                if kind == "phantom":
+                    if existing and english:
+                        verse_eng[ref][line_idx] = f"{existing} {english}"
+                    elif english:
+                        verse_eng[ref][line_idx] = english
+                else:  # "current"
+                    if existing and english:
+                        verse_eng[ref][line_idx] = f"{english} {existing}"
+                    elif english:
+                        verse_eng[ref][line_idx] = english
+
+        # Render the chapter output.
+        output_blocks: list[str] = []
+        for verse_ref, atu_lines in verses:
             output_blocks.append(verse_ref)
-            for el in eng_lines:
+            for el in verse_eng[verse_ref]:
                 output_blocks.append(el)
                 stats["lines"] += 1
                 if not el:
                     stats["empty_lines"] += 1
-            output_blocks.append("")  # blank-line separator
+            output_blocks.append("")
             stats["verses"] += 1
 
         out_path.write_text("\n".join(output_blocks) + "\n", encoding="utf-8")
