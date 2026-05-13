@@ -74,6 +74,15 @@ When Stan names a verse with a specific desired partition or proposes a fix: lin
 
 Same FP class in 2+ rules OR 2+ validators OR 2+ verses in one session = engine-level fix at `validators/_shared/*` / `atu-method/atu_method/*` / canon rule extension. Per-verse / per-validator guard the second time = whack-a-mole. **Swat the bug class, not the instance.**
 
+### Grammar constrains ATU boundaries; it does not determine them
+
+Stan codified verbatim 2026-05-13: *"grammar doesn't determine ATUs boundaries, but it can constrain them."* Authoritative cross-corpus statement at [`../atu-method/docs/framework.md §1.2`](../atu-method/docs/framework.md) tail ("Constraint vs. determination — the asymmetry") + memory [`feedback_grammar_constrains_not_determines.md`](../atu-method/memories/feedback_grammar_constrains_not_determines.md).
+
+- **Grammar gives PROHIBITIONS, not PRESCRIPTIONS.** Koine syntax (Layer 1 break-legality), R10 (`hoti` complement integrity), R7 (genitive-absolute integrity), R-rules formula integrity constrain where breaks **can't** go.
+- **Atomic-thought is the determination engine.** Generative principle + J1–J5 + image/camera-angle/period tests determine where breaks **should** go.
+- **When proposing a new rule:** "constraint or determination?" Constraints ground in grammar; determinations require the atomic-thought test (propositional, not grammatical). Grammar can confirm a determination is safe; grammar alone cannot generate it.
+- **For closed-list extensions:** threshold is "is this position content-empty such that breaking here leaves a line with no atomic thought?" Operationalization, not grammatical-pattern catalog.
+
 ### Rule-derivative vs ad-hoc
 
 Rule-derivative changes (a codified MECHANICAL rule fires unambiguously via its validator or clean trigger match) auto-apply — the canon's rule is the approval. STRONG-MERGE-CANDIDATE / STRONG-SPLIT-CANDIDATE tags are application-ready; only REVIEW-REQUIRED needs per-item editorial judgment. Walking Stan through verse-level confirmations on rule-derivative changes is the inverted-discipline failure mode.
