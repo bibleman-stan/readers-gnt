@@ -46,6 +46,24 @@ if [ -n "$V4_STAGED" ]; then
     echo ""
     echo "[pre-commit] v4/grk chapters staged. Checking cascade freshness..."
 
+    # Precompute baseline-coverage misses per book-chapter (e.g., "matt-14: 1").
+    # When v4/grk has Greek content on a line that has no KJV alignment available
+    # (bracket pericopes, MetaV verse-key boundary mismatches, etc.), eng-kjv
+    # carries a blank line for it. The line-count parity check must subtract
+    # these acceptable blanks, otherwise legitimate cascades produce false
+    # STALE verdicts (matt-14, matt-21, acts-19 case at 9cc2e9b6).
+    BASELINE_COUNTS=$(PYTHONIOENCODING=utf-8 py -3 -c "
+import json
+from collections import Counter
+try:
+    b = json.load(open('data/eng-kjv-coverage.baseline.json', encoding='utf-8'))
+    c = Counter(m['book'] for m in b.get('misses', []))
+    for k, v in c.items():
+        print(f'{k}:{v}')
+except Exception:
+    pass
+" 2>/dev/null || true)
+
     BOOKS_AFFECTED=""
     STALE_FOUND=0
 
@@ -55,6 +73,7 @@ if [ -n "$V4_STAGED" ]; then
         BOOK_SUBDIR=${REL_PATH%%/*}
         FILENAME=${REL_PATH##*/}
         SLUG=${FILENAME%%-*}
+        BOOK_KEY=${FILENAME%.txt}  # e.g., "matt-14"
 
         # Track unique books (for HTML-build check)
         case " $BOOKS_AFFECTED " in
@@ -74,8 +93,17 @@ if [ -n "$V4_STAGED" ]; then
         V4_LINES=$(git show ":$V4_FILE" | grep -cv "^$" || true)
         EN_LINES=$(git show ":$EN_PATH" | grep -cv "^$" || true)
 
-        if [ "$V4_LINES" != "$EN_LINES" ]; then
-            echo "[pre-commit]   STALE: $FILENAME — v4=$V4_LINES non-blank lines, v4/eng-kjv=$EN_LINES"
+        # Baseline-aware comparison: V4_LINES = EN_LINES + acceptable_blank_misses
+        BASELINE_MISSES=$(echo "$BASELINE_COUNTS" | grep "^${BOOK_KEY}:" | cut -d: -f2)
+        BASELINE_MISSES=${BASELINE_MISSES:-0}
+        EXPECTED_EN=$((V4_LINES - BASELINE_MISSES))
+
+        if [ "$EXPECTED_EN" != "$EN_LINES" ]; then
+            if [ "$BASELINE_MISSES" -gt 0 ]; then
+                echo "[pre-commit]   STALE: $FILENAME — v4=$V4_LINES non-blank, v4/eng-kjv=$EN_LINES (baseline allows $BASELINE_MISSES; expected $EXPECTED_EN)"
+            else
+                echo "[pre-commit]   STALE: $FILENAME — v4=$V4_LINES non-blank lines, v4/eng-kjv=$EN_LINES"
+            fi
             STALE_FOUND=1
         fi
     done
