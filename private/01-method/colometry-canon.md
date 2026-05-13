@@ -946,6 +946,175 @@ LEADING_CONNECTIVES_BLOCK_FIRE:
 
 ---
 
+### Detector Signatures (machine-readable)
+
+For rules with implemented detectors, the structured signature the detector consumes — extracted faithfully from each detector's docstring. Detector implementation is the source of truth; drift between this section and `validators/*/check_r*.py` is a failure mode (per `atu-method/docs/architecture.md §drift-prevention #1`).
+
+Rules without a Detector Signature block below have no auto-validator yet (see Rule Index column "Detector"). When implementing a detector for an unsignatured rule, add the signature block here as part of the same commit.
+
+~~~yaml
+# R11 — Direct speech introduction (canon §3.6)
+# Detector: validators/colometry/check_r11_speech_intro.py
+R11:
+  rule_id: R11
+  category: Mechanical
+  layer: 3
+  signature:
+    trigger:
+      line_has: finite_speech_verb_third_person_indicative
+      speech_verb_lemmas: [λέγω, φημί, ἀποκρίνομαι]
+      AND:
+        - line_also_has: another_finite_or_imperative_verb
+        - line_does_not_end_with_speech_boundary  # · or :
+        - no_hoti_immediately_after_speech_verb   # ὅτι → R10
+    action: STRONG-SPLIT  # speech verb + frame → line 1; quoted content → line 2
+  false_positive_filters:
+    - class_A: negated_speech_verb           # non-occurrence
+    - class_B: OT_attribution_tag            # λέγει κύριος / λέγει τὸ πνεῦμα — FULL FILTER
+    - F1: speech_verb_inside_subordinate_clause_on_same_line
+    - F2: translation_gloss_idiom            # ὃ λέγεται μεθερμηνευόμενον
+    - F3: passive_speech_form                # is said / is called
+    - F4: speech_verb_inside_already_opened_quote   # FULL FILTER
+    - F5: parenthetical_mid_speech_attribution      # φησίν/λέγει — FULL FILTER
+    - F6: hoso_hosoi_hoson_subordinator_variants
+    - F7: post_positioned_attribution_tag
+    - F8: narrative_explanatory_comment      # τοῦτο δὲ εἶπεν σημαίνων pattern
+    - F9: descriptive_speech_as_behavior     # λέγουσιν ... ποιοῦσιν contrast
+  closed_lists:
+    - R11_speech_frame_verbs                  # see Closed-List Registry, §3 Rule Index area
+~~~
+
+~~~yaml
+# R18 — Vocative three-way refined treatment (canon §3.9)
+# Detector: validators/colometry/check_r18_vocative.py
+R18:
+  rule_id: R18
+  category: Editorial   # criterion mechanical; merge/split decisions reviewed
+  layer: 3
+  signature:
+    trigger:
+      line_has: vocative_NP
+      AND:
+        - line_has: non_2p_finite_verb
+        - line_does_not_have: any_2p_element  # 2p verb OR 2p pronoun σύ/ὑμεῖς
+    action: STRONG-SPLIT  # vocative owns own line (DEFAULT case)
+  merge_overrides:
+    - subject_appositive_merge: vocative_names_implicit_subject_of_2p_finite_verb
+    - object_appositive_merge:  vocative_restates_explicit_2p_pronoun
+    - discourse_frame_cluster:  frame_particle_plus_vocative_co_lined  # Loipon etc.
+~~~
+
+~~~yaml
+# R18a-GNT — Patriarch-deity-triad indivisibility (canon §3.9a)
+# Detector: validators/colometry/check_r18a_patriarch_triad.py
+R18a-GNT:
+  rule_id: R18a-GNT
+  category: Mechanical
+  layer: 3
+  precedence_tier: 2   # indivisibility — wins over subtractive vetoes internal to triad span
+  signature:
+    trigger:
+      verse_block_contains_in_order:
+        - lemma: θεός
+        - governing: Ἀβραάμ
+        - then_within_same_verse: Ἰσαάκ
+        - then_within_same_verse: Ἰακώβ
+      split_across_lines: true
+    action: STRONG-MERGE  # entire spanning sequence whole on a single line
+  closed_lists:
+    - R18a_patriarch_triad_variants           # see Closed-List Registry
+  exclusions:
+    - personal_name_list_without_theos_anchor  # Acts 7:8 genealogy
+    - non_canonical_triad_orderings             # only Ἀβραάμ → Ἰσαάκ → Ἰακώβ
+    - lead_in_title_phrases_on_separate_lines   # appositional continuations stay separate
+  ported_from: BoFM_R18a_2026-05-11
+~~~
+
+~~~yaml
+# R19 — Genitive absolute always own line (canon §3.10)
+# Detector: validators/colometry/check_r19_genabs.py
+R19:
+  rule_id: R19
+  category: Mechanical
+  layer: 3
+  signature:
+    trigger:
+      line_contains:
+        - anarthrous_genitive_participle
+        - agreeing_genitive_subject
+        - main_clause_finite_verb   # gen abs co-linear with main clause
+    action: STRONG-SPLIT
+  exclusions:
+    - adnominal: genitive_article_immediately_before_participle
+    - PP_governed: preposition_within_3_tokens_before_ptc_or_subject
+    - subordinator_finite: finite_verb_inside_subordinator_scope
+        # ὅτε / ὅταν / ὡς / ἐπεί / ἐπειδή / ὅπως / relative pronouns
+  known_FPs_allowlist:
+    # See _KNOWN_FP_ALLOWLIST in detector — attributive NP structures the
+    # adjacency heuristic can't resolve. If list grows past ~5 entries,
+    # refine Class B filter (inter-line NP awareness) rather than extend.
+    - (john, 7, 38)
+    - (2cor, 6, 16)
+    - (heb, 11, 1)
+    - (matt, 9, 10)
+    - (phil, 2, 15)
+~~~
+
+~~~yaml
+# R25 — ὥστε Short-Consecutive-Result Binding (canon §3.14a)
+# Detector: validators/colometry/check_r25_hoste_consecutive_result.py
+R25:
+  rule_id: R25
+  category: Mechanical (mechanical detection) + Editorial (semantic conditions 2-3)
+  layer: 3
+  signature:
+    trigger:
+      line_starts_with: ὥστε
+      AND:
+        - line_word_count_inclusive_of_hoste: ≤8
+        - co_referential_subject: implied_agent_of_infinitive_equals_matrix_subject  # SEMANTIC
+        - no_camera_shift: true                                                       # SEMANTIC
+    action: STRONG-MERGE-CANDIDATE   # merge ὥστε-clause onto matrix line
+  verdicts_by_path:
+    - words_le_8_after_illative_filter: STRONG-MERGE-CANDIDATE  # human review for conditions 2-3
+    - words_gt_8: SPLIT-MAINTAINED  # word-count-exceeded
+    - verse_initial_hoste: REVIEW-REQUIRED  # cross-verse defer
+    - illative_hoste_surface_markers: SPLIT-MAINTAINED
+  note: |
+    Conditions 2 (co-referential subject) and 3 (no camera shift) are
+    semantic/pragmatic and cannot be resolved by surface scan alone.
+    The validator emits STRONG-MERGE-CANDIDATE; per-item human review
+    applies the semantic conditions.
+~~~
+
+~~~yaml
+# R28-ext — Speech-Act Announcement After Adverbial Frame (canon §3.6)
+# Detector: validators/colometry/check_r28_speech_act_frame.py
+R28-ext:
+  rule_id: R28-ext  # extension of R28 / R11 family
+  category: Mechanical
+  layer: 3
+  signature:
+    trigger:
+      line_ends_with_speech_boundary: [ano_teleia, colon]   # · or :
+      line_contains:
+        - finite_speech_verb_third_person_indicative
+        - speech_verb_lemmas: [λέγω, εἶπον, φημί]
+        - OR:
+          - temporal_conjunction_with_inner_finite_verb     # ὡς/ὅτε/ὅταν + frame verb
+          - participial_cluster_of_3plus_tokens_before_speech_verb
+    action: STRONG-SPLIT  # frame → line 1; speech verb + dative-address → line 2
+  exclusions:
+    - X1: hoti_immediately_after_speech_verb         # R10 governs (indirect speech)
+    - X2: legōn_eipōn_participial_adjacent_to_speech_verb  # ἀπεκρίθη+λέγων Hebraism
+    - X3: frame_already_on_prior_line
+    - X4: speech_verb_inside_subordinate_clause      # F1 from R11
+~~~
+
+**Signature coverage status (2026-05-13).** 6 of ~26 rules signatured: R11, R18, R18a-GNT, R19, R25, R28-ext (+ M4-GNT-1 inline at §3.18). Unsignatured: R1, R7, R8, R9, R10, R12, R13, R14, R17, R20, R22, R23, R24, R27, R28, Layer-1 R2–R6. R7 and R2–R6 signatures live in Layer 1 syntax-floor (`data/syntax-reference/greek-break-legality.md`), not duplicated here. R12/R13/R14/R24/R27/R28 are Editorial / Principle — no auto-validator, signature would over-specify. R1/R8/R9/R10/R17/R20/R22/R23 detectors not yet implemented — signature pending detector authorship (the right time to write the signature is when the detector lands, not now).
+
+---
+
 ## Section 4: Operational Tests
 
 *Purpose: **mainly operational** — diagnostic tests Claude runs to gate or sharpen editorial decisions (No-Anchor, Period, Image, Two-Prong, Q1/Q2, Completing-Predication, Validator Work-Queue). Each test has explicit inputs, outputs, and pass/fail criteria.*
