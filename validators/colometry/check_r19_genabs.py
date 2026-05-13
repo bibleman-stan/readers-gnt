@@ -75,7 +75,7 @@ ERROR_CLASS = "DEVIATION"   # Layer 3 editorial
 _KNOWN_FP_ALLOWLIST: frozenset[tuple[str, int, int]] = frozenset({
     ("john",  7, 38),   # ὕδατος ζῶντος — attributive, head ποταμοί scattered on same line
     ("2cor",  6, 16),   # θεοῦ ἐσμεν ζῶντος — head ναός on prior line (inter-line NP)
-    ("heb",  11,  1),   # ἐλπιζομένων ὑπόστασις πραγμάτων — ptc-noun gap > 1
+    # heb 11:1 retired 2026-05-13 — now caught by Class B check 4 (ptc-head-gennoun widened pattern)
     ("matt",  9, 10),   # ἐγένετο + gen abs Septuagintalism — formulaic temporal frame, not independent
     ("phil",  2, 15),   # γενεᾶς σκολιᾶς καὶ διεστραμμένης — attributive adjective-modified NP, not gen abs
 })
@@ -188,6 +188,19 @@ def _is_attributive_gen_ptc(ptc_idx: int, subj_idx: int, line_tokens: list) -> b
             _, pos_k, p_k, _ = line_tokens[k]
             if pos_k.startswith("N-") and len(p_k) >= 5 and p_k[4] in ("N", "A", "D"):
                 return True
+
+    # ── check 4 (NEW, 2026-05-13): widened-window for ptc-intervening-head-gennoun
+    #    pattern. Catches heb 11:1 (ἐλπιζομένων ὑπόστασις πραγμάτων: ptc-noun gap
+    #    = 2 with intervening nominative head ὑπόστασις) and similar.
+    #
+    #    Pattern: ptc at idx_a, gen noun at idx_b with |a-b| == 2, AND the token
+    #    between them is a non-genitive (N/A/D) noun. The intervening noun is
+    #    the head that the gen NP modifies attributively — NOT a gen abs.
+    if abs(ptc_idx - noun_idx) == 2:
+        between_idx = (ptc_idx + noun_idx) // 2
+        _, pos_b, p_b, _ = line_tokens[between_idx]
+        if pos_b.startswith("N-") and len(p_b) >= 5 and p_b[4] in ("N", "A", "D"):
+            return True
 
     return False
 

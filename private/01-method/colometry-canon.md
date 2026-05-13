@@ -1144,7 +1144,76 @@ R28-ext:
     - X4: speech_verb_inside_subordinate_clause      # F1 from R11
 ~~~
 
-**Signature coverage status (2026-05-13).** 6 of ~26 rules signatured: R11, R18, R18a-GNT, R19, R25, R28-ext (+ M4-GNT-1 inline at §3.18). Unsignatured: R1, R7, R8, R9, R10, R12, R13, R14, R17, R20, R22, R23, R24, R27, R28, Layer-1 R2–R6. R7 and R2–R6 signatures live in Layer 1 syntax-floor (`data/syntax-reference/greek-break-legality.md`), not duplicated here. R12/R13/R14/R24/R27/R28 are Editorial / Principle — no auto-validator, signature would over-specify. R1/R8/R9/R10/R17/R20/R22/R23 detectors not yet implemented — signature pending detector authorship (the right time to write the signature is when the detector lands, not now).
+~~~yaml
+# R1 — No-anchor rule (canon §3.1)
+# Detector: scripts/scan_no_anchor_lines.py (scanner)
+#           scripts/apply_no_anchor_merges.py (applier)
+R1:
+  rule_id: R1
+  category: Mechanical
+  layer: 3
+  signature:
+    trigger:
+      line_lacks_anchor: true
+      anchor_types:
+        - finite_verb           # person 1/2/3, mood I/S/D/O
+        - infinitive            # mood N
+        - participle            # mood P (per detector; canon §3.1 narrows to predicate-ptc)
+        - substantive_NAV       # nominative/accusative/vocative substantive
+                                # NOT governed by a preposition on same line
+    action: MERGE-CANDIDATE  # candidate for merging with neighbor (after two-prong exception check)
+  exemptions:
+    - single_line_verse         # atomic by definition
+    - speech_intro_prefix
+    - standalone_sentence_connective  # Ὥστε, Ἄρα οὖν, Διὰ τοῦτο
+    - two_prong_exception_test_passes  # §2 / J1–J5 carve-out
+  corpus_status: "860 no-anchor merges applied across 26 books (2026-04-12 sweep). Final scan: 0 unanchored lines remaining corpus-wide."
+~~~
+
+~~~yaml
+# R20 — Participial phrase test, refined (canon §3.10)
+# Detector: scripts/scan_line_ending_participles.py (scanner only)
+R20:
+  rule_id: R20
+  category: Editorial
+  layer: 3
+  signature:
+    trigger:
+      line_ends_with: participial_form
+      AND:
+        - next_line_starts_with: resolving_finite_verb
+        - participle_is_predicate_not_attributive  # §3.10 distinction
+    action: MERGE-CANDIDATE  # the participle resolves to next line's finite verb
+  note: |
+    Scanner surfaces candidates; canon §3.10 + §8 Participial Rules
+    govern editorial application. Predicate vs attributive distinction
+    is judgment-required per-construction.
+~~~
+
+~~~yaml
+# R23 — Dative subject of infinitive (canon §3.12)
+# Detector: scripts/scan_r23_dative_infinitive.py (scanner only;
+#           empirical FP check — R23 may be one-verse crystallization)
+R23:
+  rule_id: R23
+  category: Mechanical (canonical case Rom 12:3); under empirical review
+  layer: 3
+  signature:
+    trigger:
+      verse_contains:
+        - speech_command_or_desire_class_verb
+        - dative_NP_not_governed_by_preposition  # parsing[4] == 'D'
+        - infinitive                              # parsing[3] == 'N'
+      AND:
+        dative_can_be_semantic_subject_of_infinitive: true  # SEMANTIC
+    action: MERGE-CANDIDATE  # dative + infinitive bind as semantic unit
+  note: |
+    Adversarial over-structuring audit (2026-04-18) flagged R23 as
+    most-suspect: possibly one-verse crystallization from Rom 12:3.
+    Scanner empirically tests whether the pattern recurs elsewhere.
+~~~
+
+**Signature coverage status (2026-05-13).** 9 of ~26 rules signatured: R1, R11, R18, R18a-GNT, R19, R20, R23, R25, R28-ext (+ M4-GNT-1 inline at §3.18). Unsignatured: R7, R8, R9, R10, R12, R13, R14, R17, R22, R24, R27, R28, Layer-1 R2–R6. R7 and R2–R6 signatures live in Layer 1 syntax-floor (`data/syntax-reference/greek-break-legality.md`), not duplicated here. R12/R13/R14/R24/R27/R28 are Editorial / Principle — no auto-validator, signature would over-specify. R8/R9/R10/R17/R22 detectors not yet implemented — signature pending detector authorship.
 
 ---
 
