@@ -29,11 +29,11 @@ Behold the man!
 19:6
 When the chief priests therefore and officers saw him,
 they cried out, saying,
-Crucify
-him, crucify
-him. Pilate saith unto them,
-Take ye him, and crucify
-him: for I find no fault in him.
+Crucify him,
+crucify him.
+Pilate saith unto them,
+Take ye him, and crucify him:
+for I find no fault in him.
 
 19:7
 The Jews answered him,
@@ -83,9 +83,9 @@ Behold your King!
 
 19:15
 But they cried out,
-Away with
-him, away with
-him, crucify him.
+Away with him,
+away with him,
+crucify him.
 Pilate saith unto them,
 Shall I crucify your King?
 The chief priests answered,
@@ -168,8 +168,8 @@ put it upon hyssop, and put it to his mouth.
 
 19:30
 When therefore had received the vinegar,
-Jesus he said,
-It is finished:
+Jesus he said, It
+is finished:
 and he bowed his head, and gave up the ghost.
 
 19:31

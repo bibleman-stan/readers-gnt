@@ -23,8 +23,8 @@ And some fell on stony ground, where it had not much earth;
 and immediately it sprang up, because it had no depth of earth:
 
 4:6
-But when the sun was up,
-it was scorched;
+But when the sun was up, it
+was scorched;
 and because it had no root, it withered away.
 
 4:7
@@ -41,16 +41,16 @@ and some sixty,
 and some an hundred.
 
 4:9
-And he said
-unto them, He that hath ears to hear, let him hear.
+And he said unto them,
+He that hath ears to hear, let him hear.
 
 4:10
 And when he was alone,
 they that were about him with the twelve asked of him the parable.
 
 4:11
-And he said unto them,
-Unto you it is given to know the mystery of the kingdom of God:
+And he said unto them, Unto
+you it is given to know the mystery of the kingdom of God:
 but unto them that are without, all these things are done in parables:
 
 4:12
@@ -98,8 +98,8 @@ and it becometh unfruitful.
 4:20
 And these are they which are sown on good ground;
 such as hear the word,
-and receive
-it, and bring forth fruit,
+and receive it,
+and bring forth fruit,
 some thirtyfold,
 some sixty,
 and some an hundred.
@@ -163,8 +163,8 @@ which, when it is sown in the earth,
 is less than all the seeds that be in the earth:
 
 4:32
-But when it is sown,
-it groweth up,
+But when it is sown, it
+groweth up,
 and becometh greater than all herbs,
 and shooteth out great branches;
 so that the fowls of the air may lodge under the shadow of it.

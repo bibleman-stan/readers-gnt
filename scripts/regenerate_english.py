@@ -285,6 +285,7 @@ _SUPERSCRIPT_TO_DIGIT = {
     "⁰": 0, "¹": 1, "²": 2, "³": 3, "⁴": 4,
     "⁵": 5, "⁶": 6, "⁷": 7, "⁸": 8, "⁹": 9,
 }
+_DIGIT_TO_SUPERSCRIPT = {v: k for k, v in _SUPERSCRIPT_TO_DIGIT.items()}
 _SUPERSCRIPT_RE = re.compile(
     "[" + "".join(_SUPERSCRIPT_TO_DIGIT.keys()) + "]+"
 )
@@ -292,6 +293,10 @@ _SUPERSCRIPT_RE = re.compile(
 
 def _superscript_run_to_int(s: str) -> int:
     return int("".join(str(_SUPERSCRIPT_TO_DIGIT[c]) for c in s))
+
+
+def _int_to_superscript(n: int) -> str:
+    return "".join(_DIGIT_TO_SUPERSCRIPT[int(d)] for d in str(n))
 
 
 def segment_atu_line(line: str, current_verse: int) -> list[tuple[int, str]]:
@@ -480,12 +485,14 @@ def generate_book(
 
             # Phantom lines first (in source-line order — TAGNT for this
             # verse keys these tokens at the start of the canonical verse).
+            # Target verse = `verse` (the verse currently being aligned).
             for phantom in phantoms_into.get(verse_ref, []):
                 modified_atu_lines.append(phantom["text"])
                 line_targets.append((
                     "phantom",
                     phantom["source_verse_ref"],
                     phantom["source_line_idx"],
+                    verse,  # target verse for superscript fold marker emission
                 ))
 
             # Current-verse content per ATU line (skip marker-targeted segments).
@@ -494,7 +501,7 @@ def generate_book(
                     text for (tv, text) in segments if tv == verse
                 )
                 modified_atu_lines.append(current_text)
-                line_targets.append(("current", verse_ref, line_idx))
+                line_targets.append(("current", verse_ref, line_idx, verse))
 
             tagnt_key = f"{tagnt_prefix}.{chapter}.{verse}"
             tagnt_tokens = tagnt_verses.get(tagnt_key, [])
@@ -522,17 +529,22 @@ def generate_book(
             eng_lines = eng_lines[: len(modified_atu_lines)]
 
             # Distribute eng_lines back to verse_eng buffer.
-            # Phantom English appends to the source line (concatenates with
-            # whatever pre-marker English already lives there); current
+            # Phantom English appends to the source line, PREFIXED with the
+            # target-verse superscript marker per canon §3.17 ("Mirror in
+            # English — same merge, same superscript position"). Current
             # English fills the target line (may have a phantom already
             # appended if processing order has phantom first).
-            for english, (kind, ref, line_idx) in zip(eng_lines, line_targets):
+            for english, (kind, ref, line_idx, target_verse) in zip(
+                eng_lines, line_targets
+            ):
                 existing = verse_eng[ref][line_idx]
                 if kind == "phantom":
-                    if existing and english:
-                        verse_eng[ref][line_idx] = f"{existing} {english}"
-                    elif english:
-                        verse_eng[ref][line_idx] = english
+                    marker = _int_to_superscript(target_verse)
+                    marked_english = f"{marker}{english}" if english else ""
+                    if existing and marked_english:
+                        verse_eng[ref][line_idx] = f"{existing} {marked_english}"
+                    elif marked_english:
+                        verse_eng[ref][line_idx] = marked_english
                 else:  # "current"
                     if existing and english:
                         verse_eng[ref][line_idx] = f"{english} {existing}"
