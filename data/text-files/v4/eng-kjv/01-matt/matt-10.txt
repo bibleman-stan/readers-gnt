@@ -1,6 +1,6 @@
 10:1
-And when he had called unto him his twelve disciples, he gave them power against unclean spirits, to cast them out,
-and to heal all manner of sickness and all manner of disease.
+And when he had called unto him his twelve disciples, he gave them power against unclean spirits, to cast them
+out, and to heal all manner of sickness and all manner of disease.
 
 10:2
 Now the names of the twelve apostles are these;
@@ -90,8 +90,8 @@ for my sake,
 for a testimony against them and the Gentiles.
 
 10:19
-But when they deliver you up,
-take no thought how or what ye shall speak:
+But when they deliver you
+up, take no thought how or what ye shall speak:
 for it shall be given you in that same hour what ye shall speak.
 
 10:20
@@ -128,8 +128,8 @@ how much more shall they call them of his household?
 
 10:26
 Fear them not therefore:
-for there is nothing covered, that shall not be revealed;
-and hid, that shall not be known.
+for there is nothing covered, that shall not
+be revealed; and hid, that shall not be known.
 
 10:27
 What I tell you in darkness, that speak ye in light:

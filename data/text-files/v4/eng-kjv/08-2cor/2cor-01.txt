@@ -1,8 +1,8 @@
 1:1
 Paul, an apostle of Jesus Christ by the will of God,
 and Timothy our brother,
-unto the church of God which is at Corinth, with all the saints which
-are in all Achaia:
+unto the church of God which is at Corinth, with all the saints
+which are in all Achaia:
 
 1:2
 Grace be to you and peace from God our Father, and from the Lord Jesus Christ.
@@ -21,17 +21,17 @@ For as the sufferings of Christ abound in us,
 so our consolation also aboundeth by Christ.
 
 1:6
-And whether we be afflicted, it is for your consolation and salvation, which salvation.
+And whether we be afflicted, it is for your consolation and salvation, which
 or whether we be comforted,
-is effectual in the enduring of the same sufferings which we also suffer: it is for your consolation and
+is effectual in the enduring of the same sufferings which we also suffer: it is for your consolation and salvation.
 
 1:7
-our hope of you is stedfast, knowing, that as ye are partakers of the sufferings,
-And so shall ye be also of the consolation.
+is stedfast, knowing, that as ye are partakers of the sufferings,
+And our hope of you so shall ye be also of the consolation.
 
 1:8
-For we would not, brethren, have you ignorant
-of our trouble which came to us in Asia,
+For we would not, brethren, have you
+ignorant of our trouble which came to us in Asia,
 that we were pressed out of measure, above strength, insomuch that we despaired even of life:
 
 1:9
@@ -54,8 +54,8 @@ but by the grace of God, we have had our conversation in the world, and more abu
 
 1:13
 For we write none other things unto you, than what ye read
-or acknowledge; even
-and I trust ye shall acknowledge to the end;
+or acknowledge;
+and I trust ye shall acknowledge even to the end;
 
 1:14
 As also ye have acknowledged us in part,

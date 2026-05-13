@@ -54,8 +54,8 @@ I fast twice in the week,
 I give tithes of all that I possess.
 
 18:13
-And the publican, standing afar off, would not lift up so much as his eyes unto heaven, upon
-but smote his breast, saying,
+And the publican, standing afar off, would not lift up so much as his eyes unto heaven,
+but smote upon his breast, saying,
 God be merciful to me a sinner.
 
 18:14
@@ -90,11 +90,11 @@ none is good, save one, that is, God.
 
 18:20
 Thou knowest the commandments,
-Do not commit adultery,
-Do not kill,
-Do not steal,
-Do not bear false witness,
-Honour thy father and thy mother.
+Do not
+commit adultery, Do not
+kill, Do not
+steal, Do not
+bear false witness, Honour thy father and thy mother.
 
 18:21
 And he said,
@@ -158,8 +158,8 @@ and spitefully entreated,
 and spitted on:
 
 18:33
-And they shall scourge him, and put him to death:
-and the third day he shall rise again.
+And they shall scourge him, and put him
+to death: and the third day he shall rise again.
 
 18:34
 And they understood none of these things:

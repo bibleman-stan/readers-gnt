@@ -2,8 +2,8 @@
 At that time Herod the tetrarch heard of the fame of Jesus,
 
 14:2
-And said unto his servants, This
-is John the Baptist;
+And said unto his servants,
+This is John the Baptist;
 he is risen from the dead;
 and therefore mighty works do shew forth themselves in him.
 
@@ -48,8 +48,8 @@ and went and told Jesus.
 
 14:13
 Jesus heard of it, he departed thence by ship into a desert place
-apart:
-When and when the people had heard thereof, they followed him on foot out of the cities.
+apart: and
+When when the people had heard thereof, they followed him on foot out of the cities.
 
 14:14
 And Jesus went forth, and saw a great multitude,
@@ -61,8 +61,8 @@ And when it was evening,
 his disciples came to him,
 saying, This is a desert place,
 and the time is now past;
-send the multitude away,
-that they may go into the villages, and buy themselves victuals.
+send the multitude
+away, that they may go into the villages, and buy themselves victuals.
 
 14:16
 But Jesus said unto them,

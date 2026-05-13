@@ -46,8 +46,8 @@ And his disciples asked him, saying, What might this parable be?
 And he said,
 Unto you it is given to know the mysteries of the kingdom of God:
 but to others in parables;
-that seeing they might not see,
-and hearing they might not understand.
+that seeing they might not
+see, and hearing they might not understand.
 
 8:11
 Now the parable is this:
@@ -102,16 +102,16 @@ it was told him
 And by certain which said, Thy mother and thy brethren stand without, desiring to see thee.
 
 8:21
-And he answered and said unto them, it.
+And he answered and said unto them,
 My mother and my brethren are these
-which hear the word of God, and do
+which hear the word of God, and do it.
 
 8:22
 it came to pass on a certain day,
 Now that he went into a ship his disciples:
 with he said unto them,
-Let us go over unto the other side of the lake.
-and And they launched forth.
+Let us go over unto the other side of the lake. And
+and they launched forth.
 
 8:23
 But as they sailed
@@ -131,8 +131,8 @@ and there was a calm.
 And he said unto them,
 Where your faith?
 And they being afraid wondered, saying one to another,
-is What manner of man is
-this! for he commandeth even the winds and water, and they obey him.
+is What manner of man
+is this! for he commandeth even the winds and water, and they obey him.
 
 8:26
 And they arrived at the country of the Gadarenes,
@@ -228,11 +228,11 @@ and immediately her issue of blood stanched.
 
 8:45
 And Jesus said,
-Who touched me? sayest thou, Who touched me?
+Who touched me? thou, Who touched me?
 When all denied,
 Peter said,
-and throng thee and press thee, and
-they that were with him Master, the multitude
+and thee, and sayest
+they that were with him Master, the multitude throng thee and press
 
 8:46
 And Jesus said,
@@ -241,13 +241,13 @@ for I perceive that virtue is gone out of me.
 
 8:47
 And when the woman saw that she was not hid, she came trembling, and falling down before him,
-she declared unto him before all the people for what cause she had touched him,
-and how she was healed immediately.
+she declared unto him before all the people for what cause she had touched
+him, and how she was healed immediately.
 
 8:48
-And he said unto her,
-Daughter, be of good comfort: thy faith hath made thee whole;
-go in peace.
+And he said unto her, Daughter,
+be of good comfort: thy faith hath made thee
+whole; go in peace.
 
 8:49
 While he yet spake,
@@ -266,8 +266,8 @@ and the father and the mother of the maiden.
 8:52
 And all wept, and bewailed her:
 but he said,
-Weep not; she is not dead,
-but sleepeth.
+Weep not; she is not
+dead, but sleepeth.
 
 8:53
 And they laughed him to scorn, knowing that she was dead.

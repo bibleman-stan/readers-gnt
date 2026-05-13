@@ -3,8 +3,8 @@ When the morning was come,
 all the chief priests and elders of the people took counsel against Jesus to put him to death:
 
 27:2
-And when they had bound him, they led him away, him
-and delivered to Pontius Pilate the governor.
+And when they had bound him, they led him away,
+and delivered him to Pontius Pilate the governor.
 
 27:3
 Then Judas, which had betrayed him, when he saw that he was condemned, repented himself, and brought again the thirty pieces of silver
@@ -44,9 +44,9 @@ as the Lord appointed me.
 27:11
 And Jesus stood before the governor:
 and the governor asked him, saying,
-Art thou the King of the Jews? Thou
+Art thou the King of the Jews?
 And Jesus said
-unto him, sayest.
+unto him, Thou sayest.
 
 27:12
 And when he was accused of the chief priests and elders,
@@ -162,8 +162,8 @@ And they crucified him, and parted his garments, casting lots: that it might be 
 And sitting down they watched him there;
 
 27:37
-And set up over his head his accusation written, THIS
-IS JESUS THE KING OF THE JEWS.
+And set up over his head his accusation written,
+THIS IS JESUS THE KING OF THE JEWS.
 
 27:38
 Then were there two thieves crucified with him,
@@ -185,15 +185,15 @@ Likewise also the chief priests mocking him, with the scribes and elders, said,
 
 27:42
 He saved others;
-himself he cannot save.
-If he be the King of Israel,
+himself he cannot save. If
+he be the King of Israel,
 let him now come down from the cross,
 and we will believe him.
 
 27:43
 He trusted in God;
-let him deliver him now, if he will have him:
-for he said,
+let him deliver him now, if he will have
+him: for he said,
 I am the Son of God.
 
 27:44
@@ -286,8 +286,8 @@ After three days I will rise again.
 
 27:64
 Command therefore that the sepulchre be made sure until the third day,
-lest his disciples come by night, and steal him away,
-and say unto the people,
+lest his disciples come by night, and steal him
+away, and say unto the people,
 He is risen from the dead:
 so the last error shall be worse than the first.
 

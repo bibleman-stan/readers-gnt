@@ -13,8 +13,8 @@ Especially because I know thee to be expert in all customs and questions which a
 
 26:4
 My manner of life
-from my youth, which
-was at the first among mine own nation
+from my youth,
+which was at the first among mine own nation
 at Jerusalem,
 know all the Jews;
 
@@ -28,8 +28,8 @@ I stand and am judged
 
 26:7
 Unto which promise our twelve tribes, instantly serving God day and night, hope to come.
-For which hope's sake, Agrippa, I am accused of the Jews.
-king
+For which hope's sake, I am accused of the Jews.
+king Agrippa,
 
 26:8
 Why should it be thought a thing incredible with you,
@@ -66,8 +66,8 @@ it is hard for thee to kick against the pricks.
 
 26:15
 And I said,
-Who art thou, Lord?
-And he said,
+Who art thou,
+Lord? And he said,
 I am Jesus whom thou persecutest.
 
 26:16
@@ -152,6 +152,6 @@ This man doeth nothing worthy of death or of bonds.
 
 26:32
 Then said Agrippa unto Festus,
-This man might have been set at liberty,
-if he had not appealed unto Caesar.
+This man might have been set at liberty, if
+he had not appealed unto Caesar.
 
