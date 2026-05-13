@@ -1,5 +1,5 @@
 {
-  "_note": "Known coverage misses: v4/grk lines with Greek content whose eng-kjv counterpart is blank. Each represents an SBLGNT-vs-KJV verse-boundary mismatch or other structural case the alignment cannot resolve. Run scripts/scan_eng_kjv_coverage.py --update-baseline after intentional structural changes.",
+  "_note": "Known coverage misses: v4/grk content lines whose Strong's-lemma signature has no surface counterpart in the host MetaV record. TAGNT/MetaV are storage-indexed by Stephanus 1551 verse-key — addressing convention only (canon §1: versification is editorial overlay, not analytical signal). When v4/grk's ATU-segmentation puts Greek on a line whose lemmas are matched by KJV words stored under an adjacent MetaV record, the distributor can't reach the match. The verse-keys here are substrate-addressing artifacts, not analytical-unit claims. Run scripts/scan_eng_kjv_coverage.py --update-baseline after intentional structural changes.",
   "misses": [
     {
       "book": "1cor-07",

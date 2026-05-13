@@ -666,9 +666,9 @@ Test: is there a finite verb in the clause following de? If yes -> split. If the
 
 ### 3.9 Vocative Rule (Refined Three-Way Treatment)
 
-**Default: vocatives get their own line** when they initiate or resume direct address. A vocative at the start of a verse or after a speech-introducing boundary is opening a camera-angle turn — the speaker is now turning toward an addressee — and earns its own line as a complete address act.
+**Default: vocatives get their own line** when they initiate or resume direct address. A vocative at the start of a discourse turn (paragraph-opening or post-speech-intro position) is opening a camera-angle turn — the speaker is now turning toward an addressee — and earns its own line as a complete address act.
 
-**Apposition exception: a vocative merges into the preceding line when it is grammatically appositive to an already-established second-person address in the same clause.** The grammatical signature: somewhere in the preceding line(s) of the same verse, *not separated from the vocative by a speech-introducing boundary* (ano teleia or colon), there is either a second-person pronoun (any form of sy / hymeis) or a second-person finite verb.
+**Apposition exception: a vocative merges into the preceding line when it is grammatically appositive to an already-established second-person address in the same clause-span.** The grammatical signature: somewhere in the preceding line(s) of the same clause-span, *not separated from the vocative by a speech-introducing boundary* (ano teleia or colon), there is either a second-person pronoun (any form of sy / hymeis) or a second-person finite verb. "Clause-span" here means the syntactic unit; intervening Stephanus 1551 verse-markers are irrelevant per §1 versification-not-a-signal.
 
 Two justifications, not one:
 
@@ -678,8 +678,8 @@ Two justifications, not one:
 **Verb person is irrelevant.** The triggering condition is the 2p *pronoun*, not the person of the main verb. `Akoloutheso soi, kyrie:` (Luke 9:61) — kyrie merges because it is object-appositive to soi, regardless of akoloutheso being first person. Contrast Acts 9:10 `Idou ego, / kyrie.` (correctly split: ego is 1p, kyrie is not appositive to any 2p element).
 
 **Boundary cases that stay on their own line:**
-- **Verse-initial vocative** — initiating a new address turn, no preceding grammar to lean on.
-- **Verse-final vocative** — tail address, distinct act.
+- **Turn-initial vocative** — opening a new discourse turn (paragraph-opening, post-speech-intro), no preceding grammar to lean on within the turn.
+- **Tail vocative** — clause-final address, distinct act.
 - **Vocative after speech-intro punctuation** — the prior 2p markers belong to the outer layer, not the inner address.
 - **Stacked parallel vocatives** — treated as a parallel address structure (pateres / neaniskoi / paidia in 1 John 2:12-14).
 
@@ -842,9 +842,9 @@ Mark's paratactic short lines and Paul's periodic long lines both emerge from ap
 
 A strong signal that coordination is at work: **aspect or tense shift across members.** Heb 1:3 has a present participle (sustaining), an aorist participle (purifying), and a finite indicative (enthroning) — three actions at three temporal planes. This is coordination of events, not elaboration of one event. Split into a tri-colon.
 
-### 3.17 Cross-Verse Continuity Merge
+### 3.17 ATU Spans Versification Overlay (Inline Superscript Marker)
 
-**When a single ATU crosses a Stephanus 1551 verse boundary, the line stays intact.** The verse boundary is an editorial overlay (imposed 1551 on a text that already had its own rhetorical structure); it does not constrain ATU formation. The ATU is formed by grammatical/rhetorical continuity, and the versification is carried along by an inline superscript marker.
+**When a single ATU happens to span a Stephanus 1551 verse-marker, the line stays intact.** Versification is editorial overlay (imposed 1551 on a text that already had its own rhetorical structure) — it does not constrain ATU formation per §1 versification-not-a-signal. The ATU is formed by grammatical/rhetorical continuity; the versification marker is carried along inline as a superscript, which is an indexing convenience for cross-references — not an analytical boundary the ATU is "crossing."
 
 **Canonical example — Matt 3:1-2:**
 

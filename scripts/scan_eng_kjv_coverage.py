@@ -21,9 +21,13 @@ Run as:
 
 Baseline lives at data/eng-kjv-coverage.baseline.json — a sorted list
 of [book_slug, verse_ref, line_idx] tuples that are KNOWN to be blank
-(typically because SBLGNT-vs-KJV verse-boundary differences leave some
-Greek lines with no KJV counterpart). --baseline-check fails if any
-NEW blank lines have appeared that aren't in the baseline.
+(typically because the line's Strong's-lemma signature is matched by
+KJV words stored under an adjacent MetaV record-key. TAGNT/MetaV are
+storage-indexed by Stephanus 1551 verse-key — addressing convention
+only, per canon §1's versification-is-not-an-analytical-signal stance.
+The verse-keys here are substrate-addressing, not analytical units).
+--baseline-check fails if any NEW blank lines have appeared that aren't
+in the baseline.
 """
 
 import argparse
