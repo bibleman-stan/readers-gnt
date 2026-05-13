@@ -54,8 +54,8 @@ there shall also this, that this woman hath done, be told for a memorial of her.
 Then one of the twelve, called Judas Iscariot, went unto the chief priests,
 
 26:15
-And said
-unto them, What will ye give me,
+And said unto them,
+What will ye give me,
 and I will deliver him unto you?
 And they covenanted with him for thirty pieces of silver.
 
@@ -64,8 +64,8 @@ And from that time he sought opportunity
 to betray him.
 
 26:17
-Now the first day of the feast of unleavened bread the disciples came to Jesus, saying
-unto him, Where wilt thou that we prepare for thee to eat the passover?
+Now the first day of the feast of unleavened bread the disciples came to Jesus, saying unto
+him, Where wilt thou that we prepare for thee to eat the passover?
 
 26:18
 And he said,
@@ -90,9 +90,9 @@ Verily I say unto you,
 that one of you shall betray me.
 
 26:22
-And they were exceeding sorrowful, and began every one of them to say
+And they were exceeding sorrowful, and began every one of them to say unto
 is it I?
-unto him, Lord,
+him, Lord,
 
 26:23
 And he answered and said,
@@ -104,8 +104,8 @@ The Son of man goeth
 as it is written of him:
 but woe unto that man
 by whom the Son of man is betrayed!
-it had been good man
-for that if he had not been born.
+it had been good for man
+that if he had not been born.
 
 26:25
 Then Judas, which betrayed him, answered and said,
@@ -116,9 +116,9 @@ Thou hast said.
 
 26:26
 And as they were eating,
-Jesus took bread, and blessed
-it, and brake
-it, and gave it to the disciples, and said,
+Jesus took bread, and blessed it,
+and brake it,
+and gave it to the disciples, and said,
 Take, eat;
 this is my body.
 
@@ -373,7 +373,7 @@ saying, I know not the man.
 And immediately the cock crew.
 
 26:75
-And Peter remembered the word of Jesus, which said
-unto him, Before the cock crow, thou shalt deny me thrice.
+And Peter remembered the word of Jesus, which said unto
+him, Before the cock crow, thou shalt deny me thrice.
 And he went out, and wept bitterly.
 
