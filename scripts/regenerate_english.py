@@ -110,7 +110,39 @@ BOOK_BY_SLUG = {m[1]: m for m in BOOK_META}
 # where col3 = Strong's+morph, col11 = bare Strong's, col12 = alt Strong's
 # ---------------------------------------------------------------------------
 
-_RE_TOKEN_ROW = re.compile(r"^([0-9A-Z][a-zA-Z0-9]+\.\d+\.\d+)#\d+=")
+# TAGNT row prefix: book.ch.vs[{alt.ch.vs}]#NN=
+# The optional {N.N} annotation appears on bracketed-pericope rows where
+# TAGNT records both the SBLGNT verse-number and the alternate-tradition
+# verse-number (e.g. Jhn.7.53{8.1}#01 — SBL prints under 7:53, other
+# editions under 8:1). The primary verse_ref before "{" is what v4/grk
+# uses.
+_RE_TOKEN_ROW = re.compile(r"^([0-9A-Z][a-zA-Z0-9]+\.\d+\.\d+)(?:\{[^}]+\})?#\d+=")
+
+
+# SBLGNT-bracketed pericopes: printed in SBLGNT with editorial brackets
+# ⟦…⟧ but TAGNT's col5 attestation list excludes "SBL" because TAGNT's
+# editor considers them later additions. v4/grk inherits SBLGNT's
+# printed text and contains them, so for alignment we must include
+# their TAGNT rows even though col5 omits SBL.
+# Format: (tagnt_prefix, chapter, verse_lo, verse_hi) inclusive.
+_BRACKET_PERICOPES: list[tuple[str, int, int, int]] = [
+    ("Mrk", 16, 9, 20),   # Longer Ending of Mark
+    ("Jhn", 7, 53, 53),   # Pericope Adulterae (start)
+    ("Jhn", 8, 1, 11),    # Pericope Adulterae (body)
+]
+
+
+def _is_bracket_pericope(verse_ref: str) -> bool:
+    """True if verse_ref ('Mrk.16.9') falls in a SBLGNT-bracketed range."""
+    try:
+        prefix, ch_str, vs_str = verse_ref.split(".")
+        ch, vs = int(ch_str), int(vs_str)
+    except (ValueError, IndexError):
+        return False
+    for p, c, lo, hi in _BRACKET_PERICOPES:
+        if prefix == p and ch == c and lo <= vs <= hi:
+            return True
+    return False
 
 
 def load_tagnt_book(
@@ -132,6 +164,11 @@ def load_tagnt_book(
     insert "οὓς καὶ ἀποστόλους ὠνόμασεν") overflow the window and
     cause line-1 to absorb the wrong Strong's. Filtering at load is
     cheaper than widening the lookahead.
+
+    Exception: SBLGNT-bracketed pericopes (Mark 16:9-20 Longer Ending,
+    John 7:53-8:11 Pericope Adulterae) are printed in SBLGNT with ⟦…⟧
+    brackets but TAGNT's col5 omits SBL for them. v4/grk contains
+    these tokens, so the filter admits them regardless of col5.
     """
     verses: dict[str, list[tuple[str, str, str, str]]] = {}
     with open(tagnt_path, encoding="utf-8", errors="replace") as fh:
@@ -146,9 +183,10 @@ def load_tagnt_book(
             parts = line.split("\t")
             if len(parts) < 12:
                 continue
-            # col5: manuscript attestation list. Skip rows not in SBL.
+            # col5: manuscript attestation list. Skip rows not in SBL,
+            # except for SBLGNT-bracketed pericopes.
             col5 = parts[5].strip() if len(parts) > 5 else ""
-            if col5 and "SBL" not in col5:
+            if "SBL" not in col5 and not _is_bracket_pericope(verse_ref):
                 continue
             # col1: "Ἀβραὰμ (Abraam)" — strip transliteration in parens
             greek_raw = parts[1].strip()
