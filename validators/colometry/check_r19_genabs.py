@@ -31,10 +31,47 @@ from validators.common import (
 RULE_ID = "R19"
 ERROR_CLASS = "DEVIATION"   # Layer 3 editorial
 
-# Known false positives — attributive NP structures that the adjacency heuristic
-# can't resolve. Added 2026-04-20 after manual triage. If this list grows past
-# ~5 entries, consider refining the Class B filter (inter-line NP awareness,
-# wider adjacency window) rather than listing exceptions.
+# Known false positives — attributive NP structures the current adjacency
+# heuristic can't resolve. Added 2026-04-20 after manual triage. Audit
+# 2026-05-13 confirmed this is symptom-patch, not class-based filter.
+#
+# Each entry maps to a distinct sub-class that Class B (_is_attributive_gen_ptc)
+# could catch with a class-based refinement:
+#
+#   (john,  7, 38) — ὕδατος ζῶντος: attributive ptc with HEAD on same line but
+#                    further than 2 positions away. Class B widening from
+#                    `abs(ptc_idx - noun_idx) <= 1` to `<= 2` + head-noun scan
+#                    in expanded window may catch.
+#   (heb,  11,  1) — ἐλπιζομένων ὑπόστασις πραγμάτων: ptc-noun gap = 2 with
+#                    intervening nominative head ὑπόστασις. Same widening
+#                    helps; a separate "ptc + intervening-nom-head + gen-noun"
+#                    sub-pattern would catch precisely.
+#   (phil,  2, 15) — γενεᾶς σκολιᾶς καὶ διεστραμμένης: adj-modified gen NP
+#                    with the gen-ptc as an attributive modifier. Class B
+#                    currently misses because intervening adjectival modifier
+#                    breaks the "immediately adjacent" criterion.
+#   (2cor,  6, 16) — θεοῦ ἐσμεν ζῶντος: head ναός is on PRIOR line (inter-line
+#                    NP). Class B is line-local. Needs inter-line NP awareness
+#                    (look up the prior line's content tokens when evaluating).
+#   (matt,  9, 10) — ἐγένετο + gen abs: ἐγένετο-Septuagintalism formula. Real
+#                    gen abs structure but conventionally treated as temporal
+#                    frame, not independent. Needs a formula-recognition pass
+#                    (closed list of ἐγένετο-temporal-frame patterns).
+#
+# Engineering follow-up (not yet implemented — corpus baseline currently 0
+# emissions across R19, so allowlist suppression is operationally sufficient):
+#   (a) Widen Class B's "adjacent head" scan from 2 positions to 3+ when the
+#       ptc-noun pair is itself separated by 1-2 positions.
+#   (b) Add Class C: ptc + intervening-nom-head + gen-noun three-token pattern.
+#   (c) Add Class D: inter-line NP head awareness (requires line-N-1 access).
+#   (d) Add Class E: ἐγένετο + gen-abs formulaic temporal frame (closed list).
+#
+# Per canon §3 Pairwise Precedence Catalogue + validators/README.md
+# "Detector precedence discipline": R19 (Tier 3) yields to higher-priority
+# rules at the same locus. The 5 FPs above are class-disambiguation cases,
+# NOT R6/R7 tier-yields — the audit's "yield to R7/R6" framing doesn't match
+# the actual FPs. Class-based refinement of _is_attributive_gen_ptc is the
+# right shape.
 _KNOWN_FP_ALLOWLIST: frozenset[tuple[str, int, int]] = frozenset({
     ("john",  7, 38),   # ὕδατος ζῶντος — attributive, head ποταμοί scattered on same line
     ("2cor",  6, 16),   # θεοῦ ἐσμεν ζῶντος — head ναός on prior line (inter-line NP)

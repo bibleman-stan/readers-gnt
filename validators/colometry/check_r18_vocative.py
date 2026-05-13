@@ -62,6 +62,48 @@ _FRAME_LEMMAS: frozenset[str] = frozenset({
 })
 
 
+# ─── R7-yield helpers (canon Pairwise Precedence Catalogue) ────────────────
+#
+# Per canon §3 catalogue: when R7 (Layer 1 multi-word vocative units
+# indivisible) governs a span, R18 must defer. The case: a multi-word
+# vocative is split across two lines (R7 MALFORMED). On the line-2
+# fragment, R18's signature can fire (vocative + non-2p finite verb,
+# no 2p element on line 2) — but the right fix is to re-merge per R7,
+# not to split-fix per R18. R18 should yield to R7's pending re-merge.
+#
+# Detection: a vocative on the CURRENT line is part of an R7-eligible
+# multi-word unit if the IMMEDIATELY PREVIOUS line's last non-punctuation
+# token was also a vocative AND no clause-boundary intervenes. Existing
+# `prev_line_starts_with_voc` handles the stacked-parallel case (canon
+# §3.9); this extension covers the cross-line split case (R7 territory).
+
+def _prev_line_ends_with_voc(
+    prev_line_text: str | None,
+    prev_line_words: list[tuple] | None,
+) -> bool:
+    """True if the prior line's LAST token is a vocative.
+
+    Used as R7-yield: a vocative continuation on this line whose
+    immediate prior line ended with another vocative is part of a
+    multi-word voc unit R7 governs. R18 defers in that case.
+    """
+    if not prev_line_text or not prev_line_words:
+        return False
+    tokens = prev_line_text.split()
+    if not tokens:
+        return False
+    last = strip_punctuation(tokens[-1])
+    if not last:
+        return False
+    pool: dict[str, list] = defaultdict(list)
+    for w, pos, p, lemma in prev_line_words:
+        pool[w].append((pos, p, lemma))
+    if last in pool and pool[last]:
+        pos, p, _ = pool[last][-1]
+        return is_vocative(pos, p)
+    return False
+
+
 _morph_cache: dict[str, dict] = {}
 
 
@@ -144,6 +186,11 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
     # Stacked-parallel-vocative tracking: True if the previous line's first
     # token was a vocative (canon §3.9 boundary: τεκνία / πατέρες / νεανίσκοι).
     prev_line_starts_with_voc: bool = False
+    # R7-yield tracking: True if the previous line's LAST token was a vocative
+    # (multi-word voc unit potentially split across lines — R7 territory).
+    prev_line_ends_with_voc: bool = False
+    prev_line_text: str | None = None
+    prev_line_words: list[tuple] | None = None
 
     for verse in verses:
         ch_num = verse["ch"]
@@ -175,8 +222,18 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
                 # Guard 1: discourse-frame cluster (Loipon + vocative).
                 # Guard 2: stacked parallel vocatives — if prior line started with a
                 #           vocative, this line is part of an address stack; do not flag.
+                # Guard 3 (R7-yield): if prior line ENDED with a vocative AND this
+                #           line STARTS with a vocative, the two-token span is a
+                #           multi-word voc unit R7 governs (Layer 1, Tier 1 per canon
+                #           Pairwise Precedence Catalogue). R18 defers; R7's re-merge
+                #           will eliminate the apparent R18 violation.
+                line_first_is_voc_now = (bool(vocs) and bool(line.split())
+                    and strip_punctuation(line.split()[0]) in {w for w, _ in vocs})
+                r7_yield = prev_line_ends_with_voc and line_first_is_voc_now
+
                 if (not _has_discourse_frame_prefix(line, normalized_words)
-                        and not prev_line_starts_with_voc):
+                        and not prev_line_starts_with_voc
+                        and not r7_yield):
                     voc_str = ", ".join(f"{w}({l})" for w, l in vocs)
                     fin_str = ", ".join(f"{w}({l})" for w, l in fins)
                     book_cap = book[0].upper() + book[1:]
@@ -199,6 +256,9 @@ def check_book_chapter(book: str, chapter: int) -> List[Candidate]:
                     )
 
             prev_line_starts_with_voc = line_first_token_is_voc
+            prev_line_ends_with_voc = _prev_line_ends_with_voc(line, normalized_words)
+            prev_line_text = line
+            prev_line_words = normalized_words
             global_line_index += 1
 
     return candidates
