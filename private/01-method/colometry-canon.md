@@ -261,6 +261,27 @@ This diagnostic catches the failure mode where a canon change is self-framed as 
 
 Rules are classified as MECHANICAL (any trained editor would apply them identically), EDITORIAL (defensible, documented, but require judgment), PRINCIPLE (governing stance, not a per-line rule), or LAYER 1 (pure Koine-Greek syntax facts at [`data/syntax-reference/greek-break-legality.md`](../../data/syntax-reference/greek-break-legality.md); Mechanical in effect, but their warrant is generic Greek grammar rather than a project-specific editorial choice).
 
+### Closed-List Registry
+
+Index of the closed-list lexical/syntactic sets that rules in §3 reference. Each list is **defined inline** in the cited section; this table is a findability index, not a duplicate definition. Any *extension* to a list is a §6.5 audit trigger (closed-list extension is a precedence/scope claim).
+
+| List name | Members (canonical) | Defined in | Consumed by |
+|---|---|---|---|
+| **R8 framing devices** | ἰδού, διό, οὖν, νυν δέ, ἀλλά, γάρ, πλήν, τοιγαροῦν | §3.3 table | *(no validator yet — manual editorial)* |
+| **R9 subordinate-clause openers** | ἵνα, ὥστε, ὅτι, διότι, ὅταν, ὅτε, εἰ, ἐάν, καθώς, μήποτε | §3.4 | *(no validator yet)* |
+| **R10 cognition / perception / belief verbs** (merge with ὅτι) | οἶδα, γινώσκω, ὁράω/εἶδον/βλέπω/θεωρέω, πιστεύω, ἐπίσταμαι, νομίζω/δοκέω, εὑρίσκω, ἀκούω, συνίημι | §3.5 | *(no validator yet)* |
+| **R10 declaration / speech / writing verbs** (split from ὅτι) | λέγω, εἶπον, γράφω, μαρτυρέω, ὁμολογέω, διδάσκω, κηρύσσω, ἀπαγγέλλω, καταγγέλλω, ἀναγγέλλω, ἐπαγγέλλομαι, προφητεύω | §3.5 | *(no validator yet)* |
+| **R10 speech-intro frame class** | ἀποκρίνομαι (verb + ὅτι merges as speech-intro frame) | §3.5 | `validators/colometry/check_r11_speech_intro.py` (R11 family) |
+| **R11 / R28-ext speech-frame verbs** (J3 instantiation) | λέγω, εἶπον, ἀποκρίνομαι, ἔφη + dative addressee | §3.6 | `validators/colometry/check_r11_speech_intro.py`, `validators/colometry/check_r28_speech_act_frame.py` |
+| **R18a-GNT patriarch-triad variants** | fully-distributed `ὁ θεὸς Ἀβραάμ καὶ ὁ θεὸς Ἰσαάκ καὶ ὁ θεὸς Ἰακώβ`; anchor-shared `τὸν θεὸν Ἀβραάμ καὶ θεὸν Ἰσαάκ καὶ θεὸν Ἰακώβ`; compressed `ὁ θεὸς Ἀβραάμ καὶ Ἰσαάκ καὶ Ἰακώβ`; extended-lead `ὁ θεὸς τῶν πατέρων σου, ὁ θεὸς Ἀβραάμ καὶ Ἰσαάκ καὶ Ἰακώβ` | §3.9a | `validators/colometry/check_r18a_patriarch_triad.py` |
+| **M1 GNT bonded pairs** | {κόπῳ, μόχθῳ} (2 Cor 11:27); {χαίρειν μετὰ χαιρόντων, κλαίειν μετὰ κλαιόντων} (Rom 12:15); {Τολμηταί, αὐθάδεις} (2 Pet 2:10) | §1 (GNT instantiations) | *(no validator yet — operational via M1 reasoning)* |
+| **M4-GNT-1 SUBJECT_SHAPES** | C1 vocative_address_NP, C2 np_with_appositive, C3 np_with_participial, C4 np_with_relcl, C5 biographical_intro | §3.18 (inline YAML) | `validators/colometry/check_m4_gnt_1_subject_orphan.py` |
+| **M4-GNT-1 LEADING_CONNECTIVES_BLOCK_FIRE** | καί, δέ, γάρ, οὖν, ἀλλά, ἤ, εἰ, ὅτι, ἵνα, ὅταν, ὅτε, ὡς, ὥστε, ὅπου, ὁ, ἡ, τό | §3.18 (inline YAML) | `validators/colometry/check_m4_gnt_1_subject_orphan.py` |
+| **Period Test obligatory-complement verbs (non-R10)** | κελεύω, ἐντέλλομαι (command); θέλω, ἐπιθυμέω, βούλομαι (desire); δείκνυμι, δηλόω (demonstrate) | §4 Period Test | *(diagnostic test — used by humans, not by an auto-validator)* |
+| **Layer 1 syntactic-bond pairs** (R2–R7) | conjunctions never-final; articles never-final; negation+verb never-split; periphrastic εἰμί+ptc never-split; fixed phrases (κατὰ + acc, εἰς τὸ + inf, etc.); vocative units never-split | `data/syntax-reference/greek-break-legality.md` | `validators/syntax/check_r{2,3,4,5,6,7}_*.py` |
+
+**Extension protocol.** Adding a member to any list above (a new verb to R10's families, a new triad-variant to R18a-GNT, a new SUBJECT_SHAPE to M4-GNT-1, a new framing device to R8) is a closed-list extension per canon §6.5 trigger #3 — Category B by default, audit dispatched. Cross-reference the list's defining section in the audit-evidence.
+
 ### 3.1 The No-Anchor Rule
 
 Every ATU must carry at least one thought-marking anchor: (1) a finite verb, (2) an infinitive, (3) a participle standing as predicate, or (4) a substantive head that is the independently predicated topic of its own line.
@@ -930,6 +951,26 @@ LEADING_CONNECTIVES_BLOCK_FIRE:
 *Purpose: **mainly operational** — diagnostic tests Claude runs to gate or sharpen editorial decisions (No-Anchor, Period, Image, Two-Prong, Q1/Q2, Completing-Predication, Validator Work-Queue). Each test has explicit inputs, outputs, and pass/fail criteria.*
 
 These are the diagnostics actually run during editorial work.
+
+### Runnable equivalents (test → invocation)
+
+| Test | Runnable equivalent | Nature |
+|---|---|---|
+| **No-Anchor Test** | `py -3 scripts/scan_no_anchor_lines.py` (scanner) + `py -3 scripts/apply_no_anchor_merges.py` (applier) | mechanical |
+| **Post-Split Function-Word Recheck** | `py -3 validators/run_all.py --baseline-check` (Layer 1 + Layer 3 sweep) + manual diff of the four gold-standard chapters (Mark 4, Rom 2:12-13, Acts 1:1-4, Heb 1:3) before/after the change | mechanical + manual diff |
+| **Validator Work-Queue Convention** | `py -3 validators/run_all.py` (full sweep) + per-rule queue via `py -3 validators/colometry/check_r*.py --book <slug>` | mechanical |
+| **Period Test** | judgment-only (no script — verb-class scope + grammatical ellipsis assessment is per-construction) | judgment |
+| **Image Test** | judgment-only (close-eyes-picture-scene is human-cognitive) | judgment |
+| **Two-Prong Exception Test** | judgment-only (cognitive + structural prongs require editorial assessment) | judgment |
+| **Goldilocks Q1/Q2 Diagnostic** | judgment-only (prosodic-predication + pivot/resumption signatures require editorial reading) | judgment |
+| **Completing-Predication Test** | judgment-only (paraphrase/remove/new-image diagnostics require human image-judgment) | judgment |
+
+The judgment-only tests are deliberately not automated: each requires a per-construction reading that the structured layer (MorphGNT POS, Macula constituency) underdetermines. If you find yourself wishing one of them had a script, the right move is to ask "could Macula syntax-tree shape encode this?" — usually the answer is no, the test exists *because* the rule underdetermines and human judgment closes the gap.
+
+**Wired automatic gates** (run by pre-commit hook, not by hand):
+- Phase 1: cascade-staleness detection (v4/grk staged → eng-kjv + HTML must be staged with matching line counts)
+- Phase 2: `py -3 scripts/scan_eng_kjv_coverage.py --baseline-check` (every Greek content line has English)
+- Phase 3: `py -3 validators/run_all.py --baseline-check` (no new candidates vs baseline)
 
 ### Gold-standard regression-test chapters — why these four
 
