@@ -423,7 +423,7 @@ When a ὅτι-clause is split from its governing verb (split applies under R10 
 
 Corpus state: **834 leading : 0 trailing** — convention is universal.
 
-Grammatical warrant: ὅτι is a complementizer — its function is to introduce the clause that follows. Placing it at line-end severs it from the clause it governs. Standard Koine grammar (BDF §416, Smyth §2017, Wallace p. 453-461) describes ὅτι as introducing its complement; our placement convention honors that function visually.
+Grammatical warrant: ὅτι is a complementizer — its function is to introduce the clause that follows. Placing it at line-end severs it from the clause it governs. Standard Koine grammar (BDF §416, Smyth §2017, Wallace p. 453-461, Burton §334–356 on indirect-discourse-ὅτι vs declarative-ὅτι distinction) describes ὅτι as introducing its complement; our placement convention honors that function visually.
 
 **Always:**
 ```
@@ -701,7 +701,7 @@ Two justifications, not one:
 
 **Default rule for circumstantial participles: merge with their main verb.** The default function of a Greek circumstantial participle is adverbial framing — temporal, causal, concessive, conditional, manner. All of these are DEPENDENT: they frame the main verb's action and are not complete thoughts without it.
 
-**Exception — circumstantial participle with independent semantic weight:** A participial phrase earns its own line when it constitutes a **second predication** — that is, when the main verb can be implicitly repeated to reconstruct the participle as an independent thought. (Note: standard grammars reserve "supplementary participle" for participles completing specific verbs like τυγχάνω, λανθάνω, φθάνω, παύω per Smyth §2094-96 and Wallace §645-47. Our usage is broader — any circumstantial participle that constitutes an independent predication via ellipsis of the main verb.)
+**Exception — circumstantial participle with independent semantic weight:** A participial phrase earns its own line when it constitutes a **second predication** — that is, when the main verb can be implicitly repeated to reconstruct the participle as an independent thought. (Note: standard grammars reserve "supplementary participle" for participles completing specific verbs like τυγχάνω, λανθάνω, φθάνω, παύω per Smyth §2094-96 and Wallace §645-47, with Burton §445–446 on supplementary participles after these specific verbs. Our usage is broader than the technical "supplementary" category — any circumstantial participle that constitutes an independent predication via ellipsis of the main verb. Burton §434–450 enumerates the adverbial-participle classes — time, condition, concession, cause, purpose, means, manner, attendant circumstance — that our R20/R22 discipline navigates.)
 
 **The test:** Can you reconstruct the participle as an independent predication by supplying the main verb? If "the angel appeared" is complete thought 1, then "[the angel appeared] standing at the right of the altar" is complete thought 2 via ellipsis. Split. But if "having seen the star" requires "they rejoiced" to become a thought at all — if there's no implicit repeated verb — it's a dependent frame. Merge.
 
@@ -733,7 +733,7 @@ kai aneginosken ton propheten Esaian.   <- imperfect equivalent, stacks as paral
 
 ### 3.12 Dative Indirect Object as Semantic Subject of Infinitive
 
-When a Greek speech or command verb (λέγω, παραγγέλλω, παρακαλέω, κελεύω, etc.) takes a dative indirect object that is ALSO the semantic subject of an infinitive complement, the dative chunks with the infinitive content, not with the speech verb frame. (Note: standard Greek grammar reserves "subject of the infinitive" for the accusative case per BDF §392, Wallace §195. The dative here is grammatically an indirect object that happens to be coreferential with the understood subject of the infinitive — but for colometric purposes, it belongs with the infinitive content it semantically controls.)
+When a Greek speech or command verb (λέγω, παραγγέλλω, παρακαλέω, κελεύω, etc.) takes a dative indirect object that is ALSO the semantic subject of an infinitive complement, the dative chunks with the infinitive content, not with the speech verb frame. (Note: standard Greek grammar reserves "subject of the infinitive" for the accusative case per BDF §392, Wallace §195, Burton §390 — the accusative-subject default in indirect discourse / object infinitives. The dative here is grammatically an indirect object that happens to be coreferential with the understood subject of the infinitive — but for colometric purposes, it belongs with the infinitive content it semantically controls.)
 
 ```
 Lego gar dia tes charitos tes dotheises moi
@@ -985,6 +985,13 @@ For rules with implemented detectors, the structured signature the detector cons
 
 Rules without a Detector Signature block below have no auto-validator yet (see Rule Index column "Detector"). When implementing a detector for an unsignatured rule, add the signature block here as part of the same commit.
 
+**Reference grammar substrate.** YAML `references:` lines cite authoritative NT Greek reference grammars by their printed-edition section numbers. Substrates live at `private/05-resources/{slug}/` with per-rule mapping in each slug's README:
+
+- **Burton 1903** (`private/05-resources/burton-1903/`) — Ernest De Witt Burton, *Syntax of the Moods and Tenses in New Testament Greek*. Classic monograph specifically on NT Greek verbal syntax (moods / tenses / infinitives / participles). Section numbers §1–§489 stable across editions 3–5. Cite as `Burton §N` or `Burton §N–M`. Covers R9 / R10 / R19 / R20 / R22 / R23 / R25 + J3/J5 partial. Does NOT cover particles / framing devices / discourse markers — those need BDF / Runge / Levinsohn (substrate not yet ingested).
+- *(Future)* BDF, Wallace, Runge, Levinsohn, Smyth — when ingested, citation convention extends: `BDF §M`, `Wallace p.X`, `Runge §Y`, etc.
+
+The print-edition section numbers are the citation primary; the `_full-text.txt` OCR dump at the substrate slug is for spot-checking content during canon revisions — not for authoritative reading.
+
 ~~~yaml
 # R11 — Direct speech introduction (canon §3.6)
 # Detector: validators/colometry/check_r11_speech_intro.py
@@ -1091,6 +1098,7 @@ R19:
     - (heb, 11, 1)
     - (matt, 9, 10)
     - (phil, 2, 15)
+  references: Burton §451 (Genitive Absolute — construction definition + scope as separate from main clause)
 ~~~
 
 ~~~yaml
@@ -1118,6 +1126,7 @@ R25:
     semantic/pragmatic and cannot be resolved by surface scan alone.
     The validator emits STRONG-MERGE-CANDIDATE; per-item human review
     applies the semantic conditions.
+  references: Burton §234–237 (Result Clauses — ὥστε + indicative vs ὥστε + infinitive distinction), §371–374 (Infinitive of Result with τοῦ)
 ~~~
 
 ~~~yaml
@@ -1188,6 +1197,7 @@ R20:
     Scanner surfaces candidates; canon §3.10 + §8 Participial Rules
     govern editorial application. Predicate vs attributive distinction
     is judgment-required per-construction.
+  references: Burton §418–457 (full Participle section). Attributive (restrictive §420–421 / explanatory §427) vs predicative §429–433 distinction is Burton's. Adverbial subtypes §434–450 inform the predicate-vs-attributive judgment for line-ending participles.
 ~~~
 
 ~~~yaml
@@ -1211,6 +1221,7 @@ R23:
     Adversarial over-structuring audit (2026-04-18) flagged R23 as
     most-suspect: possibly one-verse crystallization from Rom 12:3.
     Scanner empirically tests whether the pattern recurs elsewhere.
+  references: Burton §361–417 (Infinitive section). Specifically §387–389 (Infinitive as object after verbs of commanding / desiring / hoping), §390 (Infinitive in Indirect Discourse — accusative subject), §406–417 (Infinitive with article governed by prepositions). The dative-subject-of-infinitive construction is unusual relative to Burton's accusative-subject default — Rom 12:3 may be classical-influenced.
 ~~~
 
 **Signature coverage status (2026-05-13).** 9 of ~26 rules signatured: R1, R11, R18, R18a-GNT, R19, R20, R23, R25, R28-ext (+ M4-GNT-1 inline at §3.18). Unsignatured: R7, R8, R9, R10, R12, R13, R14, R17, R22, R24, R27, R28, Layer-1 R2–R6. R7 and R2–R6 signatures live in Layer 1 syntax-floor (`data/syntax-reference/greek-break-legality.md`), not duplicated here. R12/R13/R14/R24/R27/R28 are Editorial / Principle — no auto-validator, signature would over-specify. R8/R9/R10/R17/R22 detectors not yet implemented — signature pending detector authorship.
