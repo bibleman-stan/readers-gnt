@@ -1029,7 +1029,7 @@ R11:
   references: |
     PRIMARY discourse-linguistic source: Runge §7 Redundant Quotative Frames (especially §7.2.1 At Changes in Speaker/Hearer). Runge's framework: the participial-ἀποκρίνομαι + finite-εἶπεν pattern is a REDUNDANT-FRAME prominence-marker, not just a Semitic-influence holdover. Discourse function: (a) signal CHANGE OF DIRECTION in a conversation (counter / objection / rejection), or (b) introduce an AUTHORITATIVE PRONOUNCEMENT (Levinsohn). The redundancy IS the signal — the frame is a single prominence-marking unit, which is why R11 merges participle + finite onto one line.
     Wallace, "Person and Number" (3rd-person finite verbs) + "Indicative Mood" treatment of declarative verbs. Burton §168 (hortatory subj) + §180–184 (imperative) partial. BDF §§329–339 (periphrastic constructions; indicative speech-act-class verbs); BDF §420 cited in Runge §7's Suggested Reading for the "coincident" participle that grounds the Hebraism analysis.
-  refinement_candidate_runge_§7_2_2_within_same_speaker:
+  resolved_runge_§7_2_2_within_same_speaker:
     source: Runge §7.2.2 (Within the Same Speaker's Speech) + Mark 4:9 / 13 / 21 / 24 / 26 / 30 examples
     claim: |
       Mid-speech redundant quotative frames (καὶ ἔλεγεν / Καὶ λέγει αὐτοῖς·) where
@@ -1041,17 +1041,30 @@ R11:
       the canon §3.6 Parenthetical Mid-Speech Attribution rule (which treats
       mid-quote φησίν/λέγει as merge-not-split because they are parenthetical
       attribution tags, not segmentation markers).
-    operational_implication: |
-      Canon §3.6 Parenthetical Mid-Speech Attribution rule (merge) covers ONE
-      class of mid-speech speech-verb: parenthetical attribution. Runge §7.2.2
-      identifies a SECOND class: thematic segmentation within a single speech
-      (Mark 4 chain). The current canon treats them identically (merge); Runge
-      argues they have DIFFERENT discourse functions and the segmentation case
-      may warrant DIFFERENT colometric treatment (own line as segmentation
-      marker). Empirical check needed: how is Mark 4:9/13/21/24/26/30 currently
-      laid out in v4/grk? If on own lines, canon is implicitly tracking Runge's
-      distinction; if merged, refinement may be warranted.
-    status: deferred — empirical-corpus check needed before refining canon §3.6.
+    audit_2026-05-13_corpus_state:
+      All six Mark 4 mid-speech segmentation frames Runge identifies are ALREADY
+      on own lines in v4/grk via the normal R11 speech-intro discipline:
+        - mark 4:9 line 44 — Καὶ ἔλεγεν· / Ὃς ἔχει ὦτα ἀκούειν ἀκουέτω.
+        - mark 4:13 line 62 — Καὶ λέγει αὐτοῖς· / Οὐκ οἴδατε τὴν παραβολὴν ταύτην,
+        - mark 4:21 line 108 — Καὶ ἔλεγεν αὐτοῖς· / Μήτι ἔρχεται ὁ λύχνος,
+        - mark 4:24 line 123 — καὶ ἔλεγεν αὐτοῖς· / Βλέπετε τί ἀκούετε.
+        - mark 4:26 line 134 — Καὶ ἔλεγεν· / Οὕτως ἐστὶν ἡ βασιλεία τοῦ θεοῦ
+        - mark 4:30 line 156 — Καὶ ἔλεγεν· / Πῶς ὁμοιώσωμεν τὴν βασιλείαν τοῦ θεοῦ,
+    resolution: |
+      RESOLVED AS ALREADY APPLIED (2026-05-13 afternoon). The canon's R11
+      speech-intro rule already produces own-line treatment for these frames
+      because they surface-match the standard speech-intro pattern (καὶ +
+      speech verb + speech-boundary · → next line is the quoted content). R11
+      doesn't distinguish change-of-speaker speech-intros from same-speaker
+      segmentation frames — but the colometric output is identical: each
+      mid-speech frame gets its own line, segmenting the speech as Runge's
+      §7.2.2 analysis recommends.
+      The canon §3.6 Parenthetical Mid-Speech Attribution rule (merge) covers
+      a DIFFERENT pattern: φησίν/λέγει embedded WITHIN a quote as an inline
+      attribution tag — not a fresh speech-intro frame. These two classes
+      are correctly distinguished by their surface signature (presence of
+      speech-boundary · vs absence). No canon refinement needed.
+    status: RESOLVED — canon R11 already produces Runge §7.2.2's recommended segmentation.
 ~~~
 
 ~~~yaml
@@ -1088,10 +1101,39 @@ R18:
         jas 2:20 ὦ ἄνθρωπε
     operational_question:
       Does ὦ-emphasis override R18's same-clause-2p-element merge-test (forcing own-line
-      regardless of merge-conditions)? Hypothesis: yes — emphatic vocative IS a discourse-
-      turn marker even when surface-embedded. jas 2:20 currently mid-line within
-      `θέλεις δὲ γνῶναι, ὦ ἄνθρωπε κενέ,` — candidate for split-off per ὦ-emphasis.
-    status: deferred — needs Stan editorial decision before refining R18.
+      regardless of merge-conditions)? Initial hypothesis (2026-05-13 morning, single-source):
+      yes — emphatic vocative IS a discourse-turn marker even when surface-embedded.
+    audit_2026-05-13_corpus_state:
+      8 instances audited against current v4/grk:
+        - already own line (4): acts 1:1 ὦ Θεόφιλε / acts 18:14 ὦ Ἰουδαῖοι /
+          acts 27:21 ὦ ἄνδρες / 1tim 6:11 ὦ ἄνθρωπε θεοῦ.
+        - mid-line subject-appositive Class 2 (2): rom 2:3 (λογίζῃ δὲ τοῦτο, ὦ ἄνθρωπε
+          ὁ κρίνων — 2p verb λογίζῃ on same line) / jas 2:20 (θέλεις δὲ γνῶναι, ὦ ἄνθρωπε
+          κενέ — 2p verb θέλεις on same line).
+        - line-initial, no 2p verb on line (2): rom 2:1 (ὦ ἄνθρωπε πᾶς ὁ κρίνων· ἐν ᾧ
+          γὰρ κρίνεις τὸν ἕτερον,) / rom 9:20 (ὦ ἄνθρωπε, μενοῦνγε —).
+    resolution_against_canon_§8:
+      Applying Wallace's ω-emphasis reading WOULD force own-line splits on the 4 mid-line
+      cases (rom 2:1, rom 2:3, rom 9:20, jas 2:20), overriding the existing R18 Class 2
+      subject-appositive merge that 2p verbs λογίζῃ + θέλεις license. But this conflicts
+      with canon §8 Marked Word Order (Fronting Paradox) — now linguistically grounded
+      in Runge §9.2.5: "These effects are not an inherent meaning of the syntactic form;
+      rather, they are an effect of using a form or structure in some marked way that
+      breaks with the expected norm." The ω-marker carries the vocative's emphatic
+      prominence WITHIN the breath unit; splitting onto its own line would IMPOSE
+      editorial emphasis on top of what is already linguistically marked. Same anti-
+      imposition principle that gates fronted-NP splits gates ω-vocative splits.
+      Wallace's ω-emphasis is a SCHOLARLY OBSERVATION about discourse-pragmatic
+      prominence — not a colometric mandate.
+    status: |
+      RESOLVED AGAINST refinement (2026-05-13 afternoon). After cumulative discourse-
+      grammar reading (Runge §9.2.5 added to canon §8) + corpus audit, the ω-emphasis
+      claim is interpreted as a discourse-pragmatic observation that the canon's
+      anti-imposition principle (§8 Fronting Paradox) ARGUES AGAINST mechanizing as
+      a split. Current R18 three-way treatment stands: ω-marked vocatives obey the
+      same Class 2 subject-appositive / Class 3 object-appositive merge tests as
+      bare vocatives. Wallace's reading is cited for completeness; canon does not
+      split on the marker.
 ~~~
 
 ~~~yaml
