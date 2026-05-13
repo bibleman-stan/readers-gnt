@@ -160,11 +160,12 @@ The script is a thin wrapper over `atu_method.kjv_alignment.align_verse()`; the 
 
 **The cascade is ONE atomic operation.** Greek edit → English regen → HTML rebuild → commit → push. If you change Greek without syncing English and rebuilding HTML in the same work unit, you have failed.
 
-**Two-check verification before any cascade commit:**
+**Three-check verification before any cascade commit:**
 - `py -3 scripts/verify_word_order.py` — integrity (every Greek word present in expected verse per SBLGNT)
 - `py -3 scripts/scan_english_drift.py --min-confidence high` — English-quality drift detector
+- `py -3 scripts/scan_eng_kjv_coverage.py --baseline-check` — eng-kjv coverage (every Greek content line has English; baseline guards against new blank lines)
 
-Both should return 0 before committing. If high-confidence drift hits are confirmed false positives (gen abs detector cases, known carve-outs), document the rationale in the commit message and proceed.
+All three should return 0 before committing. If high-confidence drift hits are confirmed false positives (gen abs detector cases, known carve-outs), document the rationale in the commit message and proceed. The coverage check is also wired into the pre-commit hook (Phase 2) and runs automatically when v4/grk, v4/eng-kjv, or regenerate_english.py are staged — added 2026-05-12 after the bracket-pericope bug (commit 7f3c361c) shipped silently blank pericopes that the prior two-check could not see.
 
 ---
 

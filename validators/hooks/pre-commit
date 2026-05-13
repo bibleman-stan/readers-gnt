@@ -13,7 +13,14 @@
 #   redistribute heuristic can produce misaligned output that needs hand-
 #   correction; auto-staging would bypass the two-check gate).
 #
-# Phase 2 — Validator regression gate
+# Phase 2 — eng-kjv coverage gate
+#   Runs scan_eng_kjv_coverage.py --baseline-check on commits that touch
+#   v4/grk, v4/eng-kjv, or regenerate_english.py. Blocks if any v4/grk
+#   line with Greek content has a blank eng-kjv counterpart that wasn't
+#   in data/eng-kjv-coverage.baseline.json. Closes the blind spot that
+#   the bracket-pericope bug (commit 7f3c361c) exploited.
+#
+# Phase 3 — Validator regression gate
 #   Runs run_all.py --baseline-check on commits that touch the editorial
 #   corpus, the syntax-reference table, or validator code (.py/.yaml).
 #   Canon-prose-only and other docs-only commits skip — they cannot affect
@@ -103,7 +110,40 @@ if [ -n "$V4_STAGED" ]; then
     echo ""
 fi
 
-# ── Phase 2: validator regression gate ──────────────────────────────────────
+# ── Phase 2: eng-kjv coverage gate ──────────────────────────────────────────
+#
+# Closes a blind spot in the Phase 1 freshness check + verify_word_order:
+# both compare grk-side counts/content, neither flags the case where
+# eng-kjv has a blank line where v4/grk has Greek content. Shipped the
+# bracket-pericope bug (commit 7f3c361c) — Mark 16:9-20 + John 7:53-8:11
+# silently blank for the duration. Ports the validator-regression-gate
+# pattern: baseline of known-blank lines, fail on increase.
+
+ENG_KJV_TOUCHED=$(git diff --cached --name-only | grep -E "^(data/text-files/v4/(grk|eng-kjv)/|scripts/regenerate_english\.py$)" || true)
+
+if [ -n "$ENG_KJV_TOUCHED" ]; then
+    echo "[pre-commit] v4/grk or eng-kjv files staged. Running scan_eng_kjv_coverage --baseline-check..."
+    echo ""
+
+    PYTHONIOENCODING=utf-8 py -3 scripts/scan_eng_kjv_coverage.py --baseline-check
+    COV_RESULT=$?
+
+    if [ $COV_RESULT -ne 0 ]; then
+        echo ""
+        echo "[pre-commit] BLOCKED: new eng-kjv coverage misses vs baseline."
+        echo "[pre-commit] Either:"
+        echo "  (a) fix the alignment so the listed v4/grk lines produce English, OR"
+        echo "  (b) update the baseline if the increase is structural & intentional:"
+        echo "      PYTHONIOENCODING=utf-8 py -3 scripts/scan_eng_kjv_coverage.py --update-baseline"
+        echo ""
+        exit 1
+    fi
+
+    echo "[pre-commit] eng-kjv coverage OK. Proceeding to Phase 3."
+    echo ""
+fi
+
+# ── Phase 3: validator regression gate ──────────────────────────────────────
 
 RELEVANT=$(git diff --cached --name-only | grep -E "^(data/text-files/v4/grk/|data/syntax-reference/|validators/.*\.(py|yaml)$)" || true)
 
