@@ -1,7 +1,7 @@
 26:1
 Then Agrippa said unto Paul,
-Thou art permitted to speak for thyself.
-Then Paul stretched forth the hand, and answered for himself:
+Thou art permitted to speak for thyself. Then
+Paul stretched forth the hand, and answered for himself:
 
 26:2
 touching all the things whereof I am accused of the Jews:
@@ -143,8 +143,8 @@ that not only thou,
 but also all that hear me this day, were such as I am, except these bonds.
 
 26:30
-And when he had thus spoken, the king rose up, and the governor, they that sat with them:
-and Bernice, and
+And when he had thus spoken, the king rose up, and the governor, and Bernice,
+and they that sat with them:
 
 26:31
 And when they were gone aside, they talked between themselves, saying,

@@ -179,8 +179,8 @@ and said unto him,
 Art thou the King of the Jews?
 
 18:34
-Jesus answered him,
-Sayest thou this thing of thyself,
+Jesus answered
+him, Sayest thou this thing of thyself,
 or did others tell it thee of me?
 
 18:35
@@ -221,7 +221,7 @@ that I should release unto you one at the passover:
 will ye therefore that I release unto you the King of the Jews?
 
 18:40
-Then cried they all again,
-saying, Not this man, but Barabbas.
+Then cried they all again, saying,
+Not this man, but Barabbas.
 Now Barabbas was a robber.
 

@@ -116,11 +116,22 @@ _RE_TOKEN_ROW = re.compile(r"^([0-9A-Z][a-zA-Z0-9]+\.\d+\.\d+)#\d+=")
 def load_tagnt_book(
     tagnt_path: Path, tagnt_prefix: str
 ) -> dict[str, list[tuple[str, str, str, str]]]:
-    """Parse TAGNT file for one book.
+    """Parse TAGNT file for one book, filtering to SBL-attested rows.
 
     Returns {verse_ref -> [(greek_surface, col3, col11, col12), ...]}
     verse_ref example: "Mat.1.2"
     Columns (0-indexed): 1=Greek(translit), 3=Strong+morph, 11=bare Strong, 12=alt Strong.
+
+    Manuscript filter: TAGNT rows include a col5 manuscript-attestation
+    list (e.g. "NA28+NA27+Tyn+SBL+WH+Treg+TR+Byz") indicating which
+    critical texts contain the token. v4/grk follows SBLGNT, so rows
+    NOT including "SBL" in col5 are TR-only / NA27+WH-only / Treg-only
+    additions that don't appear in our source. Without this filter,
+    surface-matching surface-skips over them via lookahead (window of
+    3), but multi-token interpolations (e.g. Mark 3:14's 4-token NA27+WH
+    insert "οὓς καὶ ἀποστόλους ὠνόμασεν") overflow the window and
+    cause line-1 to absorb the wrong Strong's. Filtering at load is
+    cheaper than widening the lookahead.
     """
     verses: dict[str, list[tuple[str, str, str, str]]] = {}
     with open(tagnt_path, encoding="utf-8", errors="replace") as fh:
@@ -134,6 +145,10 @@ def load_tagnt_book(
                 continue
             parts = line.split("\t")
             if len(parts) < 12:
+                continue
+            # col5: manuscript attestation list. Skip rows not in SBL.
+            col5 = parts[5].strip() if len(parts) > 5 else ""
+            if col5 and "SBL" not in col5:
                 continue
             # col1: "Ἀβραὰμ (Abraam)" — strip transliteration in parens
             greek_raw = parts[1].strip()
