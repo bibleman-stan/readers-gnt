@@ -1,271 +1,191 @@
 # GNT Reader — Claude Code Instructions
 
-Read this file completely before doing anything in this repo. It is your orientation document.
+A colometric reading edition of the Greek New Testament at **gnt-reader.com**. Each line is an atomic thought unit (ATU) reflecting Koine grammatical structure, designed for oral delivery and comprehension. Base text: SBLGNT (CC-BY-4.0). Stage: v4/grk complete — all 260 chapters hand-edited, KJV-verbatim English aligned per ATU line, web app live. Sibling readers: bomreader.com (BoFM, reference impl) and tanakh-reader.com (Hebrew Bible); shared methodology + alignment-tooling plane at `../atu-method/`.
 
 ---
 
-## What This Project Is
+## Orientation reads
 
-A colometric reading edition of the Greek New Testament. The text is reformatted from standard prose paragraphs into **atomic thought units (ATUs)** (cola) — each line is one ATU reflecting Greek grammatical structure, designed for oral delivery and comprehension.
+**MANDATORY at every wake (including short pings; compaction-resume runs from scratch):**
+1. This CLAUDE.md
+2. `private/01-method/colometry-canon.md` — at least §0/§1/§2 framework pointers + §3 Quick-Reference
+3. `git log --oneline -10`
+4. Most recent `private/` pending notes if present
 
-The colometric methodology draws on ancient manuscript precedent (Codex Bezae, Claromontanus, Jerome's Vulgate *per cola et commata*) and the modern precedent of Skousen's "sense-line" analysis of the Book of Mormon, empirically extended by Stan to the GNT. Foundational premise: humans think, compose, and read in ATUs. Full canon: `private/01-method/colometry-canon.md`.
+**CONSULT-ON-TRIGGER:**
+- `private/01-method/colometry-canon.md` — anything touching `validators/`, `scripts/regenerate_english.py`, `data/text-files/v4/grk/`, syntax-reference, or rule-interpretation.
+- `data/syntax-reference/greek-break-legality.md` — R2–R7 Layer 1 break-legality.
+- `../atu-method/docs/framework.md` — methodology, rule-design, autonomy-boundary. Authoritative cross-corpus body.
+- `../atu-method/docs/apparatus.md` + `architecture.md` — English-layer / alignment-pipeline / cross-sibling architectural work. Picture-shaped: what the reader sees on gnt-reader.com when done.
+- `../atu-method/docs/change-protocol.md` — any canon revision.
+- `../atu-method/docs/glossary.md` — ambiguous term (ATU, M1–M4, J1–J5).
 
-- **Repo:** github.com/bibleman-stan/readers-gnt (public)
-- **Live site:** gnt-reader.com (GitHub Pages, custom domain, HTTPS enforced)
-- **Base text:** SBL Greek New Testament (SBLGNT) — CC-BY-4.0
-- **User:** Stan (thebibleman77@gmail.com)
-- **Stage:** v4/grk complete — all 260 chapters hand-edited, structural English glosses for all 260, web app live at gnt-reader.com
+**Self-report before first substantive response:** one line per mandatory file read; pending-item disposition (each = executing-now / retired-with-rationale / re-deferred-with-concrete-trigger; "awaiting Stan direction" is drift not a defer); red flags. Silent skip = orientation failure.
 
----
-
-## Read the Handoff Docs First
-
-Before any substantive work, read the handoffs directory in order:
-
-| File | Covers |
-|------|--------|
-| `handoffs/00-index.md` | Index and update protocol |
-| `handoffs/01-project-overview.md` | Vision, origin, scholarly landscape, research advantages, siloing decision |
-| `handoffs/03-architecture.md` | Repo structure, scripts, web app, build pipeline, deployment |
-| `handoffs/04-editorial-workflow.md` | How text goes from raw source to finished reading edition |
+JSONL at `~/.claude/projects/c--Users-bibleman-repos-readers-gnt/<session-id>.jsonl` is the verbatim record. After compaction, grep into it. Don't write wrap artifacts / session-notes / full-transcript dumps; surface state inline.
 
 ---
 
-## Wake & standing issues
+## Editorial discipline (highest-violation surface)
 
-Work is continuous. There are no sessions — only the standing set of pending decisions, blocked items, and in-flight actions. Orient toward that set, not toward wrapping arbitrary time-slices.
+### Use the structured layer FIRST. Heuristics and agents are last resort.
 
-**On wake (compaction-resume or new conversation):**
-1. Re-read the prior conversation JSONL at `C:/Users/bibleman/.claude/projects/c--Users-bibleman-repos-readers-gnt/<session-id>.jsonl` to re-acquire context — grep for the most recent activity, decisions, and unresolved items. The JSONL is the verbatim record of everything that's been said; treat it as your durable memory.
-2. `git log --oneline -10` for current code state.
-3. Self-report both reads in one line each before the first substantive response.
+GNT vendors a stack of structured syntactic signals:
 
-**Consult on trigger (evaluate the trigger; do NOT silently skip):**
-- `private/01-method/colometry-canon.md` — ANY editorial / rule-interpretation / methodology-touching work.
-- `data/syntax-reference/greek-break-legality.md` — touching R2-R7 Layer 1 break-legality.
-- `../atu-method/docs/apparatus.md` + `../atu-method/docs/architecture.md` — English-layer / swap-system / cross-sibling architectural work; pull back to the picture when ambiguity surfaces.
-- `private/README.md` — writing a new file under `private/` and don't already know the layout.
+| Layer | Wrapper | What it encodes |
+|---|---|---|
+| **Macula Greek** (constituent trees, clause roles) | `validators/_shared/macula_clauses.py` | clause boundaries, constituent membership, role labels |
+| **MorphGNT** (per-word POS + morph) | `validators/_shared/morphgnt_lookup.py` | POS, case, number, tense, voice, mood, lemma per token |
+| **TAGNT** (per-token Strong's + lemma group) | parsed in `regenerate_english.py` | Strong's number + lemma-equivalence cluster per Greek token |
+| **MetaV** (per-KJV-word Strong's) | `atu_method.kjv_alignment.metav_loader` | Strong's per KJV-1769 word |
+| **Existing per-rule validators** | `validators/colometry/*.py` | named-syntactic-signature corpus queries |
 
-**Surface standing issues** in the conversation when you find them — pending decisions, blocked items, things Stan needs to direct. Don't let items drift silently; the JSONL captures everything but visibility happens in the live conversation.
+Before reaching for either:
 
-### Canon self-consistency audit trigger
+**(a) a surface-form heuristic** (closed-list "trailing prepositions" / "speech verbs" / "object pronouns" at the algorithm level) — ask whether Macula's constituent structure or MorphGNT POS already encodes the constraint. The structural binding is the answer, not the surface form.
 
-After any commit batch with ≥2 new canon codifications (new subsections or rule revisions), run a canon self-consistency audit before the commit lands. Content-triggered, not time-triggered.
+**(b) a grep-agent dispatch** to survey the corpus for a pattern — ask whether MorphGNT + Macula + the existing validator suite already answer the question via deterministic query. Most "let me survey all instances of X" questions have a UD-style signature that resolves in seconds, not minutes.
 
-The audit checks: do new additions contradict existing canon sections (grep for overlapping keywords + spot-read affected §§); do they satisfy §6 defensibility capture (WHY / HOW WE KNOW / SCOPE); are there adjacent rules that should cross-reference the new additions; does the handoffs documentation still match the canon. Light-touch — ~5-minute pass, not a full re-read.
+**Cross-repo failure-mode evidence:** Tanakh's `atu-method/atu_method/kjv_alignment/distribute.py` Pass-C closed-list (`_OBJECT_PRONOUNS` / `_TRAILING_PREPOSITIONS` for KJV trailing-complement attachment) substituted surface-form for Macula Hebrew constituent structure — cost 3 cascades + audit waves before Stan caught it. bofm dispatched 4 parallel grep-agents to survey N-INF / COMP / RELCL patterns when `validate_rule_17_ud.py` already had the exact signature + an inline comment marking the gap — 7 min + 80k tokens for an over/under-counted estimate vs. 6 seconds of UD query.
 
----
+### Stan-flagged verse = class-investigation directive
 
-## Key Files
+When Stan flags a problem at a specific verse, that's a directive to investigate the rule set, NOT patch the verse. Right shape:
+1. Diagnose: what's the underlying class/pattern Stan's intuition is responding to?
+2. **Audit yourself FIRST** — walk M1 / M2 / M3 / M4 / J1–J5 / formula-integrity / R-rules explicitly against the actual canon. Pay attention to **explicit exclusions** (e.g., complement integrity in framework §1.2 scopes to VERB+ADJ only — NOUN-headed is out of scope, not a gap). If the framework's existing answer is "split, this is excluded," that's a real answer.
+3. Only if step 2 finds a real gap, investigate corpus-wide via the structured layer (see above), not via grep-agents.
+4. **New rules trigger canon §6.5 mandatory-audit** — ≥2 parallel adversarial agents BEFORE any validator infrastructure. NO scanner / applier / closed-list entry until the rule passes. Building infrastructure first is the "fake rule" failure mode.
+5. If audit holds: codify with WHY/HOW WE KNOW/SCOPE per canon §6 defensibility-capture, build validator, apply mechanically corpus-wide.
+6. If audit fails or framework already answers: report Stan the actual framework answer; offer Category B per-verse editorial-judgment fallback ONLY if genuinely needed.
 
-| File | Purpose |
-|------|---------|
-| `index.html` | Main web app — all CSS/JS inline (~2,500 lines), search, corpus filters, settings |
-| `scripts/build_books.py` | Converts v4/grk + v4/eng-kjv → HTML fragments under `books/` |
-| `scripts/regenerate_english.py` | Thin wrapper over `atu_method.kjv_alignment.align_verse()`; redistributes KJV verbatim per Greek ATU line via Strong's-number matching against TAGNT |
-| `scripts/v4_auto_fix.py` | Mechanical fixes against v4/grk (read/write in place) |
-| `validators/_shared/morphgnt_lookup.py` | MorphGNT morphological backend (used by `validators/common.py`) |
-| `validators/_shared/macula_clauses.py` | Macula syntax-tree clause-boundary extractor (used by `validators/common.py`) |
-| `scripts/archive/` | Tier-producer scripts (v0–v3) frozen 2026-04-26; see `scripts/archive/README.md` |
-| `data/text-files/sblgnt-source/` | 27 raw SBLGNT source files — **NEVER EDIT** |
-| `data/text-files/v4/grk/*/` | 260 chapter files in book subfolders — **single source of truth for Greek text** |
-| `data/text-files/v4/eng-kjv/*/` | 260 chapter files in book subfolders — KJV verbatim per Greek ATU line (produced by `regenerate_english.py`) |
-| `books/` | 27 generated HTML fragment files (rebuilt from v4/grk + v4/eng-kjv) |
+### Anchor in Koine syntax, not English-translation surface
 
----
+KJV systematically smooths Koine grammar into English-idiomatic constructions that don't exist in the Greek (English "when X, then Y" for a participial circumstance; English "to do" for ἵνα + subjunctive). Before agreeing OR disagreeing with an editorial intuition sourced from the English layer, check MorphGNT + Macula:
+- Genitive absolutes (`GAV` / `GAS` / `GAP` signatures) → always own line per canon, regardless of how KJV smooths them
+- Vocatives (`N-V*` morph code) → universal own-line rule
+- ἵνα / ὥστε / ὅτι / ὅταν → subordinate clause break point per R-rules
+- KJV's "when" / "and then" are translation choices, not Koine syntactic facts
 
-## CRITICAL: Source Text Rules
+### Editorial-call structure
 
-The SBLGNT source files in `data/text-files/sblgnt-source/` are canonical reference.
+When Stan names a verse with a specific desired partition or proposes a fix: line 1 = "Got it — [Stan's reading]"; line 2-N = the diff. **NO leading analytical defense of an alternative.** Analysis is value-add ONLY when Stan asks "what should it be?" or "explain what's going on there."
 
-**NEVER:**
-- Modify a canonical SBLGNT source file
-- Alter the Greek text itself (words, accents, breathing marks)
-- Add or remove words
-- Run any `scripts/archive/` tier-producer script (v0–v3) — they write to frozen scaffolding directories and almost never produce a desired outcome on a hand-edited corpus
+### Class-fix vs instance-fix
 
-**ALWAYS:**
-- Work in `v4/grk/` — the only editorial tool is where lines break
-- Present proposed changes for review before finalizing
-- Preserve verse references for alignment with standard editions
-- Use `PYTHONIOENCODING=utf-8` when running Python scripts on Windows
+Same FP class in 2+ rules OR 2+ validators OR 2+ verses in one session = engine-level fix at `validators/_shared/*` / `atu-method/atu_method/*` / canon rule extension. Per-verse / per-validator guard the second time = whack-a-mole. **Swat the bug class, not the instance.**
 
----
+### Rule-derivative vs ad-hoc
 
-## Rule-Derivative vs. Ad-Hoc Changes
+Rule-derivative changes (a codified MECHANICAL rule fires unambiguously via its validator or clean trigger match) auto-apply — the canon's rule is the approval. STRONG-MERGE-CANDIDATE / STRONG-SPLIT-CANDIDATE tags are application-ready; only REVIEW-REQUIRED needs per-item editorial judgment. Walking Stan through verse-level confirmations on rule-derivative changes is the inverted-discipline failure mode.
 
-Line-break changes come in two classes that require different gating.
+Ad-hoc changes (no codified rule, or Category B editorial, or Category C exegetical hot spot) DO require Stan approval before application.
 
-**Rule-derivative changes**: a line-break change that applies a codified MECHANICAL rule from the canon unambiguously. Example: R2 forbids line-final conjunction, a line ends on καί, the fix is a forced merge. **These do NOT require per-item Stan approval** — the canon's rule is the approval. Apply mechanically and report in the commit's rollup summary.
+### Adversarial-audit discipline
 
-**Ad-hoc changes**: a line-break change that is not directly licensed by a codified rule, or that applies an EDITORIAL/FUZZY rule (Category B), or that touches an exegetical hot spot (Category C). **These DO require Stan approval** before application — present the proposed change with its rationale and wait for explicit greenlight.
+Before non-trivial implementation (new validator with classification logic, new rule subsection, new closed-list extension, new shared helper, **OR ANY edit to `../atu-method/atu_method/*` cross-corpus shared infrastructure**), FIRST tool call must be ≥2 parallel Agent adversarial dispatches in one message OR an explicit `Audit-skippable: <named-trivial-class>` declaration.
 
-The distinction is important: gating rule-derivative changes on per-item approval treats the rule as advisory when it is mechanical, wastes context budget, and pushes the editor into a review queue rather than applying the validator's work queue. The canon's mechanical-rule-authority clause (§3 Autonomy Boundary) is the authoritative statement of this distinction.
+Pre-commit on canon-touching commits: every commit message touching `private/01-method/colometry-canon.md` includes `Audit-skippable per §6.5 ([reason])` OR `Audit dispatched: [evidence]`. The commit-msg hook detects canon-extension patterns and requires the declaration. When uncertain, dispatch.
 
-**Corollary**: when a validator produces bulk output (e.g., "73 STRONG-MERGE-CANDIDATEs from Rule 27 sweep"), the correct move is to apply all of them as rule-derivative, report the rollup, and commit. Walking Stan through 73 verse-level confirmations is exactly the failure this corollary exists to prevent.
+Same-trigger audits across distinct angles (discipline / scope / cross-project consistency / corpus impact) fire in ONE batch via parallel Agent calls, not in series.
 
----
+### Apply causes regression
 
-## Pre-commit adversarial-audit discipline
+Revert the apply → root-cause why → fix the apply → re-attempt with integrity gate verified post-apply. Do NOT build downstream-recovery tools first.
 
-**Before any commit that modifies `private/01-method/colometry-canon.md`, check whether the change matches a mandatory-audit trigger per canon §6.5.** The 12 triggers are listed in canon §6.5; re-read them when uncertain. If the change matches any trigger, audit evidence (hostile-agent dispatch + verdict + application) must be present in the commit message or the canon §10 Update Log entry.
+### Stan-escalation phrasing ("WHY are you still doing this", "stop wasting my time", "you screwed up again", "did i or did i not say...")
 
-**Audit-skippable.** Canon edits that do NOT match any trigger (typo fixes, cross-reference updates without precedence claims, deletions of same-batch reverts, defensibility-capture additions to already-settled rules without scope changes, Category A mechanical corpus edits that are not part of a ≥5-instance sweep) proceed without audit.
+STOP iterating on the surface fix. Frame-reset to class level. Ask: what's the COMMON pattern across recent attempts that I've been treating as separate instances? The escalation is a signal that the loop has run too long; the meta-pattern is what needs the answer.
 
-**When uncertain.** Dispatch the audit. The cost of a false-positive audit (Stan reads a no-op audit result) is small; the cost of a false-negative audit (a fake rule commits) is large.
+### Proactive open-item surfacing
 
-**Required commit-message declaration.** Every commit message that touches `private/01-method/colometry-canon.md` must declare audit-status explicitly: either `Audit-skippable per §6.5 ([reason])` with the reason citing one of the named audit-skippable categories above, OR `Audit dispatched: [evidence]` with concrete reference (parallel-agent verdicts, §10 entry, prior-commit pointer). Omission is itself a discipline failure — visible at a glance in `git log`. As of 2026-04-26 this is also **mechanically gated** by the commit-msg hook (see "Validator hooks" below).
-
-**Validator hooks (installed 2026-04-26, ported from sibling Tanakh project):**
-
-- **`validators/hooks/pre-commit`** — runs `validators/run_all.py --baseline-check` when canon, syntax-reference, v4/grk corpus, or validators are staged. Blocks commit if any rule's candidate count INCREASED vs `validators/.baseline.json`. Update the baseline after intentional changes: `PYTHONIOENCODING=utf-8 py -3 validators/run_all.py --update-baseline`.
-- **`validators/hooks/commit-msg`** — runs `validators/check_canon_extensions.py` against the proposed commit message. Detects canon extensions matching §6.5 trigger patterns (new rule subsections, merge-overrides, Layer 1 table rows, audit triggers, SCOPE bullets) and blocks the commit if no audit-evidence keyword OR skip-safe claim is present in the message.
-- **Bypass (Stan-only, explicit decision)**: `git commit --no-verify`.
-- **Install (one-time)**: `cp validators/hooks/pre-commit .git/hooks/pre-commit && cp validators/hooks/commit-msg .git/hooks/commit-msg && chmod +x .git/hooks/pre-commit .git/hooks/commit-msg` (already done in this clone; the source-of-truth scripts live in `validators/hooks/` and are tracked in git; the installed copies in `.git/hooks/` are not tracked).
-
-**Self-test to run pre-commit** (faster than full trigger-list scan):
-- Does this change include a scope claim, a precedence claim, a closed-list extension, or a named-category carve-out? → audit.
-- Does this change rest on spot-check evidence rather than a full-corpus classification? → audit.
-- Does this change reclassify or delete previously-settled canon content? → audit.
-- If no to all three → probably skip-safe.
-
-**Parallelize audits by default.** When triggered, dispatch multiple audit dimensions in parallel (one assistant message, multiple Agent tool calls). Sequential only when audit A's verdict determines whether audit B should run. Same-trigger audits across distinct angles (discipline / scope / cross-project consistency / corpus impact) should fire in one batch, not in series. Memory `feedback_adversarial.md` and `feedback_parallelize.md` capture the operational discipline.
-
-This discipline complements (does NOT replace) the **Canon self-consistency audit trigger** above. Pre-commit is per-change; self-consistency is batch-rollup (fires when ≥2 codifications accumulate). See canon §3 "Scope/precedence/closed-list/carve-out diagnostic" for the Category-B-by-default rule this self-test instantiates, and canon §6.5 for the full trigger list.
+Every deferred item must be visible in chat. Periodically re-examine whether held items have become canon/code/precedent-derivable as the method matures. If yes, surface "I previously needed your input on X; canon now resolves it via Y; applying unless you say stop" — don't re-defer derivable items.
 
 ---
 
-## Build Pipeline
+## Source text rules
 
-The cascade rule: **Greek edit → English regen → HTML rebuild**.
+`data/text-files/sblgnt-source/` is canonical reference, NEVER edited. `data/text-files/v4/grk/` is single source of truth, hand-edited by Stan. The only editorial tool is where lines break. NEVER alter Greek text (words, accents, breathing marks), add or remove words. ALWAYS preserve verse-refs. Use `PYTHONIOENCODING=utf-8` on Windows. NEVER run `scripts/archive/` tier-producer scripts (v0–v3 frozen 2026-04-26; they write to scaffolding directories and break the hand-edited corpus).
 
-After editing a Greek chapter in `v4/grk/`:
-1. Regenerate the English gloss for that chapter
-2. Rebuild the HTML
+---
 
-```bash
-# Regenerate English for one book
-PYTHONIOENCODING=utf-8 py -3 scripts/regenerate_english.py --book mark
+## Methodology stack
 
-# Rebuild all HTML
-PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py
+Three forces operating simultaneously: **generative** (atomic thought drives line creation; J1–J5 structural justifications), **subtractive** (Koine syntax + complement + formula integrity trigger merges; M1–M4 merge-overrides), **diagnostic** (single image as tiebreaker). Authoritative body: [`../atu-method/docs/framework.md`](../atu-method/docs/framework.md). GNT-specific rule body: `private/01-method/colometry-canon.md`. Fresh-read both before any editorial or rule work — rules evolve fast and any in-line summary drifts.
 
-# Rebuild one book's HTML
-PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py --book mark
-```
+**Categories** (autonomy boundary per `framework.md` §2):
+- **Category A** (Mechanical, mandatory) — rule firing IS the approval; auto-apply.
+- **Category B** (Editorial, judgment-required) — flag and discuss with Stan.
+- **Category C** (Theological / textual-critical) — hand-curation only.
 
-Pipeline: `v4/grk/*/ → v4/eng-kjv/*/ → books/*.html`
+---
 
-The script is a thin wrapper over `atu_method.kjv_alignment.align_verse()`; the alignment algorithm lives in `../atu-method`, not here. The English layer is KJV verbatim distributed per Greek ATU line via Strong's-number matching (TAGNT → MetaV).
+## Pipeline & files
 
-**The cascade is ONE atomic operation.** Greek edit → English regen → HTML rebuild → commit → push. If you change Greek without syncing English and rebuilding HTML in the same work unit, you have failed.
+| Tier | Directory | Engine |
+|---|---|---|
+| Source | `data/text-files/sblgnt-source/` | SBLGNT raw, NEVER edited |
+| v4 | `data/text-files/v4/grk/` | Stan + Claude hand-edited, single source of truth |
+| Eng | `data/text-files/v4/eng-kjv/` | `scripts/regenerate_english.py` → `atu_method.kjv_alignment.align_verse()` (KJV verbatim per Greek ATU line via Strong's-number matching: TAGNT → MetaV) |
+| HTML | `books/` | `scripts/build_books.py` |
 
-**Three-check verification before any cascade commit:**
+**Cascade rule:** Greek edit → English regen → HTML rebuild → three-check → commit → push. ONE atomic operation. If you change Greek without syncing English and rebuilding HTML in the same work unit, you have failed.
+
+**Three-check verification before any cascade commit** (all return 0):
 - `py -3 scripts/verify_word_order.py` — integrity (every Greek word present in expected verse per SBLGNT)
 - `py -3 scripts/scan_english_drift.py --min-confidence high` — English-quality drift detector
-- `py -3 scripts/scan_eng_kjv_coverage.py --baseline-check` — eng-kjv coverage (every Greek content line has English; baseline guards against new blank lines)
+- `py -3 scripts/scan_eng_kjv_coverage.py --baseline-check` — eng-kjv coverage (every Greek content line has English; baseline guards against new blank lines; closes the bracket-pericope blind spot — commit 7f3c361c)
 
-All three should return 0 before committing. If high-confidence drift hits are confirmed false positives (gen abs detector cases, known carve-outs), document the rationale in the commit message and proceed. The coverage check is also wired into the pre-commit hook (Phase 2) and runs automatically when v4/grk, v4/eng-kjv, or regenerate_english.py are staged — added 2026-05-12 after the bracket-pericope bug (commit 7f3c361c) shipped silently blank pericopes that the prior two-check could not see.
-
----
-
-## Colometric Principles (Orientation Only)
-
-**Authoritative canon:** `private/01-method/colometry-canon.md` (GNT-specific rule body); universal framework at `../atu-method/docs/framework.md` (§0 Mission, §1 Three Forces + 5 Structural Justifications + 4 Merge-Overrides, §2 Categories A/B/C, §7 Change Protocol). Fresh-read both before any editorial or rule work — rules evolve fast and this summary drifts. The bullets below are orientation-at-load-time only, not rule reference.
-
-### Three forces (canon §1)
-1. **Generative — Propositions.** Default SPLIT at every proposition boundary; each proposition is an atomic thought.
-2. **Subtractive — Syntax.** Vetoes any break that would violate Koine break-legality (Layer 1) or complement/formula integrity. Syntax is the floor; no line may sit below it.
-3. **Diagnostic — Single image.** Sharpens ambiguous cases: a line carrying multiple distinct images forces a split.
-
-The generative force proposes; the subtractive force vetoes; the diagnostic force adjudicates within the legal-break space. The mission is sense-driven; the method is syntax-constrained.
-
-### Representative break points (non-exhaustive — canon is authoritative)
-- Subordinate clauses introduced by ἵνα, ὥστε, ὅτι, ὅταν
-- μέν/δέ antithetical stacks
-- Genitive absolutes (always own line)
-- Vocatives (universal rule — each is an atomic address act)
-
-Full inventory — five structural justifications (§2), four merge-overrides (M1–M4), R-rules (R1–R28 with retirements logged in §9), the 11 governor classes for parallelism-consistency, and all worked examples — lives in `private/01-method/colometry-canon.md`. Do not rely on CLAUDE.md for rule lookups.
+The coverage check is also wired into the pre-commit hook (Phase 2) and runs automatically when `v4/grk`, `v4/eng-kjv`, or `regenerate_english.py` are staged.
 
 ---
 
-## Agent Dispatch — Three-Tier Model Routing
+## Validators & mechanical gates
 
-When dispatching subagents via the Agent tool, match model to task complexity. Don't default everything to Opus — Stan pays per-token and routing matters.
+**Hooks** (tracked at `validators/hooks/`, installed via `cp ... .git/hooks/`):
+- **`pre-commit` Phase 1** — cascade-staleness detection (v4/grk staged → v4/eng-kjv + `books/<slug>.html` must also be staged with matching line counts).
+- **`pre-commit` Phase 2** — `scan_eng_kjv_coverage.py --baseline-check` (added 2026-05-12).
+- **`pre-commit` Phase 3** — `validators/run_all.py --baseline-check` blocks regressions vs `validators/.baseline.json`.
+- **`commit-msg`** — `validators/check_canon_extensions.py` detects canon-extension patterns; requires audit-evidence keyword OR skip-safe claim in commit message.
 
-- **Haiku** (cheapest, fastest): file moves, renames, glob/ls formatting, mechanical reference lookups, single-file reads-and-summarize with no judgment, yes/no checks against file content.
-- **Sonnet** (mid-tier): scanner runs where rules are already defined, quick consistency checks with narrow scope, documentation updates following a clear template, short adversarial checks on a single specific question, cross-project consistency checks once both sides are stable, mirroring edits between files.
-- **Opus** (reasoning-heavy): multi-angle adversarial audits requiring deep reasoning, methodology synthesis across multiple sources, restructuring major documents, novel rule design or hierarchy reframes, anything where the judgment IS the work product.
-
-**When in doubt, Sonnet is the right default.** It handles most scoped tasks capably at a fraction of Opus cost. Reserve Opus for tasks where the reasoning quality directly determines the output's value. Stan should not have to think about this — the dispatching Claude makes the call.
-
-### Right-size the tool: scripts → bash → agents
-
-Before dispatching ANY agent, ask: *is this script-fixable?* Scripts run in milliseconds at zero token cost; agents take 60–300 seconds and consume context. If the pattern is deterministic (character/word replacement, regex match, structural edit that scales by line-count or fixed marker), write the Python or run a one-shot Bash command. Dispatch agents only when the task requires Greek-grammar interpretation, per-verse judgment, or editorial discretion the script can't encode.
-
-**Diagnostic:** if the agent prompt is "for each item, do X" and X is deterministic, you wanted a script. If X is "decide whether to do the thing," dispatch.
-
-### Parallelize by default
-
-If parallelism is possible, dispatch immediately — never ask "serial or parallel?" The bar is "is there a genuine data dependency preventing parallelism?" not "would Stan prefer it?" Only serialize when output of A must inform the design of B.
-
-**Corpus-wide split by genre group** (for XML parsing, MorphGNT lookup, rule-consistency audit, mass review): Mark / Matt / Luke-Acts / John (+Johannine epistles) / Pauline corpus / Hebrews / General Epistles / Revelation. Eight agents in parallel beats one agent on 27 books every time. **Threshold: any batch of ≥25 surgical fixes spanning 3+ genre groups MUST split by genre group.**
-
-**Two-phase pipeline for code changes:** Phase 1 = one agent for the code change (single file). Phase 2 = N agents for the corpus rebuild (split by genre group). Never combine — every violation has caused a bottleneck.
+**Bypass:** `git commit --no-verify` = Stan-only explicit override. New validators stage `--update-baseline` in the same commit. Canon commits include the audit-status declaration substring or fail the hook.
 
 ---
 
-## What Stan Does / What Claude Does
+## Default decisions (do NOT surface as menus to Stan)
 
-**Stan:**
-- Makes all final editorial decisions on line breaks
-- Reviews all proposed changes
-- Pushes to GitHub
-- Has final say on all colometric decisions
-- Decides which books/chapters to work on next
+| Decision point | Standing answer |
+|---|---|
+| Corpus pattern survey | Query Macula/MorphGNT via `validators/_shared/{macula_clauses,morphgnt_lookup}.py` or write a deterministic Python script. NEVER dispatch agents to grep the corpus for syntactic patterns — the structured layer already exists. |
+| Surface heuristic vs structured-layer query | Structured-layer first. Closed-list rules at the algorithm level are last-resort; if Macula/MorphGNT/TAGNT encode the constraint, use them. |
+| Adversarial audit on non-trivial implementation | ≥2 parallel Agent dispatches in one message, OR `Audit-skippable: <named-trivial-class>`. Never sequential. |
+| Extending existing validator vs creating new | Extension. New = explicit justification with substantive criterion. |
+| Same FP class in 2+ rules/validators/verses in session | STOP. Engine-level / canon-level fix. No more per-instance guards. |
+| Apply causes regression | Revert → root-cause → fix → re-apply with integrity gate. NEVER build recovery tools first. |
+| Commit attempt fails | `git log -3` + `git status --short` BEFORE retry. Use `git commit -m "$(cat <<'EOF'...EOF)"` (NEVER `-F /dev/stdin` — Linux-only). Never run two `git commit` in parallel — they race on HEAD lock. |
+| "Should I commit now or wait?" | Commit substantive work proactively; status claims AFTER commit. |
+| Cascade rebuild after pipeline change | Parallel cluster agents by genre group; never one agent on 27 books. |
+| Per-item judgment work at corpus scale | Parallel cluster-Opus dispatch (one per genre group); never hand-pass. |
+| Stan asks "explain what's going on there" / "what is the correct approach" | Diagnose the rule-set gap. Do NOT propose Option A / Option B menus on the surface verse. |
+| Stan names a verse with a desired partition | "Got it — [reading]" + diff. No leading analytical defense. |
 
-**Claude Code:**
-- Proposes line-break revisions with rationale
-- Builds and maintains tooling (scripts, build pipeline, web app)
-- Maintains documentation and handoffs
-- Quantitative analysis (colon counts, pattern detection)
-- Never touches source text without explicit approval
-- Commits when finished and pushes autonomously (see Git Workflow exceptions)
+When outside this table, surface. When inside, dispatch the standing answer and report the result.
 
----
+**Genre-group split** (for cluster-cascade routing): Mark / Matt / Luke-Acts / John+Johannine / Pauline / Hebrews / General Epistles / Revelation. Threshold: any batch ≥25 surgical fixes spanning 3+ groups MUST be split.
 
-## Connected Resources
-
-- **Academic vault:** `C:\vaults-nano\my_brain\` — Greek grammar notes, Bible book files, scholar notes
-- **Gospel vault:** `C:\vaults-nano\gospel\` — devotional scripture notes
-- **Key scholarly references:**
-  - Lee & Scott, *Sound Mapping the New Testament* (2009, 2nd ed.)
-  - Priscille Marschall, *Colometric Analysis of Paul's Letters* (2024, WUNT II)
-  - Runge, *Discourse Grammar of the Greek New Testament* (2010)
-  - Levinsohn, *Discourse Features of New Testament Greek* (2000)
-- **Domain registrar:** Cloudflare (same account as other domains)
+**Agent model routing:** Haiku for mechanical lookups; Sonnet for narrow-scope scans where rules are defined; Opus for adversarial audits / methodology synthesis / novel rule design / cross-corpus shared-infrastructure edits (`atu-method/atu_method/*`). Sonnet default; reserve Opus for reasoning-heavy work.
 
 ---
 
-## Git Workflow
+## Git workflow
 
-All work on `main`. After any clean commit, run `git push origin main` immediately — no "want me to push?" hedge. Stan authorized blanket autonomous push 2026-05-11 (SSH transport via `bibleman-windows-desktop` key, silent, no prompts). The prior "Stan reviews in GitHub Desktop before push" gate was replaced by branch-policy + commit-message discipline.
+All work on `main`. **Commit AND push autonomously after any clean commit on main** (Stan blanket-authorized 2026-05-11; SSH transport `bibleman-windows-desktop` key, silent pushes). Sequence: `git commit` → if exit 0 → `git push origin main` → THEN report.
 
-**Exceptions** — still warrant Stan's confirmation BEFORE push:
-- Force-pushes (`--force`, `--force-with-lease`)
-- Any branch other than `main`
-- Commits containing agent-applied bulk corpus changes I haven't personally diff-reviewed (R1-sweep / canon-restructure / mass-edit class)
+**Confirm BEFORE push:** force-pushes (`--force` / `--force-with-lease`); pushes to non-main; pushes containing agent-applied bulk corpus changes Stan hasn't diff-reviewed.
 
----
-
-## Project Siloing
-
-This project is **publicly independent** — no cross-references to any other projects in README, CLAUDE.md, handoffs, or any public-facing files. Respect this decision.
+**Tree-state self-check before commit (mandatory):** `git status --short`. If unrelated work is staged, separate it before committing — commit titles must describe actual scope. Either ask first, commit separately, or `git stash --keep-index`.
 
 ---
 
-## Update Protocol
+## Project siloing
 
-When updating handoff docs, append a dated block at the bottom — never overwrite history. After any work where decisions are made, principles are refined, or new patterns identified, update the relevant handoff file.
-
+Publicly independent — no cross-references to any other projects in README, public-facing docs, or the web app. Internal CLAUDE.md may reference sibling repos as cross-failure-mode evidence (see Editorial Discipline) since this file is dev-facing, not reader-facing.
