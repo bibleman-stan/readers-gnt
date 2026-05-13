@@ -282,6 +282,39 @@ Index of the closed-list lexical/syntactic sets that rules in §3 reference. Eac
 
 **Extension protocol.** Adding a member to any list above (a new verb to R10's families, a new triad-variant to R18a-GNT, a new SUBJECT_SHAPE to M4-GNT-1, a new framing device to R8) is a closed-list extension per canon §6.5 trigger #3 — Category B by default, audit dispatched. Cross-reference the list's defining section in the audit-evidence.
 
+### Pairwise Precedence Catalogue
+
+Canon prose makes specific pairwise-precedence statements; it does NOT make a totally-ordered N-tier ranking claim across all rules. This section catalogues every pairwise precedence the canon actually states. Each row is a direct restatement, with the canon §-ref that warrants it.
+
+Architecture.md §interface-contracts states: *"Precedence hierarchy — §3.5 of each per-repo canon. Detectors must filter candidates that match higher-tier rules out of lower-tier buckets."* Currently the GNT spec satisfies this contract by **pairwise statement**, not lattice ordering. A future revision may upgrade to a totally-ordered hierarchy *after* the detector implementations enforce tier-yield consistently (see "Known detector gaps" at the end of this subsection).
+
+| Winning rule | Loses to / Yields | Scope | Warrant |
+|---|---|---|---|
+| **Layer 1 R2–R7** (syntactic vetoes) | — (top of stack for veto-level) | Never violated for the rule's named pattern. Generic Greek grammar. | §3.2 ("R2–R7 are pure Koine-Greek syntax facts"); framework §1.2 subtractive-force-as-floor |
+| **R18a-GNT** (patriarch-deity-triad) | wins over subtractive vetoes *internal to the triad span* | When θεός-Ἀβραάμ-Ἰσαάκ-Ἰακώβ formula matches | §3.9a verbatim |
+| **R11 / R28-ext speech-frame** | wins over default break placement when verb+frame is a fixed speech-intro span | Speech-intro formula integrity | §3.18 line 898 ("formula integrity (R6, R11)"); §3.6 |
+| **R10 ὅτι-complement (cognition class)** | wins over R11 / R28-ext when ὅτι immediately follows speech verb | ὅτι→indirect speech routes to R10, not R11 | §3.6 R11 detector exclusion X1; §3.5 |
+| **R10 / Period-test obligatory complement** | wins over generic split-default | Complement integrity | §3.5; §3.18 line 898 ("complement integrity (§3.5 R10)") |
+| **R7 vocative-indivisibility** | wins over M4-GNT-1 when line A is pure vocative | Per universal exclusion #6 in §3.18 | §3.18 verbatim |
+| **R5 periphrastic** | wins over M4-GNT-1 when line A/B forms a periphrastic | Per G3 exclusion in §3.18 | §3.18 verbatim |
+| **R19 gen-abs own-line** | wins over M4-GNT-1 when line B begins with gen abs | Per universal exclusion #11 in §3.18 | §3.18 verbatim |
+| **R19 gen-abs own-line** | wins over R28-ext when both match same locus | gen abs has priority over speech-frame routing | §3.6 R28-ext relation; corroborated by R28-ext code path |
+| **R22 orphaned-adverbial-completion** | wins over R9 default in completing-predicate sub-case | R22 is the merge-override for the R9 split-default sub-case | §3.4 verbatim ("The default under R9 is split; R22 is the merge-override for the completing-predicate sub-case") |
+| **R9 subordinate-clause break** | wins over R25 ὥστε-binding when the split case applies | R25's word-count + semantic conditions must all clear for R25 to win | §3.14a verbatim ("R9 takes precedence for the split case") |
+| **R28 textual-asymmetry** | wins over R12 editorial parallelism, R14 men/de stacking | Authorial asymmetry preserved over editorial symmetry | §3.7 verbatim ("Textual asymmetry overrides editorial symmetry") |
+| **M4-GNT-1** (and by extension framework M4) | yields to R2-R7 (Layer 1), R6, R11 (formula), R10 (complement), R7 (vocative), R19 (gen-abs) | Merge-override of last resort; runs only after higher-priority rules settle | §3.18 verbatim ("Tier 4 merge-override... Yields to Tier 1–3 rules (Layer 1 vetoes, formula integrity, complement integrity, vocative integrity R7, genitive-absolute R19)") |
+| **M1 (Gorgianic bonded pair)** | exhausts M1→M2→M3→M4 chain before flipping to split | M1 strict-application caveat | §2 M1 caveat |
+| **N=2 Adjudication Principle** | adjudicates within the legal-break space when forces leave ambiguity | Applies at N=2 ambiguity; per framework §1.x | framework §1; canon §1 |
+
+**Architecture interface compliance.** Detectors are expected to filter candidates that match a higher-priority pairwise relationship out of lower-priority emission buckets. M4-GNT-1's G1–G5 exclusions + universal-6 list is the gold-standard implementation pattern (`validators/colometry/check_m4_gnt_1_subject_orphan.py`); it explicitly comments "R5 governs", "R7 governs", "R10 governs" at the yield points.
+
+**Known detector gaps (audit 2026-05-13, pending engineering follow-up).** The following detectors do NOT yet implement explicit tier-yield filters per the pairwise table above:
+- **`check_r19_genabs.py`** — lacks "skip if vocative-only line (R7)" and "skip if line spans a FIXED_PHRASES entry (R6)" filters. Current behavior leans on a 5-entry `_KNOWN_FP_ALLOWLIST` that captures the symptom; the class-based filter is missing.
+- **`check_r18_vocative.py`** — silent on R7 yield. Currently fires independently on multi-word vocative units that R7 would normally constrain.
+- **`validators/run_all.py`** — runs validators in alphabetical (`pkgutil.iter_modules`) order, not pairwise-precedence order. The "filter higher-priority matches out of lower buckets" discipline is currently the responsibility of each lower-priority detector internally; there is no runner-level pass.
+
+These gaps are documented for visibility, not codified as new rules. Closing them is detector-engineering work (separate commits, normal validator-extension audit if scope expands).
+
 ### 3.1 The No-Anchor Rule
 
 Every ATU must carry at least one thought-marking anchor: (1) a finite verb, (2) an infinitive, (3) a participle standing as predicate, or (4) a substantive head that is the independently predicated topic of its own line.
