@@ -88,6 +88,8 @@ Pre-commit on canon-touching commits: every commit message touching `private/01-
 
 Same-trigger audits across distinct angles (discipline / scope / cross-project consistency / corpus impact) fire in ONE batch via parallel Agent calls, not in series.
 
+**First-round-reframes is the default.** When dispatching the audit panel on a canon addition framed as "restatement / no new claim," expect at least one of the three audits to flag a scope/precedence/closed-list claim I didn't see. Schedule re-drafting time as part of the commit timeline; don't commit as-drafted on a NEEDS-MODIFICATION verdict. Specific anti-pattern: list-order in one operational sentence (e.g., "after Tier 1 vetoes, formula integrity, complement integrity have settled") is sequence-of-application within ONE rule's resolution, NOT a tier-rank assertion. Generalizing it is scope-creep.
+
 ### Apply causes regression
 
 Revert the apply → root-cause why → fix the apply → re-attempt with integrity gate verified post-apply. Do NOT build downstream-recovery tools first.
