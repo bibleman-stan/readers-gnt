@@ -990,9 +990,10 @@ Rules without a Detector Signature block below have no auto-validator yet (see R
 - **Burton 1903** (`private/05-resources/burton-1903/`) — Ernest De Witt Burton, *Syntax of the Moods and Tenses in New Testament Greek*. Classic monograph on NT Greek verbal syntax (moods / tenses / infinitives / participles). Section numbers §1–§489 stable across editions 3–5. Cite as `Burton §N` or `Burton §N–M`. Covers R9 / R10 / R19 / R20 / R22 / R23 / R25 + J3/J5 partial.
 - **Wallace 1996** (`private/05-resources/wallace-1996/`) — Daniel B. Wallace, *Greek Grammar Beyond the Basics: An Exegetical Syntax of the NT*. Modern comprehensive grammar covering cases, article, adjectives, pronouns, prepositions, all clause types, conjunctions, conditional sentences, plus the verb-and-verbal territory Burton also covers. Cite as `Wallace p.X` (print pages — established convention; canon already uses this form at §3.5). Section-heading citations OK when print page unknown: `Wallace, "Conjunctions: Contrastive"`. Covers ALL R-rules except R27 / R28 / discourse-marked-word-order.
 - **BDF 1961** (`private/05-resources/bdf-1961/`) — F. Blass, A. Debrunner, R. W. Funk, *A Greek Grammar of the NT and Other Early Christian Literature* (Funk translation of the 9th–10th German editions). THE standard scholarly reference grammar; deepest philological + historical-grammar treatment. Section numbers §1–§500 stable across editions. Cite as `BDF §N` (canon already uses at §3.5 `BDF §416` and §3.12 `BDF §392`). Particularly strong on: particles + conjunctions (§§438–470 — primary scholarly source for R8 framing devices), Pendent Nominative (§466 — informs M4-GNT-1), Article repetition with apposition (§§268–269 — informs R18a-GNT), Coincident participle (§420 — Burton's attendant circumstance / Wallace's same).
-- *(Future)* Runge, Levinsohn, Smyth — when ingested. Runge especially needed for R27 / R28 / §8 Fronting Paradox / discourse-marker territory neither Burton, Wallace, nor BDF cover comprehensively.
+- **Runge 2010** (`private/05-resources/runge-2010/`) — Steven E. Runge, *A Discourse Grammar of the Greek New Testament: A Practical Introduction for Teaching & Exegesis* (Lexham). Modern discourse-linguistic complement to the traditional reference grammars: information-structure, prominence-marking, framing devices, pragmatic effect. Cite as `Runge §N.M` (Runge's numbered subsections — stable) or `Runge p.X`. PRIMARY discourse-linguistic source for: R8 framing devices (§2 Connecting Propositions — entire chapter), R11 / R28-ext speech-frames (§7 Redundant Quotative Frames), R12-R14 point/counterpoint (§4), R17 δέ-as-development-marker (§2.3), M4-GNT-1 subject-orphan (§14 Left-Dislocations — entire chapter), §8 Marked Word Order / Fronting Paradox (§9 Information Structure — P1/P2 framework is the linguistic grounding for the canon's anti-imposition principle), R19 / R22 circumstantial frames (§12.3.2 / §12.3.4).
+- *(Future)* Levinsohn, Smyth — when ingested.
 
-**Burton + Wallace + BDF together cover ~all R-rule territory.** Per-rule mapping in each substrate's README documents which sections inform which rules. The `_full-text.txt` dumps are for spot-checking content during canon revisions — print editions are the citation primary.
+**Burton + Wallace + BDF + Runge together cover ~all R-rule territory.** Burton + Wallace + BDF handle morphology + syntax structurally; Runge handles information-structure + pragmatic-effect (the territory R8 / R12-R14 / R17 / R27 / R28 / §8 Fronting Paradox / M4-GNT-1 / §3.6 R11+R28-ext occupy). Per-rule mapping in each substrate's README documents which sections inform which rules. The `_full-text.txt` dumps are for spot-checking content during canon revisions — print editions are the citation primary.
 
 ~~~yaml
 # R11 — Direct speech introduction (canon §3.6)
@@ -1024,7 +1025,32 @@ R11:
     - F9: descriptive_speech_as_behavior     # λέγουσιν ... ποιοῦσιν contrast
   closed_lists:
     - R11_speech_frame_verbs                  # see Closed-List Registry, §3 Rule Index area
-  references: Wallace, "Person and Number" (3rd-person finite verbs) + "Indicative Mood" treatment of declarative verbs. Burton §168 (hortatory subj) + §180–184 (imperative) partial. BDF §§329–339 (periphrastic constructions; indicative speech-act-class verbs).
+  references: |
+    PRIMARY discourse-linguistic source: Runge §7 Redundant Quotative Frames (especially §7.2.1 At Changes in Speaker/Hearer). Runge's framework: the participial-ἀποκρίνομαι + finite-εἶπεν pattern is a REDUNDANT-FRAME prominence-marker, not just a Semitic-influence holdover. Discourse function: (a) signal CHANGE OF DIRECTION in a conversation (counter / objection / rejection), or (b) introduce an AUTHORITATIVE PRONOUNCEMENT (Levinsohn). The redundancy IS the signal — the frame is a single prominence-marking unit, which is why R11 merges participle + finite onto one line.
+    Wallace, "Person and Number" (3rd-person finite verbs) + "Indicative Mood" treatment of declarative verbs. Burton §168 (hortatory subj) + §180–184 (imperative) partial. BDF §§329–339 (periphrastic constructions; indicative speech-act-class verbs); BDF §420 cited in Runge §7's Suggested Reading for the "coincident" participle that grounds the Hebraism analysis.
+  refinement_candidate_runge_§7_2_2_within_same_speaker:
+    source: Runge §7.2.2 (Within the Same Speaker's Speech) + Mark 4:9 / 13 / 21 / 24 / 26 / 30 examples
+    claim: |
+      Mid-speech redundant quotative frames (καὶ ἔλεγεν / Καὶ λέγει αὐτοῖς·) where
+      there is NO change of speaker function as DISCOURSE SEGMENTATION markers —
+      they break a long speech into smaller chunks at thematic boundaries. The
+      imperfect ἔλεγεν is characteristic (Wallace's "instantaneous imperfect"
+      restricted to ἔλεγεν in narrative — which Runge reframes as discourse-
+      segmentation, not aspectual ambiguity). This is functionally DIFFERENT from
+      the canon §3.6 Parenthetical Mid-Speech Attribution rule (which treats
+      mid-quote φησίν/λέγει as merge-not-split because they are parenthetical
+      attribution tags, not segmentation markers).
+    operational_implication: |
+      Canon §3.6 Parenthetical Mid-Speech Attribution rule (merge) covers ONE
+      class of mid-speech speech-verb: parenthetical attribution. Runge §7.2.2
+      identifies a SECOND class: thematic segmentation within a single speech
+      (Mark 4 chain). The current canon treats them identically (merge); Runge
+      argues they have DIFFERENT discourse functions and the segmentation case
+      may warrant DIFFERENT colometric treatment (own line as segmentation
+      marker). Empirical check needed: how is Mark 4:9/13/21/24/26/30 currently
+      laid out in v4/grk? If on own lines, canon is implicitly tracking Runge's
+      distinction; if merged, refinement may be warranted.
+    status: deferred — empirical-corpus check needed before refining canon §3.6.
 ~~~
 
 ~~~yaml
@@ -1045,7 +1071,26 @@ R18:
     - subject_appositive_merge: vocative_names_implicit_subject_of_2p_finite_verb
     - object_appositive_merge:  vocative_restates_explicit_2p_pronoun
     - discourse_frame_cluster:  frame_particle_plus_vocative_co_lined  # Loipon etc.
-  references: Wallace, "Vocative Case" — Simple Address / Emphatic Address / Exclamation (Wallace's three-way maps R18's three-way: Simple = Default own-line; Emphatic w/article = Object-Appositive merge; etc.). BDF §§146–147 (Vocative Case — primary scholarly source).
+  references: |
+    Wallace, "Vocative Case" — three uses (Direct Address [Simple / Emphatic-with-ὦ / Exceptional-Acts-usage], Exclamation, Apposition). Wallace's taxonomy is ORTHOGONAL to R18's colometric three-way (Default-own-line / Subject-Appositive-merge / Object-Appositive-merge): his categorizes vocative *usage type*, R18 categorizes *colometric placement* via same-clause-span 2p-element presence. The two interact at the **ὦ-emphasis signal** (refinement candidate, see below).
+    BDF §§146–147 (Vocative Case — primary scholarly source).
+  refinement_candidate_ω_emphasis:
+    source: Wallace, "Direct Address — Emphatic (or Emotional)"
+    claim: |
+      In Koine, the ὦ-particle marks the vocative as emphatic / emotional (a reversal
+      of the classical norm where bare ὦ was unmarked and bare-vocative was emphatic).
+      Wallace cites Matt 15:28, Rom 2:1/3, 9:20, 1 Tim 6:11/20, Jas 2:20.
+    corpus_survey_2026-05-13:
+      8 instances:
+        acts 1:1 ὦ Θεόφιλε / acts 18:14 ὦ Ἰουδαῖοι / acts 27:21 ὦ ἄνδρες /
+        rom 2:1 ὦ ἄνθρωπε / rom 2:3 ὦ ἄνθρωπε / rom 9:20 ὦ ἄνθρωπε / 1tim 6:11 ὦ ἄνθρωπε /
+        jas 2:20 ὦ ἄνθρωπε
+    operational_question:
+      Does ὦ-emphasis override R18's same-clause-2p-element merge-test (forcing own-line
+      regardless of merge-conditions)? Hypothesis: yes — emphatic vocative IS a discourse-
+      turn marker even when surface-embedded. jas 2:20 currently mid-line within
+      `θέλεις δὲ γνῶναι, ὦ ἄνθρωπε κενέ,` — candidate for split-off per ὦ-emphasis.
+    status: deferred — needs Stan editorial decision before refining R18.
 ~~~
 
 ~~~yaml
@@ -1103,7 +1148,9 @@ R19:
     - (heb, 11, 1)
     - (matt, 9, 10)
     - (phil, 2, 15)
-  references: Burton §451 (Genitive Absolute — construction definition + scope as separate from main clause); Wallace, "Verbal Participles: Absolute — Genitive Absolute" (modern aspect-aware treatment); BDF §§423–424 (Genitive Absolute — historical-grammar depth).
+  references: |
+    PRIMARY discourse-linguistic source: Runge §12.3.2 Genitive Circumstantial Frames. Runge (citing Fuller): "The function of the form of participle and noun/pronoun in the Genitive (without any other formal cause, such as a preposition) is to draw the reader's attention to certain information in a more detached way than other circumstantial participles.… The information in the GA acts as a frame in which to interpret the information of the main clause, or of an even larger discourse." Two primary discourse functions: (a) TEMPORAL TRANSITION without pericope-level discontinuity (Luke 4:40, 42); (b) TAIL-HEAD LINKAGE reiterating preceding action as background (Matt 2:1 Τοῦ δὲ Ἰησοῦ γεννηθέντος — Runge example 166, directly relevant to canon Matt 2 work). The "absolute" property (gen abs subject NOT in main clause) is what marks the discourse-detachment that warrants the own-line colometric treatment.
+    Burton §451 (Genitive Absolute — construction definition + scope as separate from main clause); Wallace, "Verbal Participles: Absolute — Genitive Absolute" (modern aspect-aware treatment); BDF §§423–424 (Genitive Absolute — historical-grammar depth).
 ~~~
 
 ~~~yaml
@@ -1156,7 +1203,9 @@ R28-ext:
     - X2: legōn_eipōn_participial_adjacent_to_speech_verb  # ἀπεκρίθη+λέγων Hebraism
     - X3: frame_already_on_prior_line
     - X4: speech_verb_inside_subordinate_clause      # F1 from R11
-  references: Wallace, "Conjunctions: Adverbial — Temporal" + "Verbal Participles: Dependent — Indirect Discourse" (frame + speech-act distinction). Burton §168 / §180–184 partial. BDF §§455–456 (Asyndeton + connective particles), §457 (Hebraistic ἀπεκρίθη καὶ εἶπεν speech-frame pattern).
+  references: |
+    PRIMARY discourse-linguistic source: Runge §7 Redundant Quotative Frames (§7.2.1 At Changes in Speaker/Hearer + §7.3.1 worked examples). R28-ext is the canon's name for the COMPLEX speech-act-announcement-after-frame pattern Runge analyzes: temporal/circumstantial frame → redundant quotative frame → quote. The split is licensed by the frame providing its own discourse-pragmatic unit BEFORE the speech-frame proper. Cross-linguistic warrant: the redundant frame's discourse function (slow down before authoritative pronouncement, signal change of direction) is what motivates own-line treatment for the speech-frame line.
+    Wallace, "Conjunctions: Adverbial — Temporal" + "Verbal Participles: Dependent — Indirect Discourse" (frame + speech-act distinction). Burton §168 / §180–184 partial. BDF §§455–456 (Asyndeton + connective particles), §457 (Hebraistic ἀπεκρίθη καὶ εἶπεν speech-frame pattern — directly relevant to R28-ext class).
 ~~~
 
 ~~~yaml
@@ -1187,7 +1236,72 @@ R1:
 ~~~
 
 ~~~yaml
-# R20 — Participial phrase test, refined (canon §3.10)
+# R8 — Framing Devices Attach (canon §3.3)
+# No detector yet — manual editorial rule. Closest scanner: scan_line_ending_function_words.py (legality check post-split).
+R8:
+  rule_id: R8
+  category: Mechanical (colometric placement) + Editorial (functional gloss)
+  layer: 3
+  signature:
+    rule_form: |
+      Framing devices LEAD their content — never sit line-final.
+      A frame without its content is an orphan; content without its frame loses rhetorical context.
+    closed_list:                       # see Closed-List Registry
+      - R8_framing_devices             # ἰδού, διό, οὖν, νυν δέ, ἀλλά, γάρ, πλήν, τοιγαροῦν
+    interaction_with_R2:
+      note: R2 (never end on conjunction) already forbids most of these line-final.
+              R8 is the FUNCTIONAL gloss on the colometric rule — explains WHY R2 holds for this set.
+  references: |
+    PRIMARY discourse-linguistic source: Runge §2 Connecting Propositions (entire chapter — §2.1 ∅ asyndeton, §2.2 καί, §2.3 δέ, §2.4 narrative τότε, §2.5 οὖν, §2.6 διὰ τοῦτο, §2.7 γάρ, §2.8 μέν, §2.9 ἀλλά). Runge's 4-dimensional matrix (±continuity / ±development / ±correlation / ±forward-pointing + semantic-constraint slot) classifies every R8 framing device: οὖν = +cont +dev; διὰ τοῦτο = +cont +dev +causal; τότε = -cont +dev +temporal; ἀλλά = -cont -dev +correlation +correction. The matrix is the discourse-pragmatic grounding for R8 — each framing device leads its content because each constrains how the FOLLOWING discourse relates to context.
+
+    BDF §§438–453 (Particles) + §§459–470 (Conjunctions) — primary philological source: γάρ §452, οὖν §451, ἄρα §451, διό §451, τοιγαροῦν §451, ἀλλά §448, πλήν §449. Wallace "Conjunctions: Logical Functions" (Inferential — ἄρα, διό, οὖν, πλήν, τοιγαροῦν; Contrastive — ἀλλά, πλήν; Explanatory — γάρ; Emphatic — οὖν; Transitional — οὖν).
+  refinement_candidates:
+    γάρ_is_backward_strengthening_not_forward_framing:
+      source: Runge §2.7 (Γάρ)
+      claim: |
+        γάρ does NOT advance discourse — it strengthens/supports what PRECEDES.
+        Levinsohn / Heckert / Black converge: γάρ-introduced material is offline
+        background that confirms or grounds a preceding assertion; it does not
+        introduce a new development. The canon §3.3 functional gloss ("framing
+        devices whose function is to INTRODUCE WHAT FOLLOWS") is loose for γάρ —
+        the COLOMETRIC rule (leads its content; never line-final) holds, but the
+        functional gloss is over-extended: γάρ leads its content syntactically
+        while functionally supporting the prior unit.
+      operational_implication: |
+        The "leads its content" colometric rule is unaffected — γάρ-line still
+        must not be line-final. But the §3.3 prose "introduces what follows"
+        gloss could be refined: "framing devices LEAD their content; their
+        discourse function varies (γάρ supports prior; οὖν advances closely;
+        ἀλλά corrects expectation)."
+      status: deferred — minor prose refinement for §3.3, not a rule change.
+    δέ_is_development_marker_not_adversative:
+      source: Runge §2.3 (Δέ — entire section)
+      claim: |
+        δέ is a +development marker with no inherent adversative/contrast load.
+        Adversative force is context-dependent (semantic) not particle-marked.
+        This RECASTS R17 (De-Contrast Overbreak / canon §3.8): the editorial
+        discipline is not "weak-contrast vs strong-contrast" but "development-
+        marker (default) vs contextually-emergent-adversative (special)." Most
+        δέ in the GNT mark a new development without semantic discontinuity.
+      operational_implication: |
+        R17 §3.8 prose should be refined: δέ is fundamentally a development
+        marker; "contrast" emerges from semantic context, not from δέ itself.
+        Over-breaking on δέ-as-contrast is the failure mode R17 already names
+        — Runge gives the linguistic warrant.
+      status: deferred — substantive R17 prose refinement candidate.
+    ἀλλά_is_correction_of_expectation_not_just_adversative:
+      source: Runge §2.9 (Ἀλλά) + Heckert, *Discourse Function of Conjoiners in the Pastoral Epistles*
+      claim: |
+        ἀλλά is a "global marker of contrast" that introduces a CORRECTION of
+        the expectation created by the prior conjunct. It cancels an incorrect
+        expectation and puts a proper one in its place. Standard "adversative"
+        gloss undercounts: ἀλλά is correction-marking, not just contrast.
+      operational_implication: |
+        R8 §3.3 table entry "alla — Adversative correction" is already partly
+        right ("correction"). Could be sharpened: ἀλλά cancels expectation
+        rather than merely contrasting. Minor refinement; no rule change.
+      status: noted — already partly captured in §3.3 table gloss.
+~~~
 # Detector: scripts/scan_line_ending_participles.py (scanner only)
 R20:
   rule_id: R20
@@ -1204,7 +1318,28 @@ R20:
     Scanner surfaces candidates; canon §3.10 + §8 Participial Rules
     govern editorial application. Predicate vs attributive distinction
     is judgment-required per-construction.
-  references: Burton §418–457 (full Participle section); attributive (restrictive §420–421 / explanatory §427) vs predicative §429–433 distinction; adverbial subtypes §434–450 inform the predicate-vs-attributive judgment. Wallace, "The Participle" — Adjectival (Attributive / Predicate / Substantival) + Verbal (Dependent — Temporal, Manner, Means, Cause, Condition, Concession, Purpose, Result, Attendant Circumstance, Indirect Discourse, Complementary, Periphrastic, Redundant; Independent; Absolute — Nominative, Genitive) is the modern reorganization that adds aspect-theory framing (perfective vs imperfective vs stative) to Burton's tense-based treatment. BDF §§411–425 (Participle: Adjectival §413, Substantival §413, Predicate §414, Adverbial §417; **§420 Coincident/Accompanying participle = BDF's name for what Burton calls attendant circumstance and Wallace calls Attendant Circumstance**).
+  references: |
+    PRIMARY discourse-linguistic source for post-matrix adverbial participles: Runge §12.3.4 Adverbial Participles Following the Main Verb. Runge: "Participles that follow the main verb have a somewhat different effect from those that precede it, in that they ELABORATE the action of the main verb, often providing more specific explanation of what is meant by the main action." The participle "relegates its action to supporting the main action" — by using a participle rather than a finite verb, the writer "places its action under the umbrella of the main verb." This IS the discourse-linguistic warrant for the 2026-05-13 15-merge sweep: post-matrix adverbial λέγω/εἶπον participles elaborate the matrix verb's speech-act, they don't introduce a new event, so they MERGE.
+    Burton §418–457 (full Participle section); attributive (restrictive §420–421 / explanatory §427) vs predicative §429–433 distinction; adverbial subtypes §434–450 inform the predicate-vs-attributive judgment. Wallace, "The Participle" — Adjectival (Attributive / Predicate / Substantival) + Verbal (Dependent — Temporal, Manner, Means, Cause, Condition, Concession, Purpose, Result, Attendant Circumstance, Indirect Discourse, Complementary, Periphrastic, Redundant; Independent; Absolute — Nominative, Genitive) is the modern reorganization that adds aspect-theory framing (perfective vs imperfective vs stative) to Burton's tense-based treatment. BDF §§411–425 (Participle: Adjectival §413, Substantival §413, Predicate §414, Adverbial §417; **§420 Coincident/Accompanying participle = BDF's name for what Burton calls attendant circumstance and Wallace calls Attendant Circumstance**).
+  refinement_candidate_runge_§12_3_4_enumerative_distinction:
+    source: Runge §12.3.4 (Matt 4:23 διδάσκων/κηρύσσων/θεραπεύων + Rom 12:9-13 + Eph 5:17-22 chains)
+    claim: |
+      Runge's elaborating-participle analysis confirms R22 merge for 1-2 post-
+      matrix participles (they elaborate the main verb). BUT Runge's worked
+      examples include 3+ STACKED post-matrix participles that elaborate ONE
+      main verb (Matt 4:23 three participles; Rom 12:9-13 chain of 12+; Eph
+      5:19-22 chain). These ALSO subordinate to the matrix per Runge's analysis,
+      yet the canon's enumerative-register modulation (§5 Register, line ~1533)
+      stacks them as parallel ATUs because of the 3+ member threshold.
+    operational_implication: |
+      The canon's implicit distinction is sound: 1-2 elaborating participles
+      MERGE to matrix (R22); 3+ STACK as parallel enumeration (§5 register
+      modulation). Runge §12.3.4 grounds BOTH: discourse-subordination to the
+      matrix is preserved in both treatments; the colometric distinction is
+      about breath-unit vs visual-parallel-display, not about discourse
+      hierarchy. Could be made explicit as a Runge-grounded distinction in
+      §3.10 prose if a future refinement pass touches it.
+    status: noted — canon implicitly captures via R22 + §5 enumerative-register cooperation.
 ~~~
 
 ~~~yaml
@@ -1231,7 +1366,62 @@ R23:
   references: Burton §361–417 (Infinitive section). Specifically §387–389 (Infinitive as object after verbs of commanding / desiring / hoping), §390 (Infinitive in Indirect Discourse — accusative subject), §406–417 (Infinitive with article governed by prepositions). The dative-subject-of-infinitive construction is unusual relative to Burton's accusative-subject default — Rom 12:3 may be classical-influenced. Wallace, "Dative Case" (uses including dative-of-reference) + "The Infinitive: Verbal Uses" (subject of infinitive, normally accusative; dative cases relatively rare per Wallace §195). BDF §§392 (Infinitive — accusative-subject default, already cited at canon §3.12), §§393–411 (Infinitive — uses + with article + with preposition).
 ~~~
 
-**Signature coverage status (2026-05-13).** 9 of ~26 rules signatured: R1, R11, R18, R18a-GNT, R19, R20, R23, R25, R28-ext (+ M4-GNT-1 inline at §3.18). Unsignatured: R7, R8, R9, R10, R12, R13, R14, R17, R22, R24, R27, R28, Layer-1 R2–R6. R7 and R2–R6 signatures live in Layer 1 syntax-floor (`data/syntax-reference/greek-break-legality.md`), not duplicated here. R12/R13/R14/R24/R27/R28 are Editorial / Principle — no auto-validator, signature would over-specify. R8/R9/R10/R17/R22 detectors not yet implemented — signature pending detector authorship.
+~~~yaml
+# M4-GNT-1 — Subject-orphan predicate completion (canon §3.18)
+# Detector: validators/colometry/check_m4_gnt_1_subject_orphan.py
+# (Full signature inline at §3.18; this block is the references-only summary.)
+M4-GNT-1:
+  rule_id: M4-GNT-1
+  category: Mechanical (closed-list-eligible subject shapes); Editorial (length-backstop)
+  layer: 3
+  precedence_tier: 4   # merge-override; yields to Layer 1 vetoes + R6/R10/R7/R19
+  signature_location: canon §3.18 (full UD-trigger + G1–G5 + universal-6 exclusions)
+  references: |
+    PRIMARY discourse-linguistic source: Runge §14 Left-Dislocations (entire chapter). Runge surveys the NT-grammarian aliases for this construction (cleft / hanging nominative / **pendent nominative** / casus pendens / independent nominative — §14.1) and grounds it in Chafe's cross-linguistic "one new concept at a time" constraint (§14.2). M4-GNT-1 IS Runge's left-dislocation as a colometric rule.
+
+    Runge §14.3 identifies THREE functional sub-uses:
+      §14.3.1 STREAMLINING — introduce complex entity in one clause not two; pronominal trace in unmarked post-verb position (<20% of NT instances).
+      §14.3.2 PROCESSING FUNCTION — pronominal trace in clause-initial P1/P2 frame position to signal end-of-dislocation; entity complex enough to warrant the aid.
+      §14.3.3 DISCOURSE-PRAGMATIC FUNCTION — pronominal trace creates THEMATIC HIGHLIGHTING of the topic (majority of NT usage). The pronoun's redundancy IS what produces the rhetorical effect.
+
+    All three sub-uses receive the same colometric treatment under M4-GNT-1 (subject NP + matrix predicate = one ATU). The three sub-uses inform R27 authorial-style + §8 Marked Word Order — the same surface pattern carries different rhetorical weight depending on processing-vs-pragmatic motivation.
+
+    BDF §466 (Pendent Nominative — primary scholarly source for the construction as a classical category; cited in canon §3.18 prose). Wallace, "Nominative Case — Independent Nominative" (modern complement). Burton has no dedicated treatment (verbal-syntax monograph; pendent constructions out of scope).
+  refinement_candidates:
+    sub_use_taxonomic_distinction:
+      source: Runge §14.3.1–3 (three sub-uses)
+      claim: |
+        All three Runge sub-uses (streamlining / processing / discourse-pragmatic)
+        currently receive the same M4-GNT-1 merge action. The taxonomic distinction
+        IS NOT colometrically operative — colometry can't differentiate them — but
+        IS rhetorically operative for downstream rules: R27 authorial-style and
+        §8 Marked Word Order interact with sub-use #3 (discourse-pragmatic
+        highlighting) in particular.
+      operational_implication: |
+        No change to M4-GNT-1 detector. Optional future enhancement: tag the
+        merge-output with sub-use classification (P1/P2-resumptive vs
+        post-verb-resumptive) for downstream R27/§8 analysis.
+      status: noted — colometrically inert, downstream-rhetorically relevant.
+    corpus_cross_check_runge_§14_examples:
+      source: Runge §14.3.1 reference list (the long list at end of section)
+      claim: |
+        Runge enumerates ~50+ NT left-dislocation instances across all 3 sub-uses.
+        Subset overlaps M4-GNT-1's 2026-05-11 sweep (~15-20 Cat A applied) but
+        Runge's list is BROADER — many instances are streamlining (§14.3.1)
+        cases the current SUBJECT_SHAPES_M4_GNT1 closed list doesn't capture
+        (relative-clause-as-dislocation, ὅπου-locative-frame as dislocation,
+        ὅτε-temporal-frame as dislocation).
+      operational_implication: |
+        The current 5-shape closed list (C1 vocative-subj / C2 NP-w-appositive /
+        C3 NP-w-participial / C4 NP-w-relcl / C5 biographical-intro) covers the
+        subject-NP cases but Runge's broader taxonomy includes locative + temporal
+        left-dislocations (Matt 6:21 ὅπου-γάρ, Jas 3:16 ὅπου-γάρ, Matt 21:1
+        ὅτε-frame, John 15:4 καθώς-frame). These are governed by §3.4 subordinate-
+        clause-introduction breaks (R9) in the current canon, not by M4-GNT-1.
+      status: noted — boundary clarification, not extension. R9 ≠ M4-GNT-1.
+~~~
+
+**Signature coverage status (2026-05-13).** 10 of ~26 rules signatured: R1, R8, R11, R18, R18a-GNT, R19, R20, R23, R25, R28-ext, M4-GNT-1 (R8 unsignatured-prior, now signatured with Runge §2 citation; M4-GNT-1 has both inline-§3.18 and refs-summary here). Unsignatured: R7, R9, R10, R12, R13, R14, R17, R22, R24, R27, R28, Layer-1 R2–R6. R7 and R2–R6 signatures live in Layer 1 syntax-floor (`data/syntax-reference/greek-break-legality.md`), not duplicated here. R12/R13/R14/R24/R27/R28 are Editorial / Principle — no auto-validator, signature would over-specify. R9/R10/R17/R22 detectors not yet implemented — signature pending detector authorship.
 
 ---
 
@@ -1485,10 +1675,19 @@ The corrective layer — principled rules that merge fragments and split mega-li
 
 This subsection is the GNT-specific anti-scope-creep rule operationalizing the "reaching-for-split" warning under §1 Imposing-vs-Revealing scope discipline. It is not in the universal framework (no fronting / marked-word-order section in `framework.md`); it lives here because the rule is calibrated against Greek's case-marked freedom of word order — a per-language phenomenon.
 
+**Linguistic grounding (Runge §9 Information Structure — PRIMARY source).** Runge's discourse-grammar framework (drawing on Simon Dik's Functional Grammar and Lambrecht's cognitive-functional approach) provides the linguistic warrant for the Fronting Paradox. Dik's preverbal template `(P1) (P2) VERB X` distinguishes two marked clause-initial positions:
+
+- **P1 (Frame of Reference)** — contains PRESUPPOSED / topical information; establishes an explicit mental grounding point for the clause that follows (Runge §9.2.7).
+- **P2 (Emphasis / Marked Focus)** — contains NEWLY-ASSERTED / focal information; the prominence added to the P2 element marks it as "what is relatively the most important … information in the setting" (Runge §9.2.6 quoting Dik).
+
+The fronting paradox is the **P2-emphasis phenomenon**: an element placed in P2 is already syntactically marked for prominence by its position; the rhetorical effect IS the marked position. Crucially, Runge §9.2.5: *"These effects are not an inherent meaning of the syntactic form; rather, they are an effect of using a form or structure in some marked way that breaks with the expected norm for that context."* The prominence is carried by the position itself within the breath unit — splitting the fronted element onto its own line does not "preserve" the emphasis, it imposes EDITORIAL emphasis on top of what is already linguistically marked. This is precisely the §1 Imposing-vs-Revealing violation the canon's anti-imposition principle forbids.
+
+**Diagnostic caution (Runge §9.2.7).** P1 vs P2 disambiguation is INFORMATION-STATUS analysis (presupposed vs newly-asserted), NOT word-order observation. The same fronted element in the same syntactic position can be EITHER a topical frame (P1) OR marked focus (P2) depending on what the surrounding context presupposes. The colometric default — keep the marked-word-order span as ONE atomic-thought line — is invariant across both readings: a P1 frame leads into its main clause as one breath unit; a P2 emphasis is realized within its main clause as one breath unit. In neither case does splitting recover something hidden; in both cases splitting imposes.
+
 **Case studies:**
 
 - **Gal 2:9 — split** (pillars characterization on own line): two distinct thoughts (the named persons vs. their ironic characterization). Subject + substantival-participial-phrase appositive, where the appositive is six words, non-trivial, and introduces the *dokountes* motif. Grammatical warrant for split is the substantival-participle-as-own-thought rule.
-- **Gal 2:10 — merge** (fronted `τὸν πτωχόν` kept with `μνημονεύωμεν` on one line): `μνημονεύω` requires genitive for its object. The fronted genitive + restrictive `μόνον` create a marked word order whose rhetorical force depends on the grammatical unity staying intact.
+- **Gal 2:10 — merge** (fronted `τὸν πτωχόν` kept with `μνημονεύωμεν` on one line): `μνημονεύω` requires genitive for its object. The fronted genitive + restrictive `μόνον` create a marked word order whose rhetorical force depends on the grammatical unity staying intact. Per Runge §9.2.5: the P2-emphasis effect is carried by the marked position WITHIN the clause unit — splitting would mechanize what is already linguistically prominent.
 
 ### Exegetical Hot Spots
 
