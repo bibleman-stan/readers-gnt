@@ -989,9 +989,10 @@ Rules without a Detector Signature block below have no auto-validator yet (see R
 
 - **Burton 1903** (`private/05-resources/burton-1903/`) — Ernest De Witt Burton, *Syntax of the Moods and Tenses in New Testament Greek*. Classic monograph on NT Greek verbal syntax (moods / tenses / infinitives / participles). Section numbers §1–§489 stable across editions 3–5. Cite as `Burton §N` or `Burton §N–M`. Covers R9 / R10 / R19 / R20 / R22 / R23 / R25 + J3/J5 partial.
 - **Wallace 1996** (`private/05-resources/wallace-1996/`) — Daniel B. Wallace, *Greek Grammar Beyond the Basics: An Exegetical Syntax of the NT*. Modern comprehensive grammar covering cases, article, adjectives, pronouns, prepositions, all clause types, conjunctions, conditional sentences, plus the verb-and-verbal territory Burton also covers. Cite as `Wallace p.X` (print pages — established convention; canon already uses this form at §3.5). Section-heading citations OK when print page unknown: `Wallace, "Conjunctions: Contrastive"`. Covers ALL R-rules except R27 / R28 / discourse-marked-word-order.
-- *(Future)* BDF, Runge, Levinsohn, Smyth — when ingested, citation convention extends: `BDF §M`, `Runge §Y`, `Smyth §K`, etc. Runge especially needed for R27 / R28 / §8 Fronting Paradox / discourse-marker territory neither Burton nor Wallace covers comprehensively.
+- **BDF 1961** (`private/05-resources/bdf-1961/`) — F. Blass, A. Debrunner, R. W. Funk, *A Greek Grammar of the NT and Other Early Christian Literature* (Funk translation of the 9th–10th German editions). THE standard scholarly reference grammar; deepest philological + historical-grammar treatment. Section numbers §1–§500 stable across editions. Cite as `BDF §N` (canon already uses at §3.5 `BDF §416` and §3.12 `BDF §392`). Particularly strong on: particles + conjunctions (§§438–470 — primary scholarly source for R8 framing devices), Pendent Nominative (§466 — informs M4-GNT-1), Article repetition with apposition (§§268–269 — informs R18a-GNT), Coincident participle (§420 — Burton's attendant circumstance / Wallace's same).
+- *(Future)* Runge, Levinsohn, Smyth — when ingested. Runge especially needed for R27 / R28 / §8 Fronting Paradox / discourse-marker territory neither Burton, Wallace, nor BDF cover comprehensively.
 
-**Burton + Wallace together cover ~all R-rule territory.** Per-rule mapping in each substrate's README documents which sections inform which rules. The `_full-text.txt` dumps are for spot-checking content during canon revisions — print editions are the citation primary.
+**Burton + Wallace + BDF together cover ~all R-rule territory.** Per-rule mapping in each substrate's README documents which sections inform which rules. The `_full-text.txt` dumps are for spot-checking content during canon revisions — print editions are the citation primary.
 
 ~~~yaml
 # R11 — Direct speech introduction (canon §3.6)
@@ -1023,7 +1024,7 @@ R11:
     - F9: descriptive_speech_as_behavior     # λέγουσιν ... ποιοῦσιν contrast
   closed_lists:
     - R11_speech_frame_verbs                  # see Closed-List Registry, §3 Rule Index area
-  references: Wallace, "Person and Number" (3rd-person finite verbs) + "Indicative Mood" treatment of declarative verbs. Burton §168 (hortatory subj) + §180–184 (imperative) partial.
+  references: Wallace, "Person and Number" (3rd-person finite verbs) + "Indicative Mood" treatment of declarative verbs. Burton §168 (hortatory subj) + §180–184 (imperative) partial. BDF §§329–339 (periphrastic constructions; indicative speech-act-class verbs).
 ~~~
 
 ~~~yaml
@@ -1044,7 +1045,7 @@ R18:
     - subject_appositive_merge: vocative_names_implicit_subject_of_2p_finite_verb
     - object_appositive_merge:  vocative_restates_explicit_2p_pronoun
     - discourse_frame_cluster:  frame_particle_plus_vocative_co_lined  # Loipon etc.
-  references: Wallace, "Vocative Case" — Simple Address / Emphatic Address / Exclamation (Wallace's three-way maps R18's three-way: Simple = Default own-line; Emphatic w/article = Object-Appositive merge; etc.).
+  references: Wallace, "Vocative Case" — Simple Address / Emphatic Address / Exclamation (Wallace's three-way maps R18's three-way: Simple = Default own-line; Emphatic w/article = Object-Appositive merge; etc.). BDF §§146–147 (Vocative Case — primary scholarly source).
 ~~~
 
 ~~~yaml
@@ -1071,7 +1072,7 @@ R18a-GNT:
     - non_canonical_triad_orderings             # only Ἀβραάμ → Ἰσαάκ → Ἰακώβ
     - lead_in_title_phrases_on_separate_lines   # appositional continuations stay separate
   ported_from: BoFM_R18a_2026-05-11
-  references: Wallace, "The Article: Special Uses — Apposition" (article repetition with apposition; the formula ὁ θεὸς Ἀβραὰμ καὶ ὁ θεὸς Ἰσαάκ... is article-repeated fixed apposition pattern Wallace's category covers).
+  references: Wallace, "The Article: Special Uses — Apposition" (article repetition with apposition; the formula ὁ θεὸς Ἀβραὰμ καὶ ὁ θεὸς Ἰσαάκ... is article-repeated fixed apposition pattern Wallace's category covers). BDF §§268–269 (Article repetition with apposition — primary scholarly source).
 ~~~
 
 ~~~yaml
@@ -1102,7 +1103,7 @@ R19:
     - (heb, 11, 1)
     - (matt, 9, 10)
     - (phil, 2, 15)
-  references: Burton §451 (Genitive Absolute — construction definition + scope as separate from main clause); Wallace, "Verbal Participles: Absolute — Genitive Absolute" (modern aspect-aware treatment).
+  references: Burton §451 (Genitive Absolute — construction definition + scope as separate from main clause); Wallace, "Verbal Participles: Absolute — Genitive Absolute" (modern aspect-aware treatment); BDF §§423–424 (Genitive Absolute — historical-grammar depth).
 ~~~
 
 ~~~yaml
@@ -1130,7 +1131,7 @@ R25:
     semantic/pragmatic and cannot be resolved by surface scan alone.
     The validator emits STRONG-MERGE-CANDIDATE; per-item human review
     applies the semantic conditions.
-  references: Burton §234–237 (Result Clauses — ὥστε + indicative vs ὥστε + infinitive distinction), §371–374 (Infinitive of Result with τοῦ); Wallace, "Conjunctions: Adverbial — Result" + "Infinitive: Adverbial Uses — Result" (modern: actual vs conceived result).
+  references: Burton §234–237 (Result Clauses — ὥστε + indicative vs ὥστε + infinitive distinction), §371–374 (Infinitive of Result with τοῦ); Wallace, "Conjunctions: Adverbial — Result" + "Infinitive: Adverbial Uses — Result" (modern: actual vs conceived result); BDF §391 (Result clauses: ὥστε + indicative vs ὥστε + infinitive — the philological depth on this construction).
 ~~~
 
 ~~~yaml
@@ -1155,7 +1156,7 @@ R28-ext:
     - X2: legōn_eipōn_participial_adjacent_to_speech_verb  # ἀπεκρίθη+λέγων Hebraism
     - X3: frame_already_on_prior_line
     - X4: speech_verb_inside_subordinate_clause      # F1 from R11
-  references: Wallace, "Conjunctions: Adverbial — Temporal" + "Verbal Participles: Dependent — Indirect Discourse" (frame + speech-act distinction). Burton §168 / §180–184 partial.
+  references: Wallace, "Conjunctions: Adverbial — Temporal" + "Verbal Participles: Dependent — Indirect Discourse" (frame + speech-act distinction). Burton §168 / §180–184 partial. BDF §§455–456 (Asyndeton + connective particles), §457 (Hebraistic ἀπεκρίθη καὶ εἶπεν speech-frame pattern).
 ~~~
 
 ~~~yaml
@@ -1182,7 +1183,7 @@ R1:
     - standalone_sentence_connective  # Ὥστε, Ἄρα οὖν, Διὰ τοῦτο
     - two_prong_exception_test_passes  # §2 / J1–J5 carve-out
   corpus_status: "860 no-anchor merges applied across 26 books (2026-04-12 sweep). Final scan: 0 unanchored lines remaining corpus-wide."
-  references: Wallace, "Nominative Case" (Subject vs Predicate Nominative; Independent Nominative for proper names / titles / dependent statements — the substantive-head anchor cases). Burton's anchor classes (finite §156, infinitive §361, participle §418, substantive head implicit) inform the type taxonomy.
+  references: Wallace, "Nominative Case" (Subject vs Predicate Nominative; Independent Nominative for proper names / titles / dependent statements — the substantive-head anchor cases). Burton's anchor classes (finite §156, infinitive §361, participle §418, substantive head implicit) inform the type taxonomy. BDF §§143–145 (Nominative — primary scholarly source), §466 (Pendent Nominative — left-dislocated subjects, also informs M4-GNT-1).
 ~~~
 
 ~~~yaml
@@ -1203,7 +1204,7 @@ R20:
     Scanner surfaces candidates; canon §3.10 + §8 Participial Rules
     govern editorial application. Predicate vs attributive distinction
     is judgment-required per-construction.
-  references: Burton §418–457 (full Participle section); attributive (restrictive §420–421 / explanatory §427) vs predicative §429–433 distinction; adverbial subtypes §434–450 inform the predicate-vs-attributive judgment. Wallace, "The Participle" — Adjectival (Attributive / Predicate / Substantival) + Verbal (Dependent — Temporal, Manner, Means, Cause, Condition, Concession, Purpose, Result, Attendant Circumstance, Indirect Discourse, Complementary, Periphrastic, Redundant; Independent; Absolute — Nominative, Genitive) is the modern reorganization that adds aspect-theory framing (perfective vs imperfective vs stative) to Burton's tense-based treatment.
+  references: Burton §418–457 (full Participle section); attributive (restrictive §420–421 / explanatory §427) vs predicative §429–433 distinction; adverbial subtypes §434–450 inform the predicate-vs-attributive judgment. Wallace, "The Participle" — Adjectival (Attributive / Predicate / Substantival) + Verbal (Dependent — Temporal, Manner, Means, Cause, Condition, Concession, Purpose, Result, Attendant Circumstance, Indirect Discourse, Complementary, Periphrastic, Redundant; Independent; Absolute — Nominative, Genitive) is the modern reorganization that adds aspect-theory framing (perfective vs imperfective vs stative) to Burton's tense-based treatment. BDF §§411–425 (Participle: Adjectival §413, Substantival §413, Predicate §414, Adverbial §417; **§420 Coincident/Accompanying participle = BDF's name for what Burton calls attendant circumstance and Wallace calls Attendant Circumstance**).
 ~~~
 
 ~~~yaml
@@ -1227,7 +1228,7 @@ R23:
     Adversarial over-structuring audit (2026-04-18) flagged R23 as
     most-suspect: possibly one-verse crystallization from Rom 12:3.
     Scanner empirically tests whether the pattern recurs elsewhere.
-  references: Burton §361–417 (Infinitive section). Specifically §387–389 (Infinitive as object after verbs of commanding / desiring / hoping), §390 (Infinitive in Indirect Discourse — accusative subject), §406–417 (Infinitive with article governed by prepositions). The dative-subject-of-infinitive construction is unusual relative to Burton's accusative-subject default — Rom 12:3 may be classical-influenced. Wallace, "Dative Case" (uses including dative-of-reference) + "The Infinitive: Verbal Uses" (subject of infinitive, normally accusative; dative cases relatively rare per Wallace §195).
+  references: Burton §361–417 (Infinitive section). Specifically §387–389 (Infinitive as object after verbs of commanding / desiring / hoping), §390 (Infinitive in Indirect Discourse — accusative subject), §406–417 (Infinitive with article governed by prepositions). The dative-subject-of-infinitive construction is unusual relative to Burton's accusative-subject default — Rom 12:3 may be classical-influenced. Wallace, "Dative Case" (uses including dative-of-reference) + "The Infinitive: Verbal Uses" (subject of infinitive, normally accusative; dative cases relatively rare per Wallace §195). BDF §§392 (Infinitive — accusative-subject default, already cited at canon §3.12), §§393–411 (Infinitive — uses + with article + with preposition).
 ~~~
 
 **Signature coverage status (2026-05-13).** 9 of ~26 rules signatured: R1, R11, R18, R18a-GNT, R19, R20, R23, R25, R28-ext (+ M4-GNT-1 inline at §3.18). Unsignatured: R7, R8, R9, R10, R12, R13, R14, R17, R22, R24, R27, R28, Layer-1 R2–R6. R7 and R2–R6 signatures live in Layer 1 syntax-floor (`data/syntax-reference/greek-break-legality.md`), not duplicated here. R12/R13/R14/R24/R27/R28 are Editorial / Principle — no auto-validator, signature would over-specify. R8/R9/R10/R17/R22 detectors not yet implemented — signature pending detector authorship.
