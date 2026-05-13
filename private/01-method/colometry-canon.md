@@ -991,9 +991,10 @@ Rules without a Detector Signature block below have no auto-validator yet (see R
 - **Wallace 1996** (`private/05-resources/wallace-1996/`) — Daniel B. Wallace, *Greek Grammar Beyond the Basics: An Exegetical Syntax of the NT*. Modern comprehensive grammar covering cases, article, adjectives, pronouns, prepositions, all clause types, conjunctions, conditional sentences, plus the verb-and-verbal territory Burton also covers. Cite as `Wallace p.X` (print pages — established convention; canon already uses this form at §3.5). Section-heading citations OK when print page unknown: `Wallace, "Conjunctions: Contrastive"`. Covers ALL R-rules except R27 / R28 / discourse-marked-word-order.
 - **BDF 1961** (`private/05-resources/bdf-1961/`) — F. Blass, A. Debrunner, R. W. Funk, *A Greek Grammar of the NT and Other Early Christian Literature* (Funk translation of the 9th–10th German editions). THE standard scholarly reference grammar; deepest philological + historical-grammar treatment. Section numbers §1–§500 stable across editions. Cite as `BDF §N` (canon already uses at §3.5 `BDF §416` and §3.12 `BDF §392`). Particularly strong on: particles + conjunctions (§§438–470 — primary scholarly source for R8 framing devices), Pendent Nominative (§466 — informs M4-GNT-1), Article repetition with apposition (§§268–269 — informs R18a-GNT), Coincident participle (§420 — Burton's attendant circumstance / Wallace's same).
 - **Runge 2010** (`private/05-resources/runge-2010/`) — Steven E. Runge, *A Discourse Grammar of the Greek New Testament: A Practical Introduction for Teaching & Exegesis* (Lexham). Modern discourse-linguistic complement to the traditional reference grammars: information-structure, prominence-marking, framing devices, pragmatic effect. Cite as `Runge §N.M` (Runge's numbered subsections — stable) or `Runge p.X`. PRIMARY discourse-linguistic source for: R8 framing devices (§2 Connecting Propositions — entire chapter), R11 / R28-ext speech-frames (§7 Redundant Quotative Frames), R12-R14 point/counterpoint (§4), R17 δέ-as-development-marker (§2.3), M4-GNT-1 subject-orphan (§14 Left-Dislocations — entire chapter), §8 Marked Word Order / Fronting Paradox (§9 Information Structure — P1/P2 framework is the linguistic grounding for the canon's anti-imposition principle), R19 / R22 circumstantial frames (§12.3.2 / §12.3.4).
-- *(Future)* Levinsohn, Smyth — when ingested.
+- **Levinsohn 2000** (`private/05-resources/levinsohn-2000/`) — Stephen H. Levinsohn, *Discourse Features of New Testament Greek: A Coursebook on the Information Structure of New Testament Greek*, 2nd ed., SIL International. The SIL-discourse-linguist's NT-Greek coursebook that Runge 2010 builds on (Runge cites Levinsohn extensively). SECONDARY discourse-linguistic substrate: corroborates Runge's framework with finer empirical detail and NT-Greek-specific statistics. Cite as `Levinsohn §N.M`. Particularly strong on: §5.4.2 Background Material with Γάρ (γάρ-strengthens-prior-not-advances — corroborates the Runge §2.7 claim that was previously a single-source refinement candidate); §10.1 Prospective Μέν (the dedicated chapter Runge §2.8 + §4 condense, primary citation for R12-R14); §2.6 Implications for Basic Constituent Order (verb-initial default; statistical backing 264 SV / 310 VS / 146 ∅ in Acts narrative); §5.2 + §5.4.1 finer Δέ classification (informs R17 De-Contrast Overbreak); §10.3 Use of Ἐγένετο (informs J3 + canon §5 Front-End Frame).
+- *(Future)* Smyth — when ingested.
 
-**Burton + Wallace + BDF + Runge together cover ~all R-rule territory.** Burton + Wallace + BDF handle morphology + syntax structurally; Runge handles information-structure + pragmatic-effect (the territory R8 / R12-R14 / R17 / R27 / R28 / §8 Fronting Paradox / M4-GNT-1 / §3.6 R11+R28-ext occupy). Per-rule mapping in each substrate's README documents which sections inform which rules. The `_full-text.txt` dumps are for spot-checking content during canon revisions — print editions are the citation primary.
+**Burton + Wallace + BDF + Runge + Levinsohn together cover ~all R-rule territory.** Burton + Wallace + BDF handle morphology + syntax structurally; Runge + Levinsohn handle information-structure + pragmatic-effect (the territory R8 / R12-R14 / R17 / R27 / R28 / §8 Fronting Paradox / M4-GNT-1 / §3.6 R11+R28-ext occupy). Per Stan reminder 2026-05-13: the grammars are SUBTRACTIVE per canon §1 — they constrain where ATUs can break (Layer 1 vetoes, complement integrity, frame integrity) but do not GENERATE ATU boundaries (propositions generate; single-image diagnoses). Citations feed canon's vetoes and refinements, not its generative engine. Per-rule mapping in each substrate's README documents which sections inform which rules. The `_full-text.txt` dumps are for spot-checking content during canon revisions — print editions are the citation primary.
 
 ~~~yaml
 # R11 — Direct speech introduction (canon §3.6)
@@ -1252,28 +1253,41 @@ R8:
       note: R2 (never end on conjunction) already forbids most of these line-final.
               R8 is the FUNCTIONAL gloss on the colometric rule — explains WHY R2 holds for this set.
   references: |
-    PRIMARY discourse-linguistic source: Runge §2 Connecting Propositions (entire chapter — §2.1 ∅ asyndeton, §2.2 καί, §2.3 δέ, §2.4 narrative τότε, §2.5 οὖν, §2.6 διὰ τοῦτο, §2.7 γάρ, §2.8 μέν, §2.9 ἀλλά). Runge's 4-dimensional matrix (±continuity / ±development / ±correlation / ±forward-pointing + semantic-constraint slot) classifies every R8 framing device: οὖν = +cont +dev; διὰ τοῦτο = +cont +dev +causal; τότε = -cont +dev +temporal; ἀλλά = -cont -dev +correlation +correction. The matrix is the discourse-pragmatic grounding for R8 — each framing device leads its content because each constrains how the FOLLOWING discourse relates to context.
+    PRIMARY discourse-linguistic sources: Runge §2 Connecting Propositions (entire chapter — §2.1 ∅ asyndeton, §2.2 καί, §2.3 δέ, §2.4 narrative τότε, §2.5 οὖν, §2.6 διὰ τοῦτο, §2.7 γάρ, §2.8 μέν, §2.9 ἀλλά) + Levinsohn §5 Καί and Δέ in Narrative + §6 Τότε + §7 Thematic Development + §5.4.2 Background Material with Γάρ (Levinsohn is the SIL discourse linguist whose research Runge built on; Runge cites Levinsohn extensively throughout §2). Runge's 4-dimensional matrix (±continuity / ±development / ±correlation / ±forward-pointing + semantic-constraint slot) classifies every R8 framing device: οὖν = +cont +dev; διὰ τοῦτο = +cont +dev +causal; τότε = -cont +dev +temporal; ἀλλά = -cont -dev +correlation +correction. The matrix is the discourse-pragmatic grounding for R8 — each framing device leads its content because each constrains how the FOLLOWING discourse relates to context.
 
     BDF §§438–453 (Particles) + §§459–470 (Conjunctions) — primary philological source: γάρ §452, οὖν §451, ἄρα §451, διό §451, τοιγαροῦν §451, ἀλλά §448, πλήν §449. Wallace "Conjunctions: Logical Functions" (Inferential — ἄρα, διό, οὖν, πλήν, τοιγαροῦν; Contrastive — ἀλλά, πλήν; Explanatory — γάρ; Emphatic — οὖν; Transitional — οὖν).
   refinement_candidates:
     γάρ_is_backward_strengthening_not_forward_framing:
-      source: Runge §2.7 (Γάρ)
+      sources_corroborating:
+        - Runge §2.7 (Γάρ)
+        - Levinsohn §5.4.2 (Background Material with Γάρ — verbatim:
+          "The presence of γάρ constrains the material that it introduces to
+          be interpreted as strengthening some aspect of the previous
+          assertion, rather than as distinctive information.")
+        - Heckert (Discourse Function of Conjoiners in the Pastoral Epistles)
+        - Black (Sentence Conjunctions in the Gospel of Matthew)
       claim: |
         γάρ does NOT advance discourse — it strengthens/supports what PRECEDES.
-        Levinsohn / Heckert / Black converge: γάρ-introduced material is offline
-        background that confirms or grounds a preceding assertion; it does not
-        introduce a new development. The canon §3.3 functional gloss ("framing
-        devices whose function is to INTRODUCE WHAT FOLLOWS") is loose for γάρ —
-        the COLOMETRIC rule (leads its content; never line-final) holds, but the
-        functional gloss is over-extended: γάρ leads its content syntactically
-        while functionally supporting the prior unit.
+        Two independent discourse-linguistic sources (Runge + Levinsohn) +
+        two earlier monographs (Heckert + Black) converge: γάρ-introduced
+        material is offline background that confirms or grounds a preceding
+        assertion; it does not introduce a new development. The canon §3.3
+        functional gloss ("framing devices whose function is to INTRODUCE WHAT
+        FOLLOWS") is loose for γάρ — the COLOMETRIC rule (leads its content;
+        never line-final) holds, but the functional gloss is over-extended:
+        γάρ leads its content syntactically while functionally supporting
+        the prior unit.
       operational_implication: |
         The "leads its content" colometric rule is unaffected — γάρ-line still
         must not be line-final. But the §3.3 prose "introduces what follows"
         gloss could be refined: "framing devices LEAD their content; their
         discourse function varies (γάρ supports prior; οὖν advances closely;
         ἀλλά corrects expectation)."
-      status: deferred — minor prose refinement for §3.3, not a rule change.
+      status: |
+        CORROBORATED across two independent discourse-linguistic sources
+        (Runge + Levinsohn) — confidence elevated from single-source
+        candidate. §3.3 prose refinement remains deferred until a canon
+        editorial pass touches §3.3.
     δέ_is_development_marker_not_adversative:
       source: Runge §2.3 (Δέ — entire section)
       claim: |
@@ -1675,7 +1689,7 @@ The corrective layer — principled rules that merge fragments and split mega-li
 
 This subsection is the GNT-specific anti-scope-creep rule operationalizing the "reaching-for-split" warning under §1 Imposing-vs-Revealing scope discipline. It is not in the universal framework (no fronting / marked-word-order section in `framework.md`); it lives here because the rule is calibrated against Greek's case-marked freedom of word order — a per-language phenomenon.
 
-**Linguistic grounding (Runge §9 Information Structure — PRIMARY source).** Runge's discourse-grammar framework (drawing on Simon Dik's Functional Grammar and Lambrecht's cognitive-functional approach) provides the linguistic warrant for the Fronting Paradox. Dik's preverbal template `(P1) (P2) VERB X` distinguishes two marked clause-initial positions:
+**Linguistic grounding (Runge §9 Information Structure — PRIMARY source; Levinsohn §2.6 + §3 — corpus-empirical backing).** Runge's discourse-grammar framework (drawing on Simon Dik's Functional Grammar and Lambrecht's cognitive-functional approach) provides the linguistic warrant for the Fronting Paradox. Levinsohn §2.6 provides the NT-Greek-empirical backing: out of 720 narrative-clauses-in-Acts with a subject or theme different from the preceding context, 310 have VS order vs 264 SV vs 146 ∅ — VS dominates as the default; SV is marked (point-of-departure OR focus/emphasis). Dik's preverbal template `(P1) (P2) VERB X` distinguishes two marked clause-initial positions:
 
 - **P1 (Frame of Reference)** — contains PRESUPPOSED / topical information; establishes an explicit mental grounding point for the clause that follows (Runge §9.2.7).
 - **P2 (Emphasis / Marked Focus)** — contains NEWLY-ASSERTED / focal information; the prominence added to the P2 element marks it as "what is relatively the most important … information in the setting" (Runge §9.2.6 quoting Dik).
