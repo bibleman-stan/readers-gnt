@@ -645,7 +645,11 @@ This is a specific instance of the broader principle that **the text is authorit
 
 (General discourse-marker treatment lives in R8's framing-devices table in §3.3 — γάρ, ἀλλά, πλήν, οὐδέ, μηδέ, etc. all lead their content per R8. §3.8 is reserved for the one discourse-marker pattern that needs its own diagnostic: the δέ pivot.)
 
-**De-contrast overbreak rule.** When two distinct clauses with a de pivot appear on one line — a comma before `ho de / he de / to de / hoi de / meson de / nyni de` — split at the de. The comma marks the clause boundary; the de signals a contrast or topic shift.
+**Linguistic grounding (Runge §2.3 + Levinsohn §5.4.1 + Buth 1992 table cited in Levinsohn §5.3 — PRIMARY discourse-linguistic sources).** δέ is fundamentally a **+development marker** (Runge: "Δέ is a coordinating conjunction like καί, but it includes the added constraint of signaling a new development"; Buth's table in Levinsohn §5.3 captures it as +development, -close-connection in contrast to καί's -development, +close-connection). Adversative force is **context-dependent**, not particle-marked — Runge §2.3.2: "Contrast has everything to do with the semantics of the elements present in the context… [δέ] does not mark [discontinuity's] presence or absence." The R17 rule's NAME ("De-Contrast Overbreak") captures the editorial **failure mode** — editors over-split because they read δέ as inherently adversative (the legacy English "but" gloss) — not the particle's underlying function. The colometric rule remains valid because both the development-marker reading and the legacy contrast reading coincide on the surface signature: δέ + new finite-verb clause = new development = own line.
+
+Genre note (Levinsohn §5.2): Mark specifically has a HIGHER distinctiveness threshold than the other Synoptics for δέ — Buth (in Levinsohn): "adversative overtones must be present in Mark before δέ occurs." Mark δέ instances are therefore a stronger split signal than δέ in Matthew/Luke/Acts; the rule has its highest yield in Mark.
+
+**De-contrast overbreak rule.** When two distinct clauses with a δέ pivot appear on one line — a comma before `ho de / he de / to de / hoi de / meson de / nyni de` — split at the δέ. The comma marks the clause boundary; the δέ signals a new development (which may include contextually-emergent topical shift, narrative-to-background switch, or adversative contrast as one of several motivations for marking the development).
 
 **Canonical example:**
 ```
@@ -655,14 +659,14 @@ ho de huios tou anthropou ouk echei pou ten kephalen kline.
 ```
 (Matt 8:20)
 
-**False positives to rule out:**
-- Participial de (no new finite verb after the de)
-- Intensifying `malista de` (adds emphasis, not a new clause)
-- Appositional `thanatou de staurou` (emphatic specification, not a clause boundary)
+**False positives to rule out** — in each case δέ marks no new development because there is no new finite-clause to develop *into*:
+- Participial δέ (δέ inside a participial phrase; no new finite verb after)
+- Intensifying `malista de` (adds emphasis to an item within the current clause)
+- Appositional `thanatou de staurou` (emphatic specification of an existing element, not a new clause)
 
-Test: is there a finite verb in the clause following de? If yes -> split. If the de introduces only a nominal or participial phrase without its own finite verb -> likely false positive, leave merged.
+Test: is there a finite verb in the clause following δέ? If yes → split (a new finite-clause development is licensed). If the δέ introduces only a nominal or participial phrase without its own finite verb → likely false positive, leave merged.
 
-*27 confirmed splits applied corpus-wide.*
+*27 confirmed splits applied corpus-wide. Discourse-linguistic grounding refined 2026-05-13 (commit pending) — colometric behavior unchanged; rule's editorial warrant updated from legacy "contrast pivot" framing to Runge/Levinsohn "development marker" framing.*
 
 ### 3.9 Vocative Rule (Refined Three-Way Treatment)
 
@@ -1331,7 +1335,13 @@ R8:
         candidate. §3.3 prose refinement remains deferred until a canon
         editorial pass touches §3.3.
     δέ_is_development_marker_not_adversative:
-      source: Runge §2.3 (Δέ — entire section)
+      sources_corroborating:
+        - Runge §2.3 (Δέ — entire section + §2.3.2 Function of Δέ)
+        - Levinsohn §5.4.1 (Background Material with Δέ) + §5.3 (citing
+          Buth 1992 table: δέ = +development, -close-connection)
+        - Levinsohn §5.2 (Mark-specific: higher distinctiveness threshold —
+          Mark δέ tends to carry adversative overtones, even though
+          pan-Synoptic δέ is fundamentally a development marker)
       claim: |
         δέ is a +development marker with no inherent adversative/contrast load.
         Adversative force is context-dependent (semantic) not particle-marked.
@@ -1339,12 +1349,24 @@ R8:
         discipline is not "weak-contrast vs strong-contrast" but "development-
         marker (default) vs contextually-emergent-adversative (special)." Most
         δέ in the GNT mark a new development without semantic discontinuity.
+        Genre nuance: Mark has higher distinctiveness threshold than other
+        Synoptics; Mark δέ skews adversative.
       operational_implication: |
         R17 §3.8 prose should be refined: δέ is fundamentally a development
         marker; "contrast" emerges from semantic context, not from δέ itself.
         Over-breaking on δέ-as-contrast is the failure mode R17 already names
-        — Runge gives the linguistic warrant.
-      status: deferred — substantive R17 prose refinement candidate.
+        — Runge + Levinsohn give the linguistic warrant. The colometric rule
+        (split on δέ + new-finite-clause) is unchanged because both readings
+        coincide on the surface signature.
+      status: |
+        RESOLVED — applied (2026-05-13 afternoon). Canon §3.8 prose refined
+        with Runge §2.3 + Levinsohn §5.4.1 + Buth-1992-via-Levinsohn-§5.3
+        linguistic-grounding paragraph. Genre note added re: Mark's higher
+        distinctiveness threshold (Levinsohn §5.2). False-positives list
+        reframed in terms of "no new development" rather than "no new
+        clause." Colometric rule unchanged (27 confirmed splits stand);
+        editorial warrant updated from legacy contrast-pivot framing to
+        development-marker framing.
     ἀλλά_is_correction_of_expectation_not_just_adversative:
       source: Runge §2.9 (Ἀλλά) + Heckert, *Discourse Function of Conjoiners in the Pastoral Epistles*
       claim: |
