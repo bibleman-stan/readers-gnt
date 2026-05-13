@@ -53,8 +53,8 @@ from henceforth thou shalt catch men.
 And when they had brought their ships to land, they forsook all, and followed him.
 
 5:12
-And it came to pass, when he was in a certain
-city, behold a man full of leprosy:
+And it came to pass, when he was in a certain city,
+behold a man full of leprosy:
 who seeing Jesus fell on his face, and besought him, saying,
 Lord, if thou wilt, thou canst make me clean.
 
@@ -164,8 +164,8 @@ and make prayers, and likewise the disciples of the Pharisees;
 but thine eat and drink?
 
 5:34
-And he said unto them,
-Can ye the children of the bridechamber
+And he said unto
+them, Can ye the children of the bridechamber
 make fast, while the bridegroom is with them?
 
 5:35
