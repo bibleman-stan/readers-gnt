@@ -51,6 +51,21 @@ This canon is the GNT-corpus instantiation of the ATU methodology framework. Uni
 
 - **Force 1 (Generative) — GNT resolution principle.** Atomic thought is relative to the author's resolution. For plainer narrative (Mark's simpler scenes), atomic usually means a complete sentence-level predication. For more literary authors (Luke, Paul, John at their most crafted), "atomic" often includes grammatically-independent sub-units — most notably genitive absolutes used as interjectory frames. See §8 for participial and FEF treatment.
 
+- **J1 compound-list break signals — GNT extension: marked-coordinator climactic emphasis (5th signal).** Framework §1.4 J1 lists four compound-list-break signals (elided auxiliary + stacked participles / possessive restart / new demonstrative / attached relative clause). GNT adds a **fifth: marked-coordinator climactic emphasis on a final list-member**. Greek author marks the climax of a list with `ἔτι τε καί` (moreover-and-even), `μάλιστα δέ` / `καὶ μάλιστα` (especially), `μᾶλλον δέ` (rather), `οὐ μόνον ... ἀλλὰ καί` (not-only-but-also climactic addition). These markers elevate the marked item from compound-list peer to its own beat. The principle is consistency with the "honor what Greek marks" discipline (see also matt 11:25 / luke 10:21 keep-merge case): when the Greek grammar itself signals a beat-boundary via marked-coordinator, colometry reveals it; when there is no marker, colometry merges per J1 bare-compound default.
+
+  **GNT corpus instantiations** (committed 2026-05-13 audit):
+    - **luke 14:26** `ἔτι τε καὶ τὴν ψυχὴν ἑαυτοῦ` — Jesus' climactic demand: own life as deepest attachment. Splits before the marker.
+    - **acts 21:28** `ἔτι τε καὶ Ἕλληνας εἰσήγαγεν εἰς τὸ ἱερὸν` — already split correctly.
+    - **phil 4:22** `μάλιστα δὲ οἱ ἐκ τῆς Καίσαρος οἰκίας` — Caesar's-household greeting as climactic addition. Splits.
+    - **gal 6:10** `μάλιστα δὲ πρὸς τοὺς οἰκείους τῆς πίστεως` — household-of-faith priority. Splits.
+    - **acts 25:26** `καὶ μάλιστα ἐπὶ σοῦ, βασιλεῦ Ἀγρίππα` — Festus's deference to King Agrippa. Splits.
+    - **`οὐ μόνον ... ἀλλὰ καί` family** (rom 1:32, 5:3, 5:11, 8:23, 9:10, acts 21:13, 2cor 8:10, 2cor 9:12, 1thess 1:8/2:8, 1tim 5:13, 2tim 4:8, etc.) — corpus splits at clause-major-boundary. The marker is the standard NT-Greek "climactic-addition" structure.
+    - **`μᾶλλον δέ` family** (rom 8:34, eph 4:28, eph 5:11, 1cor 14:1/5, gal 4:9 internal-merge) — climactic correction/intensification.
+
+  Edge-case principle: when the climactic-coordinator construction is INTERNAL to a short clause (rom 13:5, 2cor 7:7, 2cor 8:21, acts 27:10, eph 1:21), merge is defensible per the "modifier-phrase inside larger predication" reading. The split fires when the coordinator constitutes its OWN beat-boundary; the merge holds when it's a contrastive qualifier inside a larger thought.
+
+  Scholarship backing: Runge §2 marked-coordinator analysis (e.g., μᾶλλον δέ as +development +correction); Levinsohn §10.1 Prospective Μέν chapter for the parallel μέν/δέ climactic discipline.
+
 - **Bidirectional atomic-thought test (codified at framework §1.1, 2026-05-13).** "Single cognitive bite" requires the line to stand on its own **referentially**, not just **grammatically**. A line whose content is anaphoric to prior context fails atomic-thought standing alone, even when forward grammatical closure passes. The test is asymmetric: **anaphoric** unresolved-backward-dependence FAILS; **cataphoric** forward-pointing reference PASSES. The reader can process a line whose content is whole and merely sets up what follows (cataphoric); the reader cannot process a line whose content is a pointer to undefined prior context (anaphoric). See [`atu-method/docs/framework.md §1.1`](../../atu-method/docs/framework.md) for full statement.
 
   **GNT diagnostic markers for anaphoric failure.** When a line's content is dominated by these markers AND the line stands alone (no apodosis on the same line), the bidirectional test fires and the line MUST merge with its apodosis:
