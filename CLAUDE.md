@@ -22,7 +22,7 @@ A colometric reading edition of the Greek New Testament at **gnt-reader.com**. E
 
 **Self-report before first substantive response:** one line per mandatory file read; pending-item disposition (each = executing-now / retired-with-rationale / re-deferred-with-concrete-trigger; "awaiting Stan direction" is drift not a defer); red flags. Silent skip = orientation failure.
 
-JSONL at `~/.claude/projects/c--Users-bibleman-repos-readers-gnt/<session-id>.jsonl` is the verbatim record. After compaction, grep into it. Don't write wrap artifacts / session-notes / full-transcript dumps; surface state inline.
+**Post-compaction JSONL re-acquisition (MANDATORY).** JSONL at `~/.claude/projects/c--Users-bibleman-repos-readers-gnt/<session-id>.jsonl` is the verbatim record. When the wake follows a compaction event (system summary present + significantly more JSONL than visible conversation), the FIRST action after the orientation reads is to read **the last 20-30 user↔assistant back-and-forth turns** from the JSONL verbatim. The compaction summary preserves structural narrative but loses verbatim turn-by-turn detail (Stan's exact phrasing, his minor corrections, the tradeoffs he weighed, the precise lines under discussion). "Kind of" memory from the summary alone is not enough — it lets me bluff continuity but fails the trust state Stan has built up. Read the recent window proactively; don't grep-on-demand for fragments only when challenged. Report the re-read as part of the orientation self-report. Don't write wrap artifacts / session-notes / full-transcript dumps; surface state inline.
 
 ---
 
