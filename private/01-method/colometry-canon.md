@@ -107,6 +107,23 @@ This canon is the GNT-corpus instantiation of the ATU methodology framework. Uni
 
 - **M1 bonded-pair list (GNT corpus-attested):** `{κόπῳ, μόχθῳ}` (2 Cor 11:27 — labor+toil); `{χαίρειν μετὰ χαιρόντων, κλαίειν μετὰ κλαιόντων}` (Rom 12:15 — two classical-comma halves constituting one paraenetic command); `{Τολμηταί, αὐθάδεις}` (2 Pet 2:10 — asyndetic N=2 bonded adjective pair).
 
+- **M1 paraphrase-test scope: hendiadys AND merism (codified 2026-05-13).** Framework §1.5 M1 defines a bonded pair as N=2 coordinate members where the pair functions as "a single unified hendiadys or bonded rhetorical image." The paraphrase test — "can the two members be paraphrased as a single unified image?" — covers TWO sub-rhetorics:
+
+  - **Hendiadys (synonymy / cognate doubling)**: two near-synonymous terms naming ONE idea by redundant emphasis. The paraphrase collapses to one term. GNT examples: `χάρις καὶ εἰρήνη` (grace+peace — Pauline opening formula, 14/14 same-line); `κόπος καὶ μόχθος` (labor+toil — 2 Cor 11:27, already-M1); `δόξα καὶ τιμή` (glory+honor); `φόβος καὶ τρόμος` (fear+trembling — Phil 2:12).
+
+  - **Merism (polar totality)**: two contrastive terms together representing the WHOLE via polar binary. The paraphrase collapses to "everything within the polar range." GNT examples: `Ἰουδαῖος καὶ Ἕλλην` (Jew+Greek = all humanity — Rom 1:16, Gal 3:28, 14/14 same-line); `οὐρανὸς καὶ γῆ` (heaven+earth = all creation — Matt 5:18, 11:25, 24:35; 12/12 same-line); `ἄρσεν καὶ θῆλυ` (male+female = all humans — Matt 19:4, Mark 10:6, Gal 3:28, 3/3 same-line); `Ἄλφα καὶ Ὦ` (Alpha+Omega = totality of being — Rev 1:8, 21:6, 22:13, 3/3 same-line); `πρῶτος καὶ ἔσχατος` (first+last); `μικρὸς καὶ μέγας` (small+great = everyone); `δοῦλος καὶ ἐλεύθερος` (slave+free).
+
+  Both sub-rhetorics pass the M1 paraphrase test for the same operational reason: the two members are **referentially co-extensive** (hendiadys via synonymy; merism via polar-totality). The test is mechanism-neutral. **NO new sub-category in framework.md §1.5 M1** — the existing paraphrase test already covers both, and the GNT corpus is at 75/78 (96%) same-line conformance across the 15 surveyed candidate pairs without explicit framework codification. This note documents the implicit editorial discipline.
+
+  **J1-distinct override remains.** When each member of an N=2 candidate pair carries its OWN independent modifier, sub-referent, or predication, J1 wins (split). Audited cross-line cases this discipline correctly preserves:
+    - **heb 4:16** `ἵνα λάβωμεν ἔλεος / καὶ χάριν εὕρωμεν` — N=2 with DISTINCT finite verbs (λάβωμεν / εὕρωμεν) → J1 distinct purpose-clauses.
+    - **1tim 6:11, 2tim 2:22** `πίστιν / ἀγάπην` — embedded in N≥4 virtue lists (δικαιοσύνη, εὐσέβεια, πίστις, ἀγάπη, ὑπομονή, πραϋπαθία) in asyndeton → J1 enumeration.
+    - **col 3:11** `δοῦλος / ἐλεύθερος` — embedded in N≥4 social-category enumeration (Ἕλλην/Ἰουδαῖος, περιτομή/ἀκροβυστία, βάρβαρος, Σκύθης, δοῦλος, ἐλεύθερος) in asyndeton → J1 enumeration.
+
+  **Corpus survey evidence**: `scripts/audit_hendiadys_merism_gnt.py` surveyed 18 candidate pairs, found 75/78 (96%) same-line conformance corpus-wide. The 3 cross-line cases are all J1-correct overrides. Audit-evidence: two parallel Sonnet adversarial agents (`a96a39a468fe38133`, `aad58f82b961b893c`) validated the J1 classifications and surfaced the framing recommendation (refinement of M1 paraphrase-test, not new sub-category). Scholarly-citation grounding deliberately omitted — Audit 1 found neither Smyth §3025-3026 nor BDF §443-444 unambiguously treat merism as a named category; Runge / Levinsohn don't mention it. The corpus survey itself is the empirical evidence.
+
+  **Audit trigger acknowledgment (per §7.3).** This note touches Trigger #2 (scope claim — clarifying M1 paraphrase-test covers polar-totality alongside synonymy) and Trigger #8 (named pattern under existing rule — naming "merism" as a recognized M1 sub-rhetoric). Two parallel adversarial audits dispatched + NEEDS-MODIFICATION verdicts applied; per-audit-1 recommendation honored by keeping codification at GNT-canon level (not framework.md) and avoiding closed-list extension.
+
 - **J3 named patterns (speech-act announcement) — GNT instantiations.** Direct speech introduction: `καὶ ἔλεγεν αὐτοῖς:` / `καὶ εἶπεν αὐτῷ:` — each is a complete speech-act predication. See §3.6 (R11) for the full treatment.
 
 - **J5 substantive adjunct — GNT canonical cases.**
