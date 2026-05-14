@@ -1936,10 +1936,11 @@ Rule-number gaps (15, 16, 21, 25-old, 26, 29) preserved rather than renumbered t
 | **Earlier vocative explorations** (Attachment / Epistolary-vs-Narrative Distinction) | dissolved into universal + apposition rule on Luke 1:3 κράτιστε Θεόφιλε analysis — the correct distinction is grammatical (2p binding), not contextual. | 2026-04-12 |
 | **Prior hierarchy versions** (Four-criteria-no-hierarchy 2026-04-09 → Syntax-as-floor 2026-04-11 → Absolutist "atomic-thought-wins-every-collision" 2026-04-12 → current Default + Unless 2026-04-16) | iterative refinement; only the current form is authoritative. | 2026-04-16 |
 | **Duplicate "Section 6b"** (μή/ἀλλά antithesis + dative-subject-of-infinitive both labeled 6b) | restructured to R15 (§3.7, since retired) and R23 (§3.12). | document restructure |
+| **Idou (ἰδού) three-type distinction** (deictic / mirative / logical-connective, adapted from parallel-corpus work) | Tested 2026-05-14 on the canon-named passages (Matt 1-2, Luke 1-2, Rev 1-3 — 24 instances). All three types are present in the sample, but colometric treatment is 100% uniform: ἰδού (or `καὶ ἰδού`) leads its content, never line-final, regardless of type. Type does not predict break behavior → not a colometric rule. Also requires authorial-intent interpretation to detect (deictic-vs-mirative is genuinely ambiguous on cases like `Ἰδοὺ ἡ παρθένος`) → out of scope per §1 Imposing-vs-Revealing. ἰδού is already correctly handled by §3.3 R8 (framing-device, leads content) + the §1 bidirectional-test cataphoric-presentative pass. The three-type distinction is a real discourse-semantic fact but belongs in exegetical commentary, not the colometric grid. | 2026-05-14 |
 
 ### Unsettled (active open question, not retired)
 
-**Idou (ἰδού) three-type distinction:** Deictic (pointing) / mirative (surprise) / logical-connective (discourse pivot), adapted from parallel corpus work. Not yet tested on GNT material. Test on Matt 1-2, Luke 1-2, Rev 1-3 still pending.
+*(No active open questions. The ἰδού three-type distinction — the prior sole entry — was tested and retired 2026-05-14; see Retired criteria / formulations above.)*
 
 ### Goldilocks three-phase history (illustrative anti-pattern)
 
