@@ -1,0 +1,21 @@
+book	chapter	verse	expected	notes
+matt	1	20	POSITIVE	Joseph's prior considerations of Mary in 1:19 → angel appearance
+matt	9	18	POSITIVE	Jesus' prior parable answers (wineskins) → Jairus arrives
+matt	2	1	NEGATIVE_PROPER_NOUN	Τοῦ δὲ Ἰησοῦ γεννηθέντος — proper-noun subject (Ἰησοῦ), not anaphoric. R19 split applies.
+matt	17	5	NEGATIVE_CATAPHORIC_REF	Voice from heaven introduces fresh content; subject is non-deictic
+luke	9	34	POSITIVE	Peter's tabernacle proposal in 9:33 → cloud overshadows
+luke	13	17	POSITIVE	Jesus' rebuke of synagogue ruler in 13:14-16 → adversaries put to shame
+luke	24	36	POSITIVE	Emmaus disciples reporting in 24:35 → Jesus appears
+john	8	30	POSITIVE	Jesus' I-AM saying in 8:28-29 → many believed
+john	18	22	POSITIVE	Jesus' words to high priest in 18:20-21 → officer's blow
+acts	1	9	NEGATIVE_NOT_GEN_ABS	καὶ ταῦτα εἰπών — nominative ptc, subject = Jesus (matrix subject), NOT gen abs. Macula correctly excludes.
+acts	23	7	POSITIVE	Paul's resurrection statement in 23:6 → Pharisee/Sadducee dissension
+acts	25	25	EDGE_PRONOUN_SUBJECT	αὐτοῦ δὲ τούτου ἐπικαλεσαμένου — τούτου is gen-abs subject (=Paul), demonstrative-deictic but referent is established. Borderline anaphoric.
+acts	26	24	POSITIVE	Paul's defense in 26:1-23 → Festus's outburst
+acts	28	8	NEGATIVE_POST_MATRIX	τούτου δὲ γενομένου — gen abs follows the matrix verb on same line; already merged-rendering. Bidirectional test does not fire on post-matrix gen abs.
+acts	28	9	NEGATIVE_POST_MATRIX	Same line as acts 28:8 — verse-block-overlap artifact in Macula
+heb	9	8	NEGATIVE_CATAPHORIC	τοῦτο δηλοῦντος τοῦ πνεύματος τοῦ ἁγίου — τοῦτο is direct object of δηλοῦντος pointing FORWARD to v9 explanation. Cataphoric, not anaphoric.
+luke	1	8	NEGATIVE_NO_DEICTIC	ἐγένετο δὲ ἐν τῷ ἱερατεύειν αὐτὸν — no demonstrative; temporal frame
+matt	2	13	NEGATIVE_PROPER_NOUN	ἀναχωρησάντων δὲ αὐτῶν — αὐτῶν refers to magi (just-mentioned), but no anaphoric demonstrative
+luke	8	49	NEGATIVE_PRESENT_PARTICIPLE	ἔτι αὐτοῦ λαλοῦντος — no demonstrative; pure temporal frame ("while he was still speaking")
+matt	17	24	NEGATIVE_PRESENT_PARTICIPLE	Ἐλθόντων δὲ αὐτῶν — temporal frame, no anaphoric demonstrative
