@@ -280,11 +280,11 @@ RULES: list[dict] = [
         "name": "Orphaned adverbial completion",
         "rule_type": "Editorial",
         "validator": None,
-        "applier_none": False,
+        "applier_none": True,
         "closed_lists": [],
         "ud_terms": [],
         "branches": [],
-        "notes": "*(not yet implemented)*",
+        "notes": "*(judgment-required; no auto-validator)*",
     },
     {
         "rule_id": "R23",

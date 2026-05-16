@@ -311,7 +311,7 @@ This diagnostic catches the failure mode where a canon change is self-framed as 
 | R18a-GNT | Patriarch-deity-triad indivisibility | Mechanical | 3.9a | `validators/colometry/check_r18a_patriarch_triad.py` |
 | R19 | Genitive absolute always own line | Mechanical | 3.10 | `validators/colometry/check_r19_genabs.py` + `scripts/sweep_r19_genabs.py` |
 | R20 | Participial phrase test (refined) | Editorial | 3.10 | `scripts/scan_line_ending_participles.py` *(scanner only)* |
-| R22 | Orphaned adverbial completion | Editorial | 3.11 | *(not yet implemented)* |
+| R22 | Orphaned adverbial completion | Editorial | 3.11 | *(judgment-required; no auto-validator)* |
 | R23 | Dative subject of infinitive | Mechanical | 3.12 | `scripts/scan_r23_dative_infinitive.py` *(scanner only)* |
 | R24 | Qualifying phrases: escalation vs. restriction | Editorial | 3.13 | *(judgment-required; no auto-validator)* |
 | R25 | ὥστε short-consecutive-result binding | Mechanical | 3.14a | `validators/colometry/check_r25_hoste_consecutive_result.py` |
