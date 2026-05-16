@@ -80,31 +80,14 @@ def get_rule_attr(node) -> str:
 
 
 # ─── Candidate output type ───────────────────────────────────────────────────
+# Migrated 2026-05-16 to consume the universal verdict layer from
+# atu_method.infrastructure.validator_output (per Q1 finding +
+# canon-validator-alignment readiness arc). The local Candidate /
+# emit_candidate definitions are re-exported so every existing call site
+# (validators/colometry/*, validators/syntax/*, validators/run_all.py)
+# continues to work via `from validators.common import Candidate, emit_candidate`.
 
-@dataclass
-class Candidate:
-    verse_ref: str       # "Matt 4:1"
-    line_index: int      # 0-based index within chapter
-    line_text: str       # raw line content for context
-    rule: str            # "R2", "R18", "M1", etc.
-    tag: str             # "STRONG-MERGE" | "STRONG-SPLIT" | "REVIEW-REQUIRED" | "AMBIG"
-    error_class: str     # "MALFORMED" (Layer 1) | "DEVIATION" (Layer 3)
-    rationale: str       # short description of why this is flagged
-    context: str = ""    # 2-3 lines surrounding (optional)
-
-
-def emit_candidate(
-    verse_ref: str,
-    line_index: int,
-    line_text: str,
-    rule: str,
-    tag: str,
-    error_class: str,
-    rationale: str,
-    context: str = "",
-) -> Candidate:
-    """Constructor helper — same fields as Candidate dataclass."""
-    return Candidate(verse_ref, line_index, line_text, rule, tag, error_class, rationale, context)
+from atu_method.infrastructure.validator_output import Candidate, emit_candidate  # noqa: F401
 
 
 # ─── Data loaders (thin wrappers around scripts/) ────────────────────────────
