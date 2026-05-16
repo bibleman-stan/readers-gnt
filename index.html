@@ -221,6 +221,22 @@
   }
   .nav-panel-close:hover { color: var(--text-dim); }
 
+  .nav-panel-home {
+    margin-left: auto;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    cursor: pointer;
+  }
+  .nav-panel-home:hover { color: var(--text-dim); }
+  .nav-panel-home svg { width: 18px; height: 18px; }
+
   .nav-panel-title {
     font-size: 0.88em;
     color: var(--text-dim);
@@ -1096,29 +1112,23 @@
   }
 
   /* Modern pill button — always visible (KJV is now the default) */
-  #aid-pill {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 12px;
-    border: 1px solid var(--text-faint);
-    background: none;
-    color: var(--text-faint);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    font-size: 0.62em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
-    letter-spacing: 0.02em;
-    -webkit-tap-highlight-color: transparent;
-  }
-  #aid-pill:hover {
-    color: var(--text-dim);
-    border-color: var(--text-dim);
-  }
+  /* Modern pill lives in the layer-bar (row 2). Inherits base .pill styling;
+     only its toggle-active state is special here (matches active-pill accent
+     used by Greek/English layer pills). */
   #aid-pill.active-aid {
-    color: #7cafc2;
-    border-color: #7cafc2;
-    background: rgba(124,175,194,0.12);
+    background: rgba(124, 175, 194, 0.22);
+    border-color: rgba(124, 175, 194, 0.55);
+    color: #cfe7f1;
+  }
+  /* Thin vertical divider between layer/language pills and mode pills (Modern). */
+  .pill-sep {
+    display: inline-block;
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+    margin: 0 4px;
+    flex-shrink: 0;
+    align-self: center;
   }
 </style>
 </head>
@@ -1141,17 +1151,19 @@
 
 <!-- Top bar -->
 <div class="topbar">
+  <button class="topbar-icon" id="btn-home" onclick="openNav()" aria-label="Menu" title="Menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
   <div class="topbar-loc" id="topbar-loc" onclick="openNav()">
     <span class="topbar-book" id="topbar-book">Mark</span>
     <span class="topbar-chap" id="topbar-chap">1</span>
   </div>
   <div class="topbar-icons">
-    <button class="topbar-icon" id="btn-home" onclick="showLanding()" aria-label="Home" title="Home">
-      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-    </button>
-    <span class="topbar-brand" onclick="showLanding()" style="cursor:pointer;">GNT Reader</span>
     <button class="topbar-icon" id="btn-search" onclick="toggleSearch()" aria-label="Search" title="Search (Ctrl+F)">
       <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+    </button>
+    <button class="topbar-icon" id="btn-listen" onclick="toggleListen()" aria-label="Listen" title="Listen (audio — coming soon)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9a5 5 0 0 1 10 0c0 3-2.5 4-3.5 5.2-.8 1-1 1.8-1 2.8a2.5 2.5 0 0 1-5 0"/><path d="M10 9.2a2.2 2.2 0 0 1 4.4 0c0 1.3-1 2-1.7 2.7"/></svg>
     </button>
     <button class="topbar-icon" id="btn-settings" onclick="toggleSettings()" aria-label="Settings" title="Settings">
       <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 00-.48-.41h-3.84a.48.48 0 00-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87a.48.48 0 00.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.26.41.48.41h3.84c.24 0 .44-.17.48-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.61 3.61 0 0112 15.6z"/></svg>
@@ -1159,8 +1171,6 @@
     <button class="topbar-icon" id="btn-help" onclick="openHelp()" aria-label="Help" title="Help">
       <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
     </button>
-    <!-- Modern pill — always visible; toggles archaic→modern KJV English. -->
-    <button id="aid-pill" onclick="toggleAid()" aria-label="Modern words" title="Toggle modern words">Modern</button>
   </div>
 </div>
 
@@ -1169,8 +1179,11 @@
      the last visible layer (shake animation on rejected click). -->
 <div class="layer-bar" id="layer-bar">
   <div class="layer-bar-inner">
-    <button class="pill" data-layer="gk" onclick="toggleLayer(this)">Greek</button>
-    <button class="pill" data-layer="en" onclick="toggleLayer(this)">English</button>
+    <button class="pill" data-layer="gk" onclick="toggleLayer(this)">Grk</button>
+    <button class="pill" data-layer="en" onclick="toggleLayer(this)">Eng</button>
+    <span class="pill-sep" aria-hidden="true"></span>
+    <!-- Modern pill — toggles archaic→modern KJV English. Lives in row 2 with the layer pills. -->
+    <button id="aid-pill" class="pill" onclick="toggleAid()" aria-label="Modern words" title="Toggle modern words">Modern</button>
   </div>
 </div>
 
@@ -1281,10 +1294,10 @@
 
     <h2>Navigation</h2>
     <ul>
-      <li>Tap the book name or chapter number in the top bar to open the navigation panel.</li>
+      <li>Tap the menu icon, the book name, or the chapter number in the top bar to open the navigation panel.</li>
       <li>Tap a chapter number, then select a verse to jump directly to it.</li>
       <li>URL format: <code>#book-chapter-verse</code> (e.g., <code>#acts-2-38</code>)</li>
-      <li>Tap the home icon or &ldquo;GNT Reader&rdquo; text to return to the landing page.</li>
+      <li>Tap the home icon inside the navigation panel to return to the landing page.</li>
       <li>Use arrow keys or the floating arrows at screen edges to move between chapters.</li>
     </ul>
 
@@ -1322,6 +1335,9 @@
   <div class="nav-panel-header">
     <button class="nav-panel-close" onclick="closeNav()">&times;</button>
     <span class="nav-panel-title">Greek New Testament</span>
+    <button class="nav-panel-home" onclick="closeNav(); showLanding();" aria-label="Home" title="Home">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    </button>
   </div>
   <div class="nav-panel-body" id="nav-body"></div>
 </div>
@@ -1819,6 +1835,11 @@ function loadSettings() {
 // toggleAid() is called by the #aid-pill button in the topbar.
 // Modern pill is always visible; KJV-verbatim English is the default path.
 var aidOn = false;
+
+// Listen — TTS audio playback. Placeholder; feature still to be built.
+window.toggleListen = function() {
+  alert('Listen (audio playback) is coming soon.');
+};
 
 window.toggleAid = function() {
   aidOn = !aidOn;
