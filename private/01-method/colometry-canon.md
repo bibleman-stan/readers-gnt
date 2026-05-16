@@ -1056,17 +1056,57 @@ trigger_attributive_merge:
 
 *15 merges applied corpus-wide.*
 
-### 3.12 Dative Indirect Object as Semantic Subject of Infinitive
+### 3.12 R23 — Dative Indirect Object as Semantic Subject of Infinitive
 
-When a Greek speech or command verb (λέγω, παραγγέλλω, παρακαλέω, κελεύω, etc.) takes a dative indirect object that is ALSO the semantic subject of an infinitive complement, the dative chunks with the infinitive content, not with the speech verb frame. (Note: standard Greek grammar reserves "subject of the infinitive" for the accusative case per BDF §392, Wallace §195, Burton §390 — the accusative-subject default in indirect discourse / object infinitives. The dative here is grammatically an indirect object that happens to be coreferential with the understood subject of the infinitive — but for colometric purposes, it belongs with the infinitive content it semantically controls.)
+**Status:** Active
+**Category:** A (Mechanical, mandatory)
+**Decidability:** UD-pattern
+**Layer:** 3
 
-```
-Lego gar dia tes charitos tes dotheises moi
-panti to onti en hymin me hyperphronein par' ho dei phronein,
-```
-(Rom 12:3 — `panti to onti en hymin` belongs with `me hyperphronein` because it is the subject of the infinitive, not just an addressee.)
+**Rule.** When a Greek speech / command verb (lemma in `SPEECH_COMMAND_LEMMAS_R23`) takes a dative indirect object that is ALSO the semantic subject of an infinitive complement (the dative is coreferential with the understood subject of the infinitive), the dative NP MUST chunk with the infinitive content on the same v4/grk line, NOT with the speech-verb frame. The colometric line-break belongs between the speech-frame and the dative + infinitive content unit.
 
-This is the colometric analogue of accusative-subject-of-infinitive constructions in indirect discourse. The dative functions as the semantic agent of the infinitive even though it is grammatically an indirect object — for line-break purposes, it belongs with the content it controls, not with the speech frame.
+**UD signature.**
+~~~yaml
+trigger:
+  speech_or_command_verb:
+    lemma_in: SPEECH_COMMAND_LEMMAS_R23
+  dative_NP_indirect_object:
+    coreferential_with_subject_of: infinitive_complement
+  infinitive_complement:
+    on_same_or_next_line_as_dative: true
+action: MERGE_FORWARD   # dative chunks forward with infinitive content
+~~~
+
+**Closed lists** (machine-readable).
+~~~yaml
+SPEECH_COMMAND_LEMMAS_R23:
+  - λέγω
+  - παραγγέλλω
+  - παρακαλέω
+  - κελεύω
+  - ἐντέλλομαι
+  # Extension protocol: §6.5 trigger #3 (closed-list extension)
+~~~
+
+**Scope.** All v4/grk lines containing a speech/command verb + dative indirect object + infinitive complement where the dative is the semantic agent of the infinitive. The rule disambiguates the line-break placement: dative + infinitive chunks together, separate from the speech-frame.
+
+**Exclusions** (closed list).
+1. **Dative is the addressee but NOT the semantic subject of the infinitive** — the dative belongs with the speech-frame, not the infinitive content. R23 does not fire.
+2. **Accusative-subject of infinitive in indirect discourse** — standard accusative-subject construction; line-break governed by complement-integrity rules, not R23.
+3. **Infinitive is not a complement of the speech/command verb** — e.g., infinitive functions adverbially (purpose-infinitive); R23 does not fire.
+
+**Precedence.** §3.5 Tier 2 (complement integrity). Yields to R2–R7 (Layer 1), R10 (ὅτι-complement). Wins over R1 No-Anchor when the merge places the dative on the anchored infinitive line.
+
+**Examples.**
+- *Compliant:* `Λέγω γὰρ διὰ τῆς χάριτος τῆς δοθείσης μοι` / `παντὶ τῷ ὄντι ἐν ὑμῖν μὴ ὑπερφρονεῖν παρ' ὃ δεῖ φρονεῖν,` (Rom 12:3) — `παντὶ τῷ ὄντι ἐν ὑμῖν` is the semantic subject of `ὑπερφρονεῖν`; the dative chunks with the infinitive content on line 2.
+- *Non-compliant:* `Λέγω γὰρ διὰ τῆς χάριτος τῆς δοθείσης μοι παντὶ τῷ ὄντι ἐν ὑμῖν,` / `μὴ ὑπερφρονεῖν παρ' ὃ δεῖ φρονεῖν,` — dative stranded with the speech-frame; the infinitive's semantic subject is orphaned from the infinitive.
+- *Excluded (dative is addressee only):* a dative that names only the addressee of the speech act without controlling the infinitive's subject — R23 does not fire; standard speech-frame discipline applies.
+
+**Implementation.**
+- Validator: `scripts/scan_r23_dative_infinitive.py` *(scanner-only — emits candidates; no auto-applier)*
+- Applier: (none currently — sweep performed editorially)
+- Closed-list definitions: §SPEECH_COMMAND_LEMMAS_R23 (inline above)
+- Scholarship: `private/01-method/scholarship/r23.md` (BDF §392 / Wallace §195 / Burton §390 accusative-subject-of-infinitive grounding; reasoning for the "Dative Indirect Object as Semantic Subject" naming choice)
 
 ### 3.13 Qualifying Phrases: Escalation vs. Restriction
 
@@ -1079,72 +1119,96 @@ This is the colometric analogue of accusative-subject-of-infinitive construction
 
 **Test:** Does the qualifying phrase narrow the scope (restriction -> merge) or intensify the claim (escalation -> break)?
 
-### 3.14a R25 ὥστε Short-Consecutive-Result Binding
+### 3.14a R25 — ὥστε Short-Consecutive-Result Binding
 
-**Rule Statement:** When a ὥστε-clause expresses the direct result of the preceding action AND meets all three conditions below, merge the ὥστε-clause onto the same line as its matrix clause. The cause-and-result form a single cognitive image; splitting them fragments what the author composed as one beat.
+**Status:** Active (Phase A; Phase B deferred)
+**Category:** A (Mechanical, mandatory)
+**Decidability:** UD-pattern
+**Layer:** 3
 
-**Three-condition merge test (all three must hold):**
-1. **≤8 words** — the ὥστε-clause (from ὥστε through clause end) contains eight or fewer Greek words (counting ὥστε itself).
-2. **Co-referential subject** — the (explicit or implied) agent of the ὥστε infinitive is the same participant as the subject of the matrix clause.
-3. **No camera shift** — no new scene participant or viewpoint pivot is introduced by the result clause (the clause stays inside the single image the matrix established).
+**Rule.** A ὥστε-infinitive clause that meets ALL THREE merge-test conditions below MUST be merged onto the same v4/grk line as its matrix clause. The cause-and-result form a single cognitive image; splitting them fragments what the author composed as one beat. The morphological trigger is **ὥστε + infinitive** (consecutive-result reading); illative-ὥστε + finite verb / vocative / imperative is OUT of scope (governed by R9).
 
-**Morphological trigger:** ὥστε + **infinitive** (consecutive-result reading). The infinitive signals that ὥστε is binding a dependent result clause, not launching an independent sentence. When all three conditions hold: STRONG-MERGE-CANDIDATE.
+**Three-condition merge test (all three MUST hold):**
+1. **≤8 words** — the ὥστε-clause (from ὥστε through clause end) contains eight or fewer Greek words inclusive of ὥστε.
+2. **Co-referential subject** — the (explicit or implied) agent of the ὥστε-infinitive is the same participant as the matrix-clause subject.
+3. **No camera shift** — no new scene participant or viewpoint pivot is introduced by the result clause.
 
-**Illative-ὥστε exclusion — SPLIT-MAINTAINED (reason: illative-hoste):** ὥστε as an inferential conjunction ("therefore / so then / consequently") launches a NEW independent sentence. Three reliable surface markers:
-- ὥστε + **2nd-person finite imperative** as the first verb (ὥστε μαρτυρεῖτε, ὥστε ἀδελφοί μου ἀγαπητοί — the clause is direct exhortation, not a dependent result).
-- ὥστε + **vocative** (the presence of a vocative almost always signals an illative-ὥστε introducing a new address unit).
-- ὥστε + **new-third-person declarative finite verb** where the subject differs from the matrix and ὥστε clearly has inferential force (ὥστε ἔξεστιν, ὥστε οὐκέτι εἶ — the prior context is reasoning and this is the conclusion).
+**UD signature.**
+~~~yaml
+trigger:
+  hoste_clause:
+    opener: ὥστε
+    next_finite_form: infinitive   # consecutive-result, not illative
+    word_count_inclusive: <= 8
+    coreferential_subject_with_matrix: true
+    no_camera_shift: true
+action: MERGE_BACKWARD   # ὥστε-clause merges into matrix clause line
 
-**Word-count boundary:** Exactly 8 words qualifies (≤ is inclusive). 9+ words → SPLIT-MAINTAINED (reason: word-count-exceeded). Phase B or later will revisit 9-12 word boundary cases.
+# SPLIT-MAINTAINED branches:
+exclusion_illative:
+  opener: ὥστε
+  next_token_pattern:
+    OR:
+      - finite_2p_or_3p_imperative
+      - prohibitive_subjunctive
+      - vocative_NP
+      - new_3P_declarative_finite_verb_with_changed_subject
+  action: REVIEW   # treated as illative; SPLIT-MAINTAINED with reason illative-hoste
 
-**Cross-verse ὥστε:** When ὥστε is the first token of a verse (verse-initial, idx=0), the matrix clause lives in the prior verse. These require cross-verse merge logic (§3.17 procedure) and are deferred to Phase B. Validator: flag as REVIEW-REQUIRED (reason: cross-verse-defer).
+exclusion_word_count:
+  hoste_clause_word_count_inclusive: > 8
+  action: REVIEW   # SPLIT-MAINTAINED with reason word-count-exceeded
+                    # (Phase B: 9–12 word boundary cases revisit)
 
-**Examples — STRONG-MERGE-CANDIDATE (Phase A applied, 2026-05-11):**
+exclusion_cross_verse:
+  hoste_position: verse_initial
+  action: REVIEW   # cross-verse-defer; Phase B
+~~~
 
-| Locus | ὥστε-clause | Word count | Merge rationale |
-|-------|-------------|------------|-----------------|
-| Matt 8:24 | ὥστε τὸ πλοῖον καλύπτεσθαι ὑπὸ τῶν κυμάτων | 7 | co-ref subject (storm), one image |
-| Matt 10:1 | ὥστε ἐκβάλλειν αὐτὰ καὶ θεραπεύειν πᾶσαν νόσον | 7 | authority-granted-for-result, one act |
-| Mark 1:27 | ὥστε συζητεῖν αὐτοὺς λέγοντας· | 4 | crowd amazement → immediate reaction |
-| Mark 3:20 | ὥστε μὴ δύνασθαι αὐτοὺς μηδὲ ἄρτον φαγεῖν | 8 | exactly 8 words, co-ref |
-| Mark 4:1 | ὥστε αὐτὸν εἰς πλοῖον ἐμβάντα καθῆσθαι | 6 | crowd pressure → single result |
-| 1 Cor 13:2 | ὥστε ὄρη μεθιστάναι | 3 | faith → mountain-moving, one image |
-| 1 Thess 1:8 | ὥστε μὴ χρείαν ἔχειν ἡμᾶς λαλεῖν τι | 8 | reputation spread → no need to speak |
+**Closed lists** (machine-readable).
+~~~yaml
+HOSTE_LEMMAS:
+  - ὥστε
 
-Full Phase A corpus: Matt 8:24, 10:1, 12:22, 13:2, 13:54, 27:1, 27:14; Mark 1:27, 3:20, 4:1, 4:37, 15:5; Luke 4:29, 5:7, 12:1; Acts 15:39; 1 Cor 13:2; 2 Cor 1:8, 7:7; 1 Thess 1:8. (20 merges total.)
+ILLATIVE_KNOWN:
+  # 22 corpus illatives encoded by the validator (Phase C audit aae0b801a5130b535).
+  # See scholarship/r25.md for the 4 pattern-cluster analysis.
+  - Matt 12:12, 23:31
+  - Mark 2:28
+  - Rom 7:12, 13:2
+  - 1 Cor 3:7, 3:21, 4:5, 5:8, 7:38, 10:12, 14:22, 14:39
+  - 2 Cor 2:7, 4:12, 5:17
+  - Gal 3:9, 3:24, 4:7, 4:16
+  - Phil 4:1
+  - 1 Thess 4:18
+  - 1 Pet 4:19
+~~~
 
-**Examples — SPLIT-MAINTAINED:**
+**Scope.** ὥστε + infinitive (consecutive-result) only. Out of scope: (a) illative-ὥστε + finite verb; (b) ὥστε-clauses >8 words (Phase B); (c) cross-verse-initial ὥστε (Phase B); (d) ἵνα result clauses (separate governance if codified).
 
-| Locus | Reason | Surface marker |
-|-------|--------|----------------|
-| Matt 23:31 | illative-ὥστε | ὥστε μαρτυρεῖτε — 2p imperative |
-| Matt 12:12 | illative-ὥστε | ὥστε ἔξεστιν — new 3P declarative conclusion |
-| Gal 4:7 | illative-ὥστε | ὥστε οὐκέτι εἶ δοῦλος — new 2P declarative, inferential |
-| Mark 1:45 | word-count-exceeded | 9 words (μηκέτι αὐτὸν δύνασθαι φανερῶς εἰς πόλιν εἰσελθεῖν) |
+**Exclusions** (closed list).
+1. **Illative-ὥστε** — ὥστε as inferential conjunction; surface markers in the UD-signature illative branch. → R9 split-default
+2. **Word-count exceeded (>8)** — `SPLIT-MAINTAINED` with reason `word-count-exceeded`. Phase B revisits 9–12 word boundary cases.
+3. **Cross-verse-initial ὥστε** — matrix clause in prior verse; `REVIEW-REQUIRED` reason `cross-verse-defer`. Phase B.
+4. **Co-referential subject violated** — different agent in result clause; `SPLIT-MAINTAINED`.
+5. **Camera shift detected** — new scene participant / viewpoint pivot in result clause; `SPLIT-MAINTAINED`.
 
-**Illative-ὥστε pattern clusters** (Phase C audit `aae0b801a5130b535` confirmed 22 corpus illatives; 4 named pattern clusters with canonical exemplars):
+**Precedence.** §3.5 Tier 2 (formula / framing integrity within the consecutive-result subdomain). Yields to R2–R7 (Layer 1) and to R9 (subordinate-clause break) for the split case. R25 never conflicts with R9 in the merge case (merged lines never end on ὥστε); R9 takes precedence when ὥστε leads a split line.
 
-1. **Hortatory imperative / prohibitive** — ὥστε immediately followed by 2p/3p imperative, prohibitive subjunctive, or 1p hortatory subjunctive. *Canonical exemplar:* **1 Cor 4:5** `ὥστε μὴ πρὸ καιροῦ τι κρίνετε` (direct 2p prohibition). Family includes: 1 Cor 3:21, 5:8, 10:12, 14:39; 1 Thess 4:18; 1 Pet 4:19.
+**Examples.**
+- *Compliant (STRONG-MERGE-CANDIDATE):* `καὶ ἐτάραξεν τὸν λαὸν καὶ τοὺς πολιτάρχας ὥστε τὸ πλοῖον καλύπτεσθαι ὑπὸ τῶν κυμάτων` (Matt 8:24 pattern after merge) — 7-word ὥστε clause, co-ref subject, single image.
+- *Compliant (3-word merge):* matrix + `ὥστε ὄρη μεθιστάναι` (1 Cor 13:2) — faith → mountain-moving as one image.
+- *Excluded by illative (Exclusion 1):* `ὥστε μαρτυρεῖτε` (Matt 23:31) — 2p imperative; SPLIT-MAINTAINED.
+- *Excluded by illative (Exclusion 1, vocative):* `ὥστε, ἀδελφοί μου ἀγαπητοί,` (Phil 4:1) — vocative; SPLIT-MAINTAINED.
+- *Excluded by word-count (Exclusion 2):* `ὥστε μηκέτι αὐτὸν δύνασθαι φανερῶς εἰς πόλιν εἰσελθεῖν` (Mark 1:45) — 9 words; SPLIT-MAINTAINED. Phase B candidate.
+- *Ambiguous-REVIEW (Phase B):* cross-verse ὥστε at idx=0 of a verse — flagged for Phase B cross-verse merge logic.
 
-2. **Vocative + imperative opener** — ὥστε + direct vocative address + command. *Canonical exemplar:* **Phil 4:1** `ὥστε, ἀδελφοί μου ἀγαπητοί, οὕτως στήκετε ἐν κυρίῳ` (cross-chapter scope makes illative function undeniable). Family includes: 1 Cor 14:39.
-
-3. **New 3P doctrinal-principle declaration** — ὥστε + new indefinite or general subject + timeless-present predication; no action-continuity with matrix. *Canonical exemplar:* **Gal 3:24** `ὥστε ὁ νόμος παιδαγωγὸς ἡμῶν γέγονεν` (doctrinal summary with new subject, often followed by purpose clause). Family includes: Mark 2:28; Rom 7:12, 13:2; 1 Cor 3:7, 14:22; 2 Cor 4:12, 5:17; Gal 3:9.
-
-4. **Rhetorical inferential conclusion** — ὥστε + retrospective argument summary or rhetorical question; no narrative action to inherit. *Canonical exemplar:* **Gal 4:16** `ὥστε ἐχθρὸς ὑμῶν γέγονα ἀληθεύων ὑμῖν` (rhetorical question framing makes inferential function explicit). Family includes: 1 Cor 7:38; 2 Cor 2:7; Gal 4:7.
-
-These 22 illatives are encoded in the validator's `_ILLATIVE_KNOWN` set so they emit `SPLIT-MAINTAINED` directly. Future ὥστε occurrences exhibiting any of the four pattern cluster signatures should be classified as illative without per-instance re-litigation.
-
-**WHY (defensibility):** A ὥστε-infinitive consecutive-result clause is structurally dependent — it cannot stand alone and it names the outcome that the matrix clause caused. Cause + immediate short result = one cognitive image. The reader's eye-span covers both in a single perceptual unit. Splitting them imposes a line-break on a semantic boundary that doesn't exist in the author's composition.
-
-**HOW WE KNOW:** Phase A sweep across all NT books using Grep + manual evaluation of ~30 candidates. The 3-condition test (≤8, co-ref, no camera shift) correctly identified 20 clean merges and correctly excluded all illative cases and all word-count-exceeded cases under adversarial review (task `a894941c72f5cc4e2`).
-
-**SCOPE:** ὥστε + infinitive (result construction) only. Does NOT cover: (a) illative-ὥστε + finite verb; (b) ὥστε-clauses >8 words (Phase B territory); (c) cross-verse-initial ὥστε (Phase B); (d) ἵνα result clauses (governed by separate rule if one exists).
-
-**Precedence vs. R9 (never-end-on-function-word):** R9 states that a line may not end on a conjunction. When a ὥστε-clause is split onto its own line (word count exceeded, illative, or cross-verse), ὥστε leads the new line — it does NOT stay at the end of the prior line. R25 never conflicts with R9 in the merge case (merged lines never end on ὥστε). R9 takes precedence for the split case.
-
-**Validator:** `validators/colometry/check_r25_hoste_consecutive_result.py`
-
-**Phase A applied:** 2026-05-11 (20 merges). Phase B (9-12 word cases, cross-verse) deferred to future session.
+**Implementation.**
+- Validator: `validators/colometry/check_r25_hoste_consecutive_result.py`
+- Applier: (validator emits STRONG-MERGE-CANDIDATE / SPLIT-MAINTAINED / REVIEW-REQUIRED; sweep applied editorially)
+- Closed-list definitions: §HOSTE_LEMMAS, §ILLATIVE_KNOWN (inline above)
+- Scholarship: `private/01-method/scholarship/r25.md` (defensibility narrative — single-image diagnosis; 4-cluster illative-ὥστε pattern analysis with canonical exemplars; Burton §369–371 / Wallace pp.677–679 / BDF §391 / Smyth §2249–2278 grounding)
+- Audit trail: `private/01-method/audit-trail/r25.md` (Phase A: 20 merges applied 2026-05-11; Phase A SPLIT-MAINTAINED catalog; Phase B deferred items; adversarial-review tasks `a894941c72f5cc4e2` + `aae0b801a5130b535`)
 
 ### 3.15 R27 — Authorial Style Principle (Principle entry)
 
