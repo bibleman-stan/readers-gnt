@@ -48,14 +48,15 @@ RULE_ID = "R17"
 ERROR_CLASS = "DEVIATION"
 
 # Article forms that head the δέ pivot (NFC-stripped surface forms).
+# Canon §3.8 names the nominative-article + μεσον + νυνὶ pattern — the
+# "subject-reintroducing" δέ pivot ("ὁ δέ εἶπεν" / "ἡ δέ ἀπεκρίθη" /
+# "οἱ δέ ἔλεγον" etc.). Oblique-case articles (τοῦ / τῆς / τῷ / τόν / etc.)
+# are NOT subject-introducing — they're case-marked inside noun phrases —
+# so they MUST NOT be in this list. Extending beyond canon's named heads
+# is a closed-list extension (change-protocol §7.3 trigger #3).
 _ARTICLE_FORMS: frozenset[str] = frozenset({
-    "ὁ", "ἡ", "τό", "τὸ",   # NOM sing
-    "οἱ", "αἱ",              # NOM pl
-    # Add other article forms that could introduce a new subject clause:
-    "τοῦ", "τῆς", "τῶν",    # GEN (less common as δέ pivot head)
-    "τῷ", "τῇ",              # DAT
-    "τόν", "τόν", "τήν", "τὴν",  # ACC sing
-    "τούς", "τάς",           # ACC pl
+    "ὁ", "ἡ", "τὸ", "τό",   # NOM sing (article variants: accent on/off)
+    "οἱ",                     # NOM pl masc
 })
 
 # Other pivot-head tokens (non-article).
