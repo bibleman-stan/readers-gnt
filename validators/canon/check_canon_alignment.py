@@ -373,10 +373,75 @@ _SEVERITY = {"NO_IMPL": 0, "DRIFT": 1, "PARTIAL": 2, "EDITORIAL_ACK": 3, "ALIGNE
 
 # ── Core check logic ──────────────────────────────────────────────────────────
 
+# Cache canon source so repeated inline-prose lookups don't re-read the file.
+_CANON_SOURCE: Optional[str] = None
+
+# Path patterns the protocol's (b) scope expansion accepts in canon prose.
+_INLINE_PATH_RE = re.compile(r"(?:validators|scripts)/[^\s)`,'\"]+\.py")
+
+
 def load_source(path: Path) -> Optional[str]:
     """Return file contents as string, or None if file doesn't exist."""
     if path.exists():
         return path.read_text(encoding="utf-8", errors="replace")
+    return None
+
+
+def _load_canon() -> str:
+    """Load and cache the canon markdown."""
+    global _CANON_SOURCE
+    if _CANON_SOURCE is None:
+        if CANON_PATH.exists():
+            _CANON_SOURCE = CANON_PATH.read_text(encoding="utf-8", errors="replace")
+        else:
+            _CANON_SOURCE = ""
+    return _CANON_SOURCE
+
+
+def find_inline_validator_in_canon(rule_id: str) -> Optional[str]:
+    """Protocol scope (b): scan canon §3.x for an inline-prose validator path
+    when the RULES table's `validator:` field is None. Returns the first
+    `validators/X.py` or `scripts/X.py` reference found within ~1.2 KB after
+    a §3.x heading whose body mentions rule_id, or None.
+    """
+    canon = _load_canon()
+    if not canon:
+        return None
+    # Find every §3.x heading + section body up to the next heading.
+    section_re = re.compile(r"^### 3\.\d+[a-z]?[^\n]*\n(.*?)(?=^### |^## )",
+                            re.MULTILINE | re.DOTALL)
+    for m in section_re.finditer(canon):
+        body = m.group(1)
+        if rule_id in body or rule_id in m.group(0):
+            path_match = _INLINE_PATH_RE.search(body)
+            if path_match:
+                return path_match.group(0)
+    return None
+
+
+def search_fallback_for_constant(cl_name: str, primary_source: str) -> Optional[str]:
+    """Protocol scope (a): if a closed-list constant isn't in the named
+    validator source, fall back to searching `validators/_shared/*.py` and
+    the rest of `validators/`. Returns the relative path of the file
+    containing the constant, or None.
+    """
+    if cl_name in primary_source:
+        return None  # Already found in primary; caller shouldn't have called us
+    candidates: list[Path] = []
+    shared_dir = REPO_ROOT / "validators" / "_shared"
+    if shared_dir.exists():
+        candidates.extend(sorted(shared_dir.glob("*.py")))
+    # Then the rest of validators/, excluding subdirectories we've already covered
+    for sub in ("colometry", "syntax", "canon"):
+        sub_dir = REPO_ROOT / "validators" / sub
+        if sub_dir.exists():
+            candidates.extend(sorted(sub_dir.glob("*.py")))
+    for py_file in candidates:
+        try:
+            if cl_name in py_file.read_text(encoding="utf-8", errors="replace"):
+                return str(py_file.relative_to(REPO_ROOT)).replace("\\", "/")
+        except Exception:
+            continue
     return None
 
 
@@ -397,7 +462,14 @@ def check_rule(rule: dict) -> tuple[str, str]:
     if applier_none and validator_rel is None:
         return "EDITORIAL_ACK", f"Applier: (none — {rule_type} / {rule['notes']})"
 
-    # No validator named at all
+    # Protocol scope (b): inline-prose validator discovery
+    inline_note = ""
+    if validator_rel is None:
+        validator_rel = find_inline_validator_in_canon(rule_id)
+        if validator_rel:
+            inline_note = f" (validator path discovered via canon inline-prose: {validator_rel})"
+
+    # No validator named anywhere (RULES table + canon prose both empty)
     if validator_rel is None:
         return "NO_IMPL", f"Canon §3 Rule Index: {rule['notes']} — no validator path named"
 
@@ -414,11 +486,21 @@ def check_rule(rule: dict) -> tuple[str, str]:
     partial_items_missing: list[str] = []
 
     # Check 2: closed-list presence
+    # Protocol scope (a): fall back to validators/_shared/ + rest of validators/
+    # when constant isn't in named-detector source.
     for cl_name in closed_lists:
         if cl_name in source:
             partial_items_present.append(f"closed-list {cl_name!r}")
         else:
-            drift_items.append(f"closed-list constant {cl_name!r} missing from validator source")
+            fallback_path = search_fallback_for_constant(cl_name, source)
+            if fallback_path:
+                partial_items_present.append(
+                    f"closed-list {cl_name!r} (resolved via shared: {fallback_path})"
+                )
+            else:
+                drift_items.append(
+                    f"closed-list constant {cl_name!r} missing from validator source AND shared modules"
+                )
 
     # Check 3: UD signature field consistency (string presence in source)
     # We check for ASCII-safe surrogates since some lemmas are Greek; use both
@@ -461,7 +543,7 @@ def check_rule(rule: dict) -> tuple[str, str]:
     if drift_items:
         return "DRIFT", "; ".join(drift_items)
 
-    return "ALIGNED", "validator exists; all named closed-lists and UD terms found"
+    return "ALIGNED", "validator exists; all named closed-lists and UD terms found" + inline_note
 
 
 # ── Report generation ─────────────────────────────────────────────────────────
