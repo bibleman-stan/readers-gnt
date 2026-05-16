@@ -582,149 +582,129 @@ This applies only when R10 says the ὅτι-clause splits (declaration/speech ve
 
 Same logic applies to the English gloss: `that` leads its complement clause on its own line when the Greek splits.
 
-### 3.6 Direct Speech Introduction
+### 3.6 R11 — Direct Speech Introduction
 
-Speech introductions (elegen, eipen, ephe + dative) get their own line. The speech content begins on the next line:
-
-```
-kai elegen autois:
-Hymin to mysterion dedotai tes basileias tou theou:
-```
-
-Imperatives (Akouete, Siopa) also stand alone — they are complete predications (Mark 4:3).
-
-**Special case: amen-prefix speech-intro formula** — ἀμήν [ἀμήν] λέγω σοι/ὑμῖν is treated as a distinct class. See the "Amen-formula speech-intro" subsection below.
-
-**Exception: synonymous-doublet imperatives stay together.** When two imperatives are uttered as a single rebuke with one breath — where the second is not a distinct action but an intensifying restatement — they merge onto one line. Mark 4:39 `Siopa, pephimoso.` ("Be silent, be muzzled!") is the canonical example. Test: if the second imperative is a synonym or intensifier with no new content, merge. If it commands a distinct action, split.
-
-**Speech-intro frame aggregation (short qualifier only).** The speech-introducing apparatus may merge with a preceding qualifying clause *only when the qualifier is structurally minimal* — a bare ἐάν/ὅταν + subjunctive with no substantial finite-clause content of its own (e.g., `ἐὰν μὴ λέγω·`). When the qualifier is substantive — it contains a finite verb, object NPs, and scene-setting content independent of the speech verb — it is NOT a mere qualifier; it is a full adverbial clause, and R28-ext below mandates the split. Scope boundary: applies only to structurally trivial qualifiers; anything with a full finite-clause body (subject, verb, object) falls under R28-ext and splits.
-
-### OT-Attribution Tags Inside Quotation Blocks (merge, not speech-intro)
-
-When a speech verb (λέγει, φησίν, λέγει τὸ πνεῦμα, λέγει κύριος) appears INSIDE an already-opened quotation block — attributing the quoted content to its speaker mid-quote rather than opening a new speech event — it is NOT a speech-introduction under R11. It stays merged with the surrounding quoted content.
-
-Detection:
-- A speech-intro line (ending in ano teleia `·` or colon `:`) immediately precedes the current line
-- The current line contains a speech verb in a non-opening position (post-first-word, flanked by commas, or appearing after content)
-- The current line's content is continuation of the already-opened quote
-
-Canonical cases:
-- **Revelation 2-3 letters** — `λέγει τὸ πνεῦμα ταῖς ἐκκλησίαις` repeated ×7 in letter-closings. Each is an OT-style attribution tag within a prophetic letter's quoted content, NOT a fresh speech-intro.
-- **Pauline OT citations** — Rom 12:19 `λέγει κύριος`, Rom 14:11 `λέγει κύριος`, 1 Cor 14:21 `λέγει κύριος`, 2 Cor 6:17 `λέγει κύριος`, etc. The quoted OT passage already has its speech-intro upstream; the embedded λέγει κύριος is attribution, not intro.
-- **Hebrews** — Heb 8:8-9, 8:5 `λέγει κύριος` / `φησίν` inside OT quotation blocks.
-- **Acts** — Acts 7:7 `λέγει ὁ θεός`, 7:49 `λέγει κύριος` inside Stephen's quoted-OT narration.
-
-Rationale: these are attribution markers serving the same function as "he said" parenthetically interjected in English dialogue. The canon treats them as continuation of the quoted content, not as re-introducing speech.
-
-### Parenthetical Mid-Speech Attribution (merge, not speech-intro)
-
-When a speech verb — typically `φησίν`, occasionally `λέγει` or `εἶπεν` — appears INSIDE a single-sentence quoted speech as a parenthetical attribution tag (flanked by commas, not opening a new speech event), it stays merged with the surrounding quoted content. This is the same merge-discipline as the OT-attribution case, applied to non-quotation-block contexts.
-
-Detection:
-- Speech verb is flanked by commas on both sides (` , φησίν, `)
-- The surrounding tokens on the same line are quoted content (imperatives, finite verbs, content words)
-- The verb is NOT at line-start position (it's a parenthetical interjection, not a new speech opening)
-
-Canonical cases:
-- **Matt 14:8** — `Δός μοι, φησίν, ὧδε ἐπὶ πίνακι τὴν κεφαλὴν Ἰωάννου τοῦ βαπτιστοῦ.` — "'Give me,' she says, 'the head of John the Baptist here on a platter.'" The φησίν is an attribution interjection; splitting it out would mechanize a natural mid-sentence pause and dilute the quoted speech.
-- **Acts 25:22** — `Αὔριον, φησίν, ἀκούσῃ αὐτοῦ.` — "'Tomorrow,' he says, 'you will hear him.'"
-
-Rationale: parenthetical attribution is a prose convention, not a new speech event. Treating it as a speech-intro would generate three-line micro-fragments where the original text reads as a single flowing quotation. The attribution verb is the English analogue of the comma-flanked "he said" inside a quotation.
-
-Contrast with R11 genuine violations: a speech-intro that OPENS new speech appears at line-start, immediately followed by an ano teleia (`·`) or colon, then the quoted content on the NEXT line. If the speech verb is mid-line between quoted content, it is NOT a new speech-intro — it is parenthetical attribution.
-
-### Amen-formula speech-intro (own line, content breaks next)
-
-The solemnity-prefixed speech-intro formula **ἀμήν (ἀμήν) λέγω σοι / ὑμῖν** ("truly [truly] I say to you / [to thee]") is an atomic formulaic unit that gets its own line. The content of the saying breaks to the next line.
-
-**Canonical form (single or doubled amen):**
-```
-ἀμὴν λέγω ὑμῖν,
-<content of saying>...
-```
-```
-ἀμὴν ἀμὴν λέγω σοι·
-<content of saying>...
-```
-
-**Applied 15 times corpus-wide** (commit c51faf8, 2026-04). Matthew/Mark/Luke use single amen; John uses doubled amen. Both forms follow the same structural convention.
-
-**Diagnostic:**
-- Line starts with `ἀμήν` (or `ἀμήν ἀμήν`) + `λέγω` + pronoun (σοι / ὑμῖν / etc.)
-- Ends with ano teleia, colon, or comma — then the content follows on the next line
-
-**Why this is not a generic R11 case:** R11 says speech-intro verbs stand alone, but a bare `λέγω ὑμῖν` can merge under some contexts (speech-frame aggregation, parenthetical attribution). The amen-prefix makes this formula structurally unambiguous: the solemnity marker + speech-intro verb + addressee is a complete formulaic unit. Applying R11 without the amen-prefix recognition can leave the formula mid-line-joined with its content.
-
-**Exception: repeated-vocative address `Κύριε κύριε`** (Matt 7:21-22, Luke 6:46) stays merged as a single speech act per §3.9 (repeated vocatives as rhetorical unit). Not governed by this rule.
-
-**Test contrasts:**
-- `ἀμὴν λέγω ὑμῖν, ...` — formula + content → two lines ✓
-- `Κύριε κύριε, οὐ τῷ σῷ ὀνόματι ...` — repeated vocative → one line per §3.9 ✗ (not this rule)
-
-### R28-ext: Speech-Act Announcement After Frame (split)
-
-**Status:** Active (2026-05-11)
+**Status:** Active
 **Category:** A (Mechanical, mandatory)
-**Layer:** 3 — sub-rule of §3.6 (R11 speech-intro discipline)
-**Port:** GNT adaptation of BofM R28 (Speech-Act Announcement After Frame, canon §5 R28)
+**Decidability:** UD-pattern
+**Layer:** 3
 
-**Statement.** When a finite speech verb (λέγω, εἶπον/λέγω, φημί) that introduces direct speech co-occurs on the same v4/grk line with a substantive preceding adverbial frame — temporal clause (ὅταν/ὅτε/ὡς + finite verb), causal clause, or participial absolute frame with its own subject/object content — the line MUST be split. The frame occupies line 1; the finite speech verb and its dative-object address (if any) occupy line 2. The speech verb's line 2 closes with the ano teleia (·) or colon (:) per R11.
+**Rule.** A line whose final position is a finite speech verb (lemma in `SPEECH_LEMMAS_R11`) followed by ano teleia (`·`) or colon (`:`) MUST stand as its own ATU; the quoted content begins on the next v4/grk line. Imperatives standing as complete predications (e.g., `Ἀκούετε.`) also occupy their own line. The amen-prefix solemnity formula (`ἀμήν [ἀμήν] λέγω σοι/ὑμῖν,`) is treated identically — the formula owns its line; saying content breaks to next.
 
-**Rationale.** Each atomic thought unit encodes one predication. A substantive temporal frame (`ὡς δὲ ἐπαύσατο λαλῶν` — "when he stopped speaking") is a complete predication with its own verb and subject. The finite speech-intro (`εἶπεν πρὸς τὸν Σίμωνα·` — "he said to Simon:") is a separate complete predication. Co-lineating two complete predications violates the one-predication-per-line generative principle. This rule applies the same split-discipline already operative for genitive absolutes (R19) and adverbial subordinate clauses (R9) to the speech-intro context.
+**UD signature.**
+~~~yaml
+trigger:
+  line:
+    has_finite_speech_verb: true
+    speech_verb_lemma_in: SPEECH_LEMMAS_R11
+    line_ends_with: [·, :, comma_if_amen_formula]
+    no_hoti_immediately_after_speech_verb: true   # ὅτι → R10 governs
+  OR_imperative_complete_predication: true        # Mark 4:3 Ἀκούετε.
+  OR_amen_prefix_formula:
+    sequence: [ἀμήν, (ἀμήν), λέγω, σοι|ὑμῖν]
+action: STAND_OWN_LINE
+~~~
 
-**Scope.** Same-line co-occurrence of:
-1. A finite speech verb in `SPEECH_LEMMAS_R28EXT` — 3rd-person indicative (λέγω, εἶπον, φημί)
-2. A *substantive* preceding adverbial clause: either (a) a finite-verb temporal/causal clause introduced by ὡς/ὅτε/ὅταν/ἐπεί/ἐπειδή, or (b) a participial absolute with its own overt subject and object content (≥3 non-punctuation tokens in the participle's NP cluster)
-3. The speech verb's line ends in ano teleia (·) or colon (:), confirming direct speech follows on the next line
+**Closed lists** (machine-readable).
+~~~yaml
+SPEECH_LEMMAS_R11:
+  - λέγω
+  - εἶπον
+  - φημί
+  - ἀποκρίνομαι   # speech-intro frame class; verb + ὅτι merges (see R10)
+~~~
 
-**Exclusions (closed list).**
+**Scope.** All v4/grk lines containing a finite speech-introducing verb (or amen-prefix formula) immediately preceding direct quoted content. The rule fires when the speech-intro span opens a new speech act, marked by terminal `·` / `:` (or terminal comma in the amen-formula case).
 
-1. **ἀπεκρίθη + ὅτι (R10-governed indirect speech).** When ὅτι immediately follows the speech verb, the construction is R10's cognition/declaration-verb complement, not a direct-speech announcement. R10 governs; R28-ext does not fire. Canonical: John 3:28 ὅτι-clauses.
+**Exclusions** (closed list — each cites dominating rule or governing pattern).
 
-2. **ἀπεκρίθη + λέγων Hebraism (MERGE, not R11/R28-ext).** The `ἀπεκρίθη ... λέγων` double-verb construction is a Semitic idiom in which λέγων is a redundant manner marker, not a second speech introduction. The entire `ἀπεκρίθη ... λέγων·` collapses onto one line under R11. R28-ext does not fire because λέγων is participial (non-finite), not a standalone finite speech-intro. Canonical cases: Matt 11:25, Matt 12:38, Mark 9:5, Luke 17:17, etc.
+1. **OT-attribution tag inside quotation block** — speech verb (`λέγει`, `φησίν`, `λέγει τὸ πνεῦμα`, `λέγει κύριος`) appears mid-quote, post-first-word, flanked by commas, or after content; preceding line ended in `·`/`:`. STAYS MERGED with surrounding quoted content. → scholarship/r11.md (Rev 2–3 ×7; Rom 12:19, 14:11; 1 Cor 14:21; 2 Cor 6:17; Heb 8:5, 8:8–9; Acts 7:7, 7:49)
+2. **Parenthetical mid-speech attribution** — speech verb (typically `φησίν`) flanked by commas, mid-line, surrounding tokens are quoted content. STAYS MERGED. → scholarship/r11.md (Matt 14:8; Acts 25:22)
+3. **ἀπεκρίθη + ὅτι (R10 indirect-speech complement)** — ὅτι immediately follows the speech verb; R10 cognition/declaration-class governs. → R10
+4. **ἀπεκρίθη + λέγων Semitic idiom** — `ἀπεκρίθη ... λέγων·` double-verb construction; `λέγων` is participial (non-finite) redundant manner marker. Entire construction collapses onto one line. → scholarship/r11.md
+5. **Synonymous-doublet imperatives** — two imperatives uttered as a single rebuke (Mark 4:39 `Σιώπα, πεφίμωσο.`) merge onto one line. → scholarship/r11.md
+6. **Repeated-vocative address `Κύριε κύριε`** (Matt 7:21–22, Luke 6:46) — single speech-act rhetorical unit. → R7 / §3.9 vocative integrity
+7. **Speech-intro frame aggregation (short qualifier only)** — structurally minimal qualifier (bare `ἐάν`/`ὅταν` + subjunctive, no substantive finite-clause body) merges with the speech-intro. Substantive frames fall under R28-ext. → R28-ext
 
-3. **Structural minimum frame (§3.6 frame-aggregation carve-out).** When the preceding clause is a *bare* conditional or purpose marker with no substantive finite-clause body (e.g., trivial ἐάν + single-word subjunctive), the frame is not substantive; aggregation applies under §3.6 and R28-ext does not fire.
+**Precedence.** §3.5 Tier 2 (formula / framing integrity). Yields to R2–R7 (Layer 1), R10 (ὅτι-complement). Wins over generic break-determinations within its scope. R28-ext extends R11 to the substantive-frame case.
 
-4. **R19 genitive absolute already handled.** When the frame contains a genitive absolute (anarthrous gen ptc + agreeing gen subject), R19 fires first — the gen abs gets its own line independent of any speech-verb on the same colometric line. R28-ext is therefore redundant in that case and should not be layered on top of an R19 application.
+**Examples.**
+- *Compliant:* `καὶ ἔλεγεν αὐτοῖς·` / `Ὑμῖν τὸ μυστήριον δέδοται τῆς βασιλείας τοῦ θεοῦ·` — speech-intro own line, content next.
+- *Compliant (amen-formula, single):* `ἀμὴν λέγω ὑμῖν,` / `<content>` — Synoptic form.
+- *Compliant (amen-formula, doubled):* `ἀμὴν ἀμὴν λέγω σοι·` / `<content>` — Johannine form.
+- *Compliant (imperative own-line):* `Ἀκούετε.` (Mark 4:3).
+- *Excluded by R10:* `… εἶπον ὅτι …` — R10 cognition/declaration-class governs.
+- *Excluded by OT-attribution:* `… ποιήσει αὐτοῖς, λέγει τὸ πνεῦμα, …` (Rev 2–3 letter-closings).
+- *Excluded by parenthetical:* `Δός μοι, φησίν, ὧδε ἐπὶ πίνακι …` (Matt 14:8).
+- *Excluded by Hebraism:* `ἀποκριθεὶς εἶπεν αὐτοῖς·` — `ἀπεκρίθη + λέγων` on one line.
+- *Excluded by R7/§3.9:* `Κύριε κύριε, οὐ τῷ σῷ ὀνόματι …` — repeated-vocative on one line.
 
-5. **Frame already on prior line (already compliant).** When the temporal/participial frame has already been placed on a separate line by a prior edit or is on a different v4/grk line from the speech verb, R28-ext does not re-fire.
+**Implementation.**
+- Validator: `validators/colometry/check_r11_speech_intro.py`
+- Applier: (validator emits STRONG-SPLIT candidates; integrated)
+- Closed-list definitions: §SPEECH_LEMMAS_R11 (inline above)
+- Scholarship: `private/01-method/scholarship/r11.md` (canonical cases for OT-attribution, parenthetical attribution, ἀπεκρίθη+λέγων Semitic idiom, synonymous-doublet, amen-formula reasoning, repeated-vocative carve-out)
+- Audit trail: `private/01-method/audit-trail/r11.md` (amen-formula sweep: 15 applications corpus-wide commit c51faf8 2026-04; OT-attribution + parenthetical false-positive sweep)
 
-**Precedence vs. other rules.**
-- **vs. R9 (subordinate-clause break):** R9 covers the general case of subordinate-clause introduction. R28-ext is more specific: it governs only the subclass where the subordinate clause is immediately followed by a direct-speech verb. Both rules mandate a split; R28-ext provides the specific STRONG-SPLIT label for validator output.
-- **vs. R10 (ὅτι complement):** R10 governs first for cognition/speech verbs + ὅτι. If R10 fires, R28-ext is out of scope.
-- **vs. R19 (genitive absolute):** R19 governs first when the frame contains a gen abs.
-- **vs. R11 (speech-intro own line):** R28-ext is a sub-rule of R11 that adds split discipline when a frame precedes the R11-governed speech verb.
+### 3.6.1 R28-ext — Speech-Act Announcement After Frame
 
-**STRONG-SPLIT examples (compliant after split).**
+**Status:** Active
+**Category:** A (Mechanical, mandatory)
+**Decidability:** UD-pattern
+**Layer:** 3
 
-```
-ὡς δὲ ἐπαύσατο λαλῶν,        ← frame: "when he stopped speaking" (Luke 5:4)
-εἶπεν πρὸς τὸν Σίμωνα·       ← speech verb + addressee
-```
+**Rule.** When a finite speech verb (lemma in `SPEECH_LEMMAS_R28EXT`) introducing direct speech co-occurs on the same v4/grk line with a substantive preceding adverbial frame — a temporal/causal finite clause (ὅταν/ὅτε/ὡς/ἐπεί/ἐπειδή + finite verb) OR a participial absolute frame with its own overt subject and object content — the line MUST be split. The frame occupies line 1; the finite speech verb and its dative-object address (if any) occupy line 2. Line 2 closes with ano teleia (`·`) or colon (`:`) per R11.
 
-```
-Ἀκούσας δέ τις τῶν συνανακειμένων ταῦτα   ← participial frame (Luke 14:15)
-εἶπεν αὐτῷ·                               ← speech verb
-```
+**UD signature.**
+~~~yaml
+trigger:
+  line:
+    has_finite_speech_verb: true
+    speech_verb_lemma_in: SPEECH_LEMMAS_R28EXT
+    has_substantive_preceding_adverbial_frame:
+      OR:
+        - finite_temporal_or_causal_clause:
+            opener_lemma_in: [ὡς, ὅτε, ὅταν, ἐπεί, ἐπειδή]
+            has_finite_verb_in_clause: true
+        - participial_absolute_with_substantive_NP_cluster:
+            NP_cluster_nontoken_count_gte: 3
+    line_ends_with: [·, :]
+    no_hoti_immediately_after_speech_verb: true
+action: SPLIT_BEFORE_SUBJECT   # split before speech verb + addressee; frame stays on line 1
+~~~
 
-```
-ὅταν δὲ πάλιν εἰσαγάγῃ τὸν πρωτότοκον εἰς τὴν οἰκουμένην,   ← temporal frame (Heb 1:6)
-λέγει·                                                          ← speech verb
-```
+**Closed lists** (machine-readable).
+~~~yaml
+SPEECH_LEMMAS_R28EXT:
+  - λέγω
+  - εἶπον
+  - φημί
+~~~
 
-**Excluded examples (do NOT split).**
+**Scope.** Same-line co-occurrence of (1) a finite speech verb in `SPEECH_LEMMAS_R28EXT`, (2) a substantive preceding adverbial frame (finite temporal/causal clause OR participial absolute with ≥3-token NP cluster), and (3) line ends in `·` / `:` confirming direct speech follows. R28-ext is a sub-rule of R11 governing the substantive-frame case under-handled by R11's frame-aggregation carve-out.
 
-```
-ἀποκριθεὶς εἶπεν αὐτοῖς·    ← ἀπεκρίθη+λέγων Hebraism → one line (Exclusion 2)
-```
+**Exclusions** (closed list — each cites dominating rule).
+1. **ἀπεκρίθη + ὅτι (R10-governed indirect speech)** — ὅτι immediately follows the speech verb; R10 cognition/declaration-class complement governs. Canonical: John 3:28 ὅτι-clauses. → R10
+2. **ἀπεκρίθη + λέγων Semitic idiom** — `λέγων` is participial (non-finite) redundant manner marker; R11 collapses the entire construction onto one line. R28-ext does not fire because `λέγων` is not a finite speech-intro. → R11 / scholarship/r11.md
+3. **Structural-minimum frame (R11 frame-aggregation carve-out)** — preceding clause is a bare conditional/purpose marker with no substantive finite-clause body (e.g., trivial `ἐάν` + single-word subjunctive). Aggregation under R11 governs; R28-ext does not fire. → R11
+4. **R19 genitive absolute frame** — when the frame contains a genitive absolute (anarthrous gen ptc + agreeing gen subject), R19 fires first and the gen abs takes its own line. R28-ext is redundant; do not layer on top of R19 application. → R19
+5. **Frame already on prior line** — temporal/participial frame is already on a separate v4/grk line from the speech verb (no co-occurrence on the same line). Rule does not fire (already compliant).
 
-```
-αὐτοὶ ὑμεῖς μοι μαρτυρεῖτε ὅτι εἶπον·    ← ὅτι immediately follows → R10 governs (Exclusion 1)
-```
+**Precedence.** §3.5 Tier 2 (formula / framing integrity; sub-rule of R11). Yields to R10 (ὅτι-complement first), R19 (gen-abs first). Wins over R9's general subordinate-clause-break rule for its specific subclass (subordinate clause + direct-speech verb).
 
-**Validator:** `validators/colometry/check_r28_speech_act_frame.py`
+**Examples.**
+- *Compliant (post-split):* `ὡς δὲ ἐπαύσατο λαλῶν,` / `εἶπεν πρὸς τὸν Σίμωνα·` (Luke 5:4) — substantive temporal frame + speech-intro on separate lines.
+- *Compliant (post-split):* `Ἀκούσας δέ τις τῶν συνανακειμένων ταῦτα` / `εἶπεν αὐτῷ·` (Luke 14:15) — substantive participial frame + speech-intro on separate lines.
+- *Compliant (post-split):* `ὅταν δὲ πάλιν εἰσαγάγῃ τὸν πρωτότοκον εἰς τὴν οἰκουμένην,` / `λέγει·` (Heb 1:6) — substantive temporal frame + speech-intro on separate lines.
+- *Excluded by Hebraism (Exclusion 2):* `ἀποκριθεὶς εἶπεν αὐτοῖς·` — `ἀπεκρίθη + λέγων` on one line.
+- *Excluded by R10 (Exclusion 1):* `αὐτοὶ ὑμεῖς μοι μαρτυρεῖτε ὅτι εἶπον·` — ὅτι immediately follows; R10 governs.
 
-**Corpus survey (2026-05-11).** Three STRONG-SPLIT-CANDIDATEs applied: Heb 1:6, Luke 5:4, Luke 14:15.
+**Implementation.**
+- Validator: `validators/colometry/check_r28_speech_act_frame.py`
+- Applier: (validator emits STRONG-SPLIT candidates; integrated)
+- Closed-list definitions: §SPEECH_LEMMAS_R28EXT (inline above)
+- Scholarship: `private/01-method/scholarship/r11.md` (shared with R11 — substantive-frame discussion; ἀπεκρίθη+λέγων Hebraism)
+- Audit trail: `private/01-method/audit-trail/r11.md` (2026-05-11 codification; three STRONG-SPLIT applications: Heb 1:6, Luke 5:4, Luke 14:15)
 
 ### 3.7 Parallel Structures and Stacking
 
