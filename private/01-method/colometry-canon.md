@@ -303,9 +303,9 @@ This diagnostic catches the failure mode where a canon change is self-framed as 
 | R10 | Complementizer hoti — cognition vs. speech | Mechanical | 3.5 | *(not yet implemented)* |
 | R11 | Direct speech introduction | Mechanical | 3.6 | `validators/colometry/check_r11_speech_intro.py` |
 | R11-ext / R28-ext | Speech-act announcement after adverbial frame (split) | Mechanical | 3.6 | `validators/colometry/check_r28_speech_act_frame.py` |
-| R12 | Parallel stacking (if atomic) | Editorial | 3.7 | *(judgment-required; no auto-validator)* |
-| R13 | Correlative pair treatment | Editorial | 3.7 | *(judgment-required; no auto-validator)* |
-| R14 | Men/de contrast stacking | Editorial | 3.7 | *(judgment-required; no auto-validator)* |
+| R12 | Parallel stacking (if atomic) | Editorial | 3.7.1 | *(judgment-required; no auto-validator)* |
+| R13 | Correlative pair treatment | Editorial | 3.7.2 | *(judgment-required; no auto-validator)* |
+| R14 | Men/de contrast stacking | Editorial | 3.7.3 | *(judgment-required; no auto-validator)* |
 | R17 | De-contrast overbreak | Mechanical | 3.8 | *(not yet implemented)* |
 | R18 | Vocative rule (three-way refined) | Editorial | 3.9 | `validators/colometry/check_r18_vocative.py` |
 | R18a-GNT | Patriarch-deity-triad indivisibility | Mechanical | 3.9a | `validators/colometry/check_r18a_patriarch_triad.py` |
@@ -322,6 +322,15 @@ This diagnostic catches the failure mode where a canon change is self-framed as 
 *Retired (see §9):* R15 (folded into R14), R16 (folded into R8), R21 (absorbed as operational mechanism for R12/R13/R14), R25-old (folded into R11 — superseded 2026-05-11 by R25 ὥστε-binding; see §9), R26 (pure restatement of M2), R29 (pointer-only; M1–M4 stand on their own in Section 2).
 
 Rules are classified as MECHANICAL (any trained editor would apply them identically), EDITORIAL (defensible, documented, but require judgment), PRINCIPLE (governing stance, not a per-line rule), or LAYER 1 (pure Koine-Greek syntax facts at [`data/syntax-reference/greek-break-legality.md`](../../data/syntax-reference/greek-break-legality.md); Mechanical in effect, but their warrant is generic Greek grammar rather than a project-specific editorial choice).
+
+### Entry kinds
+
+Canon §3 entries fall into four **entry kinds**. Each has its own template-conformance profile per [`../../atu-method/docs/rule-template.md`](../../atu-method/docs/rule-template.md):
+
+- **Mechanical rule** — full template entry: Status, Category (A), Decidability, Layer, Rule statement with RFC 2119 keywords (MUST / MUST NOT), UD signature, Closed lists, Scope, Exclusions, Precedence, Examples (Compliant / Non-compliant / Excluded), Implementation. Detector exists; auto-applies on unambiguous fire.
+- **Editorial rule** — same template; Category B; SHOULD per editorial direction (RFC 2119); Examples include ambiguous-REVIEW cases; Implementation typically `Applier: (none — Category B / editorial-judgment rule)`. Detector flags candidates; per-case Stan review.
+- **Principle** — governing stance referenced by other rules; NOT a per-line rule. Template requirements relaxed: a Principle entry MUST include Title, Status, Category (Principle), and a Rule statement (using SHOULD per editorial-direction rather than MUST per mechanical-mandate); MAY include Examples (cases where the principle applies). Other template fields (Decidability, UD signature, Closed lists, Implementation) are deemed n/a — the principle has no per-line trigger. Cited by other rules' Precedence or Exclusions blocks. Currently: R27 (Authorial Style), R28 (Textual Asymmetry).
+- **Layer 1 rule** — operationally defined at [`data/syntax-reference/greek-break-legality.md`](../../data/syntax-reference/greek-break-legality.md); not duplicated in canon §3.x. Validators live at `validators/syntax/check_r{N}_*.py`. Currently: R2–R7. See §3.2 for the redirect rationale.
 
 ### Closed-List Registry
 
@@ -404,6 +413,8 @@ Every ATU must carry at least one thought-marking anchor: (1) a finite verb, (2)
 *Rule numbers R2–R7 are preserved in the Rule Index (marked as "Layer 1") to avoid breaking references in prior session notes and scanners. Their effect on editing is unchanged — they are still hard constraints that any line-break edit must respect.*
 
 *Verb-object bond: see M2 in Section 2 — the clause-nucleus merge-override covers this domain.*
+
+**Template-conformance note.** Per [`../../atu-method/docs/rule-template.md`](../../atu-method/docs/rule-template.md), full template entries (Status / Category / Decidability / Layer / Rule / UD signature / Closed lists / Scope / Exclusions / Precedence / Examples / Implementation) are deemed out of scope for Layer 1 rules in this canon. Layer 1 is the framework universal-grammatical-floor (`atu-method/docs/framework.md §1.2`), not a corpus-specific editorial decision; duplicating the framework-level definitions in canon §3.x would violate DRY and risk drift between canon and framework. The Rule Index Detector column points to the existing Layer 1 validators at `validators/syntax/check_r{2,3,4,5,6,7}_*.py`; the alignment script audits validator presence structurally per `atu-method/docs/canon-validator-alignment-protocol.md`.
 
 ### 3.3 Framing Devices Attach
 
@@ -651,6 +662,28 @@ The solemnity-prefixed speech-intro formula **ἀμήν (ἀμήν) λέγω σ�
 
 ### 3.7 Parallel Structures and Stacking
 
+This section covers three per-line rules (R12 / R13 / R14) governing how parallel and correlative structures map to colometric lines, plus one Principle entry (R28) that bounds them. The Principle is documented inline at the top because it disciplines the per-line rules below; the per-line rules each have their own sub-section.
+
+---
+
+#### R28 — Textual Asymmetry Overrides Editorial Symmetry (Principle entry)
+
+**Status:** Active
+**Category:** Principle (governing stance, not a per-line rule)
+
+**Rule.** When a passage has a positive/negative counterpart pair and the author uses a different structure in one than the other, editors SHOULD preserve the author's asymmetry and SHOULD NOT reshape the text to force editorial parallelism.
+
+**Examples.**
+- *Compliant:* Matt 25:35–36 (positive) splits each condition into its own line with its own finite verb (`epeinasa gar kai edokate moi phagein, / edipsesa kai epotisate me, / ... / esthenesa kai epeskepsasthe me, / en phylake emen kai elthate pros me.`). Matt 25:43 (negative) uses ONE verb `ouk epeskepsasthe me` to cover both `asthenes` and `en phylake`, then introduces the unmerciful action differently. The negative version's line structure reflects the Greek's single-verb treatment — splitting it to mirror the positive would require inventing predication the text does not supply.
+
+**Operational test.** Count the finite verbs, elided verbs, and distinct predicative heads in each parallel passage. If they differ between positive and negative, the asymmetry is the author's and the lines should reflect it. If they don't differ, editorial treatment should converge.
+
+This is a specific instance of the broader principle that **the text is authoritative over the methodology's aesthetic preferences.** Where the author chose asymmetry, we preserve it; where the editor imposed asymmetry, we normalize it. R28 is cited by R12 / R13 / R14 below as the bounding constraint when their parallel-stacking impulse conflicts with textual asymmetry.
+
+---
+
+#### 3.7.1 R12 — Parallel Stacking
+
 **Parallel stacking rule.** When the author builds parallel structures, stack them vertically to make the rhetoric visible:
 
 ```
@@ -666,11 +699,19 @@ eisporeuomenai sympnigousin ton logon,
 
 **When NOT to stack:** Multiple objects of a single verb do NOT stack — they are one thought, not separate predications. "They offered gifts: gold and frankincense and myrrh" (Matt 2:11) is one offering of three things, not three separate offerings. The test: can each member be reconstructed as an independent predication by supplying the verb? If yes, stack. If they are all objects/complements of one verb, keep together.
 
+---
+
+#### 3.7.2 R13 — Correlative Pair Treatment
+
 **Correlative pairs (eite/eite, oute/oute, mete/mete).** The stacking rule depends on whether each member is a distinct proposition or a qualifying phrase.
 
-- **Correlative members with distinct predicates -> stack each on its own line.** Each member is a complete predication.
-- **Correlative members sharing a single predicate -> one proposition -> stay.** When all members feed into one shared verb, the correlatives are distributing subjects/objects/qualifiers over a single predication.
-- **Correlative phrases (prepositional, nominal, participial) modifying a head -> may stay together.** These are not independent predications; they distribute a single head across alternatives. `legomenoi theoi eite en ourano eite epi ges` (1 Cor 8:5).
+- **Correlative members with distinct predicates → stack each on its own line.** Each member is a complete predication.
+- **Correlative members sharing a single predicate → one proposition → stay.** When all members feed into one shared verb, the correlatives are distributing subjects/objects/qualifiers over a single predication.
+- **Correlative phrases (prepositional, nominal, participial) modifying a head → may stay together.** These are not independent predications; they distribute a single head across alternatives. `legomenoi theoi eite en ourano eite epi ges` (1 Cor 8:5).
+
+---
+
+#### 3.7.3 R14 — Men/De Contrast Stacking
 
 **Men/de contrast stacking.** Greek's built-in contrast structure becomes spatially visible:
 
@@ -695,13 +736,7 @@ alla phronein eis to sophronein,
 
 **Paradox pairs.** Antithetical pairs that form a single paradox merge onto one line: "seeing they may see and not perceive" is one thought — the paradox is the unit, not its halves (Mark 4:12, Isaiah quotation).
 
-**Textual asymmetry overrides editorial symmetry.** When a passage has a positive/negative counterpart pair and the author uses a different structure in one than the other, preserve the author's asymmetry — do not reshape the text to force editorial parallelism.
-
-Canonical case: Matt 25:35–36 (positive) splits each condition into its own line with its own finite verb (`epeinasa gar kai edokate moi phagein, / edipsesa kai epotisate me, / ... / esthenesa kai epeskepsasthe me, / en phylake emen kai elthate pros me.`). Matt 25:43 (negative) uses ONE verb `ouk epeskepsasthe me` to cover both `asthenes` and `en phylake`, then introduces the unmerciful action differently. The negative version's line structure reflects the Greek's single-verb treatment — splitting it to mirror the positive would require inventing predication the text does not supply.
-
-Test: is the structural difference between parallel passages authorial (one uses N verbs, the other M≠N) or editorial (we split one and not the other for no text-grounded reason)? Authorial asymmetry is preserved. Editorial asymmetry is a parallelism-consistency drift and should be fixed. The distinction: count the finite verbs, elided verbs, and distinct predicative heads in each passage. If they differ between positive and negative, the asymmetry is the author's and the lines should reflect it. If they don't differ, editorial treatment should converge.
-
-This is a specific instance of the broader principle that **the text is authoritative over the methodology's aesthetic preferences.** Where the author chose asymmetry, we preserve it; where the editor imposed asymmetry, we normalize it. See also "The Complete Framework" (Section 2, step 4) for how R28 operates at the split-trigger level within the full decision procedure.
+---
 
 *Three §3.7 subsections (Need/Response Paired Beats, Imperative + Divine-Consequence, Cause-Consequence Bonded Beats) retired 2026-04-25 — see §9 Superseded Formulations.*
 
@@ -889,9 +924,12 @@ These 22 illatives are encoded in the validator's `_ILLATIVE_KNOWN` set so they 
 
 **Phase A applied:** 2026-05-11 (20 merges). Phase B (9-12 word cases, cross-verse) deferred to future session.
 
-### 3.15 Authorial Style Principle
+### 3.15 R27 — Authorial Style Principle (Principle entry)
 
-The same colometric framework applies uniformly to all NT authors. Do not adjust thresholds, rules, or sensitivity by author or genre. Let the colometric output reveal authorial differences rather than encoding assumptions about them.
+**Status:** Active
+**Category:** Principle (governing stance, not a per-line rule)
+
+**Rule.** The same colometric framework SHOULD apply uniformly to all NT authors. Editors SHOULD NOT adjust thresholds, rules, or sensitivity by author or genre. Let the colometric output reveal authorial differences rather than encoding assumptions about them.
 
 Mark's paratactic short lines and Paul's periodic long lines both emerge from applying the same criteria consistently. The difference in output IS the finding — it reflects genuine compositional differences between authors, not editorial preferences about how each author "should" look.
 
