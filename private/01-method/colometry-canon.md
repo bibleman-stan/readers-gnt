@@ -813,36 +813,129 @@ Test: is there a finite verb in the clause following δέ? If yes → split (a n
 
 *27 confirmed splits applied corpus-wide. Discourse-linguistic grounding refined 2026-05-13 (commit pending) — colometric behavior unchanged; rule's editorial warrant updated from legacy "contrast pivot" framing to Runge/Levinsohn "development marker" framing.*
 
-### 3.9 Vocative Rule (Refined Three-Way Treatment)
+### 3.9 R18 — Vocative Rule (Refined Three-Way Treatment)
 
-**Default: vocatives get their own line** when they initiate or resume direct address. A vocative at the start of a discourse turn (paragraph-opening or post-speech-intro position) is opening a camera-angle turn — the speaker is now turning toward an addressee — and earns its own line as a complete address act.
+**Status:** Active
+**Category:** B (Editorial, judgment-required)
+**Decidability:** UD-pattern (subject-appositive / object-appositive branches) / Discourse-context-needed (boundary-case branches)
+**Layer:** 3
 
-**Apposition exception: a vocative merges into the preceding line when it is grammatically appositive to an already-established second-person address in the same clause-span.** The grammatical signature: somewhere in the preceding line(s) of the same clause-span, *not separated from the vocative by a speech-introducing boundary* (ano teleia or colon), there is either a second-person pronoun (any form of sy / hymeis) or a second-person finite verb. "Clause-span" here means the syntactic unit; intervening Stephanus 1551 verse-markers are irrelevant per §1 versification-not-a-signal.
+**Rule.** A vocative SHOULD occupy its own v4/grk line as a complete address act, EXCEPT in the apposition cases enumerated below. The apposition exception fires when the vocative is grammatically appositive to an already-established second-person element in the same clause-span — either (a) a second-person pronoun (any form of σύ / ὑμεῖς), or (b) a second-person finite verb. Clause-span means the syntactic unit *not separated from the vocative by a speech-introducing boundary* (`·` / `:`); intervening verse-markers are irrelevant. When the apposition exception fires, the vocative SHOULD merge into the preceding line. Triggering condition is the 2p pronoun (heuristic — not decision-gating), not the person of the main verb.
 
-Two justifications, not one:
+**UD signature.**
+~~~yaml
+trigger_subject_appositive:
+  vocative_line:
+    has_vocative: true
+  preceding_clause_span:
+    has_2p_finite_verb: true   # e.g., Ὕπαγε / Ἀγνοεῖτε / Θάρσει
+    no_speech_intro_boundary_between: true
+  action: MERGE_BACKWARD
 
-1. **Subject-appositive rule** — when the vocative names the implicit subject of a 2p finite verb (`Hypage, Satana`, `Agnoeite, adelphoi`, `Tharsei, teknon`, `Ouai hymin, grammateis kai Pharisaioi hypokritai`). The verb and vocative form *one atomic predication*.
-2. **Object-appositive rule** — when the vocative restates an explicit 2p pronoun already in the clause (`Parakalo hymas, adelphoi`, `Gnorizo hymin, adelphoi`). The address is already established; the vocative is affective restatement.
+trigger_object_appositive:
+  vocative_line:
+    has_vocative: true
+  preceding_clause_span:
+    has_explicit_2p_pronoun: true  # σύ / σοί / σέ / ὑμεῖς / ὑμᾶς / ὑμῖν
+    no_speech_intro_boundary_between: true
+  action: MERGE_BACKWARD
 
-**Verb person is irrelevant.** The triggering condition is the 2p *pronoun*, not the person of the main verb. `Akoloutheso soi, kyrie:` (Luke 9:61) — kyrie merges because it is object-appositive to soi, regardless of akoloutheso being first person. Contrast Acts 9:10 `Idou ego, / kyrie.` (correctly split: ego is 1p, kyrie is not appositive to any 2p element).
+trigger_boundary_case:
+  vocative_line:
+    has_vocative: true
+    is_turn_initial OR is_tail_vocative OR after_speech_intro_punct OR is_repeated_vocative_pair OR is_stacked_parallel_vocative_member
+  action: REVIEW   # default-own-line; per-case judgment
 
-**Boundary cases that stay on their own line:**
-- **Turn-initial vocative** — opening a new discourse turn (paragraph-opening, post-speech-intro), no preceding grammar to lean on within the turn.
-- **Tail vocative** — clause-final address, distinct act.
-- **Vocative after speech-intro punctuation** — the prior 2p markers belong to the outer layer, not the inner address.
-- **Stacked parallel vocatives** — treated as a parallel address structure (pateres / neaniskoi / paidia in 1 John 2:12-14).
+trigger_frame_plus_vocative_cluster:
+  vocative_line:
+    has_extra_clausal_discourse_marker_with_vocative: true   # Λοιπόν, ἀδελφοί, etc.
+  action: KEEP_WHOLE   # frame + vocative cluster on one line; content next line
+~~~
 
-**Discourse-frame + vocative cluster rule.** When a sentence-initial discourse marker (Loipon, To loipon, Loipon oun, Tauta de, Kago, etc.) co-occurs with a vocative, *both* are extra-clausal elements and cluster on one line; the proposition follows on the next line. Canonical example: `Loipon, adelphoi, / stekete en kyrio.` (Phil 4:1 pattern). The vocative still earns its line; it earns *that* line together with the frame particle.
+**Scope.** All v4/grk vocative occurrences. Direct-address cases governed by R18; epithets and titular nominatives are out of scope.
 
-**Repeated vocatives as a rhetorical unit still stay together.** `Kyrie kyrie` (Matt 7:21-22) is one speech act.
+**Exclusions** (closed list — each cites dominating rule or governing pattern).
+1. **Patriarch-deity-triad** — `ὁ θεὸς Ἀβραάμ καὶ ὁ θεὸς Ἰσαάκ καὶ ὁ θεὸς Ἰακώβ` and variants. → R18a-GNT (§3.9a)
+2. **Repeated-vocative speech act** — `Κύριε κύριε` (Matt 7:21–22, Luke 6:46) treated as a single speech act. → R7 / §3.9 repeated-vocative carve-out
+3. **Stacked parallel vocatives as J1 series** — `πατέρες / νεανίσκοι / παιδία` (1 John 2:12–14) governed by J1 (parallel series). → J1
+4. **Vocative after speech-intro boundary (`·` / `:`)** — boundary severs apposition relation; default own-line applies.
 
-*125 vocative merges landed across 21 books.*
+**Precedence.** §3.5 Tier 2 (formula / address integrity). Yields to R7 (vocative-indivisibility — Layer 1), R18a-GNT (patriarch-deity-triad, Tier 2). Wins over R1 No-Anchor when the merge target carries the predication (the apposition exception is the No-Anchor satisfying mechanism for vocative-only lines).
+
+**Examples.**
+- *Compliant (default own-line):* `Παῦλος, ἀπόστολος Χριστοῦ Ἰησοῦ διὰ θελήματος θεοῦ,` — opening address, own line per default.
+- *Compliant (subject-appositive merge):* `Ὕπαγε, Σατανᾶ` (Matt 4:10) — 2p imperative + appositive vocative merged.
+- *Compliant (object-appositive merge):* `Παρακαλῶ ὑμᾶς, ἀδελφοί,` — explicit ὑμᾶς + appositive vocative merged.
+- *Compliant (object-appositive despite 1p verb):* `Ἀκολουθήσω σοι, κύριε·` (Luke 9:61) — `κύριε` merges via apposition to `σοι` even though `ἀκολουθήσω` is 1p.
+- *Compliant (boundary case — turn-initial split):* `Ἰδοὺ ἐγώ,` / `κύριε.` (Acts 9:10) — `ἐγώ` is 1p; no 2p apposition; vocative stays own line.
+- *Compliant (frame + vocative cluster):* `Λοιπόν, ἀδελφοί,` / `στήκετε ἐν κυρίῳ.` (Phil 4:1 pattern) — discourse-frame + vocative cluster on one line; proposition next.
+- *Ambiguous-REVIEW:* a tail vocative where the apposition relation is borderline (e.g., dative addressee in a participial frame several tokens earlier) — surface for editorial review.
+
+**Implementation.**
+- Validator: `validators/colometry/check_r18_vocative.py`
+- Applier: (none — Category B / editorial-judgment rule; validator emits STRONG-MERGE-CANDIDATE for mechanical apposition branches and REVIEW-REQUIRED for boundary cases)
+- Closed-list definitions: (no closed lists; the rule enumerates 2p pronoun and 2p finite-verb signatures inline)
+- Scholarship: `private/01-method/scholarship/r18.md` (Burton §82–84 / Wallace pp.65–71 / BDF §145–149 vocative grounding; canonical cases for subject-appositive and object-appositive sub-rules; boundary-case discipline)
+- Audit trail: `private/01-method/audit-trail/r18.md` (125-merge sweep across 21 books, 2026-04; "verb person irrelevant" clarification provenance)
 
 ### 3.9a R18a-GNT — Patriarch-Deity-Triad Indivisibility
 
-*Ported from BoFM R18a 2026-05-11. Mechanical Category A.*
+**Status:** Active
+**Category:** A (Mechanical, mandatory)
+**Decidability:** Surface-pattern
+**Layer:** 3
 
-**Patriarch-deity-triad (Exod 3:6 LXX quotation; R18a-GNT, ported from BoFM R18a 2026-05-11).** The Exodus citation *ὁ θεὸς Ἀβραάμ καὶ ὁ θεὸς Ἰσαάκ καὶ ὁ θεὸς Ἰακώβ* (and its anchor-shared variants) appears at five NT loci: Matt 22:32, Mark 12:26, Luke 20:37, Acts 3:13, Acts 7:32. The triad-as-unit functions as a single fixed referring expression to YHWH; severing the span across lines fractures the unitary deity-reference into the apparent enumeration of three deities. **Rule.** A verse-block whose tokens contain `θεός`-lemma governing `Ἀβραάμ`, followed (in order, within the same verse) by `Ἰσαάκ`, followed by `Ἰακώβ`, MUST keep the entire spanning sequence whole on a single line. **Status:** Active. **Category:** A (Mechanical, mandatory). **Layer:** 3 (sister to the Revelation frozen-formula note above; ported from BoFM R18a). **Closed list of attested variants:** fully-distributed (`ὁ θεὸς Ἀβραάμ καὶ ὁ θεὸς Ἰσαάκ καὶ ὁ θεὸς Ἰακώβ` — Matt 22:32, Mark 12:26); anchor-shared (`τὸν θεὸν Ἀβραάμ καὶ θεὸν Ἰσαάκ καὶ θεὸν Ἰακώβ` — Luke 20:37); compressed (`ὁ θεὸς Ἀβραάμ καὶ Ἰσαάκ καὶ Ἰακώβ` — Acts 3:13, Acts 7:32); extended-lead (`ὁ θεὸς τῶν πατέρων σου, ὁ θεὸς Ἀβραάμ καὶ Ἰσαάκ καὶ Ἰακώβ` — Acts 7:32 full). **Exclusions.** (1) Personal-name list without θεός anchor (e.g., Acts 7:8 patriarchal genealogy) — coordinate-NP-object territory, R18a-GNT does not fire. (2) Non-canonical triad orderings — Ἀβραάμ → Ἰσαάκ → Ἰακώβ is the only attested order; no reversals. (3) Lead-in title phrases on separate lines (e.g., `ὁ θεὸς τῶν πατέρων ἡμῶν,` at Acts 3:13 line 60) — appositional continuations stay on their own line; the triad-line itself must be whole. **Precedence.** Tier 2 indivisibility, parallel to BoFM R18a §3.5 Tier 2. Wins over subtractive vetoes internal to the triad span. Where the triad follows a speech-intro verb (Mark 12:26: `λέγων·`, Luke 20:37: `ὡς λέγει`), the speech-intro lands on its own prior line per R11 and the triad opens the content line. **Validator:** `validators/colometry/check_r18a_patriarch_triad.py`. **Corpus survey (2026-05-11).** Matt 22:32, Mark 12:26, Acts 3:13 already compliant (triad whole); Luke 20:37 violation (triad split across lines 211-212); Acts 7:32 Category B Stan-review (triad whole on line 153, but extended formula `Ἐγὼ ὁ θεὸς τῶν πατέρων σου` on line 152 is appositional-lead boundary judgment).
+**Rule.** A verse-block whose tokens contain a `θεός`-lemma occurrence governing `Ἀβραάμ`, followed within the same verse (in order) by `Ἰσαάκ` and then `Ἰακώβ` — matching any variant in `PATRIARCH_TRIAD_VARIANTS` — MUST keep the entire spanning sequence whole on a single v4/grk line. The triad-as-unit functions as a single fixed referring expression to YHWH; severing the span across lines fractures the unitary deity-reference into the apparent enumeration of three deities.
+
+**UD signature.**
+~~~yaml
+trigger:
+  verse_token_sequence:
+    matches_variant_in: PATRIARCH_TRIAD_VARIANTS
+    order: [θεός_governing_Ἀβραάμ, Ἰσαάκ, Ἰακώβ]
+action: KEEP_WHOLE
+~~~
+
+**Closed lists** (machine-readable).
+~~~yaml
+PATRIARCH_TRIAD_VARIANTS:
+  fully_distributed:
+    surface: "ὁ θεὸς Ἀβραάμ καὶ ὁ θεὸς Ἰσαάκ καὶ ὁ θεὸς Ἰακώβ"
+    attested_at: [Matt 22:32, Mark 12:26]
+  anchor_shared:
+    surface: "τὸν θεὸν Ἀβραάμ καὶ θεὸν Ἰσαάκ καὶ θεὸν Ἰακώβ"
+    attested_at: [Luke 20:37]
+  compressed:
+    surface: "ὁ θεὸς Ἀβραάμ καὶ Ἰσαάκ καὶ Ἰακώβ"
+    attested_at: [Acts 3:13, Acts 7:32]
+  extended_lead:
+    surface: "ὁ θεὸς τῶν πατέρων σου, ὁ θεὸς Ἀβραάμ καὶ Ἰσαάκ καὶ Ἰακώβ"
+    attested_at: [Acts 7:32]
+~~~
+
+**Scope.** All v4/grk verses containing a patriarch-deity-triad span matching one of `PATRIARCH_TRIAD_VARIANTS`. Five NT loci: Matt 22:32, Mark 12:26, Luke 20:37, Acts 3:13, Acts 7:32 (Exod 3:6 LXX citation pattern).
+
+**Exclusions** (closed list).
+1. **Personal-name list without θεός anchor** — coordinate-NP-object territory; e.g., Acts 7:8 patriarchal genealogy lists Ἀβραάμ / Ἰσαάκ / Ἰακώβ without the `θεός` anchor. R18a-GNT does not fire.
+2. **Non-canonical triad orderings** — Ἀβραάμ → Ἰσαάκ → Ἰακώβ is the only attested order; no reversals.
+3. **Lead-in title phrases on separate lines** — appositional continuations (e.g., `ὁ θεὸς τῶν πατέρων ἡμῶν,` at Acts 3:13 line 60) stay on their own line; the triad-line itself must be whole.
+
+**Precedence.** §3.5 Tier 2 (formula integrity / indivisibility — parallel to BoFM R18a). Wins over subtractive vetoes internal to the triad span. Where the triad follows a speech-intro verb (Mark 12:26: `λέγων·`; Luke 20:37: `ὡς λέγει`), the speech-intro lands on its own prior line per R11 and the triad opens the content line.
+
+**Examples.**
+- *Compliant (fully-distributed):* `ὁ θεὸς Ἀβραὰμ καὶ ὁ θεὸς Ἰσαὰκ καὶ ὁ θεὸς Ἰακώβ;` (Matt 22:32) — whole on one line.
+- *Compliant (anchor-shared):* `τὸν θεὸν Ἀβραὰμ καὶ θεὸν Ἰσαὰκ καὶ θεὸν Ἰακώβ.` (Luke 20:37) — whole on one line.
+- *Compliant (compressed):* `ὁ θεὸς Ἀβραὰμ καὶ ὁ θεὸς Ἰσαὰκ καὶ ὁ θεὸς Ἰακώβ, ὁ θεὸς τῶν πατέρων ἡμῶν,` (Acts 3:13 — triad whole; appositional title continues).
+- *Non-compliant:* triad split across two lines as if enumerating three deities.
+- *Excluded (Exclusion 1):* Acts 7:8 patriarchal genealogy without the `θεός` anchor.
+
+**Implementation.**
+- Validator: `validators/colometry/check_r18a_patriarch_triad.py`
+- Applier: (validator emits STRONG-MERGE-CANDIDATE for triad-span lines that are split)
+- Closed-list definitions: §PATRIARCH_TRIAD_VARIANTS (inline above; cross-referenced in §3 Closed-List Registry)
+- Audit trail: `private/01-method/audit-trail/r18a-gnt.md` (2026-05-11 codification, BoFM-port provenance, 5-locus survey results)
+
+*Port note.* R18a-GNT is the GNT adaptation of BoFM R18a (Patriarch-Deity-Triad Indivisibility). Closed-list `PATRIARCH_TRIAD_VARIANTS` is GNT-specific (Greek surface forms); the underlying formula-integrity rationale matches BoFM's KJV-1769 instantiation.
 
 ### 3.10 Participial Phrases and Genitive Absolutes
 
