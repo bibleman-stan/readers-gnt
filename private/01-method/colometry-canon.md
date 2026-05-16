@@ -445,24 +445,61 @@ action: MERGE_BACKWARD   # upward-merge into preceding anchored line is the appl
 
 **Template-conformance note.** Per [`../../atu-method/docs/rule-template.md`](../../atu-method/docs/rule-template.md), full template entries (Status / Category / Decidability / Layer / Rule / UD signature / Closed lists / Scope / Exclusions / Precedence / Examples / Implementation) are deemed out of scope for Layer 1 rules in this canon. Layer 1 is the framework universal-grammatical-floor (`atu-method/docs/framework.md §1.2`), not a corpus-specific editorial decision; duplicating the framework-level definitions in canon §3.x would violate DRY and risk drift between canon and framework. The Rule Index Detector column points to the existing Layer 1 validators at `validators/syntax/check_r{2,3,4,5,6,7}_*.py`; the alignment script audits validator presence structurally per `atu-method/docs/canon-validator-alignment-protocol.md`.
 
-### 3.3 Framing Devices Attach
+### 3.3 R8 — Framing Devices Attach
 
-If a construction's function is to frame, introduce, or pivot to what comes next, it should not be severed from what comes next. A frame without its content is an orphan; content without its frame loses its rhetorical context.
+**Status:** Active
+**Category:** A (Mechanical, mandatory)
+**Decidability:** Surface-pattern
+**Layer:** 3
 
-| Marker | Function | Example |
-|--------|----------|---------|
-| **idou** | Deictic/mirative pointer | idou ego apostello ton angelon mou (Mark 1:2) |
-| **dio** | Inferential conclusion | dio kai ho theos auton hyperupsosen (Phil 2:9) |
-| **oun** | Resumptive/consequential | oun as post-positive, attaches to its clause |
-| **nyn de** | Discourse pivot | nyn de choris nomou dikaiosyne theou pephanerootai (Rom 3:21) |
-| **alla** | Adversative correction | Already in rules — confirmed as framing device |
-| **gar** | Explanatory ground | Already in rules — confirmed as framing device |
-| **plen** | Restrictive adversative | plen hoti to pneuma... diamartyretai moi (Acts 20:23) |
-| **toigaroun** | Strong inference | toigaroun kai hemeis... trechomen (Heb 12:1) |
+**Rule.** A line-final occurrence of any member of the `FRAMING_DEVICES` closed list MUST be merged forward into the next v4/grk line. Framing devices lead their content; they MUST NOT stand orphaned at line-final position. The two-token sequence `νῦν δέ` (discourse pivot) is treated identically to single-token members.
 
-These are not merely "break triggers" — they lead their content; never orphan them at the end of a line.
+**UD signature.**
+~~~yaml
+trigger:
+  line_final_token:
+    lemma_in: FRAMING_DEVICES
+  OR_line_final_two_token_sequence:
+    sequence: [νῦν, δέ]
+action: MERGE_FORWARD
+~~~
 
-**Functional-gloss nuance (codified 2026-05-14, corroborated Runge §2.7 + Levinsohn §5.4.2).** The colometric rule — *lead your content, never line-final* — is uniform across the table. But the discourse FUNCTION varies, and the loose gloss "introduce what follows" is over-extended for one member: **γάρ does not frame-forward; it strengthens-backward.** γάρ-introduced material is offline background that confirms or grounds the *preceding* assertion — Levinsohn §5.4.2 verbatim: "The presence of γάρ constrains the material that it introduces to be interpreted as strengthening some aspect of the previous assertion, rather than as distinctive information." Runge §2.7 concurs (γάρ = +continuity, -development, +support per the §2 connectives matrix). The colometric placement (γάρ leads its clause) is unaffected — but the framing-device gloss should be read as: *these markers lead their content; their discourse direction varies — γάρ supports the prior unit, οὖν advances closely from it, ἀλλά corrects an expectation it set, διό draws an inference from it.* The table's "Function" column already encodes these per-marker; the blanket "introduce what follows" is the gloss being nuanced here.
+**Closed lists** (machine-readable).
+~~~yaml
+FRAMING_DEVICES:
+  - ἰδού      # deictic / mirative pointer
+  - διό        # inferential conclusion
+  - οὖν       # resumptive / consequential
+  - ἀλλά     # adversative correction
+  - γάρ        # explanatory ground (strengthens-backward; placement unaffected)
+  - πλήν     # restrictive adversative
+  - τοιγαροῦν # strong inference
+
+FRAMING_DEVICE_TWO_TOKEN_SEQUENCES:
+  - [νῦν, δέ]  # discourse pivot
+~~~
+
+**Scope.** All v4/grk lines across the 260-chapter corpus. The rule applies to LINE-FINAL occurrences only — framing-device tokens that are not line-final are unaffected (they already lead their content within the line).
+
+**Exclusions** (closed list — each cites dominating rule or condition).
+1. **Framing device is not line-final** — the device is already correctly positioned; rule does not fire.
+2. **End-of-verse position with no following v4/grk line in the same verse** — no merge target. Surface as REVIEW for editorial decision.
+3. **R6 fixed-phrase membership** — when the framing-device token participates in a fixed phrase Layer-1 rule prohibits splitting (rare; e.g., idiomatic combinations), R6 governs. → R6
+
+**Precedence.** §3.5 Tier 1 (Layer-1-adjacent break-legality). Yields to R2–R7 (Layer 1). Wins over all Tier-2+ merge-overrides and split-determinations that would otherwise leave a framing device line-final.
+
+**Examples.**
+- *Compliant:* `ἰδοὺ ἐγὼ ἀποστέλλω τὸν ἄγγελόν μου` (Mark 1:2) — ἰδού leads its content within the line.
+- *Compliant:* `νῦν δὲ χωρὶς νόμου δικαιοσύνη θεοῦ πεφανέρωται` (Rom 3:21) — νῦν δέ leads its content.
+- *Compliant:* `διὸ καὶ ὁ θεὸς αὐτὸν ὑπερύψωσεν` (Phil 2:9) — διό leads its inferential clause.
+- *Non-compliant:* a line ending in stranded `… ἰδού,` / `… γάρ,` / `… οὖν,` — MUST be merged forward into the following line.
+- *Excluded (not line-final):* mid-line ἰδού / γάρ / οὖν — rule does not fire.
+
+**Implementation.**
+- Validator: `validators/syntax/check_r8_framing_devices.py`
+- Applier: (surface-pattern MERGE_FORWARD; integrated into validator)
+- Closed-list definitions: §FRAMING_DEVICES (inline above; cross-referenced from §3 Closed-List Registry)
+- Scholarship: `private/01-method/scholarship/r8.md` (per-marker discourse-function nuance; Runge §2.7 + Levinsohn §5.4.2 grounding for γάρ strengthens-backward)
 
 ### 3.4 Subordinate Clause Introduction Breaks
 
