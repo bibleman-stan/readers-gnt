@@ -1151,12 +1151,14 @@
 
 <!-- Top bar -->
 <div class="topbar">
-  <button class="topbar-icon" id="btn-home" onclick="openNav()" aria-label="Menu" title="Menu">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-  </button>
-  <div class="topbar-loc" id="topbar-loc" onclick="openNav()">
-    <span class="topbar-book" id="topbar-book">Mark</span>
-    <span class="topbar-chap" id="topbar-chap">1</span>
+  <div style="display:flex; align-items:center; gap:8px; min-width:0;">
+    <button class="topbar-icon" id="btn-home" onclick="openNav()" aria-label="Menu" title="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <div class="topbar-loc" id="topbar-loc" onclick="openNav()">
+      <span class="topbar-book" id="topbar-book">Mark</span>
+      <span class="topbar-chap" id="topbar-chap">1</span>
+    </div>
   </div>
   <div class="topbar-icons">
     <button class="topbar-icon" id="btn-search" onclick="toggleSearch()" aria-label="Search" title="Search (Ctrl+F)">
@@ -1442,8 +1444,23 @@ function setHash(book, chapter, verse) {
 
 // --- Topbar ---
 
+// SBL-style medium abbreviations for the topbar location label. Kept
+// distinct from BOOKS[…].short (which is 2-char and powers the dense
+// landing-page book grid). Family-wide convention: book labels in the
+// topbar are abbreviated (matches tanakh-reader "Deut 6" style).
+const BOOK_DISP = {
+  matt:'Matt', mark:'Mark', luke:'Luke', john:'John', acts:'Acts',
+  rom:'Rom', '1cor':'1 Cor', '2cor':'2 Cor', gal:'Gal', eph:'Eph',
+  phil:'Phil', col:'Col', '1thess':'1 Thess', '2thess':'2 Thess',
+  '1tim':'1 Tim', '2tim':'2 Tim', titus:'Titus', phlm:'Phlm',
+  heb:'Heb', jas:'Jas', '1pet':'1 Pet', '2pet':'2 Pet',
+  '1john':'1 John', '2john':'2 John', '3john':'3 John',
+  jude:'Jude', rev:'Rev',
+};
+
 function updateTopbar() {
-  document.getElementById('topbar-book').textContent = BOOKS[currentBook].name;
+  var disp = BOOK_DISP[currentBook] || BOOKS[currentBook].name;
+  document.getElementById('topbar-book').textContent = disp;
   document.getElementById('topbar-chap').textContent = currentChapter;
   document.title = BOOKS[currentBook].name + ' ' + currentChapter + ' — GNT Reader';
 }
