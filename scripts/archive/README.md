@@ -41,6 +41,32 @@ See `private/01-method/colometry-canon.md` §10 (2026-04-26 later⁷ entry) for 
 - **`generate_english_glosses.py`** — original from-scratch seeder for `eng-gloss/` (read v4 with v3 fallback, wrote new English glosses). Superseded by `regenerate_english.py`, the incremental-regen tool with a skip-guard for the active loop.
 - **`generate_pauline_english.py`** — Pauline-subset variant of the seeder with v1/v3/v4 three-tier fallback. Predates full v4 coverage. Zero inbound references at archive time.
 
+### 2026-05-16 archival wave (validators/colometry/ takeover + completed sweeps)
+
+When the verdict-layer migration and R8/R9/R10/R17 implementations shipped (commits `c1886b60` → `0a7cfb36`), the canonical detector home became `validators/syntax/` and `validators/colometry/`. The following 12 `scripts/` entries — appliers that finished sweeping, validators superseded by canon-named successors, and a self-retired investigation — moved here.
+
+#### Validators superseded by `validators/colometry/*`
+- **`validate_r11_speech_intro.py`** — superseded by `validators/colometry/check_r11_speech_intro.py`.
+- **`validate_r18_vocative.py`** — superseded by `validators/colometry/check_r18_vocative.py`.
+- **`validate_r19_genabs.py`** — superseded by `validators/colometry/check_r19_genabs.py`. (Note: `scripts/sweep_r19_genabs.py` remains active as the sweep applier.)
+
+#### Investigation superseded by canon-named successor
+- **`scan_hoti_complement.py`** — superseded by `validators/colometry/check_r10_hoti_complementizer.py` (commit `c1886b60`, R10 canon §3.5). The script was a pre-canon exploratory survey; canon §3.5 + R10 validator now own the detector logic.
+
+#### Appliers — sweep complete
+- **`apply_line_splits.py`** — generic line-split applier from the early hand-edit phase; one-off completed.
+- **`apply_m1_merges.py`** — M1 bonded-pair merge applier; sweep complete corpus-wide.
+- **`apply_vocative_rule.py`** — vocative own-line applier; sweep complete and now enforced by `validators/colometry/check_r18_vocative.py`.
+
+#### ὅτι-lead flip sweeps (canon §3.5 R10)
+- **`flip_hoti_to_lead.py`** — Greek-side ὅτι-lead flip sweep; complete.
+- **`flip_that_to_lead.py`** — English-side companion sweep (KJV "that" alignment); complete.
+
+#### Other one-offs
+- **`filter_reverse_splits.py`** — auxiliary filter for completed split-sweep; no longer referenced.
+- **`scan_emdash_midline.py`** — self-retired per inline rationale (corpus convention settled; no remaining inbound calls).
+- **`sweep_r19_correct_acc.py`** — one-off accusative-correction bug-fix sweep on R19 output; complete.
+
 ## What stays in `scripts/`
 
 The active editorial loop and any scripts referenced by it remain in `scripts/`:
