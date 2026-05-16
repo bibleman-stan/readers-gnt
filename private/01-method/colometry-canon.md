@@ -386,25 +386,54 @@ Architecture.md §interface-contracts states: *"Precedence hierarchy — §3.5 o
 
 These gaps are documented for visibility, not codified as new rules. Closing them is detector-engineering work (separate commits, normal validator-extension audit if scope expands).
 
-### 3.1 The No-Anchor Rule
+### 3.1 R1 — No-Anchor Rule
 
-Every ATU must carry at least one thought-marking anchor: (1) a finite verb, (2) an infinitive, (3) a participle standing as predicate, or (4) a substantive head that is the independently predicated topic of its own line.
+**Status:** Active
+**Category:** A (Mechanical, mandatory)
+**Decidability:** UD-pattern
+**Layer:** 3
 
-*Serves:* the generative force (atomic thought / propositions) — this rule operationalizes the DEFAULT case of the generative force (the predication test).
+**Rule.** Every v4/grk line MUST carry at least one thought-marking anchor of one of the following kinds: (a) a finite verb; (b) an infinitive; (c) a participle standing as the predicate of its own clause; or (d) a substantive head that is the independently-predicated topic of its own line. A line lacking all four anchor types MUST be merged into an adjacent anchored line, UNLESS the line satisfies one of the enumerated exclusions.
 
-**Participle scope.** Anchor type (3) is "a participle standing as predicate" — not any participle. A participle functioning as an adverbial modifier or attributive adjective does not anchor its line; only a participle standing as the predicate of its own clause (genitive absolute, circumstantial participle carrying an independent predication via ellipsis) counts.
+**UD signature.**
+~~~yaml
+trigger:
+  line:
+    has_no_finite_verb: true
+    has_no_infinitive: true
+    has_no_predicate_participle: true
+    has_no_independent_substantive_topic: true
+  no_exclusion_satisfied: true
+action: MERGE_BACKWARD   # upward-merge into preceding anchored line is the applier's default;
+                         # downward-merge (MERGE_FORWARD) fallback when the line opens its verse
+~~~
 
-**Critical clarification:** A "substantive head" does NOT include bare noun phrases that continue a prior clause's predicate as list objects or appositional extensions. A line of objects from the previous line's verb fails the anchor test even though it contains nouns.
+**Anchor-type scoping notes.**
+- Anchor (c) requires a participle *standing as predicate of its own clause* (genitive absolute, circumstantial participle carrying independent predication via ellipsis, predicate participle). Adverbial-modifier and attributive-adjective participles do NOT anchor the line.
+- Anchor (d) — "substantive head" — does NOT include bare noun phrases that continue a prior clause's predicate as list objects or appositional extensions. The most common false-anchor failure mode is the compound-list continuation: the prior line establishes a verb; the current line names additional objects. The current line looks anchored (it contains nouns) but is not.
 
-**Exemptions:**
-1. Single-line verses — atomic by definition.
-2. Speech-intro prefixes ending with ano teleia (kai palin:, kai eipen:) — the punctuation marks a new discourse layer.
-3. Standalone sentence connectives (Hoste, Ara oun, Dia touto) — hinge markers that license a merge with the *next* line.
-4. Lines that fail the anchor test but pass the two-prong exception test (Section 2) — formally-marked parallel series members, portrait-building accumulations, speech-act announcements, and classical commata may legitimately lack a traditional anchor.
+**Scope.** All v4/grk lines across the 260-chapter corpus. R1 operationalizes the DEFAULT case of the generative force (atomic-thought / propositions): a line that carries no proposition is not an ATU.
 
-**Object-continuation failure mode:** The most common way a noun-only line slips through is as a compound-list continuation: the previous line establishes a verb, and the following line names additional objects. These look anchored (they have nouns) but are not.
+**Exclusions** (closed list — each cites dominating rule or principle).
+1. **Single-line verse** — a verse with one line is atomic by definition; the no-anchor test is vacuous. → §1 atomic-thought
+2. **Speech-intro prefix ending with ano teleia (`·`)** — punctuation marks a new discourse layer. → R11 / J3
+3. **Standalone sentence connective** (e.g., Ὥστε, Ἄρα οὖν, Διὰ τοῦτο) — hinge marker that licenses merge with the *next* line. → R8
+4. **Two-prong exception passes** — formally-marked parallel-series member (J1), portrait-building accumulation (J2), speech-act announcement (J3), classical comma (J4), substantive adjunct as own focus (J5). → J1 / J2 / J3 / J4 / J5
 
-**Corpus status:** 860 no-anchor merges applied across 26 books. Final scan: 0 unanchored lines remaining corpus-wide.
+**Precedence.** §3.5 Tier 1 (foundational atomic-thought floor). Yields to Layer 1 R2–R7 (break-legality). All Tier-2+ merge-overrides (M1–M4, M4-GNT-1) and split-determinations (J1–J5) presuppose the no-anchor test has cleared.
+
+**Examples.**
+- *Compliant (finite-verb anchor):* `ἦλθεν Ἰησοῦς ἀπὸ Ναζαρὲτ τῆς Γαλιλαίας` — anchored by ἦλθεν.
+- *Compliant (predicate-participle / gen-abs anchor):* `Ταῦτα δὲ αὐτοῦ ἐνθυμηθέντος,` — anchored by ἐνθυμηθέντος (gen abs).
+- *Non-compliant (object-continuation):* a bare-NP line continuing the prior line's verb as additional objects carries no anchor; MUST be merged backward into the verb-bearing line.
+- *Excluded by R8:* `Διὰ τοῦτο,` — standalone connective hinge that licenses merge with the *following* line; not a no-anchor violation.
+- *Excluded by J3:* `ἀμὴν λέγω ὑμῖν,` — speech-act announcement permitted as own-line under the two-prong exception.
+
+**Implementation.**
+- Validator: `scripts/scan_no_anchor_lines.py`
+- Applier: `scripts/apply_no_anchor_merges.py`
+- Closed-list definitions: (none — rule enumerates anchor types and exclusions inline)
+- Audit trail: `private/01-method/audit-trail/r1.md`
 
 ### 3.2 Syntactic Bond Rules — Migrated to Layer 1
 
