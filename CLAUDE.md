@@ -74,14 +74,9 @@ When Stan names a verse with a specific desired partition or proposes a fix: lin
 
 Same FP class in 2+ rules OR 2+ validators OR 2+ verses in one session = engine-level fix at `validators/_shared/*` / `atu-method/atu_method/*` / canon rule extension. Per-verse / per-validator guard the second time = whack-a-mole. **Swat the bug class, not the instance.**
 
-### Grammar constrains ATU boundaries; it does not determine them
+### Grammar constrains; atomic-thought determines
 
-Stan codified verbatim 2026-05-13: *"grammar doesn't determine ATUs boundaries, but it can constrain them."* Authoritative cross-corpus statement at [`../atu-method/docs/framework.md §1.2`](../atu-method/docs/framework.md) tail ("Constraint vs. determination — the asymmetry") + memory [`feedback_grammar_constrains_not_determines.md`](../atu-method/memories/feedback_grammar_constrains_not_determines.md).
-
-- **Grammar gives PROHIBITIONS, not PRESCRIPTIONS.** Koine syntax (Layer 1 break-legality), R10 (`hoti` complement integrity), R7 (genitive-absolute integrity), R-rules formula integrity constrain where breaks **can't** go.
-- **Atomic-thought is the determination engine.** Generative principle + J1–J5 + image/camera-angle/period tests determine where breaks **should** go.
-- **When proposing a new rule:** "constraint or determination?" Constraints ground in grammar; determinations require the atomic-thought test (propositional, not grammatical). Grammar can confirm a determination is safe; grammar alone cannot generate it.
-- **For closed-list extensions:** threshold is "is this position content-empty such that breaking here leaves a line with no atomic thought?" Operationalization, not grammatical-pattern catalog.
+Cross-corpus discipline at `framework.md §1.2` tail + `../atu-method/memories/feedback_grammar_constrains_not_determines.md` + new Factor A in `feedback_three_anti_default_factors.md`. GNT-specific instantiation: Layer 1 = Koine break-legality; R10 = ὅτι complement integrity; R7 = genitive-absolute integrity; R-rules instantiate formula integrity. Determination via J1–J5 + bidirectional atomic-thought test.
 
 ### Rule-derivative vs ad-hoc
 
@@ -91,13 +86,9 @@ Ad-hoc changes (no codified rule, or Category B editorial, or Category C exegeti
 
 ### Adversarial-audit discipline
 
-Before non-trivial implementation (new validator with classification logic, new rule subsection, new closed-list extension, new shared helper, **OR ANY edit to `../atu-method/atu_method/*` cross-corpus shared infrastructure**), FIRST tool call must be ≥2 parallel Agent adversarial dispatches in one message OR an explicit `Audit-skippable: <named-trivial-class>` declaration.
+Cross-corpus discipline at `../atu-method/docs/change-protocol.md §7.3` (12 mandatory-audit triggers) + `../atu-method/memories/feedback_rule_proposal_gates.md` (four-gate pre-proposal checklist). Before non-trivial implementation OR ANY edit to `../atu-method/atu_method/*`: ≥2 parallel Agent adversarial dispatches OR `Audit-skippable: <named-trivial-class>`. Same-trigger audits across distinct angles fire in ONE batch, parallel. Canon-touching commit messages require `Audit-skippable per §6.5 ([reason])` OR `Audit dispatched: [evidence]`; commit-msg hook enforces.
 
-Pre-commit on canon-touching commits: every commit message touching `private/01-method/colometry-canon.md` includes `Audit-skippable per §6.5 ([reason])` OR `Audit dispatched: [evidence]`. The commit-msg hook detects canon-extension patterns and requires the declaration. When uncertain, dispatch.
-
-Same-trigger audits across distinct angles (discipline / scope / cross-project consistency / corpus impact) fire in ONE batch via parallel Agent calls, not in series.
-
-**First-round-reframes is the default.** When dispatching the audit panel on a canon addition framed as "restatement / no new claim," expect at least one of the three audits to flag a scope/precedence/closed-list claim I didn't see. Schedule re-drafting time as part of the commit timeline; don't commit as-drafted on a NEEDS-MODIFICATION verdict. Specific anti-pattern: list-order in one operational sentence (e.g., "after Tier 1 vetoes, formula integrity, complement integrity have settled") is sequence-of-application within ONE rule's resolution, NOT a tier-rank assertion. Generalizing it is scope-creep.
+**First-round-reframes is the default.** When dispatching the audit panel on a canon addition framed as "restatement / no new claim," expect at least one of the three audits to flag a scope/precedence/closed-list claim that wasn't visible. Schedule re-drafting time; don't commit as-drafted on a NEEDS-MODIFICATION verdict. Specific anti-pattern: list-order in one operational sentence ("after Tier 1 vetoes, formula integrity, complement integrity have settled") is sequence-of-application within ONE rule's resolution, NOT a tier-rank assertion. Generalizing it is scope-creep.
 
 ### Apply causes regression
 
