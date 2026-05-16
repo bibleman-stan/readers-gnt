@@ -937,32 +937,115 @@ PATRIARCH_TRIAD_VARIANTS:
 
 *Port note.* R18a-GNT is the GNT adaptation of BoFM R18a (Patriarch-Deity-Triad Indivisibility). Closed-list `PATRIARCH_TRIAD_VARIANTS` is GNT-specific (Greek surface forms); the underlying formula-integrity rationale matches BoFM's KJV-1769 instantiation.
 
-### 3.10 Participial Phrases and Genitive Absolutes
+### 3.10a R19 — Genitive Absolute Always Own Line
 
-**Genitive absolutes are grammatically independent and ALWAYS get their own line.** A gen abs has its own subject (in genitive) and its own predicate (a genitive participle) — the literal meaning of "absolute" is "set apart" from the main clause. It functions as an interjectory frame: a camera shift, a scene-setter, an aside. Merging a gen abs into adjacent material absorbs an independent beat into something it is not. See Acts 1:9 showcase in Section 1.
+**Status:** Active
+**Category:** A (Mechanical, mandatory)
+**Decidability:** UD-pattern
+**Layer:** 3
 
-**Default rule for circumstantial participles: merge with their main verb.** The default function of a Greek circumstantial participle is adverbial framing — temporal, causal, concessive, conditional, manner. All of these are DEPENDENT: they frame the main verb's action and are not complete thoughts without it.
+**Rule.** A genitive absolute (anarthrous genitive participle agreeing with a genitive subject NP, syntactically detached from the main clause) MUST occupy its own v4/grk line. The "absolute" sense is literal: the construction is set apart from the main clause, functioning as an interjectory frame (camera shift, scene-setter, aside). Merging a gen abs into adjacent material absorbs an independent beat into something it is not.
 
-**Exception — circumstantial participle with independent semantic weight:** A participial phrase earns its own line when it constitutes a **second predication** — that is, when the main verb can be implicitly repeated to reconstruct the participle as an independent thought. (Note: standard grammars reserve "supplementary participle" for participles completing specific verbs like τυγχάνω, λανθάνω, φθάνω, παύω per Smyth §2094-96 and Wallace §645-47, with Burton §445–446 on supplementary participles after these specific verbs. Our usage is broader than the technical "supplementary" category — any circumstantial participle that constitutes an independent predication via ellipsis of the main verb. Burton §434–450 enumerates the adverbial-participle classes — time, condition, concession, cause, purpose, means, manner, attendant circumstance — that our R20/R22 discipline navigates.)
+**UD signature.**
+~~~yaml
+trigger:
+  span:
+    has_anarthrous_genitive_participle: true
+    has_agreeing_genitive_subject_NP: true
+    is_syntactically_detached_from_main_clause: true
+  branch_cataphoric:
+    gen_abs_introduces_following_main_clause: true
+    action: STAND_OWN_LINE
+  branch_anaphoric:
+    gen_abs_anaphorically_back-references_prior_clause: true
+    action: STAND_OWN_LINE   # fails standalone-ATU bidirectional test;
+                              # the gen abs still gets its own line per R19,
+                              # but the anaphoric dependence is flagged at framework §1.1
+  branch_review:
+    gen_abs_subject_or_predication_locus_ambiguous: true
+    action: REVIEW
+~~~
 
-**The test:** Can you reconstruct the participle as an independent predication by supplying the main verb? If "the angel appeared" is complete thought 1, then "[the angel appeared] standing at the right of the altar" is complete thought 2 via ellipsis. Split. But if "having seen the star" requires "they rejoiced" to become a thought at all — if there's no implicit repeated verb — it's a dependent frame. Merge.
+**Scope.** All v4/grk lines containing a genitive absolute construction. R19 fires regardless of cataphoric/anaphoric direction; the bidirectional ATU test at framework §1.1 governs the standalone-ATU question separately.
 
-**Split examples (supplementary predication):**
-- Luke 1:11: `ophthe de auto angelos kyriou / hestos ek dexion tou thysiasteriou` — "an angel appeared" / "[appeared] standing at the right." **Split.**
-- Mark 4:38: `kai autos en en te prymne / epi to proskephalaion katheudon` — "he was in the stern" / "[was] sleeping on the cushion." **Split.**
+**Exclusions** (closed list).
+1. **Genitive of comparison / genitive of reference** — not a gen abs (no participle agreeing with the genitive). Out of scope.
+2. **Articular genitive participle modifying a noun** — attributive participle, not absolute construction. → R20 (default merge for attributive).
+3. **Gen abs already on its own line** — rule does not re-fire (already compliant).
 
-**Merge examples (dependent frame):**
-- Matt 2:10: `idontes de ton astera echaresan charan megalen sphodra` — "having seen the star" is causal framing for "they rejoiced." **Merge.**
-- Luke 1:19: `Ego eimi Gabriel ho parestekos enopion tou theou` — attributive participle as title. **Merge.**
+**Precedence.** §3.5 Tier 2 (framing-integrity / formula-integrity). Yields to R2–R7 (Layer 1). Wins over M4-GNT-1 (§3.18 universal exclusion #11) and R28-ext (R28-ext defers to R19 when frame contains gen abs).
 
-**Periphrastic constructions** (en + participle, mello + infinitive, archomai + infinitive) are always one verbal unit — never split.
+**Examples.**
+- *Compliant (cataphoric):* `Ταῦτα δὲ αὐτοῦ ἐνθυμηθέντος,` / `ἰδοὺ ἄγγελος κυρίου …` (Matt 1:20) — gen abs frames the main clause that follows.
+- *Compliant (Acts 1:9 showcase):* `Καὶ ταῦτα εἰπών,` / `βλεπόντων αὐτῶν` / `ἐπήρθη` — gen abs `βλεπόντων αὐτῶν` as own line (camera-shift to witnesses), main clause `ἐπήρθη` follows.
+- *Compliant (anaphoric, with framework §1.1 flag):* `Ταῦτα δὲ αὐτοῦ εἰπόντος,` standing as own line; the anaphoric `ταῦτα` back-references the preceding speech. R19 still mandates own-line; the anaphoric dependence is a downstream ATU-question, not an R19 carve-out.
+- *Excluded by Exclusion 2:* attributive `ὁ παρεστηκὼς ἐνώπιον τοῦ θεοῦ` (Luke 1:19) — not a gen abs. → R20.
 
-**Periphrastic with elided auxiliary (Acts 8:28 showcase):** When a periphrastic chain extends across multiple imperfective actions sharing one auxiliary, the auxiliary can be elided for subsequent elements. Each "ellipsized periphrastic" is a complete predication via ellipsis and stacks as its own line:
-```
-en te hypostrephon              <- explicit periphrastic ("he was returning")
-kai kathemenos epi tou harmatos autou   <- elliptical periphrastic ([en] sitting)
-kai aneginosken ton propheten Esaian.   <- imperfect equivalent, stacks as parallel
-```
+**Implementation.**
+- Validator: `validators/colometry/check_r19_genabs.py` + sweep applier `scripts/sweep_r19_genabs.py`
+- Applier: `scripts/sweep_r19_genabs.py` (sweep applier for the default own-line direction)
+- Closed-list definitions: (none — rule keys on grammatical signature, not a closed list)
+- Scholarship: `private/01-method/scholarship/r19.md` (Burton §428–429 / Wallace pp.654–665 / BDF §423 gen-abs syntax; cataphoric vs. anaphoric framework §1.1 interaction)
+- Audit trail: `private/01-method/audit-trail/r19.md` (gen-abs sweep records; Acts 1:9 showcase analysis)
+
+### 3.10b R20 — Participial Phrase (Refined)
+
+**Status:** Active
+**Category:** B (Editorial, judgment-required)
+**Decidability:** UD-pattern (default-merge / supplementary-predication branches) / Discourse-context-needed (boundary cases)
+**Layer:** 3
+
+**Rule.** A circumstantial participle SHOULD merge with its main verb as a dependent adverbial frame (temporal / causal / concessive / conditional / manner / means / purpose / attendant-circumstance — Burton's adverbial-participle classes). The participle SHOULD occupy its own line ONLY when it constitutes a **second predication** — i.e., the main verb can be implicitly repeated (ellipsis) to reconstruct the participle as an independent thought.
+
+**UD signature.**
+~~~yaml
+trigger_default_merge:
+  participle_line:
+    has_circumstantial_participle: true
+    no_independent_predication_via_ellipsis: true
+  action: MERGE_BACKWARD   # merge with main verb's line
+
+trigger_supplementary_predication_split:
+  participle_line:
+    has_circumstantial_participle: true
+    test_independent_predication_via_ellipsis: true   # main verb reconstructible
+  action: STAND_OWN_LINE
+
+trigger_periphrastic_ellipsis_split:
+  participle_line:
+    is_part_of_periphrastic_chain_with_shared_auxiliary: true
+    auxiliary_explicit_on_prior_line_or_elided: true
+  action: STAND_OWN_LINE   # each ellipsized periphrastic = own line (J1 interaction)
+
+trigger_attributive_merge:
+  participle_line:
+    has_articular_attributive_participle: true   # ὁ παρεστηκώς / ὁ ἑστώς
+  action: MERGE   # functions like relative clause modifying the noun head
+~~~
+
+**Scope.** All v4/grk lines containing a non-gen-abs participle (gen abs is R19 territory). Encompasses circumstantial (adverbial), supplementary (predicative), and attributive participles.
+
+**Exclusions** (closed list — each cites dominating rule or governing pattern).
+1. **Genitive absolute** — R19 fires first. → R19
+2. **Periphrastic construction (explicit single-aux + participle)** — R5 (Layer 1) governs; never split a periphrastic pair. → R5
+3. **Articular attributive participle modifying a noun** — handled within R20 (attributive merge branch), but distinct from circumstantial-default-merge; no exception, same merge result.
+4. **Short ὅπου/ὅτε/ὅς clause completing the predicate** — not a participle; R22 territory. → R22
+
+**Precedence.** §3.5 Tier 3 (editorial direction; per-case judgment). Yields to R5 (periphrastic — Layer 1), R19 (gen abs — Tier 2). The second-predication test is the per-case judgment threshold.
+
+**Examples.**
+- *Compliant (default merge):* `ἰδόντες δὲ τὸν ἀστέρα ἐχάρησαν χαρὰν μεγάλην σφόδρα` (Matt 2:10) — "having seen the star" is causal framing for "they rejoiced"; dependent frame merges with main verb.
+- *Compliant (supplementary-predication split):* `ὤφθη δὲ αὐτῷ ἄγγελος κυρίου` / `ἑστὼς ἐκ δεξιῶν τοῦ θυσιαστηρίου` (Luke 1:11) — "[appeared] standing at the right"; second predication via ellipsis.
+- *Compliant (periphrastic ellipsis, Acts 8:28):* `ἦν τε ὑποστρέφων` / `καὶ καθήμενος ἐπὶ τοῦ ἅρματος αὐτοῦ` / `καὶ ἀνεγίνωσκεν τὸν προφήτην Ἠσαΐαν.` — ellipsized periphrastic chain stacks as parallel.
+- *Compliant (attributive merge):* `Ἐγώ εἰμι Γαβριὴλ ὁ παρεστηκὼς ἐνώπιον τοῦ θεοῦ` (Luke 1:19) — attributive participle as title; merges as noun-modifier continuation.
+- *Excluded by R19:* genitive-absolute participle phrase — R19 fires; R20 does not apply.
+- *Ambiguous-REVIEW:* a circumstantial participle whose second-predication-via-ellipsis status is borderline (e.g., when the auxiliary supply requires interpretive supply rather than grammatical recovery) — surface for editorial review.
+
+**Implementation.**
+- Validator: `scripts/scan_line_ending_participles.py` *(scanner-only — emits candidates; no auto-applier)*
+- Applier: (none — Category B / editorial-judgment rule)
+- Closed-list definitions: (no closed lists; rule keys on grammatical-class signature + second-predication test)
+- Scholarship: `private/01-method/scholarship/r20.md` (Burton §434–450 adverbial-participle classes; Burton §445–446 + Wallace §645–647 + Smyth §2094–96 supplementary-participle scope; BDF §415–425 participle syntax; second-predication test worked examples; periphrastic-ellipsis Acts 8:28 showcase)
 
 ### 3.11 Orphaned Adverbial Completion Rule
 
