@@ -14,15 +14,17 @@ Colometric analysis of the Greek New Testament has a growing scholarly literatur
 
 ## Method
 
-Line breaks are warranted by three convergent forces:
+This edition implements the **ATU Method** — a cross-corpus methodology framework maintained at [atu-method](https://github.com/bibleman-stan/atu-method) and shared with the sibling readers ([readers-tanakh](https://github.com/bibleman-stan/readers-tanakh), [readers-bofm](https://github.com/bibleman-stan/readers-bofm)).
 
-1. **Generative (propositional)** — each line carries one ATU, one mental image
-2. **Subtractive (syntactic)** — Greek syntax constrains where breaks may legally fall
-3. **Diagnostic (single image)** — multiple distinct images on one line force a split
+Every editorial break is positively justified. Three forces operate at every candidate boundary:
 
-The framework is grounded in cognitive linguistics (Chafe's intonation units, Miller's chunking) and ancient manuscript precedent for *per cola et commata* layout (Codex Bezae, Claromontanus, Jerome's Vulgate), with reference to modern colometric scholarship (Marschall, Lee & Scott, Nasselqvist).
+- **Generative.** Each proposition splits by default (`framework.md §1.1`). Five structural justifications (J1–J5: parallel series, portrait accumulation, speech-act announcement, classical commata, substantive adjunct) extend the rule to non-predicated atomic thoughts.
+- **Subtractive.** Four merge-overrides (M1–M4: Gorgianic bonded pair, verb-object clause-nucleus bond, bare-governor indivisibility, fragmented atomic thought) catch cases where naïve application of split-triggers would fragment a unit that should stay whole.
+- **Diagnostic.** When the generative and subtractive forces leave a candidate boundary genuinely ambiguous, a single-image / camera-angle check is the tiebreaker.
 
-The pipeline uses **Macula Greek syntax trees** (Clear Bible, CC-BY-4.0) for clause boundary detection and **MorphGNT** morphological tagging for pattern classification, followed by editorial review.
+The methodology is operated as what it is: a consistently-applied editorial practice grounded in target-language syntax, tested against the corpus, and refined by validator sweeps. It is not derived from a cognitive theory; no such claim is asserted (`framework.md §0.3`). External editorial overlays — NA28 paragraph structure, ancient codex colometric arrangements (Bezae, Claromontanus), Jerome's Vulgate cola — are preserved as textual evidence and consulted as historical pedigree (the per-cola format is not a new idea), but carry no authority in editorial decisions (`framework.md §0.4`). Modern colometric scholarship (Marschall 2024; Lee & Scott 2009; Nasselqvist 2015) is engaged as scholarly contemporary, not as method-derivation.
+
+The pipeline uses **Macula Greek syntax trees** (Clear Bible, CC-BY-4.0) as the constituent-tree primitive and **MorphGNT** morphological tagging for pattern classification, with a UD-query validator suite implementing each canon rule and a pre-commit baseline check.
 
 ## Structural English Gloss
 
