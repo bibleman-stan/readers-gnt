@@ -298,15 +298,15 @@ This diagnostic catches the failure mode where a canon change is self-framed as 
 | R5 | Never split periphrastic construction | Layer 1 | Layer 1 table | `validators/syntax/check_r5_periphrastic.py` |
 | R6 | Fixed phrases stay together | Layer 1 | Layer 1 table | `validators/syntax/check_r6_fixed_phrases.py` |
 | R7 | Vocative units indivisible | Layer 1 | Layer 1 table | `validators/syntax/check_r7_vocative_units.py` |
-| R8 | Framing devices attach | Mechanical | 3.3 | *(not yet implemented)* |
-| R9 | Subordinate clause introduction breaks | Mechanical | 3.4 | *(not yet implemented)* |
-| R10 | Complementizer hoti — cognition vs. speech | Mechanical | 3.5 | *(not yet implemented)* |
+| R8 | Framing devices attach | Mechanical | 3.3 | `validators/syntax/check_r8_framing_devices.py` |
+| R9 | Subordinate clause introduction breaks | Mechanical | 3.4 | `validators/syntax/check_r9_subordinate_clause.py` |
+| R10 | Complementizer hoti — cognition vs. speech | Mechanical | 3.5 | `validators/colometry/check_r10_hoti_complementizer.py` |
 | R11 | Direct speech introduction | Mechanical | 3.6 | `validators/colometry/check_r11_speech_intro.py` |
 | R11-ext / R28-ext | Speech-act announcement after adverbial frame (split) | Mechanical | 3.6 | `validators/colometry/check_r28_speech_act_frame.py` |
 | R12 | Parallel stacking (if atomic) | Editorial | 3.7.1 | *(judgment-required; no auto-validator)* |
 | R13 | Correlative pair treatment | Editorial | 3.7.2 | *(judgment-required; no auto-validator)* |
 | R14 | Men/de contrast stacking | Editorial | 3.7.3 | *(judgment-required; no auto-validator)* |
-| R17 | De-contrast overbreak | Mechanical | 3.8 | *(not yet implemented)* |
+| R17 | De-contrast overbreak | Mechanical | 3.8 | `validators/colometry/check_r17_de_contrast_overbreak.py` |
 | R18 | Vocative rule (three-way refined) | Editorial | 3.9 | `validators/colometry/check_r18_vocative.py` |
 | R18a-GNT | Patriarch-deity-triad indivisibility | Mechanical | 3.9a | `validators/colometry/check_r18a_patriarch_triad.py` |
 | R19 | Genitive absolute always own line | Mechanical | 3.10 | `validators/colometry/check_r19_genabs.py` + `scripts/sweep_r19_genabs.py` |
@@ -338,15 +338,15 @@ Index of the closed-list lexical/syntactic sets that rules in §3 reference. Eac
 
 | List name | Members (canonical) | Defined in | Consumed by |
 |---|---|---|---|
-| **R8 framing devices** | ἰδού, διό, οὖν, νυν δέ, ἀλλά, γάρ, πλήν, τοιγαροῦν | §3.3 table | *(no validator yet — manual editorial)* |
-| **R9 subordinate-clause openers** | ἵνα, ὥστε, ὅτι, διότι, ὅταν, ὅτε, εἰ, ἐάν, καθώς, μήποτε | §3.4 | *(no validator yet)* |
-| **R10 cognition / perception / belief verbs** (merge with ὅτι) | οἶδα, γινώσκω, ὁράω/εἶδον/βλέπω/θεωρέω, πιστεύω, ἐπίσταμαι, νομίζω/δοκέω, εὑρίσκω, ἀκούω, συνίημι | §3.5 | *(no validator yet)* |
-| **R10 declaration / speech / writing verbs** (split from ὅτι) | λέγω, εἶπον, γράφω, μαρτυρέω, ὁμολογέω, διδάσκω, κηρύσσω, ἀπαγγέλλω, καταγγέλλω, ἀναγγέλλω, ἐπαγγέλλομαι, προφητεύω | §3.5 | *(no validator yet)* |
+| **R8 framing devices** | ἰδού, διό, οὖν, νυν δέ, ἀλλά, γάρ, πλήν, τοιγαροῦν | §3.3 table | `validators/syntax/check_r8_framing_devices.py` |
+| **R9 subordinate-clause openers** | ἵνα, ὥστε, ὅτι, διότι, ὅταν, ὅτε, εἰ, ἐάν, καθώς, μήποτε | §3.4 | `validators/syntax/check_r9_subordinate_clause.py` |
+| **R10 cognition / perception / belief verbs** (merge with ὅτι) | οἶδα, γινώσκω, ὁράω/εἶδον/βλέπω/θεωρέω, πιστεύω, ἐπίσταμαι, νομίζω/δοκέω, εὑρίσκω, ἀκούω, συνίημι | §3.5 | `validators/colometry/check_r10_hoti_complementizer.py` |
+| **R10 declaration / speech / writing verbs** (split from ὅτι) | λέγω, εἶπον, γράφω, μαρτυρέω, ὁμολογέω, διδάσκω, κηρύσσω, ἀπαγγέλλω, καταγγέλλω, ἀναγγέλλω, ἐπαγγέλλομαι, προφητεύω | §3.5 | `validators/colometry/check_r10_hoti_complementizer.py` |
 | **R10 speech-intro frame class** | ἀποκρίνομαι (verb + ὅτι merges as speech-intro frame) | §3.5 | `validators/colometry/check_r11_speech_intro.py` (R11 family) |
 | **R11 / R28-ext speech-frame verbs** (J3 instantiation) | λέγω, εἶπον, ἀποκρίνομαι, ἔφη + dative addressee | §3.6 | `validators/colometry/check_r11_speech_intro.py`, `validators/colometry/check_r28_speech_act_frame.py` |
 | **R18a-GNT patriarch-triad variants** | fully-distributed `ὁ θεὸς Ἀβραάμ καὶ ὁ θεὸς Ἰσαάκ καὶ ὁ θεὸς Ἰακώβ`; anchor-shared `τὸν θεὸν Ἀβραάμ καὶ θεὸν Ἰσαάκ καὶ θεὸν Ἰακώβ`; compressed `ὁ θεὸς Ἀβραάμ καὶ Ἰσαάκ καὶ Ἰακώβ`; extended-lead `ὁ θεὸς τῶν πατέρων σου, ὁ θεὸς Ἀβραάμ καὶ Ἰσαάκ καὶ Ἰακώβ` | §3.9a | `validators/colometry/check_r18a_patriarch_triad.py` |
 | **M1 GNT bonded pairs** | {κόπῳ, μόχθῳ} (2 Cor 11:27); {χαίρειν μετὰ χαιρόντων, κλαίειν μετὰ κλαιόντων} (Rom 12:15); {Τολμηταί, αὐθάδεις} (2 Pet 2:10) | §1 (GNT instantiations) | *(no validator yet — operational via M1 reasoning)* |
-| **M4-GNT-1 SUBJECT_SHAPES** | C1 vocative_address_NP, C2 np_with_appositive, C3 np_with_participial, C4 np_with_relcl, C5 biographical_intro | §3.18 (inline YAML) | `validators/colometry/check_m4_gnt_1_subject_orphan.py` |
+| **M4-GNT-1 SUBJECT_SHAPES** | C1 vocative_address_NP, C2 np_with_appositive, C3 np_with_participial, C5 biographical_intro (C4 np_with_relcl retired 2026-05-16; see §3.18) | §3.18 (inline YAML) | `validators/colometry/check_m4_gnt_1_subject_orphan.py` |
 | **M4-GNT-1 LEADING_CONNECTIVES_BLOCK_FIRE** | καί, δέ, γάρ, οὖν, ἀλλά, ἤ, εἰ, ὅτι, ἵνα, ὅταν, ὅτε, ὡς, ὥστε, ὅπου, ὁ, ἡ, τό | §3.18 (inline YAML) | `validators/colometry/check_m4_gnt_1_subject_orphan.py` |
 | **Period Test obligatory-complement verbs (non-R10)** | κελεύω, ἐντέλλομαι (command); θέλω, ἐπιθυμέω, βούλομαι (desire); δείκνυμι, δηλόω (demonstrate) | §4 Period Test | *(diagnostic test — used by humans, not by an auto-validator)* |
 | **Layer 1 syntactic-bond pairs** (R2–R7) | conjunctions never-final; articles never-final; negation+verb never-split; periphrastic εἰμί+ptc never-split; fixed phrases (κατὰ + acc, εἰς τὸ + inf, etc.); vocative units never-split | `data/syntax-reference/greek-break-legality.md` | `validators/syntax/check_r{2,3,4,5,6,7}_*.py` |
@@ -1310,7 +1310,7 @@ SUBJECT_SHAPES_M4_GNT1:
   - C1_vocative_address_NP      # household-code vocative subject: Αἱ γυναῖκες, / οἱ ἄνδρες, etc.
   - C2_np_with_appositive       # NP-with-appositive subject: ὁ κύριος, ὁ θεὸς τῶν πνευμάτων,
   - C3_np_with_participial      # NP-with-participial modifier (G5 override applies)
-  - C4_np_with_relcl            # NP-with-relative-clause subject (no clean v4/grk demonstration; see Examples note)
+  # C4_np_with_relcl — RETIRED 2026-05-16 (see note below).
   - C5_biographical_intro       # καί τις X ὀνόματι Y, [appositive,] [participle,]
 
 LEADING_CONNECTIVES_BLOCK_FIRE:
@@ -1347,7 +1347,7 @@ LEADING_CONNECTIVES_BLOCK_FIRE:
 - *Excluded by G2:* `Ἰδοὺ ἡ δούλη κυρίου·` — line A is a complete verbless clause; `γένοιτό μοι` is a separate predication. STAY-SPLIT. (Luke 1:38)
 - *Excluded by R7:* bare `ἀδελφοί,` alone on a line — pure vocative address. → R7
 
-*Note: C4 (NP-with-relcl) currently lacks a clean v4/grk demonstration. Cases originally labeled C4 in prior canon drafts (e.g., Heb 3:1) were on closer inspection NP-with-appositive (C2). Flagged for follow-up audit on whether C4 should be retired from the closed list or backfilled with a verified instance.*
+*C4 (NP-with-relcl) retired 2026-05-16: no clean v4/grk demonstration; cases originally labeled C4 (e.g., Heb 3:1) are NP-with-appositive (C2). License to re-add if a verified C4 instance surfaces in v4/grk. SUBJECT_SHAPES active membership: C1, C2, C3, C5.*
 
 **Implementation.**
 - Validator: `validators/colometry/check_m4_gnt_1_subject_orphan.py`
