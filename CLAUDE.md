@@ -14,13 +14,24 @@ A colometric reading edition of the Greek New Testament at **gnt-reader.com**. E
 
 **CONSULT-ON-TRIGGER:**
 - `private/01-method/colometry-canon.md` — anything touching `validators/`, `scripts/regenerate_english.py`, `data/text-files/v4/grk/`, syntax-reference, or rule-interpretation.
-- `data/syntax-reference/greek-break-legality.md` — R2–R7 Layer 1 break-legality.
+- `data/syntax-reference/greek-break-legality.md` — R2–R7 break-legality (Stage 1 syntactic constraints).
 - `../atu-method/docs/framework.md` — methodology, rule-design, autonomy-boundary. Authoritative cross-corpus body.
 - `../atu-method/docs/apparatus.md` + `architecture.md` — English-layer / alignment-pipeline / cross-sibling architectural work. Picture-shaped: what the reader sees on gnt-reader.com when done.
 - `../atu-method/docs/change-protocol.md` — any canon revision.
-- `../atu-method/docs/glossary.md` — ambiguous term (ATU, M1–M4, J1–J5).
+- `../atu-method/docs/toolset-architecture.md` — production-tier pipeline (Stage 1 LLM identification / Stage 2 constraint catalog audit / Stage 3 editorial review).
+- `../atu-method/docs/glossary.md` — ambiguous term (ATU, bidirectional test, minimal rubric).
 
 **Self-report before first substantive response:** one line per mandatory file read; pending-item disposition (each = executing-now / retired-with-rationale / re-deferred-with-concrete-trigger; "awaiting Stan direction" is drift not a defer); red flags. Silent skip = orientation failure.
+
+---
+
+## Production tier (ATU rendering at scale)
+
+ATU rendering at scale = **Opus 3-pass with agreement scoring**. Frugal-default applies for everything else. See [`../atu-method/docs/toolset-architecture.md`](../atu-method/docs/toolset-architecture.md) §Stage 1 and [`../atu-method/memories/feedback_production_tier_empirical.md`](../atu-method/memories/feedback_production_tier_empirical.md).
+
+---
+
+## Orientation protocols
 
 **Compaction-resume protocol.** Per [`../atu-method/memories/feedback_compaction_resume_protocol.md`](../atu-method/memories/feedback_compaction_resume_protocol.md) (cross-corpus shared discipline): when resuming from a compaction event, the FIRST action after the mandatory orientation reads is to read the last 20-30 user↔assistant back-and-forth turns from the session JSONL verbatim. Report the re-read as part of the orientation self-report. Don't write wrap artifacts / session-notes / full-transcript dumps; surface state inline.
 
@@ -54,7 +65,7 @@ Before reaching for either:
 
 When Stan flags a problem at a specific verse, that's a directive to investigate the rule set, NOT patch the verse. Right shape:
 1. Diagnose: what's the underlying class/pattern Stan's intuition is responding to?
-2. **Audit yourself FIRST** — walk M1 / M2 / M3 / M4 / J1–J5 / formula-integrity / R-rules explicitly against the actual canon. Pay attention to **explicit exclusions** (e.g., complement integrity in framework §1.2 scopes to VERB+ADJ only — NOUN-headed is out of scope, not a gap). If the framework's existing answer is "split, this is excluded," that's a real answer.
+2. **Audit yourself FIRST** — walk the bidirectional test + restrictive-relative binding + minimal-rubric constraints (per `framework.md §1.2`) + formula-integrity / R-rules explicitly against the actual canon. Pay attention to **explicit exclusions** (e.g., complement integrity in framework §1.2 scopes to VERB+ADJ only — NOUN-headed is out of scope, not a gap). If the framework's existing answer is "split, this is excluded," that's a real answer.
 3. Only if step 2 finds a real gap, investigate corpus-wide via the structured layer (see above), not via grep-agents.
 4. **New rules trigger canon §6.5 mandatory-audit** — ≥2 parallel adversarial agents BEFORE any validator infrastructure. NO scanner / applier / closed-list entry until the rule passes. Building infrastructure first is the "fake rule" failure mode.
 5. If audit holds: codify with WHY/HOW WE KNOW/SCOPE per canon §6 defensibility-capture, build validator, apply mechanically corpus-wide.
@@ -78,7 +89,7 @@ Same FP class in 2+ rules OR 2+ validators OR 2+ verses in one session = engine-
 
 ### Grammar constrains; atomic-thought determines
 
-Cross-corpus discipline at `framework.md §1.2` tail + `../atu-method/memories/feedback_grammar_constrains_not_determines.md` + new Factor A in `feedback_three_anti_default_factors.md`. GNT-specific instantiation: Layer 1 = Koine break-legality; R10 = ὅτι complement integrity; R7 = genitive-absolute integrity; R-rules instantiate formula integrity. Determination via J1–J5 + bidirectional atomic-thought test.
+Cross-corpus discipline at `framework.md §1.2` tail + `../atu-method/memories/feedback_grammar_constrains_not_determines.md` + new Factor A in `feedback_three_anti_default_factors.md`. GNT-specific instantiation: Stage 1 LLM identification (Opus 3-pass + bidirectional test) determines the unit; Stage 2 constraint catalog audit (Koine break-legality + R10 ὅτι complement integrity + R7 genitive-absolute integrity + R-rules formula integrity) audits the determination. Constraints audit; they do not determine.
 
 ### Rule-derivative vs ad-hoc
 
@@ -114,7 +125,9 @@ Every deferred item must be visible in chat. Periodically re-examine whether hel
 
 ## Methodology stack
 
-Three forces operating simultaneously: **generative** (atomic thought drives line creation; J1–J5 structural justifications), **subtractive** (Koine syntax + complement + formula integrity trigger merges; M1–M4 merge-overrides), **diagnostic** (single image as tiebreaker). Authoritative body: [`../atu-method/docs/framework.md`](../atu-method/docs/framework.md). GNT-specific rule body: `private/01-method/colometry-canon.md`. Fresh-read both before any editorial or rule work — rules evolve fast and any in-line summary drifts.
+**Identification first, constraints second, parallelism off-axis.** Cognitive identification (LLM + bidirectional test) determines whether a unit is atomic; syntactic constraints (constraint catalog audit) function as an audit pass over that determination; parallelism is not a driver. Authoritative body: [`../atu-method/docs/framework.md`](../atu-method/docs/framework.md) §1.2. GNT-specific rule body: `private/01-method/colometry-canon.md`. Fresh-read both before any editorial or rule work — rules evolve fast and any in-line summary drifts.
+
+**Current criterion:** bidirectional test (forward grammatical closure + backward referential self-containment). **Current constraints:** restrictive-relative binding + small set of GNT-specific syntactic constraints (R10 ὅτι, R19 genitive absolute, R25 ὥστε, periphrastic, etc.) per `framework.md §1.2`. No cognitive-unity gate. No parallelism-class adjudication. No genre anchors.
 
 **Categories** (autonomy boundary per `framework.md` §2):
 - **Category A** (Mechanical, mandatory) — rule firing IS the approval; auto-apply.
@@ -176,7 +189,7 @@ When outside this table, surface. When inside, dispatch the standing answer and 
 
 **Genre-group split** (for cluster-cascade routing): Mark / Matt / Luke-Acts / John+Johannine / Pauline / Hebrews / General Epistles / Revelation. Threshold: any batch ≥25 surgical fixes spanning 3+ groups MUST be split.
 
-**Agent model routing:** Haiku for mechanical lookups; Sonnet for narrow-scope scans where rules are defined; Opus for adversarial audits / methodology synthesis / novel rule design / cross-corpus shared-infrastructure edits (`atu-method/atu_method/*`). Sonnet default; reserve Opus for reasoning-heavy work.
+**Agent model routing:** Haiku for mechanical lookups; Sonnet for narrow-scope scans where rules are defined; Opus for adversarial audits / methodology synthesis / novel rule design / cross-corpus shared-infrastructure edits (`atu-method/atu_method/*`). Sonnet default; reserve Opus for reasoning-heavy work. **Exception — ATU rendering at scale: Opus 3-pass with agreement scoring is the production protocol** (validated 2026-05-17; see Production tier section above). Sonnet 3-pass is NOT production-grade for ATU rendering. Haiku is off-table for biblical content.
 
 ---
 
