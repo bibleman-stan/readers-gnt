@@ -58,10 +58,11 @@ def load_morph_moods(path):
         ch, v = int(ref[2:4]), int(ref[4:6])
         idx = counters.get((ch, v), 0) + 1
         counters[(ch, v)] = idx
-        # MorphGNT parse code: person tense voice MOOD CASE number gender degree
+        # MorphGNT parse code: person TENSE voice MOOD CASE number gender degree
+        tense = code[1] if len(code) > 1 and pos.startswith("V") else ""
         mood = code[3] if len(code) > 3 and pos.startswith("V") else ""
         case = code[4] if len(code) > 4 else ""
-        moods[(ch, v, idx)] = (mood, pos, case)
+        moods[(ch, v, idx)] = (mood, pos, case, tense)
     return moods
 
 
@@ -91,13 +92,13 @@ def extract(lowfat_path, morph_path, chap):
                 c, v, wi = parse_osis(osis)
                 if c != chap:
                     continue
-                mood, mpos, mcase = moods.get((c, v, wi), ("", "", ""))
+                mood, mpos, mcase, mtense = moods.get((c, v, wi), ("", "", "", ""))
                 cur_cl = chain[-1] if chain else None
                 atoms.setdefault(cur_cl, []).append({
                     "verse": v, "wi": wi, "text": (ch.text or "").strip(),
                     "cls": ch.attrib.get("class", ""), "role": ch.attrib.get("role", ""),
                     "lemma": ch.attrib.get("lemma", ""), "mood": mood, "mpos": mpos,
-                    "case": mcase, "osis": osis, "chain": chain})
+                    "case": mcase, "tense": mtense, "osis": osis, "chain": chain})
             else:
                 walk(ch, chain)
 
@@ -111,6 +112,35 @@ def extract(lowfat_path, morph_path, chap):
             ordered.append(ws)
     ordered.sort(key=lambda ws: (ws[0]["verse"], ws[0]["wi"]))
     return ordered
+
+
+# Narrative books (Wallace feature 4) — Gospels + Acts. Book numbers per NUM.
+NARRATIVE_BOOKS = {1, 2, 3, 4, 5}
+
+
+def attendant_circ_participles(atom, book_num=None):
+    """NODE-FEATURE: the aorist participles in a clause-atom that are PARTICIPLES
+    OF ATTENDANT CIRCUMSTANCE per Wallace's 90% rule (Greek Grammar Beyond the
+    Basics, 640-45): (1) aorist participle, (2) aorist main verb, (3) participle
+    precedes the main verb, (4) narrative genre, (5) imperative/indicative main
+    verb. All five are computable from the fabric: tense+mood from MorphGNT,
+    precedence from osisId, genre from book_num. Returns the qualifying participle
+    word dicts. Such a participle borrows the main verb's mood and is COORDINATE,
+    not subordinate ("arise AND take") -> it binds to the finite verb as ONE ATU
+    (which cl_features' finite-head selection already enforces structurally).
+
+    Caveat: the 5 features are ~90% PRESENT in attendant circumstance but do not
+    PROVE it (ordinary circumstantial participles share them); for ATU BINDING the
+    distinction is moot — both bind. The tag is for annotation + binding-confidence."""
+    if book_num is not None and book_num not in NARRATIVE_BOOKS:
+        return []
+    fins = [w for w in atom if w["mood"] in "ID" and w["tense"] == "A"]   # F2,F5
+    out = []
+    for w in atom:
+        if w["mood"] == "P" and w["tense"] == "A":                        # F1
+            if any((w["verse"], w["wi"]) < (f["verse"], f["wi"]) for f in fins):  # F3
+                out.append(w)
+    return out
 
 
 def main():
