@@ -40,8 +40,13 @@ def load_v0_tokens(v0dir, slug, chap):
 
 
 def cl_features(words):
-    """Features of a clause from its DIRECT words (those whose innermost cl is it)."""
-    verb = next((w for w in words if w["mpos"].startswith("V")), None)
+    """Features of a clause from its DIRECT words (those whose innermost cl is it).
+    The clause head is its FINITE verb when it has one — a fronted circumstantial
+    participle (Ἐγερθεὶς παράλαβε, Ἀποκριθεὶς εἶπεν) must NOT make the clause read
+    as a participle and bind away as a satellite; the finite imperative/indicative
+    is the predication. Only verbless/non-finite clauses fall back to first verb."""
+    verbs = [w for w in words if w["mpos"].startswith("V")]
+    verb = next((w for w in verbs if w["mood"] in FINITE), None) or (verbs[0] if verbs else None)
     kind = ("FIN" if verb and verb["mood"] in FINITE else "ptcp" if verb and verb["mood"] == "P"
             else "inf" if verb and verb["mood"] == "N" else "verbless")
     first = min(words, key=lambda w: (w["verse"], w["wi"]))

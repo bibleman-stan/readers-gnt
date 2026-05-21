@@ -146,12 +146,6 @@
       "grk_excerpt": "εἴ τι ἔχοιεν πρὸς ⸀ἐμέ,"
     },
     {
-      "book": "acts-25",
-      "ref": "25:18",
-      "line_idx": 2,
-      "grk_excerpt": "⸀πονηρῶν,"
-    },
-    {
       "book": "acts-26",
       "ref": "26:15",
       "line_idx": 2,
@@ -334,7 +328,7 @@
     {
       "book": "luke-14",
       "ref": "14:3",
-      "line_idx": 3,
+      "line_idx": 2,
       "grk_excerpt": "ἢ οὔ⸃;"
     },
     {
@@ -352,7 +346,7 @@
     {
       "book": "mark-01",
       "ref": "1:41",
-      "line_idx": 5,
+      "line_idx": 3,
       "grk_excerpt": "καθαρίσθητι·"
     },
     {
@@ -366,12 +360,6 @@
       "ref": "6:22",
       "line_idx": 3,
       "grk_excerpt": "καὶ δώσω σοι·"
-    },
-    {
-      "book": "mark-07",
-      "ref": "7:25",
-      "line_idx": 0,
-      "grk_excerpt": "⸂ἀλλʼ εὐθὺς"
     },
     {
       "book": "mark-08",
