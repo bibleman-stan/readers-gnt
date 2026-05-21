@@ -1,11 +1,47 @@
 {
-  "_note": "Known coverage misses: v4/grk content lines whose Strong's-lemma signature has no surface counterpart in the host MetaV record. TAGNT/MetaV are storage-indexed by Stephanus 1551 verse-key — addressing convention only (canon §1: versification is editorial overlay, not analytical signal). When v4/grk's ATU-segmentation puts Greek on a line whose lemmas are matched by KJV words stored under an adjacent MetaV record, the distributor can't reach the match. The verse-keys here are substrate-addressing artifacts, not analytical-unit claims. Run scripts/scan_eng_kjv_coverage.py --update-baseline after intentional structural changes.",
+  "_note": "Known coverage misses: v4/grk lines with Greek content whose eng-kjv counterpart is blank. Each represents an SBLGNT-vs-KJV verse-boundary mismatch or other structural case the alignment cannot resolve. Run scripts/scan_eng_kjv_coverage.py --update-baseline after intentional structural changes.",
   "misses": [
+    {
+      "book": "1cor-06",
+      "ref": "6:3",
+      "line_idx": 1,
+      "grk_excerpt": "μήτιγε"
+    },
+    {
+      "book": "1cor-07",
+      "ref": "7:14",
+      "line_idx": 3,
+      "grk_excerpt": "ἄρα"
+    },
     {
       "book": "1cor-07",
       "ref": "7:29",
       "line_idx": 3,
-      "grk_excerpt": "τὸ λοιπὸν"
+      "grk_excerpt": "τὸ λοιπὸν⸃"
+    },
+    {
+      "book": "1cor-08",
+      "ref": "8:8",
+      "line_idx": 6,
+      "grk_excerpt": "ὑστερούμεθα⸃."
+    },
+    {
+      "book": "1cor-11",
+      "ref": "11:22",
+      "line_idx": 0,
+      "grk_excerpt": "μὴ"
+    },
+    {
+      "book": "1cor-12",
+      "ref": "12:15",
+      "line_idx": 3,
+      "grk_excerpt": "οὐ"
+    },
+    {
+      "book": "1cor-12",
+      "ref": "12:16",
+      "line_idx": 3,
+      "grk_excerpt": "οὐ"
     },
     {
       "book": "1cor-13",
@@ -14,28 +50,70 @@
       "grk_excerpt": "οὐδὲν ὠφελοῦμαι."
     },
     {
+      "book": "1cor-16",
+      "ref": "16:22",
+      "line_idx": 3,
+      "grk_excerpt": "θά⸃."
+    },
+    {
       "book": "1john-02",
       "ref": "2:14",
-      "line_idx": 7,
+      "line_idx": 10,
       "grk_excerpt": "καὶ νενικήκατε τὸν πονηρόν."
+    },
+    {
+      "book": "1john-03",
+      "ref": "3:1",
+      "line_idx": 3,
+      "grk_excerpt": "⸂καὶ ἐσμέν⸃."
     },
     {
       "book": "1thess-02",
       "ref": "2:7",
-      "line_idx": 3,
-      "grk_excerpt": "ὡς ἐὰν τροφὸς θάλπῃ τὰ ἑαυτῆς τέκνα·"
+      "line_idx": 4,
+      "grk_excerpt": "ὡς ⸀ἐὰν τροφὸς θάλπῃ τὰ ἑαυτῆς τέκνα·"
     },
     {
-      "book": "2cor-07",
-      "ref": "7:11",
-      "line_idx": 9,
-      "grk_excerpt": "ἁγνοὺς εἶναι τῷ πράγματι."
+      "book": "1tim-03",
+      "ref": "3:5",
+      "line_idx": 0,
+      "grk_excerpt": "(εἰ δέ"
     },
     {
-      "book": "2cor-10",
-      "ref": "10:4",
+      "book": "2cor-01",
+      "ref": "1:17",
       "line_idx": 2,
-      "grk_excerpt": "λογισμοὺς καθαιροῦντες"
+      "grk_excerpt": "ἄρα"
+    },
+    {
+      "book": "2cor-01",
+      "ref": "1:7",
+      "line_idx": 1,
+      "grk_excerpt": "εἰδότες"
+    },
+    {
+      "book": "2cor-08",
+      "ref": "8:13",
+      "line_idx": 3,
+      "grk_excerpt": "ἀλλʼ ἐξ ἰσότητος"
+    },
+    {
+      "book": "2cor-11",
+      "ref": "11:16",
+      "line_idx": 2,
+      "grk_excerpt": "εἰ δὲ"
+    },
+    {
+      "book": "2cor-11",
+      "ref": "11:16",
+      "line_idx": 3,
+      "grk_excerpt": "μή"
+    },
+    {
+      "book": "2cor-12",
+      "ref": "12:2",
+      "line_idx": 0,
+      "grk_excerpt": "οἶδα"
     },
     {
       "book": "2cor-13",
@@ -47,13 +125,7 @@
       "book": "2cor-13",
       "ref": "13:13",
       "line_idx": 0,
-      "grk_excerpt": "ἡ χάρις τοῦ κυρίου Ἰησοῦ Χριστοῦ καὶ ἡ ἀγάπη τοῦ θεοῦ"
-    },
-    {
-      "book": "2cor-13",
-      "ref": "13:13",
-      "line_idx": 1,
-      "grk_excerpt": "καὶ ἡ κοινωνία τοῦ ἁγίου πνεύματος μετὰ πάντων ὑμῶν."
+      "grk_excerpt": "ἡ χάρις τοῦ κυρίου Ἰησοῦ Χριστοῦ καὶ ἡ ἀγάπη τοῦ θεοῦ καὶ ἡ "
     },
     {
       "book": "3john-01",
@@ -82,44 +154,68 @@
     {
       "book": "acts-05",
       "ref": "5:39",
-      "line_idx": 2,
-      "grk_excerpt": "ἐπείσθησαν"
-    },
-    {
-      "book": "acts-05",
-      "ref": "5:39",
-      "line_idx": 3,
-      "grk_excerpt": "δὲ αὐτῷ,"
-    },
-    {
-      "book": "acts-09",
-      "ref": "9:28",
-      "line_idx": 1,
-      "grk_excerpt": "παρρησιαζόμενος ἐν τῷ ὀνόματι τοῦ κυρίου,"
+      "line_idx": 4,
+      "grk_excerpt": "ἐπείσθησαν δὲ αὐτῷ,"
     },
     {
       "book": "acts-13",
       "ref": "13:38",
-      "line_idx": 2,
-      "grk_excerpt": "καὶ ἀπὸ πάντων ὧν οὐκ ἠδυνήθητε ἐν νόμῳ Μωϋσέως δικαιωθῆναι"
+      "line_idx": 3,
+      "grk_excerpt": "καὶ ἀπὸ πάντων ὧν οὐκ ἠδυνήθητε ⸀ἐν νόμῳ Μωϋσέως δικαιωθῆναι"
+    },
+    {
+      "book": "acts-16",
+      "ref": "16:11",
+      "line_idx": 3,
+      "grk_excerpt": "εἰς ⸂Νέαν Πόλιν⸃,"
     },
     {
       "book": "acts-19",
       "ref": "19:40",
-      "line_idx": 3,
+      "line_idx": 2,
       "grk_excerpt": "καὶ ταῦτα εἰπὼν ἀπέλυσεν τὴν ἐκκλησίαν."
-    },
-    {
-      "book": "acts-21",
-      "ref": "21:5",
-      "line_idx": 4,
-      "grk_excerpt": "προσευξάμενοι"
     },
     {
       "book": "acts-24",
       "ref": "24:19",
       "line_idx": 2,
-      "grk_excerpt": "εἴ τι ἔχοιεν πρὸς ἐμέ,"
+      "grk_excerpt": "εἴ τι ἔχοιεν πρὸς ⸀ἐμέ,"
+    },
+    {
+      "book": "acts-25",
+      "ref": "25:18",
+      "line_idx": 2,
+      "grk_excerpt": "⸀πονηρῶν,"
+    },
+    {
+      "book": "acts-26",
+      "ref": "26:15",
+      "line_idx": 2,
+      "grk_excerpt": "κύριε;"
+    },
+    {
+      "book": "col-03",
+      "ref": "3:17",
+      "line_idx": 1,
+      "grk_excerpt": "⸂ὅ"
+    },
+    {
+      "book": "col-03",
+      "ref": "3:17",
+      "line_idx": 2,
+      "grk_excerpt": "τι⸃"
+    },
+    {
+      "book": "col-04",
+      "ref": "4:6",
+      "line_idx": 2,
+      "grk_excerpt": "εἰδέναι"
+    },
+    {
+      "book": "eph-04",
+      "ref": "4:9",
+      "line_idx": 0,
+      "grk_excerpt": "τὸ δὲ"
     },
     {
       "book": "eph-05",
@@ -134,16 +230,34 @@
       "grk_excerpt": "καὶ ἐπιφαύσει σοι ὁ Χριστός."
     },
     {
+      "book": "eph-06",
+      "ref": "6:8",
+      "line_idx": 0,
+      "grk_excerpt": "εἰδότες"
+    },
+    {
+      "book": "eph-06",
+      "ref": "6:8",
+      "line_idx": 5,
+      "grk_excerpt": "εἴτε ἐλεύθερος."
+    },
+    {
+      "book": "gal-02",
+      "ref": "2:16",
+      "line_idx": 0,
+      "grk_excerpt": "εἰδότες ⸀δὲ"
+    },
+    {
       "book": "gal-02",
       "ref": "2:19",
       "line_idx": 2,
       "grk_excerpt": "Χριστῷ συνεσταύρωμαι·"
     },
     {
-      "book": "heb-06",
-      "ref": "6:2",
-      "line_idx": 3,
-      "grk_excerpt": "καὶ κρίματος αἰωνίου."
+      "book": "heb-01",
+      "ref": "1:12",
+      "line_idx": 2,
+      "grk_excerpt": "⸂ὡς ἱμάτιον⸃"
     },
     {
       "book": "heb-07",
@@ -152,52 +266,202 @@
       "grk_excerpt": "(οἱ μὲν γὰρ χωρὶς ὁρκωμοσίας εἰσὶν ἱερεῖς γεγονότες,"
     },
     {
-      "book": "john-16",
-      "ref": "16:7",
-      "line_idx": 5,
-      "grk_excerpt": "ἐὰν δὲ πορευθῶ,"
+      "book": "heb-12",
+      "ref": "12:11",
+      "line_idx": 2,
+      "grk_excerpt": "οὐ"
+    },
+    {
+      "book": "jas-03",
+      "ref": "3:1",
+      "line_idx": 2,
+      "grk_excerpt": "εἰδότες"
+    },
+    {
+      "book": "john-02",
+      "ref": "2:9",
+      "line_idx": 1,
+      "grk_excerpt": "δὲ"
+    },
+    {
+      "book": "john-07",
+      "ref": "7:22",
+      "line_idx": 1,
+      "grk_excerpt": "οὐχ"
+    },
+    {
+      "book": "john-08",
+      "ref": "8:25",
+      "line_idx": 4,
+      "grk_excerpt": "τι⸃"
+    },
+    {
+      "book": "john-09",
+      "ref": "9:9",
+      "line_idx": 3,
+      "grk_excerpt": "Οὐχί,"
+    },
+    {
+      "book": "john-13",
+      "ref": "13:3",
+      "line_idx": 0,
+      "grk_excerpt": "⸀εἰδὼς"
+    },
+    {
+      "book": "john-14",
+      "ref": "14:11",
+      "line_idx": 2,
+      "grk_excerpt": "εἰ δὲ"
+    },
+    {
+      "book": "john-14",
+      "ref": "14:13",
+      "line_idx": 1,
+      "grk_excerpt": "τι"
+    },
+    {
+      "book": "john-14",
+      "ref": "14:2",
+      "line_idx": 1,
+      "grk_excerpt": "εἰ δὲ"
     },
     {
       "book": "john-16",
       "ref": "16:7",
       "line_idx": 6,
+      "grk_excerpt": "ἐὰν δὲ"
+    },
+    {
+      "book": "john-16",
+      "ref": "16:7",
+      "line_idx": 7,
+      "grk_excerpt": "πορευθῶ,"
+    },
+    {
+      "book": "john-16",
+      "ref": "16:7",
+      "line_idx": 8,
       "grk_excerpt": "πέμψω αὐτὸν πρὸς ὑμᾶς."
     },
     {
       "book": "john-19",
       "ref": "19:3",
       "line_idx": 0,
-      "grk_excerpt": "καὶ ἤρχοντο πρὸς αὐτὸν"
+      "grk_excerpt": "καὶ ⸂ἤρχοντο πρὸς αὐτὸν"
     },
     {
-      "book": "luke-01",
-      "ref": "1:73",
+      "book": "john-21",
+      "ref": "21:12",
+      "line_idx": 5,
+      "grk_excerpt": "εἰδότες"
+    },
+    {
+      "book": "luke-05",
+      "ref": "5:36",
+      "line_idx": 2,
+      "grk_excerpt": "εἰ δὲ"
+    },
+    {
+      "book": "luke-05",
+      "ref": "5:36",
+      "line_idx": 3,
+      "grk_excerpt": "μήγε,"
+    },
+    {
+      "book": "luke-05",
+      "ref": "5:37",
       "line_idx": 1,
-      "grk_excerpt": "τοῦ δοῦναι ἡμῖν"
+      "grk_excerpt": "εἰ δὲ"
+    },
+    {
+      "book": "luke-05",
+      "ref": "5:37",
+      "line_idx": 2,
+      "grk_excerpt": "μήγε,"
     },
     {
       "book": "luke-06",
       "ref": "6:18",
-      "line_idx": 2,
-      "grk_excerpt": "καὶ οἱ ἐνοχλούμενοι ἀπὸ πνευμάτων ἀκαθάρτων ἐθεραπεύοντο·"
-    },
-    {
-      "book": "luke-07",
-      "ref": "7:18",
       "line_idx": 1,
-      "grk_excerpt": "καὶ προσκαλεσάμενος δύο τινὰς τῶν μαθητῶν αὐτοῦ ὁ Ἰωάννης"
+      "grk_excerpt": "καὶ οἱ ⸂ἐνοχλούμενοι ἀπὸ⸃ πνευμάτων ⸀ἀκαθάρτων ἐθεραπεύοντο·"
     },
     {
-      "book": "luke-22",
-      "ref": "22:67",
+      "book": "luke-06",
+      "ref": "6:37",
+      "line_idx": 4,
+      "grk_excerpt": "ἀπολύετε,"
+    },
+    {
+      "book": "luke-10",
+      "ref": "10:6",
+      "line_idx": 2,
+      "grk_excerpt": "εἰ δὲ"
+    },
+    {
+      "book": "luke-10",
+      "ref": "10:6",
+      "line_idx": 3,
+      "grk_excerpt": "μήγε,"
+    },
+    {
+      "book": "luke-13",
+      "ref": "13:9",
+      "line_idx": 3,
+      "grk_excerpt": "εἰ δὲ"
+    },
+    {
+      "book": "luke-13",
+      "ref": "13:9",
+      "line_idx": 4,
+      "grk_excerpt": "μήγε,⸃"
+    },
+    {
+      "book": "luke-14",
+      "ref": "14:3",
+      "line_idx": 3,
+      "grk_excerpt": "ἢ οὔ⸃;"
+    },
+    {
+      "book": "luke-14",
+      "ref": "14:32",
       "line_idx": 0,
-      "grk_excerpt": "λέγοντες·"
+      "grk_excerpt": "εἰ δὲ"
+    },
+    {
+      "book": "luke-14",
+      "ref": "14:32",
+      "line_idx": 1,
+      "grk_excerpt": "μήγε,"
+    },
+    {
+      "book": "luke-20",
+      "ref": "20:24",
+      "line_idx": 3,
+      "grk_excerpt": "Καίσαρος."
+    },
+    {
+      "book": "mark-01",
+      "ref": "1:41",
+      "line_idx": 5,
+      "grk_excerpt": "καθαρίσθητι·"
+    },
+    {
+      "book": "mark-02",
+      "ref": "2:21",
+      "line_idx": 1,
+      "grk_excerpt": "εἰ δὲ"
+    },
+    {
+      "book": "mark-02",
+      "ref": "2:22",
+      "line_idx": 1,
+      "grk_excerpt": "εἰ δὲ"
     },
     {
       "book": "mark-03",
       "ref": "3:16",
       "line_idx": 0,
-      "grk_excerpt": "καὶ ἐποίησεν τοὺς δώδεκα,"
+      "grk_excerpt": "καὶ ⸂ἐποίησεν τοὺς δώδεκα,"
     },
     {
       "book": "mark-06",
@@ -207,45 +471,81 @@
     },
     {
       "book": "mark-07",
-      "ref": "7:21",
-      "line_idx": 2,
-      "grk_excerpt": "κλοπαί,"
+      "ref": "7:25",
+      "line_idx": 0,
+      "grk_excerpt": "⸂ἀλλʼ εὐθὺς"
     },
     {
-      "book": "mark-07",
-      "ref": "7:22",
-      "line_idx": 0,
-      "grk_excerpt": "μοιχεῖαι,"
+      "book": "mark-08",
+      "ref": "8:20",
+      "line_idx": 3,
+      "grk_excerpt": "Ἑπτά."
+    },
+    {
+      "book": "mark-11",
+      "ref": "11:31",
+      "line_idx": 1,
+      "grk_excerpt": "⸂Τί εἴπωμεν;⸃"
     },
     {
       "book": "mark-12",
       "ref": "12:14",
-      "line_idx": 7,
-      "grk_excerpt": "δῶμεν ἢ μὴ δῶμεν;"
+      "line_idx": 9,
+      "grk_excerpt": "δῶμεν"
+    },
+    {
+      "book": "mark-12",
+      "ref": "12:14",
+      "line_idx": 10,
+      "grk_excerpt": "ἢ μὴ δῶμεν;"
+    },
+    {
+      "book": "mark-14",
+      "ref": "14:9",
+      "line_idx": 1,
+      "grk_excerpt": "⸀δὲ"
     },
     {
       "book": "mark-16",
       "ref": "16:18",
       "line_idx": 0,
-      "grk_excerpt": "ὄφεις ἀροῦσιν,"
+      "grk_excerpt": "⸀ὄφεις ἀροῦσιν"
     },
     {
       "book": "mark-16",
       "ref": "16:8",
       "line_idx": 4,
-      "grk_excerpt": "⟦Πάντα δὲ τὰ παρηγγελμένα τοῖς περὶ τὸν Πέτρον συντόμως ἐξήγ"
+      "grk_excerpt": "μετὰ δὲ ταῦτα καὶ αὐτὸς ὁ Ἰησοῦς ἀπὸ ἀνατολῆς καὶ ἄχρι δύσεω"
     },
     {
       "book": "mark-16",
       "ref": "16:8",
       "line_idx": 5,
-      "grk_excerpt": "ἐξαπέστειλεν διʼ αὐτῶν τὸ ἱερὸν καὶ ἄφθαρτον κήρυγμα τῆς αἰω"
+      "grk_excerpt": "ἀμήν.⟧ ⁹⟦Ἀναστὰς δὲ πρωῒ πρώτῃ σαββάτου ἐφάνη πρῶτον Μαρίᾳ τ"
     },
     {
-      "book": "matt-14",
-      "ref": "14:27",
-      "line_idx": 3,
-      "grk_excerpt": "μὴ φοβεῖσθε."
+      "book": "matt-06",
+      "ref": "6:1",
+      "line_idx": 1,
+      "grk_excerpt": "εἰ δὲ"
+    },
+    {
+      "book": "matt-06",
+      "ref": "6:1",
+      "line_idx": 2,
+      "grk_excerpt": "μή"
+    },
+    {
+      "book": "matt-09",
+      "ref": "9:17",
+      "line_idx": 1,
+      "grk_excerpt": "εἰ δὲ"
+    },
+    {
+      "book": "matt-09",
+      "ref": "9:17",
+      "line_idx": 2,
+      "grk_excerpt": "μή"
     },
     {
       "book": "matt-21",
@@ -257,49 +557,121 @@
       "book": "phil-01",
       "ref": "1:16",
       "line_idx": 0,
-      "grk_excerpt": "οἱ μὲν ἐξ ἀγάπης, εἰδότες ὅτι εἰς ἀπολογίαν τοῦ εὐαγγελίου κ"
+      "grk_excerpt": "οἱ μὲν ἐξ ⸂ἀγάπης,"
+    },
+    {
+      "book": "phil-01",
+      "ref": "1:16",
+      "line_idx": 1,
+      "grk_excerpt": "εἰδότες"
+    },
+    {
+      "book": "phil-01",
+      "ref": "1:16",
+      "line_idx": 2,
+      "grk_excerpt": "ὅτι εἰς ἀπολογίαν τοῦ εὐαγγελίου κεῖμαι⸃,"
     },
     {
       "book": "phil-01",
       "ref": "1:17",
       "line_idx": 0,
-      "grk_excerpt": "οἱ δὲ ἐξ ἐριθείας τὸν Χριστὸν καταγγέλλουσιν,"
+      "grk_excerpt": "οἱ δὲ ἐξ ⸂ἐριθείας τὸν Χριστὸν καταγγέλλουσιν,"
     },
     {
       "book": "phil-01",
       "ref": "1:17",
       "line_idx": 1,
-      "grk_excerpt": "οὐχ ἁγνῶς, οἰόμενοι θλῖψιν ἐγείρειν τοῖς δεσμοῖς μου."
+      "grk_excerpt": "οὐχ ἁγνῶς,"
+    },
+    {
+      "book": "phil-01",
+      "ref": "1:17",
+      "line_idx": 2,
+      "grk_excerpt": "οἰόμενοι"
+    },
+    {
+      "book": "phil-01",
+      "ref": "1:17",
+      "line_idx": 3,
+      "grk_excerpt": "θλῖψιν ἐγείρειν τοῖς δεσμοῖς μου⸃."
+    },
+    {
+      "book": "phil-02",
+      "ref": "2:7",
+      "line_idx": 1,
+      "grk_excerpt": "καὶ σχήματι εὑρεθεὶς"
+    },
+    {
+      "book": "phil-02",
+      "ref": "2:7",
+      "line_idx": 2,
+      "grk_excerpt": "ὡς ἄνθρωπος"
+    },
+    {
+      "book": "phil-03",
+      "ref": "3:11",
+      "line_idx": 0,
+      "grk_excerpt": "εἴ πως"
+    },
+    {
+      "book": "rev-02",
+      "ref": "2:13",
+      "line_idx": 0,
+      "grk_excerpt": "⸀Οἶδα"
     },
     {
       "book": "rev-02",
       "ref": "2:28",
-      "line_idx": 1,
+      "line_idx": 2,
       "grk_excerpt": "καὶ δώσω αὐτῷ τὸν ἀστέρα τὸν πρωϊνόν."
+    },
+    {
+      "book": "rev-02",
+      "ref": "2:5",
+      "line_idx": 3,
+      "grk_excerpt": "εἰ δὲ"
     },
     {
       "book": "rev-12",
       "ref": "12:18",
       "line_idx": 0,
-      "grk_excerpt": "καὶ ἐστάθη ἐπὶ τὴν ἄμμον τῆς θαλάσσης."
+      "grk_excerpt": "καὶ ⸀ἐστάθη ἐπὶ τὴν ἄμμον τῆς θαλάσσης."
     },
     {
       "book": "rev-17",
       "ref": "17:9",
-      "line_idx": 2,
-      "grk_excerpt": "καὶ βασιλεῖς ἑπτά εἰσιν·"
+      "line_idx": 3,
+      "grk_excerpt": "καὶ βασιλεῖς ⸂ἑπτά εἰσιν⸃·"
     },
     {
-      "book": "rom-01",
-      "ref": "1:4",
-      "line_idx": 4,
-      "grk_excerpt": "Ἰησοῦ Χριστοῦ τοῦ κυρίου ἡμῶν,"
+      "book": "rom-06",
+      "ref": "6:9",
+      "line_idx": 0,
+      "grk_excerpt": "εἰδότες"
     },
     {
       "book": "rom-09",
       "ref": "9:12",
       "line_idx": 1,
       "grk_excerpt": "ὅτι Ὁ μείζων δουλεύσει τῷ ἐλάσσονι·"
+    },
+    {
+      "book": "rom-11",
+      "ref": "11:20",
+      "line_idx": 4,
+      "grk_excerpt": "⸂ὑψηλὰ φρόνει⸃,"
+    },
+    {
+      "book": "rom-11",
+      "ref": "11:22",
+      "line_idx": 0,
+      "grk_excerpt": "ἴδε"
+    },
+    {
+      "book": "titus-02",
+      "ref": "2:3",
+      "line_idx": 2,
+      "grk_excerpt": "καλοδιδασκάλους,"
     }
   ]
 }

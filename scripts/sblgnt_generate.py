@@ -1,0 +1,420 @@
+#!/usr/bin/env python3
+"""SBLGNT-native generator: clause-atoms from our fabric (gnt_v1_sblgnt) ->
+ported v1.5 binding rules -> v4/grk emitted DIRECTLY from osisId verse+position.
+No PROIEL, no reconciler. The rules are the same ones validated on PROIEL; only
+the substrate changed.
+
+Usage: cd /c/tmp && PYTHONIOENCODING=utf-8 python gnt_generate_sblgnt.py Matt 2
+"""
+import sys
+import unicodedata
+from pathlib import Path
+import sblgnt_v1_fabric as V1
+
+FINITE = set("IDSO")
+SPEECH = {"λέγω", "εἶπον", "γράφω", "μαρτυρέω", "ὁμολογέω", "διδάσκω", "κηρύσσω",
+          "ἀπαγγέλλω", "ἀναγγέλλω", "ἐξομολογέω", "φημί", "ἀποκρίνομαι", "βοάω", "κράζω"}
+COGNITION = {"οἶδα", "γινώσκω", "ὁράω", "βλέπω", "θεωρέω", "πιστεύω", "ἐπίσταμαι",
+             "νομίζω", "δοκέω", "εὑρίσκω", "ἀκούω", "συνίημι", "πείθω"}
+SUBORD_BREAK = {"ἵνα", "ὅπως", "ὅταν", "ὅτε", "εἰ", "ἐάν", "καθώς", "μήποτε", "ὥστε", "ἐπάν", "ἕως"}
+HOTI = {"ὅτι", "διότι"}
+POSTPOS = {"δέ", "γάρ", "οὖν", "μέν", "τε", "μέντοι", "ἄρα", "γε", "δή"}
+GLUE_CLS = {"conj", "ptcl"}
+V4GRK = Path(r"C:\Users\bibleman\repos\readers-gnt\data\text-files\v4\grk")
+V0PROSE = Path(r"C:\Users\bibleman\repos\readers-gnt\data\text-files\v0-prose")
+DRAFT = Path(r"C:\Users\bibleman\repos\readers-gnt\data\text-files\v4-sblgnt-draft\grk")
+V4DIR = {"Matt": "01-matt/matt", "Phil": "11-phil/phil", "Rev": "27-rev/rev", "John": "04-john/john"}
+V0DIR = {"Matt": "01-matt/matt", "Phil": "11-phil/phil", "Rev": "27-rev/rev", "John": "04-john/john"}
+
+
+def load_v0_tokens(v0dir, slug, chap):
+    """{verse: [punctuated SBLGNT token, ...]} from v0-prose (display forms)."""
+    path = v0dir / f"{slug}-{chap:02d}.txt"
+    out = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if "\t" not in line:
+            continue
+        ref, text = line.split("\t", 1)
+        out[int(ref.split(":")[1])] = text.split()
+    return out
+
+
+def cl_features(words):
+    """Features of a clause from its DIRECT words (those whose innermost cl is it)."""
+    verb = next((w for w in words if w["mpos"].startswith("V")), None)
+    kind = ("FIN" if verb and verb["mood"] in FINITE else "ptcp" if verb and verb["mood"] == "P"
+            else "inf" if verb and verb["mood"] == "N" else "verbless")
+    first = min(words, key=lambda w: (w["verse"], w["wi"]))
+    intro = first["lemma"] if (first["cls"] in GLUE_CLS or first["lemma"] in HOTI
+                               or first["lemma"] in SUBORD_BREAK) else ""
+    return {
+        "kind": kind, "lemma": verb["lemma"] if verb else "", "intro": intro,
+        "is_rel": any(w["mpos"].startswith("RR") for w in words),
+        "is_glue": all(w["cls"] in GLUE_CLS or w["lemma"] in POSTPOS for w in words),
+    }
+
+
+def generate(lowfat, morph, chap):
+    """Nesting-based ATU assignment: each word -> its innermost clause that is an
+    ATU-ROOT. A clause is a root unless it BINDS to an ancestor: non-finite
+    (participle/inf) clauses bind to their finite governor; relative + cognition-
+    ὅτι finite clauses bind; glue-only clauses ride with their parent. Verbless
+    predications and main/coordinate/ἵνα-subordinate finite clauses are roots."""
+    atoms = V1.extract(lowfat, morph, chap)
+    all_words = sorted((w for a in atoms for w in a), key=lambda w: (w["verse"], w["wi"]))
+    cl_words = {}
+    for w in all_words:
+        cl_words.setdefault(w["chain"][-1], []).append(w)
+    feats = {cl: cl_features(ws) for cl, ws in cl_words.items()}
+    rep_chain = {cl: ws[0]["chain"] for cl, ws in cl_words.items()}
+
+    def gov_lemma(cl):
+        chain = rep_chain[cl]
+        for anc in reversed(chain[:chain.index(cl)]):
+            f = feats.get(anc)
+            if f and f["kind"] == "FIN":
+                return f["lemma"]
+        return ""
+
+    def is_root(cl):
+        f = feats[cl]
+        if f["is_glue"]:
+            return False
+        has_fin_gov = bool(gov_lemma(cl))  # a FINITE predication governs this clause?
+        if f["kind"] == "FIN":
+            if f["is_rel"]:
+                # restrictive relative binds to a finite head (narrative ὃν εἶδον);
+                # a relative in a VERBLESS appositive chain (Pauline salutation
+                # ὃ προεπηγγείλατο) has no finite governor -> own ATU.
+                return not has_fin_gov
+            if f["intro"] in HOTI:
+                return gov_lemma(cl) not in COGNITION  # cognition-ὅτι binds; else own ATU
+            return True
+        if f["kind"] in ("ptcp", "inf"):
+            # circumstantial/attributive participle + complement infinitive bind
+            # to their finite predication; in a verbless chain (no finite
+            # governor) they are apposed descriptions -> own ATU.
+            return not has_fin_gov
+        return True  # verbless predication -> own ATU
+
+    def atu_of(w):
+        for cl in reversed(w["chain"]):
+            if cl in feats and is_root(cl):
+                return cl
+        return w["chain"][-1]
+
+    def is_glue(w):
+        return w["cls"] in GLUE_CLS or w["lemma"] in POSTPOS
+
+    # content words -> ATU via nesting; glue words -> surface-adjacent content's
+    # ATU (postpositive δέ/γάρ -> previous content; prepositive καί/ἰδού -> next).
+    # Done at the WORD level in surface order, so a cross-verse pull (²λέγοντες)
+    # can't strand a later verse's glue on the wrong line.
+    n = len(all_words)
+    next_content = [None] * n
+    nxt = None
+    for i in range(n - 1, -1, -1):
+        if not is_glue(all_words[i]):
+            nxt = atu_of(all_words[i])
+        next_content[i] = nxt
+    prev = None
+    for i, w in enumerate(all_words):
+        if is_glue(w):
+            if w["lemma"] in POSTPOS:
+                w["_atu"] = prev if prev is not None else next_content[i]
+            else:
+                w["_atu"] = next_content[i] if next_content[i] is not None else prev
+        else:
+            w["_atu"] = atu_of(w)
+            prev = w["_atu"]
+
+    groups = {}
+    for w in all_words:
+        groups.setdefault(w["_atu"], []).append(w)
+    lines = sorted(groups.values(), key=lambda ws: (ws[0]["verse"], ws[0]["wi"]))
+    for ws in lines:
+        ws.sort(key=lambda w: (w["verse"], w["wi"]))
+    return merge_contentless(genabs_merge(lines))
+
+
+_FUNC_CLS = {"conj", "ptcl", "prep", "det", "particle", "subjunction", "x", ""}
+
+
+def _has_content(ws):
+    """True if the line has a content-bearing word (not pure function words)."""
+    for w in ws:
+        if w["cls"] not in _FUNC_CLS and w["lemma"] not in (HOTI | SUBORD_BREAK | POSTPOS):
+            return True
+    return False
+
+
+def merge_contentless(lines):
+    """No ATU line may be content-less (a thought needs a content word). Fold a
+    function-word-only line (stray ὅτι/ὅπως/δέ/καί) into a neighbor: postpositive
+    -> backward, else forward. Guarantees every ATU line is KJV-mappable so the
+    Greek/English layers stay 1:1."""
+    out, pend = [], []
+    for ws in lines:
+        if not _has_content(ws):
+            if all(w["lemma"] in POSTPOS for w in ws) and out:
+                out[-1].extend(ws)
+            else:
+                pend.extend(ws)
+            continue
+        out.append(pend + ws if pend else list(ws))
+        pend = []
+    if pend:
+        (out[-1].extend(pend) if out else out.append(pend))
+    for ws in out:
+        ws.sort(key=lambda w: (w["verse"], w["wi"]))
+    return out
+
+
+def genabs_merge(lines):
+    """Gen-abs / leading-circumstantial frames are SIBLINGS of their main clause
+    in lowfat (not nested), so they survive as their own line; merge such a
+    leading non-finite frame FORWARD into the next ATU it frames."""
+    out, pend = [], []
+    for ws in lines:
+        has_fin = any(w["mpos"].startswith("V") and w["mood"] in FINITE for w in ws)
+        has_gen_ptcp = any(w["mpos"].startswith("V") and w["mood"] == "P" and w["case"] == "G"
+                           for w in ws)
+        if not has_fin and has_gen_ptcp:
+            pend.extend(ws)
+            continue
+        out.append(pend + ws if pend else list(ws))
+        pend = []
+    if pend:
+        (out[-1].extend(pend) if out else out.append(pend))
+    for ws in out:
+        ws.sort(key=lambda w: (w["verse"], w["wi"]))
+    return out
+
+
+# --- Layer-1 break-legality (mechanical, mandatory): a line may not END on a
+# leader that grammatically governs what FOLLOWS. R3 (article), R4 (negation),
+# R8 (framing device) all share one fix: such a line MERGES FORWARD into the
+# next. R7 (multi-word vocative) shares one fix too: keep consecutive vocative-
+# case tokens on one line. Predicates copied verbatim from validators/syntax/
+# check_r{3,4,7,8}_*.py so the pre-commit canon gate is guaranteed to pass. ---
+
+_FRAMING = {"ἰδού", "διό", "οὖν", "ἀλλά", "γάρ", "πλήν", "τοιγαροῦν"}   # R8 closed list
+_NUN = {"νῦν", "νυν", "νύν"}                                          # R8 "νῦν δέ"
+_DE = {"δέ", "δε"}
+_NEG_LEM = {"οὐ", "μή", "οὐδέ", "μηδέ", "οὐκέτι", "μηκέτι", "μήποτε", "οὐχί", "μήτι"}  # R4
+_NEG_SURF = {"οὐ", "οὐκ", "οὐχ", "μή", "οὐδέ", "μηδέ", "οὐκέτι", "μηκέτι", "μήποτε"}
+_R9_OPENERS = {"ἵνα", "ὥστε", "ὅτι", "διότι", "ὅταν", "ὅτε", "εἰ", "ἐάν", "καθώς", "μήποτε"}  # R9
+_SENT_TERM = {".", ";", "·", "·"}   # period, ; (Greek '?'), ano teleia, middle dot
+
+
+def _strip_p(s):
+    """NFC + strip leading/trailing punctuation (incl. SBLGNT editorial marks)."""
+    s = unicodedata.normalize("NFC", s)
+    i, j = 0, len(s)
+    while i < j and unicodedata.category(s[i]).startswith("P"):
+        i += 1
+    while j > i and unicodedata.category(s[j - 1]).startswith("P"):
+        j -= 1
+    return s[i:j]
+
+
+def _rtok(w, v0):
+    """The rendered (v0-prose, punctuated) surface token for a word — what the
+    validators actually see in v4/grk."""
+    toklist = v0.get(w["verse"], [])
+    return toklist[w["wi"] - 1] if 0 <= w["wi"] - 1 < len(toklist) else w["text"]
+
+
+def merge_split_vocatives(lines):
+    """R7: 2+ consecutive vocative-case tokens (parse case == 'V') that fall on
+    different ATU lines form one indivisible address unit -> merge. Skip the
+    stacked-parallel case (a line carrying its own genitive/adjective modifier
+    alongside the vocative — each such address keeps its own line, canon §3.9)."""
+    def is_voc(w):
+        return w.get("case") == "V"
+
+    def has_modifier(ws):  # genitive complement or non-voc adjective on the line
+        for w in ws:
+            if is_voc(w):
+                continue
+            if w["case"] == "G" and (w["mpos"].startswith(("N", "A")) or w["mpos"] in ("RP", "RR", "RD")):
+                return True
+            if w["mpos"].startswith("A") and w["case"] not in ("V", ""):
+                return True
+        return False
+
+    out = []
+    for ws in lines:
+        if (out and is_voc(ws[0]) and is_voc(out[-1][-1])
+                and not has_modifier(out[-1]) and not has_modifier(ws)):
+            out[-1].extend(ws)
+            out[-1].sort(key=lambda w: (w["verse"], w["wi"]))
+        else:
+            out.append(list(ws))
+    return out
+
+
+def merge_cognition_hoti(lines):
+    """R10(A) (canon §3.5): a ὅτι-clause governed by a COGNITION/perception verb
+    is that verb's syntactic OBJECT — complement integrity requires it on the
+    SAME line. Our nesting-bind misses it when lowfat structures the ὅτι-clause
+    as a sibling (not nested) of the cognition predication, so it surfaces as its
+    own ATU. Fix at the surface: a line that opens with ὅτι whose PREVIOUS line
+    carries a finite cognition verb merges back into it. Declaration/speech ὅτι
+    (recitative) has a non-cognition governor -> left split (R10(B))."""
+    def has_fin_cognition(ws):
+        return any(w["mpos"].startswith("V") and w["mood"] in FINITE
+                   and w["lemma"] in COGNITION for w in ws)
+
+    out = []
+    for ws in lines:
+        if out and ws[0]["lemma"] == "ὅτι" and has_fin_cognition(out[-1]):
+            out[-1].extend(ws)
+            out[-1].sort(key=lambda w: (w["verse"], w["wi"]))
+        else:
+            out.append(list(ws))
+    return out
+
+
+def merge_line_end_leaders(lines, v0):
+    """R3/R4/R8: no ATU line may END on a forward-governing leader — an article
+    (R3, MorphGNT POS 'RA'), a non-terminal negation whose scope is off-line
+    (R4), or a framing device (R8: ἰδού/διό/οὖν/ἀλλά/γάρ/πλήν/τοιγαροῦν, νῦν δέ).
+    Such a line merges FORWARD into the next (STRONG-MERGE). Last-line carry that
+    can't merge forward is left as-is."""
+    def is_article(w):
+        return w["mpos"] == "RA" or w["cls"] == "det"
+
+    def is_framing(ws):
+        last = _strip_p(_rtok(ws[-1], v0))
+        if last in _FRAMING:
+            return True
+        return len(ws) >= 2 and _strip_p(_rtok(ws[-2], v0)) in _NUN and last in _DE
+
+    def is_stranded_neg(ws):
+        w = ws[-1]
+        surf = _strip_p(_rtok(w, v0))
+        is_neg = (w["mpos"] in ("D-", "ADV", "PART", "C-") and w["lemma"] in _NEG_LEM) or surf in _NEG_SURF
+        if not is_neg or len(ws) == 1:
+            return False
+        raw = _rtok(w, v0).rstrip()                       # Filter A: sentence-terminal
+        if raw and raw[-1] in _SENT_TERM:
+            return False
+        for prev in ws[:-1]:                              # Filter B: finite verb on line
+            if prev["mpos"].startswith("V"):
+                return False
+        return True
+
+    def is_subord_opener(ws):   # R9: subordinate-clause opener must not trail
+        last = ws[-1]
+        return _strip_p(_rtok(last, v0)) in _R9_OPENERS or last["lemma"] in _R9_OPENERS
+
+    def is_leader(ws):
+        last = ws[-1]
+        return (is_article(last) or is_framing(ws)
+                or is_stranded_neg(ws) or is_subord_opener(ws))
+
+    out, carry = [], []
+    for ws in lines:
+        cur = carry + list(ws)
+        cur.sort(key=lambda w: (w["verse"], w["wi"]))
+        if is_leader(cur):
+            carry = cur
+        else:
+            out.append(cur)
+            carry = []
+    if carry:
+        (out[-1].extend(carry) if out else out.append(carry))
+        if out:
+            out[-1].sort(key=lambda w: (w["verse"], w["wi"]))
+    return out
+
+
+def emit_v4(lowfat, morph, v0dir, slug, chap):
+    """v4/grk lines rendered from v0-prose PUNCTUATED tokens. A display line is a
+    maximal run of surface-CONSECUTIVE words sharing one ATU id — so the flattened
+    text always equals the SBLGNT source word order (verify_word_order gate). A
+    discontinuous ATU (its words interleaved with an embedded clause) renders as
+    two contiguous segments, the only order-preserving rendering. Blank line
+    between verse groups; a cross-verse word in a segment gets a superscript."""
+    sup = {str(i): c for i, c in enumerate("⁰¹²³⁴⁵⁶⁷⁸⁹")}
+    supn = lambda v: "".join(sup[d] for d in str(v))
+    v0 = load_v0_tokens(v0dir, slug, chap)
+    base_lines = generate(lowfat, morph, chap)
+
+    # Re-segment into surface-CONTIGUOUS display segments by ATU id, THEN apply
+    # the binding-merge rules to those actual display boundaries (not to the
+    # grouped clause-atoms — a discontinuous clause-atom must split at its gap to
+    # preserve word order, and the binding rules act on the resulting cuts).
+    flat = [(w, lid) for lid, ws in enumerate(base_lines) for w in ws]
+    flat.sort(key=lambda x: (x[0]["verse"], x[0]["wi"]))
+    segments, cur, cur_lid = [], [], None
+    for w, lid in flat:
+        if lid != cur_lid and cur:
+            segments.append(cur); cur = []
+        cur.append(w); cur_lid = lid
+    if cur:
+        segments.append(cur)
+    segments = merge_split_vocatives(segments)
+    segments = merge_cognition_hoti(segments)
+    segments = merge_line_end_leaders(segments, v0)
+
+    out, headered = [], set()
+
+    def flush(seg_words):
+        if not seg_words:
+            return
+        fv = seg_words[0]["verse"]
+        if fv not in headered:
+            if out:
+                out.append("")            # blank-line separator between verses
+            out.append(f"{chap}:{fv}")
+            headered.add(fv)
+        toks, segv = [], fv
+        for w in seg_words:
+            toklist = v0.get(w["verse"], [])
+            t = toklist[w["wi"] - 1] if 0 <= w["wi"] - 1 < len(toklist) else w["text"]
+            if w["verse"] > segv:
+                t = supn(w["verse"]) + t; segv = w["verse"]
+            toks.append(t)
+        out.append(" ".join(toks))
+
+    for seg in segments:
+        flush(seg)
+    return out
+
+
+def write_draft_num(num, chap):
+    """Generate + write draft v4/grk for book `num` (1-27), chapter `chap`."""
+    lowfat, morph, v0dir, slug, nn = V1.book_paths(num)
+    lines = emit_v4(lowfat, morph, v0dir, slug, chap)
+    d = DRAFT / f"{nn}-{slug}"
+    d.mkdir(parents=True, exist_ok=True)
+    out = d / f"{slug}-{chap:02d}.txt"
+    out.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return out
+
+
+def main():
+    book = sys.argv[1] if len(sys.argv) > 1 else "Matt"
+    chap = int(sys.argv[2]) if len(sys.argv) > 2 else 2
+    write = "--write" in sys.argv
+    num = V1.NUM[book]
+    lowfat, morph, v0dir, slug, nn = V1.book_paths(num)
+    out = emit_v4(lowfat, morph, v0dir, slug, chap)
+    if write:
+        print(f"wrote {write_draft_num(num, chap)}")
+        return
+    print(f"=== {book} {chap}: SBLGNT-native v4/grk (no reconciler) ===\n")
+    print("\n".join(out))
+    hp = V4GRK / f"{nn}-{slug}" / f"{slug}-{chap:02d}.txt"
+    if hp.exists():
+        hand = [l for l in hp.read_text(encoding="utf-8").splitlines() if l.strip()]
+        ismark = lambda l: l and l[0].isdigit() and ":" in l.split()[0]
+        gl = [l for l in out if l.strip() and not ismark(l)]
+        hl = [l for l in hand if l.strip() and not ismark(l)]
+        print(f"\n--- lines: SBLGNT-native={len(gl)}  hand-v4={len(hl)} ---")
+
+
+if __name__ == "__main__":
+    main()
