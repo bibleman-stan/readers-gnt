@@ -9,12 +9,6 @@
     },
     {
       "book": "1cor-07",
-      "ref": "7:14",
-      "line_idx": 3,
-      "grk_excerpt": "ἄρα"
-    },
-    {
-      "book": "1cor-07",
       "ref": "7:29",
       "line_idx": 3,
       "grk_excerpt": "τὸ λοιπὸν⸃"
@@ -22,14 +16,8 @@
     {
       "book": "1cor-08",
       "ref": "8:8",
-      "line_idx": 6,
+      "line_idx": 4,
       "grk_excerpt": "ὑστερούμεθα⸃."
-    },
-    {
-      "book": "1cor-11",
-      "ref": "11:22",
-      "line_idx": 0,
-      "grk_excerpt": "μὴ"
     },
     {
       "book": "1cor-12",
@@ -74,18 +62,6 @@
       "grk_excerpt": "ὡς ⸀ἐὰν τροφὸς θάλπῃ τὰ ἑαυτῆς τέκνα·"
     },
     {
-      "book": "1tim-03",
-      "ref": "3:5",
-      "line_idx": 0,
-      "grk_excerpt": "(εἰ δέ"
-    },
-    {
-      "book": "2cor-01",
-      "ref": "1:17",
-      "line_idx": 2,
-      "grk_excerpt": "ἄρα"
-    },
-    {
       "book": "2cor-01",
       "ref": "1:7",
       "line_idx": 1,
@@ -96,18 +72,6 @@
       "ref": "8:13",
       "line_idx": 3,
       "grk_excerpt": "ἀλλʼ ἐξ ἰσότητος"
-    },
-    {
-      "book": "2cor-11",
-      "ref": "11:16",
-      "line_idx": 2,
-      "grk_excerpt": "εἰ δὲ"
-    },
-    {
-      "book": "2cor-11",
-      "ref": "11:16",
-      "line_idx": 3,
-      "grk_excerpt": "μή"
     },
     {
       "book": "2cor-12",
@@ -154,7 +118,7 @@
     {
       "book": "acts-05",
       "ref": "5:39",
-      "line_idx": 4,
+      "line_idx": 3,
       "grk_excerpt": "ἐπείσθησαν δὲ αὐτῷ,"
     },
     {
@@ -278,12 +242,6 @@
       "grk_excerpt": "εἰδότες"
     },
     {
-      "book": "john-02",
-      "ref": "2:9",
-      "line_idx": 1,
-      "grk_excerpt": "δὲ"
-    },
-    {
       "book": "john-07",
       "ref": "7:22",
       "line_idx": 1,
@@ -309,38 +267,20 @@
     },
     {
       "book": "john-14",
-      "ref": "14:11",
-      "line_idx": 2,
-      "grk_excerpt": "εἰ δὲ"
-    },
-    {
-      "book": "john-14",
       "ref": "14:13",
       "line_idx": 1,
       "grk_excerpt": "τι"
     },
     {
-      "book": "john-14",
-      "ref": "14:2",
-      "line_idx": 1,
-      "grk_excerpt": "εἰ δὲ"
+      "book": "john-16",
+      "ref": "16:7",
+      "line_idx": 5,
+      "grk_excerpt": "ἐὰν δὲ πορευθῶ,"
     },
     {
       "book": "john-16",
       "ref": "16:7",
       "line_idx": 6,
-      "grk_excerpt": "ἐὰν δὲ"
-    },
-    {
-      "book": "john-16",
-      "ref": "16:7",
-      "line_idx": 7,
-      "grk_excerpt": "πορευθῶ,"
-    },
-    {
-      "book": "john-16",
-      "ref": "16:7",
-      "line_idx": 8,
       "grk_excerpt": "πέμψω αὐτὸν πρὸς ὑμᾶς."
     },
     {
@@ -359,25 +299,13 @@
       "book": "luke-05",
       "ref": "5:36",
       "line_idx": 2,
-      "grk_excerpt": "εἰ δὲ"
-    },
-    {
-      "book": "luke-05",
-      "ref": "5:36",
-      "line_idx": 3,
-      "grk_excerpt": "μήγε,"
+      "grk_excerpt": "εἰ δὲ μήγε,"
     },
     {
       "book": "luke-05",
       "ref": "5:37",
       "line_idx": 1,
-      "grk_excerpt": "εἰ δὲ"
-    },
-    {
-      "book": "luke-05",
-      "ref": "5:37",
-      "line_idx": 2,
-      "grk_excerpt": "μήγε,"
+      "grk_excerpt": "εἰ δὲ μήγε,"
     },
     {
       "book": "luke-06",
@@ -395,25 +323,13 @@
       "book": "luke-10",
       "ref": "10:6",
       "line_idx": 2,
-      "grk_excerpt": "εἰ δὲ"
-    },
-    {
-      "book": "luke-10",
-      "ref": "10:6",
-      "line_idx": 3,
-      "grk_excerpt": "μήγε,"
+      "grk_excerpt": "εἰ δὲ μήγε,"
     },
     {
       "book": "luke-13",
       "ref": "13:9",
-      "line_idx": 3,
-      "grk_excerpt": "εἰ δὲ"
-    },
-    {
-      "book": "luke-13",
-      "ref": "13:9",
-      "line_idx": 4,
-      "grk_excerpt": "μήγε,⸃"
+      "line_idx": 1,
+      "grk_excerpt": "εἰ δὲ μήγε,⸃"
     },
     {
       "book": "luke-14",
@@ -425,13 +341,7 @@
       "book": "luke-14",
       "ref": "14:32",
       "line_idx": 0,
-      "grk_excerpt": "εἰ δὲ"
-    },
-    {
-      "book": "luke-14",
-      "ref": "14:32",
-      "line_idx": 1,
-      "grk_excerpt": "μήγε,"
+      "grk_excerpt": "εἰ δὲ μήγε,"
     },
     {
       "book": "luke-20",
@@ -444,18 +354,6 @@
       "ref": "1:41",
       "line_idx": 5,
       "grk_excerpt": "καθαρίσθητι·"
-    },
-    {
-      "book": "mark-02",
-      "ref": "2:21",
-      "line_idx": 1,
-      "grk_excerpt": "εἰ δὲ"
-    },
-    {
-      "book": "mark-02",
-      "ref": "2:22",
-      "line_idx": 1,
-      "grk_excerpt": "εἰ δὲ"
     },
     {
       "book": "mark-03",
@@ -500,12 +398,6 @@
       "grk_excerpt": "ἢ μὴ δῶμεν;"
     },
     {
-      "book": "mark-14",
-      "ref": "14:9",
-      "line_idx": 1,
-      "grk_excerpt": "⸀δὲ"
-    },
-    {
       "book": "mark-16",
       "ref": "16:18",
       "line_idx": 0,
@@ -522,30 +414,6 @@
       "ref": "16:8",
       "line_idx": 5,
       "grk_excerpt": "ἀμήν.⟧ ⁹⟦Ἀναστὰς δὲ πρωῒ πρώτῃ σαββάτου ἐφάνη πρῶτον Μαρίᾳ τ"
-    },
-    {
-      "book": "matt-06",
-      "ref": "6:1",
-      "line_idx": 1,
-      "grk_excerpt": "εἰ δὲ"
-    },
-    {
-      "book": "matt-06",
-      "ref": "6:1",
-      "line_idx": 2,
-      "grk_excerpt": "μή"
-    },
-    {
-      "book": "matt-09",
-      "ref": "9:17",
-      "line_idx": 1,
-      "grk_excerpt": "εἰ δὲ"
-    },
-    {
-      "book": "matt-09",
-      "ref": "9:17",
-      "line_idx": 2,
-      "grk_excerpt": "μή"
     },
     {
       "book": "matt-21",
@@ -626,12 +494,6 @@
       "grk_excerpt": "καὶ δώσω αὐτῷ τὸν ἀστέρα τὸν πρωϊνόν."
     },
     {
-      "book": "rev-02",
-      "ref": "2:5",
-      "line_idx": 3,
-      "grk_excerpt": "εἰ δὲ"
-    },
-    {
       "book": "rev-12",
       "ref": "12:18",
       "line_idx": 0,
@@ -660,12 +522,6 @@
       "ref": "11:20",
       "line_idx": 4,
       "grk_excerpt": "⸂ὑψηλὰ φρόνει⸃,"
-    },
-    {
-      "book": "rom-11",
-      "ref": "11:22",
-      "line_idx": 0,
-      "grk_excerpt": "ἴδε"
     },
     {
       "book": "titus-02",

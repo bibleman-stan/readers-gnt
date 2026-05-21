@@ -117,16 +117,20 @@ def generate(lowfat, morph, chap):
         if not is_glue(all_words[i]):
             nxt = atu_of(all_words[i])
         next_content[i] = nxt
-    prev = None
+    # postpositive δέ/γάρ binds to the IMMEDIATELY PRECEDING token's ATU (not the
+    # last *content* word) — so "ἐπὰν δὲ εὕρητε" stays one ATU. Binding to last
+    # content skipped back past a prepositive opener (ἐπάν/ὅταν), stranding δέ in
+    # the previous clause and shattering the clause in surface-order emit.
+    prev_tok = None
     for i, w in enumerate(all_words):
         if is_glue(w):
             if w["lemma"] in POSTPOS:
-                w["_atu"] = prev if prev is not None else next_content[i]
+                w["_atu"] = prev_tok if prev_tok is not None else next_content[i]
             else:
-                w["_atu"] = next_content[i] if next_content[i] is not None else prev
+                w["_atu"] = next_content[i] if next_content[i] is not None else prev_tok
         else:
             w["_atu"] = atu_of(w)
-            prev = w["_atu"]
+        prev_tok = w["_atu"]
 
     groups = {}
     for w in all_words:
