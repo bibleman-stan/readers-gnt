@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Scan all 260 v4/grk chapter files for lines where a participial phrase
+Scan all 260 v1.5/grk chapter files for lines where a participial phrase
 ends the line and its resolving finite verb starts the next line.
 
 This catches cases like Matt 2:8:
@@ -20,9 +20,9 @@ from collections import defaultdict
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MORPHGNT_DIR = os.path.join(BASE, "research", "morphgnt-sblgnt")
-V4_DIR = os.path.join(BASE, "data", "text-files", "v4", "grk")
+V4_DIR = os.path.join(BASE, "data", "text-files", "v1.5", "grk")
 
-# Mapping from morphgnt file prefix to v4/grk folder/file prefix
+# Mapping from morphgnt file prefix to v1.5/grk folder/file prefix
 BOOK_MAP = {
     "61": ("01-matt", "matt"),
     "62": ("02-mark", "mark"),

@@ -25,7 +25,7 @@ from pathlib import Path
 from collections import defaultdict
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-V4_GRK = REPO_ROOT / "data" / "text-files" / "v4" / "grk"
+V4_GRK = REPO_ROOT / "data" / "text-files" / "v1.5" / "grk"
 
 # Candidate pairs. Each pair: (member_a_forms, member_b_forms, category, gloss).
 # Forms are inflectional variants (case/number) to match in surface text.
@@ -115,7 +115,7 @@ GRK_BOOKS = sorted([d for d in V4_GRK.iterdir() if d.is_dir()])
 
 def find_pair_in_corpus(member_a_forms, member_b_forms):
     """Find all occurrences of (member_a + καί + member_b) or (member_b + καί + member_a)
-    in v4/grk. Returns list of (book_dir, file_name, line_idx, line_text, status).
+    in v1.5/grk. Returns list of (book_dir, file_name, line_idx, line_text, status).
     status = 'same_line' or 'cross_line' (members on adjacent lines).
 
     Audit 2 fix: extended coordinator set from {καί, τε} to include οὐδέ

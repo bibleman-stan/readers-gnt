@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-scan_adverbial_speech_intro_split.py — find v4/grk lines where a λέγω-family
+scan_adverbial_speech_intro_split.py — find v1.5/grk lines where a λέγω-family
 participle (adverbial participle of attendant circumstance) is split off
 onto its own line from its matrix verb on a prior line.
 

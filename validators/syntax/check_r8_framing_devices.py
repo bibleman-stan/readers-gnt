@@ -35,7 +35,7 @@ ERROR_CLASS = "MALFORMED"
 
 # Single-token framing devices that must not trail a line.
 # Accent variants: νῦν / νυν — strip_punctuation does NFC but leaves accents.
-# We use the NFC lemma form as it appears in v4/grk text.
+# We use the NFC lemma form as it appears in v1.5/grk text.
 _FRAMING_SINGLE: frozenset[str] = frozenset({
     "ἰδού",
     "διό",

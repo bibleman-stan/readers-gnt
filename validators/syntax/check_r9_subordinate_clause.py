@@ -40,7 +40,7 @@ RULE_ID = "R9"
 ERROR_CLASS = "MALFORMED"
 
 # Subordinate-clause openers that must never trail a line.
-# Forms are the NFC-normalized surface forms as they appear in v4/grk after
+# Forms are the NFC-normalized surface forms as they appear in v1.5/grk after
 # strip_punctuation (which is already applied to V4Line.tokens).
 _SUB_CLAUSE_OPENERS: frozenset[str] = frozenset({
     "ἵνα",

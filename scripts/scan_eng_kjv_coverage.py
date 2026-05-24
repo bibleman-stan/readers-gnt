@@ -1,13 +1,13 @@
 """
 scan_eng_kjv_coverage.py — verify eng-kjv has English content for every
-Greek content line in v4/grk.
+Greek content line in v1.5/grk.
 
 Closes a coverage-gap blind spot that the two-check cascade
 (verify_word_order + scan_english_drift) misses: `verify_word_order`
-compares v4/grk against sblgnt-source (Greek-only), and
+compares v1.5/grk against sblgnt-source (Greek-only), and
 `scan_english_drift` checks for translation quality on English lines
 that EXIST — neither flags the case where eng-kjv has a blank line
-where v4/grk has Greek content.
+where v1.5/grk has Greek content.
 
 This blind spot caused the bracket-pericope bug (commit 7f3c361c): the
 SBL-only TAGNT filter dropped every token of Mark 16:9-20 and John
@@ -38,8 +38,8 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-V4_GRK = REPO_ROOT / "data" / "text-files" / "v4" / "grk"
-V4_ENG = REPO_ROOT / "data" / "text-files" / "v4" / "eng-kjv"
+V4_GRK = REPO_ROOT / "data" / "text-files" / "v1.5" / "grk"
+V4_ENG = REPO_ROOT / "data" / "text-files" / "v1.5" / "eng-kjv"
 BASELINE_PATH = REPO_ROOT / "data" / "eng-kjv-coverage.baseline.json"
 
 _RE_VERSE = re.compile(r"^(\d+):(\d+)\s*$")
@@ -81,10 +81,10 @@ def _rstrip_blanks(lines: list[str]) -> list[str]:
 
 
 def scan_corpus() -> list[tuple[str, str, int, str]]:
-    """Walk v4/grk + v4/eng-kjv, return list of coverage misses.
+    """Walk v1.5/grk + v1.5/eng-kjv, return list of coverage misses.
 
     Each tuple: (book_slug, verse_ref, line_idx, grk_excerpt).
-    A "miss" is a v4/grk line with non-blank Greek content where the
+    A "miss" is a v1.5/grk line with non-blank Greek content where the
     eng-kjv counterpart line is blank or missing.
     """
     misses: list[tuple[str, str, int, str]] = []
@@ -120,7 +120,7 @@ def load_baseline() -> set[tuple[str, str, int]]:
 def write_baseline(misses: list[tuple[str, str, int, str]]) -> None:
     payload = {
         "_note": (
-            "Known coverage misses: v4/grk lines with Greek content "
+            "Known coverage misses: v1.5/grk lines with Greek content "
             "whose eng-kjv counterpart is blank. Each represents an "
             "SBLGNT-vs-KJV verse-boundary mismatch or other structural "
             "case the alignment cannot resolve. Run "
@@ -152,7 +152,7 @@ def main(argv: list[str] | None = None) -> int:
     args = p.parse_args(argv)
 
     misses = scan_corpus()
-    print(f"Coverage misses: {len(misses)} v4/grk content lines have "
+    print(f"Coverage misses: {len(misses)} v1.5/grk content lines have "
           f"blank eng-kjv counterparts")
 
     if args.update_baseline:
@@ -172,7 +172,7 @@ def main(argv: list[str] | None = None) -> int:
             if len(new) > 20:
                 print(f"  ... and {len(new) - 20} more")
             print(
-                "\nEither (a) fix the alignment so these v4/grk lines "
+                "\nEither (a) fix the alignment so these v1.5/grk lines "
                 "produce English, or (b) update the baseline if the "
                 "increase is intentional:\n"
                 "      PYTHONIOENCODING=utf-8 py -3 "

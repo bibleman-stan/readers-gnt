@@ -2,7 +2,7 @@
 """
 scan_english_straddles.py
 
-Detection-only audit. Walks every v4/eng-kjv chapter file and flags pairs of
+Detection-only audit. Walks every v1.5/eng-kjv chapter file and flags pairs of
 consecutive content lines (within the same verse) where the line break appears
 to straddle a phrase. Typical cause: regenerate_english.py split by proportional
 word count rather than by meaning, leaving a function word stranded at the end
@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import List, Tuple
 
 REPO = Path("c:/Users/bibleman/repos/readers-gnt")
-ENG_DIR = REPO / "data" / "text-files" / "v4" / "eng-kjv"
+ENG_DIR = REPO / "data" / "text-files" / "v1.5" / "eng-kjv"
 OUT_PATH = REPO / "private" / "english-straddle-audit.txt"
 
 VERSE_RE = re.compile(r"^\s*(\d+):(\d+)\s*$")
@@ -336,7 +336,7 @@ def render(findings: List[dict]) -> str:
     out.append(f"Total candidates: {len(findings)}")
     out.append("")
     out.append("Detection-only. No files modified.")
-    out.append("Source: data/text-files/v4/eng-kjv/**/*.txt")
+    out.append("Source: data/text-files/v1.5/eng-kjv/**/*.txt")
     out.append("")
 
     by_conf = {"HIGH": [], "MEDIUM": [], "LOW": []}

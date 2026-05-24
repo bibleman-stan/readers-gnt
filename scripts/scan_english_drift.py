@@ -2,8 +2,8 @@
 """
 scan_english_drift.py — Find probable English-alignment drift sites.
 
-The English glosses in data/text-files/v4/eng-kjv/ are supposed to have
-a 1:1 line correspondence with the Greek v4/grk files. Over the
+The English glosses in data/text-files/v1.5/eng-kjv/ are supposed to have
+a 1:1 line correspondence with the Greek v1.5/grk files. Over the
 project's history, multiple passes of proportional-regen have
 introduced mechanical splits that break English phrases mid-sentence:
 
@@ -51,8 +51,8 @@ from collections import defaultdict
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPT_DIR)
-ENG_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4", "eng-kjv")
-V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v4", "grk")
+ENG_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v1.5", "eng-kjv")
+V4_DIR = os.path.join(REPO_ROOT, "data", "text-files", "v1.5", "grk")
 
 # Greek subordinators — if the Greek line N+1 starts with one of these
 # (after any leading καί / δέ / γάρ), the English break at line N is
@@ -192,7 +192,7 @@ _ENGLISH_TEMPORAL_STARTS = {
 
 
 def _load_greek_chapter(eng_file_rel):
-    """Given an v4/eng-kjv relative path ('06-rom/rom-02.txt'), load the
+    """Given an v1.5/eng-kjv relative path ('06-rom/rom-02.txt'), load the
     corresponding Greek chapter. Returns dict: verse_ref -> list of lines."""
     greek_path = os.path.join(V4_DIR, *eng_file_rel.split("/"))
     if not os.path.exists(greek_path):

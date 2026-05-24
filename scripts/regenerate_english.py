@@ -10,7 +10,7 @@ Architecture
 Substrate : viz.bible MetaV CSV (CC-BY-SA 3.0) — per-KJV-word Strong's
             tagging. Loaded once via load_kjv_strongs_index() and cached.
             Lives at ../atu-method/data/kjv-strongs/.
-Source    : v4/grk Greek ATU files (one Greek ATU line per line).
+Source    : v1.5/grk Greek ATU files (one Greek ATU line per line).
 Token     : TAGNT rows for the verse; Strong's extracted via
             extract_strongs_from_tagnt_col(col3, col11, col12).
 Algorithm : atu_method.kjv_alignment.align_verse() — per-verse KJV
@@ -18,7 +18,7 @@ Algorithm : atu_method.kjv_alignment.align_verse() — per-verse KJV
 
 Output
 ------
-data/text-files/v4/eng-kjv/<NN-book>/<slug>-<NN>.txt
+data/text-files/v1.5/eng-kjv/<NN-book>/<slug>-<NN>.txt
 Format: verse marker "1:1", one English ATU line per Greek ATU line,
 blank-line separator between verses. Identical to Wave 2 format.
 
@@ -44,10 +44,10 @@ from typing import Optional
 REPO_ROOT    = Path(__file__).resolve().parent.parent       # readers-gnt/
 ATU_METHOD   = REPO_ROOT.parent / "atu-method"              # sibling repo
 
-V4_EDITORIAL = REPO_ROOT / "data" / "text-files" / "v4" / "grk"
+V4_EDITORIAL = REPO_ROOT / "data" / "text-files" / "v1.5" / "grk"
 TAGNT_DIR    = REPO_ROOT / "data" / "text-files" / "tagnt-source"
 METAV_DIR    = ATU_METHOD / "data" / "kjv-strongs"
-OUTPUT_ROOT  = REPO_ROOT / "data" / "text-files" / "v4" / "eng-kjv"
+OUTPUT_ROOT  = REPO_ROOT / "data" / "text-files" / "v1.5" / "eng-kjv"
 
 TAGNT_MAT_JHN = TAGNT_DIR / "TAGNT_Mat-Jhn.txt"
 TAGNT_ACT_REV = TAGNT_DIR / "TAGNT_Act-Rev.txt"
@@ -114,14 +114,14 @@ BOOK_BY_SLUG = {m[1]: m for m in BOOK_META}
 # The optional {N.N} annotation appears on bracketed-pericope rows where
 # TAGNT records both the SBLGNT verse-number and the alternate-tradition
 # verse-number (e.g. Jhn.7.53{8.1}#01 — SBL prints under 7:53, other
-# editions under 8:1). The primary verse_ref before "{" is what v4/grk
+# editions under 8:1). The primary verse_ref before "{" is what v1.5/grk
 # uses.
 _RE_TOKEN_ROW = re.compile(r"^([0-9A-Z][a-zA-Z0-9]+\.\d+\.\d+)(?:\{[^}]+\})?#\d+=")
 
 
 # SBLGNT-bracketed pericopes: printed in SBLGNT with editorial brackets
 # ⟦…⟧ but TAGNT's col5 attestation list excludes "SBL" because TAGNT's
-# editor considers them later additions. v4/grk inherits SBLGNT's
+# editor considers them later additions. v1.5/grk inherits SBLGNT's
 # printed text and contains them, so for alignment we must include
 # their TAGNT rows even though col5 omits SBL.
 # Format: (tagnt_prefix, chapter, verse_lo, verse_hi) inclusive.
@@ -156,7 +156,7 @@ def load_tagnt_book(
 
     Manuscript filter: TAGNT rows include a col5 manuscript-attestation
     list (e.g. "NA28+NA27+Tyn+SBL+WH+Treg+TR+Byz") indicating which
-    critical texts contain the token. v4/grk follows SBLGNT, so rows
+    critical texts contain the token. v1.5/grk follows SBLGNT, so rows
     NOT including "SBL" in col5 are TR-only / NA27+WH-only / Treg-only
     additions that don't appear in our source. Without this filter,
     surface-matching surface-skips over them via lookahead (window of
@@ -167,7 +167,7 @@ def load_tagnt_book(
 
     Exception: SBLGNT-bracketed pericopes (Mark 16:9-20 Longer Ending,
     John 7:53-8:11 Pericope Adulterae) are printed in SBLGNT with ⟦…⟧
-    brackets but TAGNT's col5 omits SBL for them. v4/grk contains
+    brackets but TAGNT's col5 omits SBL for them. v1.5/grk contains
     these tokens, so the filter admits them regardless of col5.
     """
     verses: dict[str, list[tuple[str, str, str, str]]] = {}
@@ -201,11 +201,11 @@ def load_tagnt_book(
 
 
 # ---------------------------------------------------------------------------
-# v4/grk parser (unchanged from Wave 2 — format is stable)
+# v1.5/grk parser (unchanged from Wave 2 — format is stable)
 # ---------------------------------------------------------------------------
 
 def parse_v4_file(path: Path) -> list[tuple[str, list[str]]]:
-    """Parse a v4/grk chapter file.
+    """Parse a v1.5/grk chapter file.
 
     Returns list of (verse_ref, [atu_line, ...]) preserving order.
     verse_ref is e.g. "1:1".
@@ -245,11 +245,11 @@ def normalise_greek(s: str) -> str:
     """Normalize a Greek token for surface comparison.
 
     Strips trailing punctuation, applies Unicode NFC normalization, and
-    case-folds. NFC is load-bearing: v4/grk uses precomposed forms from
+    case-folds. NFC is load-bearing: v1.5/grk uses precomposed forms from
     the modern Unicode Greek block (e.g., ε+acute = U+03AD), while TAGNT
     uses legacy oxia forms (U+1F73). They render identically and are
     canonically equivalent per Unicode, but compare unequal as raw
-    strings. Case-fold is load-bearing too: v4/grk capitalizes sentence-
+    strings. Case-fold is load-bearing too: v1.5/grk capitalizes sentence-
     initial words (Ὕπαγε U+1F5D) while TAGNT stays lowercase (ὕπαγε
     U+1F55), and without case-folding those surface comparisons fail —
     same downstream consequence as the NFC miss (orphan-skip mis-fires,
@@ -267,7 +267,7 @@ def tokenise_atu_line(line: str) -> list[str]:
 # ---------------------------------------------------------------------------
 # Cross-verse line-fold markers (§5.1)
 #
-# v4/grk uses superscript-digit runs to fold the start of the next
+# v1.5/grk uses superscript-digit runs to fold the start of the next
 # canonical verse onto the current line for colometric readability. Example
 # (Matt 3:1):
 #
@@ -366,7 +366,7 @@ def build_source_tokens_per_line(
                     # Advance the cursor past any skipped tokens, but DON'T
                     # absorb their Strong's onto this line. Skipped tokens
                     # via lookahead-match are orphan-class — TAGNT has them
-                    # but v4/grk elides them (implicit subject, elided
+                    # but v1.5/grk elides them (implicit subject, elided
                     # speech verb, etc.). Absorbing their Strong's claims KJV
                     # words whose vposes don't fit this line's range and
                     # breaks cross-line KJV reading order. By leaving them
@@ -411,7 +411,7 @@ def generate_book(
     tagnt_path: Path,
     force: bool = False,
 ) -> dict:
-    """Generate v4/eng-kjv-kjv output for all chapters of one book."""
+    """Generate v1.5/eng-kjv-kjv output for all chapters of one book."""
     src_dir = V4_EDITORIAL / dir_name
     if not src_dir.exists():
         print(f"  SKIP: {dir_name} — source dir not found", file=sys.stderr)

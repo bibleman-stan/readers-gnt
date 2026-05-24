@@ -1,7 +1,7 @@
 """
 check_cascade_alignment.py — post-cascade misalignment warning checker.
 
-Scans data/text-files/v4/eng-kjv/ against v4/grk/ for mechanical
+Scans data/text-files/v1.5/eng-kjv/ against v1.5/grk/ for mechanical
 signatures of misalignment. Flags candidates for manual review.
 Does NOT modify any file.
 
@@ -23,8 +23,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
-_V4_ROOT = _REPO_ROOT / "data" / "text-files" / "v4" / "grk"
-_ENG_ROOT = _REPO_ROOT / "data" / "text-files" / "v4" / "eng-kjv"
+_V4_ROOT = _REPO_ROOT / "data" / "text-files" / "v1.5" / "grk"
+_ENG_ROOT = _REPO_ROOT / "data" / "text-files" / "v1.5" / "eng-kjv"
 
 # ---------------------------------------------------------------------------
 # Heuristic helpers

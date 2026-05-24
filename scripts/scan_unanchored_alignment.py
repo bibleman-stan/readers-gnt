@@ -14,7 +14,7 @@ For each v4 verse:
   2. Build source_atu_lines_with_tokens and call align_verse → per-line strings.
   3. Load KjvIndex separately → identify which KJV words are anchored
      (have Strong's) vs unanchored (no Strong's, "translator supplied").
-  4. Map each KJV word to the v4/eng-kjv line it landed on (by walking
+  4. Map each KJV word to the v1.5/eng-kjv line it landed on (by walking
      output lines in KJV-vpos order, since align_verse preserves order).
   5. For each UNANCHORED token: classify POS via closed list (pronoun /
      auxiliary / article / conjunction / particle / other).

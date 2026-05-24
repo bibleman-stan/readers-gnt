@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-scan_ideou_subject_anticipation.py — find v4/grk lines matching the R1+M4
+scan_ideou_subject_anticipation.py — find v1.5/grk lines matching the R1+M4
 violation pattern Stan called out 2026-05-13 on Matt 2:1.
 
 Pattern (mechanical):
   Line A starts with `ἰδοὺ` (or `Ἰδοὺ`) + contains a nominative substantive
   head + has NO finite verb on the same line.
-  Line B (immediately next v4/grk line, possibly across editorial verse-marker)
+  Line B (immediately next v1.5/grk line, possibly across editorial verse-marker)
   starts with a finite verb (no leading connective) and has no independent
   nominative subject NP on it (its subject is the line-A NP).
 

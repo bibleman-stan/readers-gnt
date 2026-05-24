@@ -28,8 +28,8 @@ import os, re, json
 from collections import defaultdict
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V4 = os.path.join(REPO, "data", "text-files", "v4", "grk")
-ENG = os.path.join(REPO, "data", "text-files", "v4", "eng-kjv")
+V4 = os.path.join(REPO, "data", "text-files", "v1.5", "grk")
+ENG = os.path.join(REPO, "data", "text-files", "v1.5", "eng-kjv")
 MORPH = os.path.join(REPO, "research", "morphgnt-sblgnt")
 
 MAX_TOKENS = 5

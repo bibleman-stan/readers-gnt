@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """SBLGNT-native generator: clause-atoms from our fabric (gnt_v1_sblgnt) ->
-ported v1.5 binding rules -> v4/grk emitted DIRECTLY from osisId verse+position.
+ported v1.5 binding rules -> v1.5/grk emitted DIRECTLY from osisId verse+position.
 No PROIEL, no reconciler. The rules are the same ones validated on PROIEL; only
 the substrate changed.
 
@@ -229,7 +229,7 @@ def _strip_p(s):
 
 def _rtok(w, v0):
     """The rendered (v0-prose, punctuated) surface token for a word — what the
-    validators actually see in v4/grk."""
+    validators actually see in v1.5/grk."""
     toklist = v0.get(w["verse"], [])
     return toklist[w["wi"] - 1] if 0 <= w["wi"] - 1 < len(toklist) else w["text"]
 
@@ -340,7 +340,7 @@ def merge_line_end_leaders(lines, v0):
 
 
 def emit_v4(lowfat, morph, v0dir, slug, chap):
-    """v4/grk lines rendered from v0-prose PUNCTUATED tokens. A display line is a
+    """v1.5/grk lines rendered from v0-prose PUNCTUATED tokens. A display line is a
     maximal run of surface-CONSECUTIVE words sharing one ATU id — so the flattened
     text always equals the SBLGNT source word order (verify_word_order gate). A
     discontinuous ATU (its words interleaved with an embedded clause) renders as
@@ -394,7 +394,7 @@ def emit_v4(lowfat, morph, v0dir, slug, chap):
 
 
 def write_draft_num(num, chap):
-    """Generate + write draft v4/grk for book `num` (1-27), chapter `chap`."""
+    """Generate + write draft v1.5/grk for book `num` (1-27), chapter `chap`."""
     lowfat, morph, v0dir, slug, nn = V1.book_paths(num)
     lines = emit_v4(lowfat, morph, v0dir, slug, chap)
     d = DRAFT / f"{nn}-{slug}"
@@ -414,7 +414,7 @@ def main():
     if write:
         print(f"wrote {write_draft_num(num, chap)}")
         return
-    print(f"=== {book} {chap}: SBLGNT-native v4/grk (no reconciler) ===\n")
+    print(f"=== {book} {chap}: SBLGNT-native v1.5/grk (no reconciler) ===\n")
     print("\n".join(out))
     hp = V4GRK / f"{nn}-{slug}" / f"{slug}-{chap:02d}.txt"
     if hp.exists():

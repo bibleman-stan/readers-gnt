@@ -31,7 +31,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "validators", "
 import morphgnt_lookup as M
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-GRK_DIR = REPO_ROOT / "data" / "text-files" / "v4" / "grk"
+GRK_DIR = REPO_ROOT / "data" / "text-files" / "v1.5" / "grk"
 
 # 2p pronoun surface forms (covers σύ-family, both sg and pl)
 TWO_P_PRONOUN_FORMS = {

@@ -67,7 +67,7 @@ _OTHER_PIVOT_HEADS: frozenset[str] = frozenset({
 
 _DE_FORMS: frozenset[str] = frozenset({"δέ", "δε"})
 
-# Characters that count as a comma/clause-boundary marker in v4/grk.
+# Characters that count as a comma/clause-boundary marker in v1.5/grk.
 _COMMA_CHARS: frozenset[str] = frozenset({
     ",",          # standard comma
     "·",     # middle dot (·)

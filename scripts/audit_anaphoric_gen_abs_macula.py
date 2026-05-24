@@ -45,7 +45,7 @@ sys.path.insert(0, str(REPO_ROOT / "validators" / "_shared"))
 
 import macula_clauses as MC
 
-V4_GRK_DIR = REPO_ROOT / "data" / "text-files" / "v4" / "grk"
+V4_GRK_DIR = REPO_ROOT / "data" / "text-files" / "v1.5" / "grk"
 FIXTURE = REPO_ROOT / "tests" / "fixtures-anaphoric-gen-abs.tsv"
 
 # Anaphoric demonstrative lemmas — closed list.
@@ -117,7 +117,7 @@ def detect_anaphoric_gen_abs(book_slug, chapter, verse):
 
 
 def find_clause_line_in_v4(book_slug, chapter, verse, clause_text):
-    """Find which v4/grk line contains the clause. Returns (line_idx_1based,
+    """Find which v1.5/grk line contains the clause. Returns (line_idx_1based,
     line_text) or None. Looks for a substring match on the first 2-3 words
     of the clause."""
     book_dir = BOOK_DIRS.get(book_slug)
@@ -226,7 +226,7 @@ def audit_book(book_slug):
                 # Cataphoric exclusion (τοῦτο + revelation-verb gen abs)
                 if is_cataphoric_tauta(cl):
                     continue
-                # It's a candidate. Find its v4/grk line.
+                # It's a candidate. Find its v1.5/grk line.
                 line_info = find_clause_line_in_v4(book_slug, chapter, verse, cl.text)
                 if line_info is None:
                     rendering = "unknown"

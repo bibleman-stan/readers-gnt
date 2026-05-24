@@ -1,20 +1,41 @@
-# GNT Reader — Text Pipeline Archive
+# GNT Reader — Text Pipeline
 
-This directory holds the complete pipeline by which the GNT Reader's colometric text was produced, from the canonical SBLGNT source to the methodology-applied reading edition currently served at gnt-reader.com.
+This directory holds the GNT Reader's colometric text and the pipeline that produces it, from the canonical SBLGNT source to the reading edition served at gnt-reader.com.
 
-**Five tiers, one chapter at a time.** Every Greek chapter exists in every tier. Opening (for example) `v0-prose/08-2cor/2cor-06.txt`, `v1-colometric/08-2cor/2cor-06.txt`, `v2-colometric/08-2cor/2cor-06.txt`, `v3-colometric/08-2cor/2cor-06.txt`, and `v4/grk/08-2cor/2cor-06.txt` shows the same chapter at five successive stages of our colometric method.
+## Canonical pipeline (mechanical-first)
 
-## The five tiers
+Per `~/repos/atu-method/docs/framework.md` (the canonical cross-corpus methodology), the pipeline is **mechanical-first**:
 
-| Tier | Directory | What it is | Produced by |
-|---|---|---|---|
-| **v0** | `v0-prose/` | Canonical SBLGNT prose, one chapter per file. Retains the SBLGNT apparatus markers (`⸀ ⸁ ⸂ ⸃ ⸄ ⸅`) so this tier is a faithful slice of the published scholarly text. **Our starting point.** | Mechanical chapter-split of `sblgnt-source/` (see `v0-prose/README.md`); producer at `scripts/archive/build_v0_prose.py` |
-| **v1** | `v1-colometric/` | First-pass mechanical atomic thought units (ATUs). Surface pattern matching on punctuation, known subordinators (ἵνα, ὥστε, ὅτι, ὅταν, …), discourse particles, speech introductions. Strips apparatus markers. | `scripts/archive/auto_colometry.py` |
-| **v2** | `v2-colometric/` | Syntax-tree-driven ATUs. Uses the scholar-annotated clause boundaries and participial-phrase brackets from the Macula Greek syntax trees to segment. Significant improvement over v1 for participial phrases, genitive absolutes, and embedded prose. | `scripts/archive/v2_colometry.py` |
-| **v3** | `v3-colometric/` | Rhetorical-pattern-refined ATUs. Adds parallelism detection, discourse-marker framing, and other rhetorical-pattern awareness on top of v2. The last machine tier. | `scripts/archive/v3_colometry.py` |
-| **v4** | `v4/grk/` | Methodology-applied reading edition. The project's documented colometric methodology — atomic thought, cognitive hierarchy, register sensitivity, semantic grouping, the universal vocative rule, the no-anchor rule, and the other rules recorded in the canon — applied to the text. Changes land via a mix of systematic scan-and-apply tools for structurally-describable classes (the vocative pass, the no-anchor pass, the Goldilocks refinement, Class F audits) and case-by-case editorial decisions where rules conflict or underdetermine. **The single source of truth for the web app.** | Methodology application (systematic scanners + editorial judgment) |
+```
+v0    Source text (SBLGNT prose, verse markers)
+  ↓
+v1    Parse-derived clause units (SBLGNT-lowfat clause-atoms + MorphGNT)
+  ↓
+v1.5  Binding rules applied — ATU candidate groups (the SBLGNT-native fabric)
+  ↓
+v2    (Optional) narrow-task LLM adjudication on residual cases   ← NOT YET BUILT for GNT
+  ↓
+v3    Editorial review → final reading edition                    ← NOT YET DONE for GNT
+```
 
-**v0–v3 producers archived 2026-04-26.** The four producer scripts now live at `scripts/archive/`. The tier directories themselves are preserved as frozen scaffolding; the scripts are preserved for provenance and re-derivability. See `scripts/archive/README.md`.
+> **Status (2026-05-22): GNT is live at v1.5.** What gnt-reader.com serves is the
+> mechanical-first **v1.5** baseline (clause-atoms + the ported Layer-1 binding rules),
+> a "deploy-then-refine" edition — NOT a methodology-complete one. A genre-spread
+> idea-unit measurement put it at ~72% (pervasive over-splitting: dependent clauses
+> severed from their heads). **v2-adjudication and v3-editorial are the unbuilt path to
+> a refined edition.** The deployed directory is named `v1.5` (not `v4`) so the label
+> never overstates the stage.
+
+## Directory layout
+
+| Directory | What it is |
+|---|---|
+| `v0-prose/` | **v0** — Canonical SBLGNT prose, one chapter per file (apparatus markers `⸀ ⸁ ⸂ ⸃ ⸄ ⸅` retained). The starting point. |
+| `v1.5/grk/` (+ `v1.5/eng-kjv/`) | **v1 + v1.5 — the currently deployed edition.** Clause-atoms off SBLGNT-lowfat + MorphGNT with the ported Layer-1 binding rules applied (R3/R4/R7/R8/R9/R10), surface-order emit. **The single source of truth the web app builds from** (`scripts/build_books.py` → `books/*.html`). A mechanical-first v1.5 baseline — not yet methodology-complete. (Renamed from `v4/grk` on 2026-05-22, since "v4" overstated the stage.) |
+| `sblgnt-source/`, `tagnt-source/` | Upstream Greek text + apparatus. Never modified. |
+| `_retired-2026-04-mechanical-tiers/` | The prior `v1-/v2-/v3-colometric` machine tiers (surface-pattern → Macula-syntax → rhetorical, frozen 2026-04-09). Their v1/v2/v3 numbering was a **different, retired** scheme that collides with the canonical v1/v1.5/v2/v3 stages above — archived here to prevent confusion. Producers at `scripts/archive/`. |
+
+**v2 and v3 do not exist yet.** v2 (optional narrow-task LLM adjudication on the v1.5 residuals — cf. the BoFM `data/text-files/v2-adjudicated/` override layer) and v3 (editorial review) are the unbuilt path from the current v1.5 baseline to a refined edition.
 
 Plus one non-Greek directory:
 

@@ -32,7 +32,7 @@ import unicodedata
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_DIR = os.path.dirname(SCRIPT_DIR)
-V4_DIR = os.path.join(REPO_DIR, "data", "text-files", "v4", "grk")
+V4_DIR = os.path.join(REPO_DIR, "data", "text-files", "v1.5", "grk")
 
 MIN_PREFIX_CHARS = 10
 
