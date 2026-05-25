@@ -39,28 +39,17 @@ v3    Editorial review → final reading edition                    ← NOT YET 
 
 Plus one non-Greek directory:
 
-- `v4/eng-kjv/` — English structural glosses aligned line-for-line with `v4/grk/`. The active English-regen tool is `scripts/regenerate_english.py` (incremental, with skip-guard). The original from-scratch seeder (`generate_english_glosses.py`) and a Pauline-only seeder variant (`generate_pauline_english.py`) were archived 2026-04-26 and live under `scripts/archive/`.
+- `v1.5/eng-kjv/` — English structural glosses aligned line-for-line with `v1.5/grk/`. The active English-regen tool is `scripts/regenerate_english.py` (incremental, with skip-guard). The original from-scratch seeder (`generate_english_glosses.py`) and a Pauline-only seeder variant (`generate_pauline_english.py`) were archived 2026-04-26 and live under `scripts/archive/`.
 
 And one untouched reference:
 
 - `sblgnt-source/` — 27 canonical SBLGNT book files, one file per book, whole-book prose. Never modified. This is the upstream text `v0-prose/` is derived from. CC-BY-4.0 per the SBLGNT license.
 
-## Why all five tiers are preserved
+## The retired machine tiers (`_retired-2026-04-mechanical-tiers/`)
 
-**Transparency.** Anyone checking our work can see exactly what the text looked like at every stage. "Where did we start, where did we go, how did it look along the way" is fully inspectable.
+Before the SBLGNT-native mechanical-first fabric existed, the GNT Reader bootstrapped its own colometric starting point through three machine passes — `v1-colometric` (surface-pattern), `v2-colometric` (Macula-syntax), `v3-colometric` (rhetorical) — culminating in a hand-edited `v4` editorial layer. **That entire v1→v4 scheme is retired.** Its numbering collided with the canonical v1/v1.5/v2/v3 stages (a `v4` that the framework has no place for), which is precisely why it was archived under `_retired-2026-04-mechanical-tiers/` and the deployed dir was relabeled to `v1.5` on 2026-05-22.
 
-**Reproducibility.** v0 → v1 → v2 → v3 is a deterministic pipeline. Given our source data (`sblgnt-source/` for v0, plus the Macula Greek syntax trees for v2), anyone can re-run `scripts/archive/auto_colometry.py`, `scripts/archive/v2_colometry.py`, and `scripts/archive/v3_colometry.py` against these inputs and produce bit-exact copies of the v1/v2/v3 tiers. The v3 → v4 transition is NOT deterministic; it's editorial hand work, and the rules governing it are documented in `handoffs/` (see the colometric methodology references).
-
-**Honesty.** Unlike the Book of Mormon Reader (a sibling project which starts from Royal Skousen's published sense-lines), the GNT Reader had no pre-existing scholar-annotated colometric edition to lean on. The three mechanical tiers are the record of how we bootstrapped our own starting point from raw SBLGNT prose plus external syntax-tree data. Preserving them is the honest way to show the mechanical baseline we built before any editorial decisions entered.
-
-**Comparability.** A researcher interested in machine-only colometric segmentation can cite v1, v2, or v3 as-is without needing to consult the methodology-applied layer. A researcher interested in the methodology's contribution can diff v3 against v4 to measure the value-add of the rule-application layer.
-
-## Two kinds of reproducibility
-
-The five tiers divide into two reproducibility regimes, and the distinction matters:
-
-- **v0, v1, v2, v3 are bit-exactly reproducible.** Given the same inputs (`sblgnt-source/` for v0/v1; `sblgnt-source/` + Macula Greek trees for v2; v2 output for v3), running the corresponding script produces a byte-for-byte copy of the tier. Anyone can confirm our mechanical output.
-- **v4 is methodologically checkable, not bit-exactly reproducible.** The rule set is documented, but case-by-case judgment enters where rules conflict or underdetermine, and two careful readers applying the same methodology will occasionally reach different break decisions on hard passages. What v4 IS reproducible as: any chapter can be audited against the documented rule set in `handoffs/02-colometry-method.md` (the private methodology canon) or its public summaries to confirm whether breaks conform to the rules. Disagreement at an individual line is resolvable by consulting the methodology, not by dispute over "what Stan happened to type." The contribution lives in the rule set; v4 is its application, not its stenography.
+The retired tiers are preserved for **transparency and reproducibility of the bootstrap**: given `sblgnt-source/` (+ Macula Greek trees), re-running the frozen producers reproduces them bit-for-bit — `scripts/archive/auto_colometry.py` (→ v1), `scripts/archive/v2_colometry.py` (→ v2), `scripts/archive/v3_colometry.py` (→ v3). They are NOT part of the live pipeline and must not be confused with the canonical stages. Running the producers today overwrites the frozen tier corpora.
 
 ## Navigation
 
@@ -99,25 +88,23 @@ vN/
 
 Total: 260 chapters, consistent shape in every tier.
 
-## How to reproduce the pipeline
+## How to reproduce the live edition (mechanical-first)
+
+The deployed `v1.5/grk` is produced deterministically by the SBLGNT-native fabric:
 
 ```bash
-# v0 — chapter-split the SBLGNT source prose
-PYTHONIOENCODING=utf-8 py -3 scripts/archive/build_v0_prose.py
+# v1 + v1.5 — clause-atoms off SBLGNT-lowfat + MorphGNT, with the ported
+# Layer-1 binding rules applied (surface-order emit). Per chapter:
+#   py -3 scripts/sblgnt_generate.py <Book> <chap> --write   → writes v1.5/grk/<book>/<slug>-NN.txt
+# (omit --write to print the chapter for inspection). Fabric + binding-rule
+# implementations live in scripts/sblgnt_v1_fabric.py.
+PYTHONIOENCODING=utf-8 py -3 scripts/sblgnt_generate.py Matt 2 --write
 
-# v1 — mechanical pattern-matched pass (reads sblgnt-source/, writes v1-colometric/)
-PYTHONIOENCODING=utf-8 py -3 scripts/archive/auto_colometry.py
-
-# v2 — Macula syntax-tree pass (requires Macula Greek trees; reads sblgnt-source/ + Macula, writes v2-colometric/)
-PYTHONIOENCODING=utf-8 py -3 scripts/archive/v2_colometry.py
-
-# v3 — rhetorical-pattern refinement (reads v2-colometric/, writes v3-colometric/)
-PYTHONIOENCODING=utf-8 py -3 scripts/archive/v3_colometry.py
+# build — assemble the reading edition the web app serves
+PYTHONIOENCODING=utf-8 py -3 scripts/build_books.py   # v1.5/grk + v1.5/eng-kjv → books/*.html
 ```
 
-The producer scripts were moved to `scripts/archive/` on 2026-04-26 once `v4/grk/` reached 260/260 coverage and the v0–v3 tiers were no longer in the active editorial loop. They are preserved unchanged for re-derivation; running them today will overwrite the frozen tier corpora.
-
-v4 is not produced by a single reproducible script because rule application involves judgment calls at the margin. It is, however, methodologically checkable — see the two-reproducibility-regimes note above and `handoffs/04-editorial-workflow.md` for the editorial workflow and the rule set the editor applies.
+The retired bootstrap tiers in `_retired-2026-04-mechanical-tiers/` are reproducible via their frozen `scripts/archive/` producers — see "The retired machine tiers" above; they are not part of this pipeline.
 
 ## For the curious
 
