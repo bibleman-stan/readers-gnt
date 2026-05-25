@@ -49,7 +49,7 @@ This canon is the GNT-corpus instantiation of the ATU methodology framework. Uni
 
 - **Step 0 input filter — GNT-specific exclusions.** In addition to the universal filters (punctuation, versification, verse position), GNT editing also excludes from the evidence base: manuscript line divisions in scholarly comparanda (Codex Bezae, Claromontanus — consulted as empirical comparanda, not authoritative warrants; see §6 below); editorial paragraph divisions in printed GNT editions (NA28/UBS5/SBLGNT ¶ marks — never a break signal); and lectionary/pericope divisions.
 
-- **Force 1 (Generative) — GNT resolution principle.** Atomic thought is relative to the author's resolution. For plainer narrative (Mark's simpler scenes), atomic usually means a complete sentence-level predication. For more literary authors (Luke, Paul, John at their most crafted), "atomic" often includes grammatically-independent sub-units — most notably genitive absolutes used as interjectory frames. See §8 for participial and FEF treatment.
+- **Force 1 (Generative) — GNT resolution principle.** Atomic thought is relative to the author's resolution. For plainer narrative (Mark's simpler scenes), atomic usually means a complete sentence-level predication. For more literary authors (Luke, Paul, John at their most crafted), the author's resolution is finer — but a genitive absolute is NOT one of the independent sub-units: it is half a thought (a frame) and binds to its governing matrix per R19 (REVISED 2026-05-20; §3.10a). See §8 for participial and FEF treatment.
 
 - **J1 compound-list break signals — GNT extension: marked-coordinator climactic emphasis (5th signal).** Framework §1.4 J1 lists four compound-list-break signals (elided auxiliary + stacked participles / possessive restart / new demonstrative / attached relative clause). GNT adds a **fifth: marked-coordinator climactic emphasis on a final list-member**. Greek author marks the climax of a list with `ἔτι τε καί` (moreover-and-even), `μάλιστα δέ` / `καὶ μάλιστα` (especially), `μᾶλλον δέ` (rather), `οὐ μόνον ... ἀλλὰ καί` (not-only-but-also climactic addition). These markers elevate the marked item from compound-list peer to its own beat. The principle is consistency with the "honor what Greek marks" discipline (see also matt 11:25 / luke 10:21 keep-merge case): when the Greek grammar itself signals a beat-boundary via marked-coordinator, colometry reveals it; when there is no marker, colometry merges per J1 bare-compound default.
 
@@ -68,6 +68,8 @@ This canon is the GNT-corpus instantiation of the ATU methodology framework. Uni
 
 - **Bidirectional atomic-thought test (codified at framework §1.1, 2026-05-13).** "Single cognitive bite" requires the line to stand on its own **referentially**, not just **grammatically**. A line whose content is anaphoric to prior context fails atomic-thought standing alone, even when forward grammatical closure passes. The test is asymmetric: **anaphoric** unresolved-backward-dependence FAILS; **cataphoric** forward-pointing reference PASSES. The reader can process a line whose content is whole and merely sets up what follows (cataphoric); the reader cannot process a line whose content is a pointer to undefined prior context (anaphoric). See [`atu-method/docs/framework.md §1.1`](../../atu-method/docs/framework.md) for full statement.
 
+  > **SUPERSEDED IN PART (2026-05-20, R19 revision §3.10a).** The 2026-05-13 effort below concluded "keep gen abs on its own line" by leaning on a J5/camera-shift independent warrant. The R19 revision **retires that warrant**: a gen abs is half an ATU and binds forward to its governing matrix. So every "keep split / R19+J5 retains priority" verdict in this sub-section (incl. the "KEEP ALL 10 SPLIT" Cat B decision below) is **reversed** — those gen abs now bind forward. The 2026-05-13 record is preserved as history; the *non-gen-abs* anaphoric-failure diagnostics (deictic-pointer lines, anaphoric particles) remain valid §1.1 candidate-flags.
+
   **Status (2026-05-13 corrective revision after adversarial audits).** Three parallel hostile audits run on a proposed corpus sweep of 5 anaphoric-gen-abs cases under this principle returned 2 REJECT + 1 NEEDS-MOD-on-scope verdicts. Key findings: (a) the codifying commit a33feca6 self-declared "no precedence change" but the prose below was being read as a precedence override over R19; (b) the worked example at Acts 1:9 was factually wrong; (c) Macula has no anaphoric/cataphoric flag on gen abs, so the classification rests on subjective deictic reading rather than a structured signal; (d) sibling-corpus Tanakh did the same codification with proper rigor (parallel Opus audits + Macula detector + 34-verse fixture + 23,213-verse corpus scan) and STILL deferred application. This section is therefore re-scoped to **informational diagnostic markers**, NOT a mechanical merge-override. Application of bidirectional-test merges in GNT requires the same rigor (detector + fixture + audit) Tanakh applied.
 
   **GNT diagnostic markers for potential anaphoric failure.** When a line's content is dominated by these markers AND the line stands alone (no apodosis on the same line), the bidirectional test CANDIDATE-flags it for editorial review. The "MUST merge" framing in the original codification was rolled back per audit findings — these are candidates, not Cat A mechanical fires:
@@ -82,19 +84,18 @@ This canon is the GNT-corpus instantiation of the ATU methodology framework. Uni
   - First-mention proper-noun + descriptor pairs
   - Speech-act announcement frames (R11/R28-ext): `λέγει αὐτοῖς·` cataphorically introduces the quote — the line is propositionally complete (the speech-act IS the proposition; the quote follows)
 
-  **Relationship to GNT canon rules (revised post-audit).** This is a §1.1 test-refinement, NOT a new §1.5 merge-override. The bidirectional test surfaces candidate cases; it does NOT mechanically override R19, R20, M4-GNT-1, or other settled rules. Specifically:
-  - **R19 (gen abs always own line) retains priority** by default. The audit established that anaphoric gen abs typically retains its OWN warrant for own-line treatment via J5 (substantive adjunct — camera-shift / interjectory function), independent of bidirectional considerations. The "R19 yields when anaphoric" reading was an inference (`P → Q` does NOT entail `¬P → ¬Q`) that was not properly grounded.
-  - **J5 substantive adjunct (camera-shift)** can give a gen abs own-line warrant even when the gen abs is anaphoric. E.g., `ταῦτα δὲ αὐτοῦ λέγοντος` introduces a temporal interjectory frame with subject distinct from the matrix subject — the gen abs IS a camera shift to the subordinate-perspective beat, regardless of its anaphoric `ταῦτα`.
-  - The bidirectional test catches cases that fail BOTH forward-grammatical AND backward-referential — and ALSO lack J5/J3/FEF independent warrant for own-line treatment. The narrower scope: lines that are PURE anaphoric scaffolding with no propositional content of their own (the Gen 22:1 archetype `wayehi achar ha-devarim ha-eleh` = "and-it-came-to-pass after these things" — zero new content beyond temporal-anaphoric pointer).
+  **Relationship to GNT canon rules (post-2026-05-20).** This is a §1.1 test-refinement for the NON-gen-abs anaphoric-failure cases (deictic-pointer lines, anaphoric particles). For gen abs specifically, the relationship changed with the R19 revision:
+  - **R19 (REVISED) binds the gen abs forward** to its governing matrix — there is no longer a "gen abs own line" outcome for the bidirectional test to defer to. An anaphoric `ταῦτα`-gen-abs fails both directions (forward: no predication; backward: anaphoric `ταῦτα`); both failures resolve the SAME way — bind forward.
+  - **The J5 camera-shift warrant for gen abs is RETIRED** (§3.10a). "Camera shift" is rhetorical-structure, not thought-atomicity; it no longer rescues a gen abs to its own line. (J5 may still operate for genuinely independent substantive adjuncts that are NOT gen abs.)
+  - The bidirectional test's residual gen-abs role is only the verse-isolated / cross-verse case (§3.10a Exclusion 3): a frame whose matrix is in the next verse routes to REVIEW, not a silent bind.
 
-  **Worked GNT cases (revised):**
-  - **Matt 2:1** — `Τοῦ δὲ Ἰησοῦ γεννηθέντος ἐν Βηθλέεμ…` is NOT anaphoric (Ἰησοῦ is a proper noun, not a deictic pointer). Gen abs is referentially self-contained → R19 split applies.
-  - **Acts 1:9 (canonical FEF showcase)** — `καὶ ταῦτα εἰπών / βλεπόντων αὐτῶν / ἐπήρθη / καὶ νεφέλη ὑπέλαβεν…` is **currently split 4-ways in v4/grk** per R19 + J5 (gen abs camera-shift). The earlier codification of this entry incorrectly claimed the canon "already MERGES this" — the audit identified the factual error. The corrected reading: `καὶ ταῦτα εἰπών` does carry anaphoric `ταῦτα` (referencing Jesus' prior commission speech in acts 1:7-8), but it ALSO has J5 substantive-adjunct function as the FEF temporal frame opening the ascension scene. The bidirectional test SURFACES the anaphoric quality; the split-treatment STANDS per R19 + J5. This is the canon's primary illustration that anaphoric ≠ automatic merge; J5/R19 independent warrants matter.
-  - **Counter-example (gen abs that splits)** — `Τοῦ δὲ Ἰησοῦ γεννηθέντος…` (Matt 2:1) — `Ἰησοῦ` is proper noun, not anaphoric; gen abs is self-contained → R19 split applies normally.
+  **Worked GNT cases (post-2026-05-20):**
+  - **Matt 2:1** — `Τοῦ δὲ Ἰησοῦ γεννηθέντος ἐν Βηθλέεμ…` — the gen abs is a frame (half a thought, "and then what?") → R19 binds it forward into `ἰδοὺ μάγοι … παρεγένοντο`; frame + clause = one ATU. (Its non-anaphoric subject is irrelevant to the bind; the forward-incompleteness governs.)
+  - **Acts 1:9** — `καὶ ταῦτα εἰπών / βλεπόντων αὐτῶν / ἐπήρθη / …` — the gen abs `βλεπόντων αὐτῶν` ("while they watched") binds into `ἐπήρθη` ("he was taken up while they watched" = one ATU). The earlier "split STANDS per R19+J5 camera-shift" reading is **retired** — camera-shift carries no thought-atomicity force. (The `καὶ ταῦτα εἰπών` nominative ptc is a separate FEF-frame question, not a gen abs.)
 
   **Audit evidence trail (2026-05-13 afternoon).** This section was rewritten in response to three parallel hostile-agent audits (`a9f21e5c8295e2fa0`, `ae817b9aed1d88339`, `aeeba3f9f6b255753`) attacking from framework-discipline, per-case-correctness, and R19-precedence angles. The audits' verdicts of REJECT + NEEDS-MOD were the trigger for this corrective revision. Future application of bidirectional-test merges in GNT requires: (1) a Macula-driven detector for anaphoric-gen-abs (porting Tanakh's `audit_anaphoric_frame_macula.py` approach), (2) a fixture of ≥20 positive/negative/cataphoric/speech-intro cases, (3) corpus-wide scan, (4) explicit per-case Stan editorial decision (Cat B, not Cat A). Audit-skippable was the wrong call at codification; this revision IS the audit.
 
-  **Cat B editorial decision recorded (2026-05-13 close).** Detector built (`scripts/audit_anaphoric_gen_abs_macula.py` — commit 4e1cb89e), fixture 20/20 pass, corpus scan surfaced 10 candidates: matt 1:20, matt 9:18, luke 9:34, luke 13:17, luke 24:36, john 8:30, john 18:22, acts 23:7, acts 25:25, acts 26:24. Stan editorial decision: **KEEP ALL 10 SPLIT.** Rationale: all 10 have J5 substantive-adjunct camera-shift (different subject in matrix); R19+J5 retain default priority per audit consensus. The δέ-development-marker distinction (7 cases with δέ vs 3 without) is supplemental discourse-linguistic detail that does not override the J5 protection. This decision closes the bidirectional-test sweep effort; the detector + fixture + scan infrastructure remains available for future surfacing.
+  **Cat B editorial decision recorded (2026-05-13 close) — REVERSED 2026-05-20.** Detector built (`scripts/audit_anaphoric_gen_abs_macula.py` — commit 4e1cb89e), fixture 20/20 pass, corpus scan surfaced 10 candidates: matt 1:20, matt 9:18, luke 9:34, luke 13:17, luke 24:36, john 8:30, john 18:22, acts 23:7, acts 25:25, acts 26:24. The 2026-05-13 decision was "KEEP ALL 10 SPLIT" on a J5/camera-shift rationale. **The R19 revision (§3.10a) reverses this: all 10 now BIND forward to their governing matrix** — the camera-shift rationale is retired. The detector + fixture + scan infrastructure remains available for surfacing the cases at v1.5 regeneration (now to confirm the bind, not the split).
 
 - **Force 2 (Subtractive) — GNT Layer 1 reference.** GNT Layer 1 break-legality lives at [`data/syntax-reference/greek-break-legality.md`](../../data/syntax-reference/greek-break-legality.md) (24-row table; R2–R7). Parse data: Macula-Greek + MorphGNT.
 
@@ -127,19 +128,18 @@ This canon is the GNT-corpus instantiation of the ATU methodology framework. Uni
 - **J3 named patterns (speech-act announcement) — GNT instantiations.** Direct speech introduction: `καὶ ἔλεγεν αὐτοῖς:` / `καὶ εἶπεν αὐτῷ:` — each is a complete speech-act predication. See §3.6 (R11) for the full treatment.
 
 - **J5 substantive adjunct — GNT canonical cases.**
-  - Genitive absolute (R19 — always own line): `βλεπόντων αὐτῶν` (Acts 1:9) — camera shifts to disciples' perspective as interjectory frame.
+  - *(Genitive absolute REMOVED from J5 — REVISED 2026-05-20: a gen abs is half an ATU and binds forward to its governing matrix per R19 §3.10a; it is not a J5 own-focus adjunct. Acts 1:9 `βλεπόντων αὐτῶν` binds into `ἐπήρθη`.)*
   - Prepositional catena: 2 Cor 6:4-7 ἐν-catena — each element on its own line.
   - FEF periodic frame: Luke 3:1-2 — five genitive-phrase temporal adjuncts before the matrix ἐγένετο ῥῆμα θεοῦ.
   - Fronted temporal existential: John 1:1 `ἐν ἀρχῇ` — only 2 words but carries the Gospel prologue's entire temporal frame (brevity-but-substance edge case).
 
-- **Showcase — Acts 1:9 (genitive absolute embedded within FEF).**
+- **Showcase — Acts 1:9 (genitive absolute binds into its matrix; REVISED 2026-05-20).**
   ```
   καὶ ταῦτα εἰπών             <- aorist nominative ptc (FEF frame; subject = Jesus)
-  βλεπόντων αὐτῶν             <- GENITIVE ABSOLUTE (subject = disciples); interjectory
-  ἐπήρθη                      <- main verb resolving εἰπών
+  βλεπόντων αὐτῶν ἐπήρθη       <- GEN ABS binds into its matrix verb ἐπήρθη (one ATU)
   καὶ νεφέλη ὑπέλαβεν αὐτὸν ἀπὸ τῶν ὀφθαλμῶν αὐτῶν.
   ```
-  The gen abs interrupts the FEF suspension with a camera shift to the disciples' perspective, then the main verb drops the resolution. **A gen abs embedded within an FEF should remain on its own line.**
+  The gen abs `βλεπόντων αὐτῶν` ("while they watched") is half a thought; it binds to the matrix verb it frames (`ἐπήρθη`) per R19 (§3.10a). The prior "gen abs interrupts the FEF with a camera shift → own line" reading is **retired**: camera-shift is rhetorical structure, not thought-atomicity. (The `καὶ ταῦτα εἰπών` nominative-participle FEF-frame question is separate from the gen-abs bind.)
 
 - **Container-not-originator (GNT-specific articulation).** The atomic thought is the primary, originating reality — language-invariant. Syntax is the container, not the originator. This is the classical distinction between *logos endiathetos* (the thought in the mind) and *logos prophorikos* (the thought as uttered). Colometric recovery targets the *endiathetos* through the *prophorikos* because the *prophorikos* is all we have. Paul's atomic thought units in Romans are the same units whether read in Greek, English, or Chinese. Only the container changes.
 
@@ -215,12 +215,12 @@ See §3.6 (R11) for the full GNT speech-intro treatment.
 
 ### J5 — Substantive Adjunct as Own Focus: GNT Cases
 
-- **Genitive absolute** (R19 — always own line): `βλεπόντων αὐτῶν` (Acts 1:9) — camera shifts to disciples' perspective as interjectory frame.
+- *(Genitive absolute is NO LONGER a J5 own-focus case — REVISED 2026-05-20. A gen abs is half an ATU and binds forward to its governing matrix per R19 §3.10a; `βλεπόντων αὐτῶν` binds into `ἐπήρθη` at Acts 1:9.)*
 - **Prepositional catena** (§8): 2 Cor 6:4-7 ἐν-catena (ἐν ὑπομονῇ πολλῇ, ἐν θλίψεσιν, ἐν ἀνάγκαις, ἐν στενοχωρίαις...) — each element on its own line.
 - **FEF periodic frame** (§5, §8): Luke 3:1-2 — five genitive-phrase temporal adjuncts (ἐν ἔτει πεντεκαιδεκάτῳ τῆς ἡγεμονίας Τιβερίου Καίσαρος... ἐπὶ ἀρχιερέως Ἅννα καὶ Καϊάφα...) — the matrix ἐγένετο ῥῆμα θεοῦ lands only after the adjunct chain completes.
 - **Fronted temporal existential edge case:** John 1:1 `ἐν ἀρχῇ` — only 2 words but carries the Gospel prologue's entire temporal frame; substance overrides the ≤3-word default-merge caveat.
 
-*Relation to R19, prep-catena (§8), FEF:* These are the mechanical operationalizations of J5 for specific GNT adjunct classes. J5 is the generating principle; R19 (gen abs), prep-catena treatment (§8), and FEF periodic-frame treatment (§5) are how it lands for those classes. A future adjunct pattern not covered by existing rules inherits its warrant from J5 rather than requiring a new top-level rule.
+*Relation to prep-catena (§8), FEF:* These are the mechanical operationalizations of J5 for specific GNT adjunct classes. J5 is the generating principle; prep-catena treatment (§8) and FEF periodic-frame treatment (§5) are how it lands for those classes. **R19 (gen abs) is no longer a J5 operationalization** — the 2026-05-20 revision re-homed it among the forward-binding rules (a gen abs is half a thought, not an own-focus adjunct). A future adjunct pattern not covered by existing rules inherits its warrant from J5 rather than requiring a new top-level rule.
 
 ### M1 — Gorgianic Bonded Pair: GNT Cases
 
@@ -309,7 +309,7 @@ This diagnostic catches the failure mode where a canon change is self-framed as 
 | R17 | De-contrast overbreak | Mechanical | 3.8 | `validators/colometry/check_r17_de_contrast_overbreak.py` |
 | R18 | Vocative rule (three-way refined) | Editorial | 3.9 | `validators/colometry/check_r18_vocative.py` |
 | R18a-GNT | Patriarch-deity-triad indivisibility | Mechanical | 3.9a | `validators/colometry/check_r18a_patriarch_triad.py` |
-| R19 | Genitive absolute always own line | Mechanical | 3.10 | `validators/colometry/check_r19_genabs.py` + `scripts/sweep_r19_genabs.py` |
+| R19 | Genitive absolute binds to governing matrix (REVISED 2026-05-20) | Mechanical | 3.10a | v1.5 binding rule *(legacy: `validators/colometry/check_r19_genabs.py`, `scripts/sweep_r19_genabs.py` — own-line era, non-driving)* |
 | R20 | Participial phrase test (refined) | Editorial | 3.10 | `scripts/scan_line_ending_participles.py` *(scanner only)* |
 | R22 | Orphaned adverbial completion | Editorial | 3.11 | *(judgment-required; no auto-validator)* |
 | R23 | Dative subject of infinitive | Mechanical | 3.12 | `scripts/scan_r23_dative_infinitive.py` *(scanner only)* |
@@ -368,19 +368,18 @@ Architecture.md §interface-contracts states: *"Precedence hierarchy — §3.5 o
 | **R10 / Period-test obligatory complement** | wins over generic split-default | Complement integrity | §3.5; §3.18 line 898 ("complement integrity (§3.5 R10)") |
 | **R7 vocative-indivisibility** | wins over M4-GNT-1 when line A is pure vocative | Per universal exclusion #6 in §3.18 | §3.18 verbatim |
 | **R5 periphrastic** | wins over M4-GNT-1 when line A/B forms a periphrastic | Per G3 exclusion in §3.18 | §3.18 verbatim |
-| **R19 gen-abs own-line** | wins over M4-GNT-1 when line B begins with gen abs | Per universal exclusion #11 in §3.18 | §3.18 verbatim |
-| **R19 gen-abs own-line** | wins over R28-ext when both match same locus | gen abs has priority over speech-frame routing | §3.6 R28-ext relation; corroborated by R28-ext code path |
+| **R19 gen-abs bind** (REVISED 2026-05-20) | no longer "wins over" M4-GNT-1 / R28-ext — the old *split*-precedence is retired; R19 now binds the gen abs forward, AGREEING in direction with both | §3.18 #11 + §3.6.1 Excl. 4 reconciled in-place | §3.10a Precedence; §9 |
 | **R22 orphaned-adverbial-completion** | wins over R9 default in completing-predicate sub-case | R22 is the merge-override for the R9 split-default sub-case | §3.4 verbatim ("The default under R9 is split; R22 is the merge-override for the completing-predicate sub-case") |
 | **R9 subordinate-clause break** | wins over R25 ὥστε-binding when the split case applies | R25's word-count + semantic conditions must all clear for R25 to win | §3.14a verbatim ("R9 takes precedence for the split case") |
 | **R28 textual-asymmetry** | wins over R12 editorial parallelism, R14 men/de stacking | Authorial asymmetry preserved over editorial symmetry | §3.7 verbatim ("Textual asymmetry overrides editorial symmetry") |
-| **M4-GNT-1** (and by extension framework M4) | yields to R2-R7 (Layer 1), R6, R11 (formula), R10 (complement), R7 (vocative), R19 (gen-abs) | Merge-override of last resort; runs only after higher-priority rules settle | §3.18 verbatim ("Tier 4 merge-override... Yields to Tier 1–3 rules (Layer 1 vetoes, formula integrity, complement integrity, vocative integrity R7, genitive-absolute R19)") |
+| **M4-GNT-1** (and by extension framework M4) | yields to R2-R7 (Layer 1), R6, R11 (formula), R10 (complement), R7 (vocative); R19 (gen-abs) now agrees rather than blocks | Merge-override of last resort; runs only after higher-priority rules settle | §3.18 ("Tier 4 merge-override... Yields to Tier 1–3 rules"); R19 yield retired 2026-05-20 (§3.10a) |
 | **M1 (Gorgianic bonded pair)** | exhausts M1→M2→M3→M4 chain before flipping to split | M1 strict-application caveat | §2 M1 caveat |
 | **N=2 Adjudication Principle** | adjudicates within the legal-break space when forces leave ambiguity | Applies at N=2 ambiguity; per framework §1.x | framework §1; canon §1 |
 
 **Architecture interface compliance.** Detectors are expected to filter candidates that match a higher-priority pairwise relationship out of lower-priority emission buckets. M4-GNT-1's G1–G5 exclusions + universal-6 list is the gold-standard implementation pattern (`validators/colometry/check_m4_gnt_1_subject_orphan.py`); it explicitly comments "R5 governs", "R7 governs", "R10 governs" at the yield points.
 
 **Known detector gaps (audit 2026-05-13, pending engineering follow-up).** The following detectors do NOT yet implement explicit tier-yield filters per the pairwise table above:
-- **`check_r19_genabs.py`** — lacks "skip if vocative-only line (R7)" and "skip if line spans a FIXED_PHRASES entry (R6)" filters. Current behavior leans on a 5-entry `_KNOWN_FP_ALLOWLIST` that captures the symptom; the class-based filter is missing.
+- **`check_r19_genabs.py`** — MOOT as of 2026-05-20: R19 is now a v1.5 binding rule (binds forward), and this own-line-era detector is legacy/non-driving (§3.10a). The old tier-yield gap no longer needs closing; encode the bind in the v1.5 stage instead.
 - **`check_r18_vocative.py`** — silent on R7 yield. Currently fires independently on multi-word vocative units that R7 would normally constrain.
 - **`validators/run_all.py`** — runs validators in alphabetical (`pkgutil.iter_modules`) order, not pairwise-precedence order. The "filter higher-priority matches out of lower buckets" discipline is currently the responsibility of each lower-priority detector internally; there is no runner-level pass.
 
@@ -424,7 +423,7 @@ action: MERGE_BACKWARD   # upward-merge into preceding anchored line is the appl
 
 **Examples.**
 - *Compliant (finite-verb anchor):* `ἦλθεν Ἰησοῦς ἀπὸ Ναζαρὲτ τῆς Γαλιλαίας` — anchored by ἦλθεν.
-- *Compliant (predicate-participle / gen-abs anchor):* `Ταῦτα δὲ αὐτοῦ ἐνθυμηθέντος,` — anchored by ἐνθυμηθέντος (gen abs).
+- *Compliant (predicate-participle anchor):* the gen-abs participle ἐνθυμηθέντος is itself a valid anchor (R1 satisfied), but a gen abs does NOT stand as its own line — per R19 (REVISED 2026-05-20) it binds forward to its governing matrix: `Ταῦτα δὲ αὐτοῦ ἐνθυμηθέντος, ἰδοὺ ἄγγελος κυρίου …` (Matt 1:20) = one ATU.
 - *Non-compliant (object-continuation):* a bare-NP line continuing the prior line's verb as additional objects carries no anchor; MUST be merged backward into the verb-bearing line.
 - *Excluded by R8:* `Διὰ τοῦτο,` — standalone connective hinge that licenses merge with the *following* line; not a no-anchor violation.
 - *Excluded by J3:* `ἀμὴν λέγω ὑμῖν,` — speech-act announcement permitted as own-line under the two-prong exception.
@@ -687,10 +686,10 @@ SPEECH_LEMMAS_R28EXT:
 1. **ἀπεκρίθη + ὅτι (R10-governed indirect speech)** — ὅτι immediately follows the speech verb; R10 cognition/declaration-class complement governs. Canonical: John 3:28 ὅτι-clauses. → R10
 2. **ἀπεκρίθη + λέγων Semitic idiom** — `λέγων` is participial (non-finite) redundant manner marker; R11 collapses the entire construction onto one line. R28-ext does not fire because `λέγων` is not a finite speech-intro. → R11 / scholarship/r11.md
 3. **Structural-minimum frame (R11 frame-aggregation carve-out)** — preceding clause is a bare conditional/purpose marker with no substantive finite-clause body (e.g., trivial `ἐάν` + single-word subjunctive). Aggregation under R11 governs; R28-ext does not fire. → R11
-4. **R19 genitive absolute frame** — when the frame contains a genitive absolute (anarthrous gen ptc + agreeing gen subject), R19 fires first and the gen abs takes its own line. R28-ext is redundant; do not layer on top of R19 application. → R19
+4. **R19 genitive absolute frame** (REVISED 2026-05-20) — when the speech-frame contains a genitive absolute (anarthrous gen ptc + agreeing gen subject), R19 binds the gen abs FORWARD into its governing matrix (the speech-intro clause); the gen abs does NOT take its own line. R28-ext then governs the frame/quote break on the resulting bound line. (Was: "R19 fires first and the gen abs takes its own line" — retired with the R19 own-line rule.) → R19 binds; R28-ext routes the quote.
 5. **Frame already on prior line** — temporal/participial frame is already on a separate v4/grk line from the speech verb (no co-occurrence on the same line). Rule does not fire (already compliant).
 
-**Precedence.** §3.5 Tier 2 (formula / framing integrity; sub-rule of R11). Yields to R10 (ὅτι-complement first), R19 (gen-abs first). Wins over R9's general subordinate-clause-break rule for its specific subclass (subordinate clause + direct-speech verb).
+**Precedence.** §3.5 Tier 2 (formula / framing integrity; sub-rule of R11). Yields to R10 (ὅτι-complement first). R19 no longer pre-splits a gen-abs frame off — under the 2026-05-20 revision R19 binds it forward, so R28-ext and R19 agree in direction (Exclusion 4). Wins over R9's general subordinate-clause-break rule for its specific subclass (subordinate clause + direct-speech verb).
 
 **Examples.**
 - *Compliant (post-split):* `ὡς δὲ ἐπαύσατο λαλῶν,` / `εἶπεν πρὸς τὸν Σίμωνα·` (Luke 5:4) — substantive temporal frame + speech-intro on separate lines.
@@ -937,14 +936,18 @@ PATRIARCH_TRIAD_VARIANTS:
 
 *Port note.* R18a-GNT is the GNT adaptation of BoFM R18a (Patriarch-Deity-Triad Indivisibility). Closed-list `PATRIARCH_TRIAD_VARIANTS` is GNT-specific (Greek surface forms); the underlying formula-integrity rationale matches BoFM's KJV-1769 instantiation.
 
-### 3.10a R19 — Genitive Absolute Always Own Line
+### 3.10a R19 — Genitive Absolute Binds to the Clause It Frames
 
-**Status:** Active
+**Status:** Active — **REVISED 2026-05-20** (was "Genitive Absolute Always Own Line"). See §9 revision note.
 **Category:** A (Mechanical, mandatory)
 **Decidability:** UD-pattern
 **Layer:** 3
 
-**Rule.** A genitive absolute (anarthrous genitive participle agreeing with a genitive subject NP, syntactically detached from the main clause) MUST occupy its own v4/grk line. The "absolute" sense is literal: the construction is set apart from the main clause, functioning as an interjectory frame (camera shift, scene-setter, aside). Merging a gen abs into adjacent material absorbs an independent beat into something it is not.
+**Rule.** A genitive absolute (anarthrous genitive participle agreeing with a genitive subject NP, syntactically detached from the main clause) is **conceptually half an ATU** — a frame that does not stand as a complete atomic thought (the bidirectional test fails: "Jesus having been born in Bethlehem" — *and then what?*). It MUST therefore **bind to its governing matrix clause** — the clause the gen-abs participle attaches to in the parse (NOT merely the linearly-adjacent clause); the gen abs and that clause together form **one ATU**. For the normal clause-initial gen abs this is a forward bind to the following main clause.
+
+**Why the rule changed.** The prior rule ("always own line") mistook *grammatical* detachment (the "absolute" = "loosened from" case-marking) for *thought* completeness. Detached in case ≠ standing as its own atomic thought. The objective is to reveal ATUs, not rhetorical structure: a gen-abs frame is one half of a single thought, not a separate beat. Three independent warrants converge: (1) the bidirectional ATU test (framework §1.1) — the frame is incomplete in its own forward direction; (2) the Gen 22:1 precedent — frame + apodosis is one ATU; (3) cross-corpus convergence with Hebrew B5 (wayhi temporal frame), which also binds forward. *Note the convergence is on the* action *(forward bind), not on an identical failure mode:* B5 binds forward because its frame fails **backward** (the deictic `hadevarim ha'eleh` is anaphoric-dangling), whereas the bare-temporal gen abs binds forward because it fails **forward** (no main predication). The anaphoric `ταῦτα`-subtype (Matt 1:20) is the exact B5 twin — it fails both directions. So the gen abs binds forward on its own forward-incompleteness; the B5 parallel corroborates the direction but the warrant does not depend on it. R19's old "own line" was the lone divergence from this shared forward-bind posture; this revision restores it.
+
+**Camera-shift carve-out RETIRED.** The prior rule kept a mid-clause gen abs (e.g. Acts 1:9 `βλεπόντων αὐτῶν`) on its own line as a "camera shift to the witnesses." "Camera shift" is a rhetorical-structure notion, not a thought-atomicity criterion (cf. `~/repos/atu-method/memories/feedback_camera_angle_diagnostic_demote`), and it is too impressionistic to carry mechanical force. `βλεπόντων αὐτῶν` is half a thought ("while they were watching" — incomplete alone) and binds into `ἐπήρθη` ("he was taken up while they watched" = one ATU). Gen abs binds to its framed clause regardless of clause position.
 
 **UD signature.**
 ~~~yaml
@@ -953,40 +956,48 @@ trigger:
     has_anarthrous_genitive_participle: true
     has_agreeing_genitive_subject_NP: true
     is_syntactically_detached_from_main_clause: true
-  branch_cataphoric:
-    gen_abs_introduces_following_main_clause: true
-    action: STAND_OWN_LINE
-  branch_anaphoric:
-    gen_abs_anaphorically_back-references_prior_clause: true
-    action: STAND_OWN_LINE   # fails standalone-ATU bidirectional test;
-                              # the gen abs still gets its own line per R19,
-                              # but the anaphoric dependence is flagged at framework §1.1
+  branch_default:
+    gen_abs_attaches_to_a_matrix_clause_in_same_verse: true
+    action: BIND_TO_GOVERNING_MATRIX   # bind to the matrix the gen-abs
+                                       # participle attaches to in the parse;
+                                       # forward for the normal clause-initial
+                                       # case, to the governing verb for a
+                                       # mid-clause framing gen abs
+  branch_cross_verse:
+    matrix_clause_is_in_the_next_verse: true   # verse-isolated / verse-final gen abs
+    action: REVIEW   # cross-verse-defer (mirrors R28-ext Phase B); the
+                     # within-verse binding constraint (framework §3) forbids
+                     # a silent cross-verse bind. e.g. Matt 26:6.
+  branch_stacked:
+    multiple_gen_abs_or_collapsed_bind_exceeds_single_thought_length: true
+    action: REVIEW   # stacked frames sharing a matrix (Mark 14:3) or two gen
+                     # abs each framing a different matrix (Acts 21:40): bind
+                     # each to its OWN governing matrix; if the collapse yields
+                     # 2+ thoughts / an over-long line, route to v2/editorial.
   branch_review:
-    gen_abs_subject_or_predication_locus_ambiguous: true
+    no_matrix_to_bind / gen_abs_subject_or_predication_locus_ambiguous: true
     action: REVIEW
 ~~~
 
-**Scope.** All v4/grk lines containing a genitive absolute construction. R19 fires regardless of cataphoric/anaphoric direction; the bidirectional ATU test at framework §1.1 governs the standalone-ATU question separately.
+**Scope.** All v4/grk lines containing a genitive absolute construction. R19 fires regardless of cataphoric/anaphoric reference direction — the *anaphoric* reference of a `ταῦτα`-type subject (e.g. `Ταῦτα δὲ αὐτοῦ εἰπόντος,`) is a discourse property handled at framework §1.1, and does not change the bind: the gen abs still frames (and binds to) its governing matrix clause.
 
 **Exclusions** (closed list).
 1. **Genitive of comparison / genitive of reference** — not a gen abs (no participle agreeing with the genitive). Out of scope.
-2. **Articular genitive participle modifying a noun** — attributive participle, not absolute construction. → R20 (default merge for attributive).
-3. **Gen abs already on its own line** — rule does not re-fire (already compliant).
+2. **Articular genitive participle modifying a noun** — attributive participle, not absolute construction. → R20.
+3. **Gen abs whose governing matrix is in the next verse** (verse-isolated / verse-final frame, e.g. Matt 26:6) — → REVIEW (cross-verse-defer); do NOT silently bind across the verse boundary.
+4. **Stacked / multi-matrix gen abs** whose collapse into one line would exceed a single thought — → REVIEW.
 
-**Precedence.** §3.5 Tier 2 (framing-integrity / formula-integrity). Yields to R2–R7 (Layer 1). Wins over M4-GNT-1 (§3.18 universal exclusion #11) and R28-ext (R28-ext defers to R19 when frame contains gen abs).
-
-**Examples.**
-- *Compliant (cataphoric):* `Ταῦτα δὲ αὐτοῦ ἐνθυμηθέντος,` / `ἰδοὺ ἄγγελος κυρίου …` (Matt 1:20) — gen abs frames the main clause that follows.
-- *Compliant (Acts 1:9 showcase):* `Καὶ ταῦτα εἰπών,` / `βλεπόντων αὐτῶν` / `ἐπήρθη` — gen abs `βλεπόντων αὐτῶν` as own line (camera-shift to witnesses), main clause `ἐπήρθη` follows.
-- *Compliant (anaphoric, with framework §1.1 flag):* `Ταῦτα δὲ αὐτοῦ εἰπόντος,` standing as own line; the anaphoric `ταῦτα` back-references the preceding speech. R19 still mandates own-line; the anaphoric dependence is a downstream ATU-question, not an R19 carve-out.
+**Precedence.** Yields to R2–R7 (Layer 1). The old R19→R28-ext and R19→M4-GNT-1 *split*-precedence yields are **retired** under the bind direction — a gen abs no longer pre-splits the line, so there is no "R19 wins/fires first" splitter to defer to. R19-revised and those rules now point the **same** direction (forward attachment): when a speech-frame contains a gen abs (R28-ext, §3.6.1 Exclusion 4), R19 binds the gen abs forward into the frame and R28-ext then governs the frame/quote break on the resulting line; when a subject-orphan line B begins with a gen abs (M4-GNT-1, §3.18 exclusion #11), R19's forward bind *supports* rather than blocks the M4 merge. Both have been reconciled in-place (this commit); see §9.
+- *Compliant (clause-initial, binds forward):* `Τοῦ δὲ Ἰησοῦ γεννηθέντος ἐν Βηθλέεμ … ἰδοὺ μάγοι … παρεγένοντο` (Matt 2:1) — gen abs + main clause = one ATU.
+- *Compliant:* `Ταῦτα δὲ αὐτοῦ ἐνθυμηθέντος, ἰδοὺ ἄγγελος κυρίου …` (Matt 1:20).
+- *Compliant (camera-shift carve-out retired):* `… βλεπόντων αὐτῶν ἐπήρθη` (Acts 1:9) — `βλεπόντων αὐτῶν` binds into `ἐπήρθη`.
 - *Excluded by Exclusion 2:* attributive `ὁ παρεστηκὼς ἐνώπιον τοῦ θεοῦ` (Luke 1:19) — not a gen abs. → R20.
 
-**Implementation.**
-- Validator: `validators/colometry/check_r19_genabs.py` + sweep applier `scripts/sweep_r19_genabs.py`
-- Applier: `scripts/sweep_r19_genabs.py` (sweep applier for the default own-line direction)
+**Implementation (mechanical-first).** R19 is a **v1.5 binding rule**: at v1.5 the PROIEL gen-abs clause-atom (anarthrous genitive participle + agreeing genitive subject) BINDS to the matrix-clause atom it attaches to in the parse (its governing matrix, same verse). The corpus is **generated** v0→v1→v1.5; R19's revision propagates by regeneration, not by mutating v4.
+- *Legacy (old producer-validator architecture, being retired):* `validators/colometry/check_r19_genabs.py` + `scripts/sweep_r19_genabs.py` enforced the old "own line" rule by sweeping hand-built v4. Under mechanical-first these do not drive R19; they remain only until the GNT v0→v1.5 generator is production-ready. Do NOT invert the sweep to "re-merge" v4 — encode the bind in the v1.5 binding stage instead.
 - Closed-list definitions: (none — rule keys on grammatical signature, not a closed list)
-- Scholarship: `private/01-method/scholarship/r19.md` (Burton §428–429 / Wallace pp.654–665 / BDF §423 gen-abs syntax; cataphoric vs. anaphoric framework §1.1 interaction)
-- Audit trail: `private/01-method/audit-trail/r19.md` (gen-abs sweep records; Acts 1:9 showcase analysis)
+- Scholarship: `private/01-method/scholarship/r19.md` (Burton §428–429 / Wallace pp.654–665 / BDF §423 gen-abs syntax; the half-an-ATU reconception + B5 convergence).
+- Audit trail: `private/01-method/audit-trail/r19.md`.
 
 ### 3.10b R20 — Participial Phrase (Refined)
 
@@ -1026,12 +1037,12 @@ trigger_attributive_merge:
 **Scope.** All v4/grk lines containing a non-gen-abs participle (gen abs is R19 territory). Encompasses circumstantial (adverbial), supplementary (predicative), and attributive participles.
 
 **Exclusions** (closed list — each cites dominating rule or governing pattern).
-1. **Genitive absolute** — R19 fires first. → R19
+1. **Genitive absolute** — R19 governs (binds it forward to its governing matrix; same merge direction as R20's default). → R19
 2. **Periphrastic construction (explicit single-aux + participle)** — R5 (Layer 1) governs; never split a periphrastic pair. → R5
 3. **Articular attributive participle modifying a noun** — handled within R20 (attributive merge branch), but distinct from circumstantial-default-merge; no exception, same merge result.
 4. **Short ὅπου/ὅτε/ὅς clause completing the predicate** — not a participle; R22 territory. → R22
 
-**Precedence.** §3.5 Tier 3 (editorial direction; per-case judgment). Yields to R5 (periphrastic — Layer 1), R19 (gen abs — Tier 2). The second-predication test is the per-case judgment threshold.
+**Precedence.** §3.5 Tier 3 (editorial direction; per-case judgment). Yields to R5 (periphrastic — Layer 1) and R19 (gen abs). Note R19 and R20 now share the same default direction (bind the participial frame to its matrix); R19 simply owns the gen-abs sub-case (distinct genitive subject). The second-predication test is the per-case judgment threshold.
 
 **Examples.**
 - *Compliant (default merge):* `ἰδόντες δὲ τὸν ἀστέρα ἐχάρησαν χαρὰν μεγάλην σφόδρα` (Matt 2:10) — "having seen the star" is causal framing for "they rejoiced"; dependent frame merges with main verb.
@@ -1332,9 +1343,9 @@ LEADING_CONNECTIVES_BLOCK_FIRE:
 8. **Leading connective on line B** (καί, δέ, γάρ, etc.). Line B is coordinate/subordinate, not bare predicate.
 9. **Line A is a PP-object, not a grammatical subject.** NP governed by a preposition (e.g., object of `ἐν`, `διά`, `πρός`).
 10. **Line A is already a complete clause** (contains its own finite subject + predicate). Line B is coordinate.
-11. **R19 genitive-absolute on line B.** Line B begins with a gen abs (anarthrous gen ptc + agreeing gen subject); R19 fires first. → R19
+11. **R19 genitive-absolute on line B** (REVISED 2026-05-20). Line B begins with a gen abs (anarthrous gen ptc + agreeing gen subject); R19 governs. Under the bind direction R19 attaches the gen abs forward to its governing matrix — which, for the subject-orphan pattern (line A = subject NP, line B = gen-abs-headed predicate), *supports* the M4 merge rather than blocking it. Defer to R19's bind. → R19
 
-**Precedence.** §3.5 Tier 4 (merge-override). Yields to Layer 1 R2–R7 (break-legality), R6 (formula integrity), R10 (complement integrity), R7 (vocative integrity), R19 (genitive absolute).
+**Precedence.** §3.5 Tier 4 (merge-override). Yields to Layer 1 R2–R7 (break-legality), R6 (formula integrity), R10 (complement integrity), R7 (vocative integrity). R19 (gen abs) now agrees in direction (binds forward) rather than imposing a prior split — see §3.10a (REVISED 2026-05-20).
 
 **Examples.**
 
@@ -1544,8 +1555,8 @@ R18a-GNT:
 ~~~
 
 ~~~yaml
-# R19 — Genitive absolute always own line (canon §3.10)
-# Detector: validators/colometry/check_r19_genabs.py
+# R19 — Genitive absolute binds to its governing matrix clause (canon §3.10a; REVISED 2026-05-20)
+# v1.5 binding rule. Legacy detector (own-line era, non-driving): validators/colometry/check_r19_genabs.py
 R19:
   rule_id: R19
   category: Mechanical
@@ -1555,24 +1566,18 @@ R19:
       line_contains:
         - anarthrous_genitive_participle
         - agreeing_genitive_subject
-        - main_clause_finite_verb   # gen abs co-linear with main clause
-    action: STRONG-SPLIT
+        - matrix_clause_finite_verb   # the matrix the gen abs attaches to (same verse)
+    action: BIND_TO_GOVERNING_MATRIX
+    review_branches:
+      - matrix_in_next_verse        # verse-isolated/verse-final gen abs → REVIEW (cross-verse-defer)
+      - stacked_or_overlong_collapse # stacked/multi-matrix → bind each to its own matrix; overlong → REVIEW
   exclusions:
-    - adnominal: genitive_article_immediately_before_participle
+    - adnominal: genitive_article_immediately_before_participle    # → R20
     - PP_governed: preposition_within_3_tokens_before_ptc_or_subject
     - subordinator_finite: finite_verb_inside_subordinator_scope
         # ὅτε / ὅταν / ὡς / ἐπεί / ἐπειδή / ὅπως / relative pronouns
-  known_FPs_allowlist:
-    # See _KNOWN_FP_ALLOWLIST in detector — attributive NP structures the
-    # adjacency heuristic can't resolve. If list grows past ~5 entries,
-    # refine Class B filter (inter-line NP awareness) rather than extend.
-    - (john, 7, 38)
-    - (2cor, 6, 16)
-    - (heb, 11, 1)
-    - (matt, 9, 10)
-    - (phil, 2, 15)
   references: |
-    PRIMARY discourse-linguistic source: Runge §12.3.2 Genitive Circumstantial Frames. Runge (citing Fuller): "The function of the form of participle and noun/pronoun in the Genitive (without any other formal cause, such as a preposition) is to draw the reader's attention to certain information in a more detached way than other circumstantial participles.… The information in the GA acts as a frame in which to interpret the information of the main clause, or of an even larger discourse." Two primary discourse functions: (a) TEMPORAL TRANSITION without pericope-level discontinuity (Luke 4:40, 42); (b) TAIL-HEAD LINKAGE reiterating preceding action as background (Matt 2:1 Τοῦ δὲ Ἰησοῦ γεννηθέντος — Runge example 166, directly relevant to canon Matt 2 work). The "absolute" property (gen abs subject NOT in main clause) is what marks the discourse-detachment that warrants the own-line colometric treatment.
+    PRIMARY discourse-linguistic source: Runge §12.3.2 Genitive Circumstantial Frames. Runge (citing Fuller): "The function of the form of participle and noun/pronoun in the Genitive (without any other formal cause, such as a preposition) is to draw the reader's attention to certain information in a more detached way than other circumstantial participles.… The information in the GA acts as a frame in which to interpret the information of the main clause, or of an even larger discourse." Two primary discourse functions: (a) TEMPORAL TRANSITION without pericope-level discontinuity (Luke 4:40, 42); (b) TAIL-HEAD LINKAGE reiterating preceding action as background (Matt 2:1 Τοῦ δὲ Ἰησοῦ γεννηθέντος — Runge example 166). Runge's own framing — the GA "acts as a frame in which to interpret the information of the main clause" — establishes that the frame is INCOMPLETE without the clause it frames; under the ATU bidirectional test this warrants BINDING the gen abs to its governing matrix (one ATU), NOT giving it its own line. (The prior reading took Runge's "more detached" to warrant own-line treatment; "detached in case" ≠ "complete as a thought" — see §3.10a "Why the rule changed.")
     Burton §451 (Genitive Absolute — construction definition + scope as separate from main clause); Wallace, "Verbal Participles: Absolute — Genitive Absolute" (modern aspect-aware treatment); BDF §§423–424 (Genitive Absolute — historical-grammar depth).
 ~~~
 
@@ -1876,7 +1881,7 @@ Any pipeline change that breaks one of these four is suspect. If a change breaks
 
 ### Post-Split Function-Word Recheck (mandatory after any split pass)
 
-**After any mass-split pass (R8, R12, R18, R19, or any rule that produces new line breaks), re-run the dangling-function-word check before committing.** A split can strand preposition-object, article-noun, or negation-verb pairs on either side of the new break. The recheck catches these.
+**After any mass-split pass (R8, R12, R18, or any rule that produces new line breaks), re-run the dangling-function-word check before committing.** A split can strand preposition-object, article-noun, or negation-verb pairs on either side of the new break. The recheck catches these. *(R19 removed from this list 2026-05-20: it now produces forward BINDS, not new line breaks.)*
 
 **Why it's mandatory:** every new line break is a potential function-word orphan. The canon's "never split" list (article+noun, preposition+object, negation+verb, noun+genitive modifier, noun+possessive pronoun — see Layer 1 `data/syntax-reference/greek-break-legality.md`) is a forbidden-break set; a split pass can accidentally produce forbidden breaks if the scanner isn't perfectly tuned. The recheck is the safety net.
 
@@ -2205,6 +2210,7 @@ Rule-number gaps (15, 16, 21, 25-old, 26, 29) preserved rather than renumbered t
 | **Prior hierarchy versions** (Four-criteria-no-hierarchy 2026-04-09 → Syntax-as-floor 2026-04-11 → Absolutist "atomic-thought-wins-every-collision" 2026-04-12 → current Default + Unless 2026-04-16) | iterative refinement; only the current form is authoritative. | 2026-04-16 |
 | **Duplicate "Section 6b"** (μή/ἀλλά antithesis + dative-subject-of-infinitive both labeled 6b) | restructured to R15 (§3.7, since retired) and R23 (§3.12). | document restructure |
 | **Idou (ἰδού) three-type distinction** (deictic / mirative / logical-connective, adapted from parallel-corpus work) | Tested 2026-05-14 on the canon-named passages (Matt 1-2, Luke 1-2, Rev 1-3 — 24 instances). All three types are present in the sample, but colometric treatment is 100% uniform: ἰδού (or `καὶ ἰδού`) leads its content, never line-final, regardless of type. Type does not predict break behavior → not a colometric rule. Also requires authorial-intent interpretation to detect (deictic-vs-mirative is genuinely ambiguous on cases like `Ἰδοὺ ἡ παρθένος`) → out of scope per §1 Imposing-vs-Revealing. ἰδού is already correctly handled by §3.3 R8 (framing-device, leads content) + the §1 bidirectional-test cataphoric-presentative pass. The three-type distinction is a real discourse-semantic fact but belongs in exegetical commentary, not the colometric grid. | 2026-05-14 |
+| **R19 "genitive absolute ALWAYS OWN LINE"** + its camera-shift/J5 own-line warrant | A gen abs is *grammatically* detached (case-absolute) but is **half an ATU**, not a complete thought — the bidirectional test fails forward ("Jesus having been born in Bethlehem — and then what?"). Reconceived: the gen abs BINDS forward to its governing matrix (frame + clause = one ATU; §3.10a). "Camera shift" is rhetorical-structure, not thought-atomicity, and too impressionistic for mechanical force → retired as a gen-abs own-line warrant. Converges with Hebrew B5 (forward-binding wayhi frame). Reverses the 2026-05-13 "KEEP ALL 10 SPLIT" Cat B decision (the 10 anaphoric-ταῦτα gen abs now bind forward). Reconciliation of R28-ext Excl. 4, M4-GNT-1 #11, J5, FEF-showcase, summary table, conflict grid done in-place same commit. | 2026-05-20 |
 
 ### Unsettled (active open question, not retired)
 
