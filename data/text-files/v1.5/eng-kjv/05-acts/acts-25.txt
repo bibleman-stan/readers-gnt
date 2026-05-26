@@ -3,10 +3,7 @@ Now when Festus was come into the province, after three days he ascended from Ca
 
 25:2
 Then the high priest and the chief of the Jews informed him against Paul,
-and besought him, ³And desired favour against him,
-
-25:3
-that he would send for him to Jerusalem, laying wait in the way to kill him.
+and besought him,
 
 25:4
 But Festus answered, that Paul should be kept at Caesarea, and that he himself would depart shortly thither.
@@ -15,15 +12,13 @@ But Festus answered, that Paul should be kept at Caesarea, and that he himself w
 Let them therefore, he, which among you
 said
 are able, go down with me,
-man, if there be any wickedness in him.
-and accuse this
+and accuse this man, if there be any wickedness in him.
 
 25:6
 And when he had tarried among them more than ten days, he went down unto Caesarea; and the next day sitting on the judgment seat commanded Paul to be brought.
 
 25:7
-And when he was come, the Jews which came down from Jerusalem stood round about, and laid many and grievous complaints against
-Paul, which they could not prove.
+And when he was come, the Jews which came down from Jerusalem stood round about, and laid many and grievous complaints against Paul, which they could not prove.
 
 25:8
 While he answered for himself, Neither against the law of the Jews, neither against the temple, nor yet against Caesar, have I offended any thing at all.
@@ -41,8 +36,7 @@ wrong, as
 thou very well knowest.
 
 25:11
-For if I be an offender,
-or have committed any thing worthy of death,
+For if I be an offender, or have committed any thing worthy of death,
 I refuse not to die:
 but if there be none of these things whereof these accuse me,
 no man may deliver me unto them.
@@ -110,8 +104,7 @@ and that he himself hath appealed to Augustus, I have determined to send him.
 25:26
 Of whom I have no certain thing to write unto my lord.
 Wherefore I have brought him forth before you, and specially before thee,
-O king Agrippa,
-that, after examination had, I might have somewhat
+O king Agrippa, that, after examination had, I might have somewhat
 to write.
 
 25:27
