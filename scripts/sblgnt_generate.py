@@ -428,6 +428,40 @@ def _is_rel_conditional(ws):
     return is_rel and any(w["lemma"] in {"ἄν", "ἐάν"} for w in ws)
 
 
+# Levinsohn/Runge developmental connectives — a clause headed by one is a new
+# development / its own grounds, and resists binding BACKWARD. CLOSED LIST (§7.3):
+#   δέ (development) · γάρ (grounds) · μέν (anticipatory correlative-setup).
+# Deliberately EXCLUDED: καί (continuity — MORE likely to bind), τε (tight phrase-
+# coordination), γε/δή (emphatics, not connectives). οὖν is a held candidate
+# (inferential in Paul → resists; Johannine οὖν is resumptive ≈ continuity → binds):
+# test in audit before adding. ἀλλά/διό are prepositive framing (R8 leads).
+_DEV_CONNECTIVE = {"δέ", "γάρ", "μέν"}
+
+
+def _dev_connective(ws):
+    """A clause headed by a developmental connective (`_DEV_CONNECTIVE`) must NOT bind
+    BACKWARD into the prior line (Rom 2:1 'ἐν ᾧ γὰρ κρίνεις … κατακρίνεις' is its own
+    ATU, not a tail of 'ὦ ἄνθρωπε πᾶς ὁ κρίνων'). The marker is postpositive (2nd
+    position), sitting after the fronted element and before the clause's finite verb
+    (ἐν ᾧ ΓΑΡ κρίνεις; τὰ ΓΑΡ αὐτὰ πράσσεις; Τὸν ΜΕΝ πρῶτον λόγον …). These are
+    CLAUSE-level connectives — they mark a clause-level development (δέ/γάρ head their
+    own finite predication; μέν sets up a forward correlative beat), so leaning on
+    them is firewall-safe (syntax, not aesthetics) and costs nothing against the
+    bidirectional test, unlike the sub-clausal yea-marker license. High-precision,
+    low-recall: presence signals a boundary; absence implies nothing (asyndeton breaks
+    too) — so this only BLOCKS a backward bind, never forces a split. Detected only
+    when the connective precedes the first finite verb; a γάρ after the main verb is
+    parenthetical (Mark's ἦν γὰρ … asides) and not the clause connective."""
+    if not _has_finite(ws):
+        return False   # a verbless phrase-fragment (phrase-internal μέν) is not a clause
+    for w in sorted(ws, key=lambda w: (w["verse"], w["wi"])):
+        if w["mpos"].startswith("V") and w["mood"] in FINITE:
+            return False
+        if w["lemma"] in _DEV_CONNECTIVE:
+            return True
+    return False
+
+
 def _junction_same_verse(earlier, later):
     """Framework §3: bindings fire WITHIN a single verse; a cross-verse bind is a
     REVIEW case, never a silent merge. A bind is allowed only when the junction is
@@ -463,6 +497,8 @@ def merge_subordinate_clauses(segments):
         bind_back = (opener in _BWD_SUB) or is_rel
         if is_rel and (_rel_is_correlative(ws) or _is_rel_conditional(ws)):
             bind_back = False   # ὃς δέ/ὅστις δέ (new correlative) or ὃς ἄν (forward conditional)
+        if _dev_connective(ws):
+            bind_back = False   # δέ/γάρ/μέν-headed clause = new development (Levinsohn/Runge)
         prev_is_quote = bool(qflag) and qflag[-1]
         if (bind_back and out and _has_finite(ws)
                 and not _is_speech_frame(out[-1]) and not prev_is_quote
@@ -502,7 +538,8 @@ def merge_subordinate_clauses(segments):
     for ws in fwd:
         opener, _ = _seg_opener(ws)
         if (opener in _BIDIR_SUB and res and _has_finite(res[-1])
-                and not _is_speech_frame(res[-1]) and _bind_ok(res[-1], ws)):
+                and not _is_speech_frame(res[-1]) and not _dev_connective(ws)
+                and _bind_ok(res[-1], ws)):
             res[-1].extend(ws)
             res[-1].sort(key=lambda w: (w["verse"], w["wi"]))
         else:
