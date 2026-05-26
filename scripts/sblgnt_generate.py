@@ -564,6 +564,42 @@ def merge_line_end_leaders(lines, v0):
     return out
 
 
+# A forward-governing function word governs what FOLLOWS it: a preposition, or a
+# subordinator that introduces a following clause (temporal/conditional frame,
+# purpose/cause, comparative, terminative ἄχρι/ἕως/μέχρι/πρίν, ὅτι/ὅταν/…). No ATU
+# line may END on one — "ending a thought on 'until' is incoherent"; it must LEAD
+# the next line. (Canon §3.4 + the §3.5 ὅτι-leads-its-complement convention.)
+_FWD_GOV_LEM = _FWD_FRAME | _BWD_SUB | _BIDIR_SUB | _R9_OPENERS
+
+
+def _is_fwd_governor(w):
+    return w["cls"] == "prep" or w["mpos"] == "P-" or w["lemma"] in _FWD_GOV_LEM
+
+
+def lead_forward_trailing_governors(segments):
+    """No ATU line may END on a forward-governing token (preposition or subordinator):
+    it governs what follows, so it must LEAD the next line, never dangle. When a verse
+    boundary or a parse attachment strands a governor at a line tail — Acts 1:1
+    `…ποιεῖν τε καὶ διδάσκειν ἄχρι |` `1:2 ἧς ἡμέρας…ἀνελήμφθη` — peel the trailing
+    governor run and prepend it to the next segment (`ἄχρι` now LEADS the v2 line).
+    Distinct from merge_line_end_leaders' STRONG-MERGE: only the trailing token moves,
+    not the whole line (strong-merging here would recreate the cross-verse mega-line).
+    Relocated tokens are flagged so emit labels the line by its own clause's verse."""
+    for i in range(len(segments) - 1):
+        seg = segments[i]
+        k = len(seg)
+        while k > 1 and _is_fwd_governor(seg[k - 1]):
+            k -= 1
+        if 1 <= k < len(seg):                 # trailing governor(s) + >=1 content token
+            moved = seg[k:]
+            for w in moved:
+                w["_relocated"] = True
+            del seg[k:]
+            segments[i + 1][0:0] = moved
+            segments[i + 1].sort(key=lambda w: (w["verse"], w["wi"]))
+    return [s for s in segments if s]
+
+
 def emit_v4(lowfat, morph, v0dir, slug, chap):
     """v1.5/grk lines rendered from v0-prose PUNCTUATED tokens. A display line is a
     maximal run of surface-CONSECUTIVE words sharing one ATU id — so the flattened
@@ -593,13 +629,17 @@ def emit_v4(lowfat, morph, v0dir, slug, chap):
     segments = merge_cognition_hoti(segments)
     segments = merge_subordinate_clauses(segments)
     segments = merge_line_end_leaders(segments, v0)
+    segments = lead_forward_trailing_governors(segments)
 
     out, headered = [], set()
 
     def flush(seg_words):
         if not seg_words:
             return
-        fv = seg_words[0]["verse"]
+        # Label by the line's OWN clause verse, not a token relocated in from the
+        # prior verse (a led-forward ἄχρι must not drag the header back a verse).
+        own = [w["verse"] for w in seg_words if not w.get("_relocated")]
+        fv = min(own) if own else seg_words[0]["verse"]
         if fv not in headered:
             if out:
                 out.append("")            # blank-line separator between verses
