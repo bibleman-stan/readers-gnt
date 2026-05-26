@@ -17,9 +17,10 @@ That your faith should not stand in the wisdom of men, but in the power of God.
 
 2:6
 Howbeit we speak wisdom among them that are perfect:
-yet not the wisdom of this world, nor of the princes of this world, that come to nought: ⁸Which none of the princes of this world knew:
+yet not the wisdom of this world, nor of the princes of this world, that come to nought:
 
 2:8
+Which none of the princes of this world knew:
 for had they known it, they would not have crucified the Lord of glory.
 
 2:9
@@ -43,8 +44,10 @@ the Spirit of God.
 Now we
 not
 have received, the spirit of the world,
-but the spirit which is of God;
-that we might know the things that are freely given to us of God.
+but the spirit which is of God; that we might know the things that are freely given to us of God.
+
+2:13
+Which things also we speak, not in the words which man's wisdom teacheth, but which the Holy Ghost teacheth; comparing spiritual things with spiritual.
 
 2:14
 But the natural man receiveth not the things of the Spirit of God:
