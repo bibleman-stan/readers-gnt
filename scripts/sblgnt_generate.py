@@ -74,34 +74,47 @@ def generate(lowfat, morph, chap):
         cl_words.setdefault(w["chain"][-1], []).append(w)
     feats = {cl: cl_features(ws) for cl, ws in cl_words.items()}
     rep_chain = {cl: ws[0]["chain"] for cl, ws in cl_words.items()}
+    verse_of = {cl: ws[0]["verse"] for cl, ws in cl_words.items()}
 
-    def gov_lemma(cl):
+    def fin_gov_cl(cl):
+        """Nearest FINITE-headed ancestor clause in the nesting chain (the governor
+        a dependent clause would bind to), or None."""
         chain = rep_chain[cl]
         for anc in reversed(chain[:chain.index(cl)]):
             f = feats.get(anc)
             if f and f["kind"] == "FIN":
-                return f["lemma"]
-        return ""
+                return anc
+        return None
 
     def is_root(cl):
         f = feats[cl]
         if f["is_glue"]:
             return False
-        has_fin_gov = bool(gov_lemma(cl))  # a FINITE predication governs this clause?
+        gov = fin_gov_cl(cl)
+        has_gov = gov is not None                                  # governor any verse
+        has_gov_samev = has_gov and verse_of[gov] == verse_of[cl]  # within-verse
+        # WITHIN-VERSE BINDING (framework §3) gates SECOND PREDICATIONS, not sub-
+        # predicational dependents. A FINITE subordinate/relative clause is its own
+        # predication: it binds only to a SAME-VERSE governor; a cross-verse finite
+        # clause = REVIEW (kills the Acts 1:1-3 relative CHAIN — ἧς…ἀνελήμφθη /
+        # οἷς…παρέστησεν — that collapsed several predications across verses). A
+        # NON-FINITE dependent (participle/infinitive) is part of ONE predicate and
+        # rides with its finite governor EVEN ACROSS a verse marker: this preserves
+        # the Greek-prominent cross-verse cases the blanket guard wrongly split —
+        # speech frames (²λέγοντες / λέγων), supplementary participles (παύομαι …
+        # εὐχαριστῶν, Eph 1:15-16), circumstantial-participle chains (Mark 5:25-27).
+        # (Refined 2026-05-24 after the §7.3 audit pair flagged the non-finite over-
+        # split; the blanket same-verse form over-split intra-predicate binds.)
         if f["kind"] == "FIN":
             if f["is_rel"]:
-                # restrictive relative binds to a finite head (narrative ὃν εἶδον);
-                # a relative in a VERBLESS appositive chain (Pauline salutation
-                # ὃ προεπηγγείλατο) has no finite governor -> own ATU.
-                return not has_fin_gov
+                return not has_gov_samev   # finite relative -> same-verse head only
             if f["intro"] in HOTI:
-                return gov_lemma(cl) not in COGNITION  # cognition-ὅτι binds; else own ATU
+                # cognition-ὅτι binds to a SAME-VERSE cognition verb; speech-ὅτι and
+                # any cross-verse ὅτι -> own ATU.
+                return not (has_gov_samev and feats[gov]["lemma"] in COGNITION)
             return True
         if f["kind"] in ("ptcp", "inf"):
-            # circumstantial/attributive participle + complement infinitive bind
-            # to their finite predication; in a verbless chain (no finite
-            # governor) they are apposed descriptions -> own ATU.
-            return not has_fin_gov
+            return not has_gov   # non-finite: rides its finite governor, any verse
         return True  # verbless predication -> own ATU
 
     def atu_of(w):
