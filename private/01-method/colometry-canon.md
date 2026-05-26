@@ -1,7 +1,9 @@
 # Colometry Methodology Canon — Reader's GNT
 
-**Version:** 3.1 (2026-05-13 — focused trim + restructure: §10 history archived to git, §8 research findings retired, §9 compressed to index, §6.5 audit-workflow promoted to §7 slot, Rule Index gains Detector column)
+**Version:** 3.3 (2026-05-24 — R9 revised: subordinate clause binds to its matrix [the last split-default holdout joins the canon bind posture], R22 subsumed; full ~16-site cascade reconciled in-place. See §10.)
 **Predecessors:**
+- v3.2 (2026-05-20) — R19 gen-abs bind-forward revision + cross-canon reconciliation
+- v3.1 (2026-05-13) — focused trim + restructure: §10 history archived to git, §8 research findings retired, §9 compressed to index, §6.5 audit-workflow promoted to §7 slot, Rule Index gains Detector column
 - v3.0 (2026-05-12) — framework extracted to atu-method/docs/framework.md
 - v2.0 (2026-04-20) — superseded; framework material lived in §0/§1/§2/§6 prose. Now pointered to atu-method.
 - v1.0 (document created 2026-04-09; restructured 2026-04-16; consolidated 2026-04-18) — retained for reference via git log; no longer authoritative as a version.
@@ -299,7 +301,7 @@ This diagnostic catches the failure mode where a canon change is self-framed as 
 | R6 | Fixed phrases stay together | Layer 1 | Layer 1 table | `validators/syntax/check_r6_fixed_phrases.py` |
 | R7 | Vocative units indivisible | Layer 1 | Layer 1 table | `validators/syntax/check_r7_vocative_units.py` |
 | R8 | Framing devices attach | Mechanical | 3.3 | `validators/syntax/check_r8_framing_devices.py` |
-| R9 | Subordinate clause introduction breaks | Mechanical | 3.4 | `validators/syntax/check_r9_subordinate_clause.py` |
+| R9 | Subordinate clause binds to its matrix (REVISED 2026-05-24) | Mechanical | 3.4 | v1.5 binding rule (`scripts/sblgnt_generate.py::merge_subordinate_clauses`) *(legacy split-detector `validators/syntax/check_r9_subordinate_clause.py` — own-line era, non-driving)* |
 | R10 | Complementizer hoti — cognition vs. speech | Mechanical | 3.5 | `validators/colometry/check_r10_hoti_complementizer.py` |
 | R11 | Direct speech introduction | Mechanical | 3.6 | `validators/colometry/check_r11_speech_intro.py` |
 | R11-ext / R28-ext | Speech-act announcement after adverbial frame (split) | Mechanical | 3.6 | `validators/colometry/check_r28_speech_act_frame.py` |
@@ -311,7 +313,7 @@ This diagnostic catches the failure mode where a canon change is self-framed as 
 | R18a-GNT | Patriarch-deity-triad indivisibility | Mechanical | 3.9a | `validators/colometry/check_r18a_patriarch_triad.py` |
 | R19 | Genitive absolute binds to governing matrix (REVISED 2026-05-20) | Mechanical | 3.10a | v1.5 binding rule *(legacy: `validators/colometry/check_r19_genabs.py`, `scripts/sweep_r19_genabs.py` — own-line era, non-driving)* |
 | R20 | Participial phrase test (refined) | Editorial | 3.10 | `scripts/scan_line_ending_participles.py` *(scanner only)* |
-| R22 | Orphaned adverbial completion | Editorial | 3.11 | *(judgment-required; no auto-validator)* |
+| R22 | Orphaned adverbial completion *(SUBSUMED into R9-revised 2026-05-24; see §3.11, §9)* | Editorial | 3.11 | *(retired — completing-predicate is now the R9 default bind)* |
 | R23 | Dative subject of infinitive | Mechanical | 3.12 | `scripts/scan_r23_dative_infinitive.py` *(scanner only)* |
 | R24 | Qualifying phrases: escalation vs. restriction | Editorial | 3.13 | *(judgment-required; no auto-validator)* |
 | R25 | ὥστε short-consecutive-result binding | Mechanical | 3.14a | `validators/colometry/check_r25_hoste_consecutive_result.py` |
@@ -319,7 +321,7 @@ This diagnostic catches the failure mode where a canon change is self-framed as 
 | R28 | Textual asymmetry overrides editorial symmetry | Principle | 3.7 | *(principle, not a per-line rule)* |
 | M4-GNT-1 | Subject-orphan predicate completion (Greek instantiation) | Mechanical | 3.18 | `validators/colometry/check_m4_gnt_1_subject_orphan.py` |
 
-*Retired (see §9):* R15 (folded into R14), R16 (folded into R8), R21 (absorbed as operational mechanism for R12/R13/R14), R25-old (folded into R11 — superseded 2026-05-11 by R25 ὥστε-binding; see §9), R26 (pure restatement of M2), R29 (pointer-only; M1–M4 stand on their own in Section 2).
+*Retired (see §9):* R15 (folded into R14), R16 (folded into R8), R21 (absorbed as operational mechanism for R12/R13/R14), R22 (subsumed into R9-revised 2026-05-24 — completing-predicate is now the R9 default bind, not a merge-override to a split-default), R25-old (folded into R11 — superseded 2026-05-11 by R25 ὥστε-binding; see §9), R26 (pure restatement of M2), R29 (pointer-only; M1–M4 stand on their own in Section 2).
 
 Rules are classified as MECHANICAL (any trained editor would apply them identically), EDITORIAL (defensible, documented, but require judgment), PRINCIPLE (governing stance, not a per-line rule), or LAYER 1 (pure Koine-Greek syntax facts at [`data/syntax-reference/greek-break-legality.md`](../../data/syntax-reference/greek-break-legality.md); Mechanical in effect, but their warrant is generic Greek grammar rather than a project-specific editorial choice).
 
@@ -339,7 +341,11 @@ Index of the closed-list lexical/syntactic sets that rules in §3 reference. Eac
 | List name | Members (canonical) | Defined in | Consumed by |
 |---|---|---|---|
 | **R8 framing devices** | ἰδού, διό, οὖν, νυν δέ, ἀλλά, γάρ, πλήν, τοιγαροῦν | §3.3 table | `validators/syntax/check_r8_framing_devices.py` |
-| **R9 subordinate-clause openers** | ἵνα, ὥστε, ὅτι, διότι, ὅταν, ὅτε, εἰ, ἐάν, καθώς, μήποτε | §3.4 | `validators/syntax/check_r9_subordinate_clause.py` |
+| **R9 forward-frame subordinators** (bind forward to matrix) | ὅτε, ὅταν, ἐπάν, ἐπειδή, ἐπεί, ἡνίκα, ὁπότε, εἰ, ἐάν | §3.4 | `scripts/sblgnt_generate.py` (`_FWD_FRAME`) |
+| **R9 backward-completing subordinators** (bind backward to governing verb) | ἵνα, ὅπως, μήποτε, διότι, ὅπου, ὅθεν, ἔνθα, καθότι, καθὸ, **ἕως, ἄχρι, μέχρι, πρίν** (terminative "until/before" — postpose) | §3.4 | `scripts/sblgnt_generate.py` (`_BWD_SUB`) |
+| **R9 comparative subordinators** (bind to adjacent clause) | καθώς, ὥσπερ, καθάπερ | §3.4 | `scripts/sblgnt_generate.py` (`_BIDIR_SUB`) |
+| **R9 coordinate-relative guard** (relative does NOT bind) | leading καί before the relative pronoun; OR δέ / μέν / γάρ / καί immediately following it | §3.4 carve-out 5; §3.16 | `scripts/sblgnt_generate.py` (`_rel_is_correlative`) |
+| *(ὥστε → R25 §3.14a; ὅτι → R10 §3.5 — neither is an R9 opener. ὡς deferred — polysemous, not yet bound. `_ENTREATY` is reserved/not-yet-wired in the engine.)* | — | — | — |
 | **R10 cognition / perception / belief verbs** (merge with ὅτι) | οἶδα, γινώσκω, ὁράω/εἶδον/βλέπω/θεωρέω, πιστεύω, ἐπίσταμαι, νομίζω/δοκέω, εὑρίσκω, ἀκούω, συνίημι | §3.5 | `validators/colometry/check_r10_hoti_complementizer.py` |
 | **R10 declaration / speech / writing verbs** (split from ὅτι) | λέγω, εἶπον, γράφω, μαρτυρέω, ὁμολογέω, διδάσκω, κηρύσσω, ἀπαγγέλλω, καταγγέλλω, ἀναγγέλλω, ἐπαγγέλλομαι, προφητεύω | §3.5 | `validators/colometry/check_r10_hoti_complementizer.py` |
 | **R10 speech-intro frame class** | ἀποκρίνομαι (verb + ὅτι merges as speech-intro frame) | §3.5 | `validators/colometry/check_r11_speech_intro.py` (R11 family) |
@@ -369,8 +375,8 @@ Architecture.md §interface-contracts states: *"Precedence hierarchy — §3.5 o
 | **R7 vocative-indivisibility** | wins over M4-GNT-1 when line A is pure vocative | Per universal exclusion #6 in §3.18 | §3.18 verbatim |
 | **R5 periphrastic** | wins over M4-GNT-1 when line A/B forms a periphrastic | Per G3 exclusion in §3.18 | §3.18 verbatim |
 | **R19 gen-abs bind** (REVISED 2026-05-20) | no longer "wins over" M4-GNT-1 / R28-ext — the old *split*-precedence is retired; R19 now binds the gen abs forward, AGREEING in direction with both | §3.18 #11 + §3.6.1 Excl. 4 reconciled in-place | §3.10a Precedence; §9 |
-| **R22 orphaned-adverbial-completion** | wins over R9 default in completing-predicate sub-case | R22 is the merge-override for the R9 split-default sub-case | §3.4 verbatim ("The default under R9 is split; R22 is the merge-override for the completing-predicate sub-case") |
-| **R9 subordinate-clause break** | wins over R25 ὥστε-binding when the split case applies | R25's word-count + semantic conditions must all clear for R25 to win | §3.14a verbatim ("R9 takes precedence for the split case") |
+| **R22 → subsumed into R9-revised** (2026-05-24) | no longer a precedence pair — completing-the-predicate IS the R9 default bind, not a merge-override to a split-default | the old split-default is retired | §3.4 (REVISED); §3.11; §9 |
+| **R9 subordinate bind / R25 ὥστε** | no conflict — R9 does NOT touch ὥστε; consecutive-result ὥστε+inf is R25's exclusive domain, illative ὥστE+finite stays split outside R9 | ὥστε is a §3.4 carve-out (#1) | §3.14a; §3.4 carve-out 1 |
 | **R28 textual-asymmetry** | wins over R12 editorial parallelism, R14 men/de stacking | Authorial asymmetry preserved over editorial symmetry | §3.7 verbatim ("Textual asymmetry overrides editorial symmetry") |
 | **M4-GNT-1** (and by extension framework M4) | yields to R2-R7 (Layer 1), R6, R11 (formula), R10 (complement), R7 (vocative); R19 (gen-abs) now agrees rather than blocks | Merge-override of last resort; runs only after higher-priority rules settle | §3.18 ("Tier 4 merge-override... Yields to Tier 1–3 rules"); R19 yield retired 2026-05-20 (§3.10a) |
 | **M1 (Gorgianic bonded pair)** | exhausts M1→M2→M3→M4 chain before flipping to split | M1 strict-application caveat | §2 M1 caveat |
@@ -500,19 +506,37 @@ FRAMING_DEVICE_TWO_TOKEN_SEQUENCES:
 - Closed-list definitions: §FRAMING_DEVICES (inline above; cross-referenced from §3 Closed-List Registry)
 - Scholarship: `private/01-method/scholarship/r8.md` (per-marker discourse-function nuance; Runge §2.7 + Levinsohn §5.4.2 grounding for γάρ strengthens-backward)
 
-### 3.4 Subordinate Clause Introduction Breaks
+### 3.4 R9 — Subordinate Clause Binds to Its Matrix
 
-Purpose (hina), result (hoste), causal (hoti, dioti), temporal (hotan, hote), conditional (ei, ean), comparative (kathos), "lest" (mepote) — each introduces a new line:
+**Status:** Active — **REVISED 2026-05-24** (was "Subordinate Clause Introduction Breaks" — each subordinator introduced a new line; the default was split). See §9 revision note.
+**Category:** A (Mechanical, mandatory)
+**Decidability:** lemma-keyed (subordinator) + finite-verb signature
+**Layer:** 1.5 (v1.5 binding stage)
 
-```
-hina blepontes bleposi kai me idosin,
-kai akouontes akouosi kai me syniosin,
-mepote epistrepsoosin kai aphethe autois.
-```
+**Rule.** A finite adverbial subordinate clause is **half an ATU** — a frame or completion that fails the bidirectional test on its own ("*when the sun rose* — and then what?"; "*in order that he might save*" — on what predication?). It MUST therefore **bind to the matrix clause it frames or completes**; frame + matrix = **one ATU**. Direction follows the subordinator:
 
-**Adjectival vs. adverbial distinction:** Adjectival subordinate clauses (hopou, hos modifying a noun) merge with their head noun — they describe the thing just mentioned and are not independent thoughts ("fell on rocky ground where it had not much earth" = one image, Mark 4:5). Adverbial subordinate clauses (hote, hina, hoste, hotan) can stand as scene-setters on their own line.
+- **Forward-framing** (temporal/conditional: ὅτε, ὅταν, ἐπάν, ἐπειδή, ἐπεί, ἡνίκα, ὁπότε, εἰ, ἐάν) — the frame precedes and binds **forward** to its apodosis/main clause.
+- **Backward-completing** (purpose/cause: ἵνα, ὅπως, μήποτε, διότι; relative-adverbs ὅπου, ὅθεν, ἔνθα, καθότι, καθὸ; **terminative** ἕως, ἄχρι, μέχρι, πρίν — "until/before," which postpose: "sit at my right hand *until I make…*") — the clause follows and binds **backward** to its governing verb.
+- *Deferred:* **ὡς** is not yet bound — it is heavily polysemous (comparative / temporal / causal / exclamatory), so a single direction would misfire; it is a candidate for a future per-sense revision, flagged by the §7.3 Greek-lens audit.
+- **Comparative** (καθώς, ὥσπερ, καθάπερ) — binds to the adjacent finite clause.
+- **Relative-conditional** (ὃς ἄν / ὅστις ἐάν / ὅσοι ἄν, "whoever") — a protasis; binds **forward** to its apodosis, not backward.
 
-**R22 override:** Short adverbial subordinate clauses (hote/hopou/hos-clauses) that complete the preceding predicate rather than introduce a new scene merge with that predicate, not take their own line. See §3.11 Orphaned Adverbial Completion Rule. The default under R9 is split; R22 is the merge-override for the completing-predicate sub-case.
+This is the same forward/backward attachment posture the rest of the canon already takes (R19 gen-abs, R20 participle, R25 ὥστε all bind); §3.4 was the last split-default holdout, and this revision brings it into line. The objective is to reveal ATUs, not the surface clause grid: a subordinate clause is one half of a thought, not a separate beat.
+
+**Why the rule changed.** The 2026-05-24 genre-spread re-measurement of the deployed GNT edition against the idea-unit bar found **over-split is 90–95% of all failures**, driven precisely by every finite subordinate clause taking its own line. The old "each introduces a new line" default *was* the over-split. Binding the subordinate frame to its matrix raised the measured bar a uniform **+~6pp across all six genre clusters** (narrative through dense Pauline). See §10 + memory `gnt-idea-unit-bar-measurement-2026-05-24`.
+
+**Carve-outs (bind does NOT fire — stays split).**
+1. **ὥστε** — consecutive-result ὥστε + infinitive is **R25's** domain (§3.14a), not §3.4; illative ὥστε + finite stays split. R9 does not touch ὥστε.
+2. **Cross-verse** — a subordinate clause whose matrix is in another verse → **REVIEW**; the within-verse binding constraint (framework §3) forbids a silent cross-verse bind.
+3. **Second predication** — a bind that would put **>2 finite verbs** on one line is fusing a distinct independent predication (Mark 4:25 sorites; Heb 4:16 `ἵνα λάβωμεν / καὶ εὕρωμεν`) → stays split. A content-word cap is a secondary fuse against periodic-catena snowball.
+4. **Speech quote** — a clause that is the **content of a direct-speech frame** (recitative; R11) is its own cataphoric ATU and is never bound into its speech verb.
+5. **Coordinate clause** — a clause coordinated with (not subordinate to) its neighbour does not bind. For relatives this is detected by a coordinating καί immediately **preceding** the relative (`καὶ ὃς οὐκ ἔχει` — sorites member) or a coordinator (δέ / μέν / γάρ / καί) immediately **following** it (`ὃς δʼ ἄν…`, `ὅς καί … ὃς καί …` coordinate chains, Rom 8:34). See §3.16.
+
+**Adjectival vs. adverbial.** A restrictive (adjectival) relative modifying a noun binds to its head noun — same direction, same one-ATU result ("fell on rocky ground where it had not much earth" = one image, Mark 4:5). The adjectival/adverbial split no longer changes the *action* (both bind); it only selects the attachment target (head noun vs. matrix predication).
+
+**R22 subsumed.** The former R22 ("Orphaned Adverbial Completion" — the *merge-override* for short adverbial clauses completing the preceding predicate) is no longer an exception to a split-default: under R9-revised, completing-the-predicate IS the default bind. R22 retires into R9 (see §3.11, §9).
+
+**Implementation (mechanical-first).** R9 is a **v1.5 binding rule**, encoded in `scripts/sblgnt_generate.py::merge_subordinate_clauses` (backward / forward / comparative passes, each gated by `_bind_ok` = within-verse + ≤2 finite verbs + content cap), with the coordinate-relative guard in `_rel_is_correlative` and quote protection via the speech-frame `qflag`. The corpus is generated v0→v1→v1.5; this revision propagates by regeneration. The legacy split-detector `validators/syntax/check_r9_subordinate_clause.py` is **non-driving** (it enforced the retired own-line default); do not invert it to re-merge.
 
 ### 3.5 Complementizer hoti — Cognition vs. Speech Verbs
 
@@ -689,7 +713,7 @@ SPEECH_LEMMAS_R28EXT:
 4. **R19 genitive absolute frame** (REVISED 2026-05-20) — when the speech-frame contains a genitive absolute (anarthrous gen ptc + agreeing gen subject), R19 binds the gen abs FORWARD into its governing matrix (the speech-intro clause); the gen abs does NOT take its own line. R28-ext then governs the frame/quote break on the resulting bound line. (Was: "R19 fires first and the gen abs takes its own line" — retired with the R19 own-line rule.) → R19 binds; R28-ext routes the quote.
 5. **Frame already on prior line** — temporal/participial frame is already on a separate v4/grk line from the speech verb (no co-occurrence on the same line). Rule does not fire (already compliant).
 
-**Precedence.** §3.5 Tier 2 (formula / framing integrity; sub-rule of R11). Yields to R10 (ὅτι-complement first). R19 no longer pre-splits a gen-abs frame off — under the 2026-05-20 revision R19 binds it forward, so R28-ext and R19 agree in direction (Exclusion 4). Wins over R9's general subordinate-clause-break rule for its specific subclass (subordinate clause + direct-speech verb).
+**Precedence.** §3.5 Tier 2 (formula / framing integrity; sub-rule of R11). Yields to R10 (ὅτι-complement first). R19 no longer pre-splits a gen-abs frame off — under the 2026-05-20 revision R19 binds it forward, so R28-ext and R19 agree in direction (Exclusion 4). For the speech subclass (subordinate clause + direct-speech verb), R28-ext governs the frame/quote break — consistent with R9-revised's speech-quote carve-out (§3.4 carve-out 4: a direct-speech quote is its own cataphoric ATU, never bound into its frame).
 
 **Examples.**
 - *Compliant (post-split):* `ὡς δὲ ἐπαύσατο λαλῶν,` / `εἶπεν πρὸς τὸν Σίμωνα·` (Luke 5:4) — substantive temporal frame + speech-intro on separate lines.
@@ -1040,7 +1064,7 @@ trigger_attributive_merge:
 1. **Genitive absolute** — R19 governs (binds it forward to its governing matrix; same merge direction as R20's default). → R19
 2. **Periphrastic construction (explicit single-aux + participle)** — R5 (Layer 1) governs; never split a periphrastic pair. → R5
 3. **Articular attributive participle modifying a noun** — handled within R20 (attributive merge branch), but distinct from circumstantial-default-merge; no exception, same merge result.
-4. **Short ὅπου/ὅτε/ὅς clause completing the predicate** — not a participle; R22 territory. → R22
+4. **Short ὅπου/ὅτε/ὅς clause completing the predicate** — not a participle; **R9-revised** territory (binds to its matrix; R22 subsumed 2026-05-24). → R9
 
 **Precedence.** §3.5 Tier 3 (editorial direction; per-case judgment). Yields to R5 (periphrastic — Layer 1) and R19 (gen abs). Note R19 and R20 now share the same default direction (bind the participial frame to its matrix); R19 simply owns the gen-abs sub-case (distinct genitive subject). The second-predication test is the per-case judgment threshold.
 
@@ -1058,14 +1082,11 @@ trigger_attributive_merge:
 - Closed-list definitions: (no closed lists; rule keys on grammatical-class signature + second-predication test)
 - Scholarship: `private/01-method/scholarship/r20.md` (Burton §434–450 adverbial-participle classes; Burton §445–446 + Wallace §645–647 + Smyth §2094–96 supplementary-participle scope; BDF §415–425 participle syntax; second-predication test worked examples; periphrastic-ellipsis Acts 8:28 showcase)
 
-### 3.11 Orphaned Adverbial Completion Rule
+### 3.11 R22 — Orphaned Adverbial Completion *(SUBSUMED into R9-revised, 2026-05-24)*
 
-**When a short hopou / hote / hos clause completes the preceding predicate rather than introducing a new semantic layer, it merges with that predicate.** The distinguishing criterion: does the clause specify or complete the main verb's meaning? -> merge. Does it introduce a new thought layer? -> split.
+R22 was the *merge-override* carve-out for the case where a short ὅπου/ὅτε/ὅς clause completes the preceding predicate rather than introducing a new layer — an exception to the old R9 split-default. Under **R9-revised (§3.4)**, binding the subordinate clause to its matrix is the **default**, so the completing-predicate case is no longer an exception — it is the rule. R22 therefore retires into R9.
 
-- **Merge**: `akoloutheso soi hopou ean aperche.` (Matt 8:19) — hopou clause specifies the destination. `erchetai hora hote...` (John 9:4, 16:25) — hote clause specifies which hour.
-- **Split**: purpose clauses (hina), result clauses (hoste), causal clauses (hoti / gar / dioti) — these introduce new semantic layers.
-
-*15 merges applied corpus-wide.*
+The old §3.11 also split ἵνα / διότι ("new semantic layers"); R9-revised binds those backward to their governing verb (carve-outs aside: cross-verse, >2 finite verbs, speech-quote, coordinate). The earlier `*15 merges applied corpus-wide*` were the manual R22 instances on hand-built v4; under mechanical-first they are produced by the v1.5 binding stage. See §9.
 
 ### 3.12 R23 — Dative Indirect Object as Semantic Subject of Infinitive
 
@@ -1198,13 +1219,13 @@ ILLATIVE_KNOWN:
 **Scope.** ὥστε + infinitive (consecutive-result) only. Out of scope: (a) illative-ὥστε + finite verb; (b) ὥστε-clauses >8 words (Phase B); (c) cross-verse-initial ὥστε (Phase B); (d) ἵνα result clauses (separate governance if codified).
 
 **Exclusions** (closed list).
-1. **Illative-ὥστε** — ὥστε as inferential conjunction; surface markers in the UD-signature illative branch. → R9 split-default
+1. **Illative-ὥστε** — ὥστε as inferential conjunction; surface markers in the UD-signature illative branch. Not in R9's bind sets (ὥστε is an R9 carve-out) and not consecutive-result, so it stays split (unbound). → out of both R25 and R9 bind scope
 2. **Word-count exceeded (>8)** — `SPLIT-MAINTAINED` with reason `word-count-exceeded`. Phase B revisits 9–12 word boundary cases.
 3. **Cross-verse-initial ὥστε** — matrix clause in prior verse; `REVIEW-REQUIRED` reason `cross-verse-defer`. Phase B.
 4. **Co-referential subject violated** — different agent in result clause; `SPLIT-MAINTAINED`.
 5. **Camera shift detected** — new scene participant / viewpoint pivot in result clause; `SPLIT-MAINTAINED`.
 
-**Precedence.** §3.5 Tier 2 (formula / framing integrity within the consecutive-result subdomain). Yields to R2–R7 (Layer 1) and to R9 (subordinate-clause break) for the split case. R25 never conflicts with R9 in the merge case (merged lines never end on ὥστε); R9 takes precedence when ὥστε leads a split line.
+**Precedence.** §3.5 Tier 2 (formula / framing integrity within the consecutive-result subdomain). Yields to R2–R7 (Layer 1). **No conflict with R9** (REVISED 2026-05-24): ὥστε is an explicit R9 carve-out (§3.4 carve-out 1) — R9 never binds or splits ὥστε, so R25 is the sole rule governing consecutive-result ὥστε+infinitive. Illative ὥστε+finite is outside both (stays split, unbound).
 
 **Examples.**
 - *Compliant (STRONG-MERGE-CANDIDATE):* `καὶ ἐτάραξεν τὸν λαὸν καὶ τοὺς πολιτάρχας ὥστε τὸ πλοῖον καλύπτεσθαι ὑπὸ τῶν κυμάτων` (Matt 8:24 pattern after merge) — 7-word ὥστε clause, co-ref subject, single image.
@@ -1239,7 +1260,7 @@ Mark's paratactic short lines and Paul's periodic long lines both emerge from ap
 | Syntax type | Example | Rule |
 |---|---|---|
 | **Subordinating** (modifier->head) | `eis to oros` tail on `anechoresen`; circumstantial ptc framing a main verb; single attributive gen. | Keep merged with originating head. |
-| **Coordinating / parallel** | te/kai chains at different temporal planes; men/de pairs; tri-cola; asyndetic catalogs; anaphoric lists; tis/tis/tis isocola. | **Split** — each member is its own atomic thought. |
+| **Coordinating / parallel** | te/kai chains at different temporal planes; men/de pairs; tri-cola; asyndetic catalogs; anaphoric lists; tis/tis/tis isocola; **coordinate relatives** (καί before the relative, or δέ/μέν/γάρ/καί after it: `καὶ ὃς οὐκ ἔχει`, `ὅς καί … ὃς καί …`). | **Split** — each member is its own atomic thought. (R9-revised coordinate-relative guard, §3.4 carve-out 5.) |
 
 **The diagnostic test:** When in doubt, ask: does the construction describe **elaboration of one event** (-> merge) or **addition of distinct events/axes** (-> split)?
 
@@ -1366,7 +1387,7 @@ LEADING_CONNECTIVES_BLOCK_FIRE:
 - Closed-list definitions: §SUBJECT_SHAPES_M4_GNT1 (inline above)
 - Scholarship: `private/01-method/scholarship/m4-gnt-1.md` (Runge §14 left-dislocation framework, BDF §466 pendent nominative, Wallace independent nominative)
 
-**Boundary note — M4-GNT-1 vs R9.** Runge §14 treats "left-dislocation" as a single discourse construction with multiple sub-uses (subject / locative / temporal / comparative). M4-GNT-1 operationalizes only the **subject-NP** instantiation. Runge's broader §14 enumeration also includes locative left-dislocations (`ὅπου γάρ` — Matt 6:21, Jas 3:16), temporal frames (`ὅτε` — Matt 21:1), and comparative frames (`καθώς` — John 15:4). Those are NOT M4-GNT-1 cases — they are governed by R9 (subordinate-clause introduction breaks, §3.4): the `ὅπου` / `ὅτε` / `καθώς` clause is an adverbial subordinate clause taking its own line, with the resumptive `ἐκεῖ` / `τότε` / `οὕτως` apodosis following. M4-GNT-1's closed-list `SUBJECT_SHAPES` (C1–C5) deliberately scopes to subject NPs only.
+**Boundary note — M4-GNT-1 vs R9.** Runge §14 treats "left-dislocation" as a single discourse construction with multiple sub-uses (subject / locative / temporal / comparative). M4-GNT-1 operationalizes only the **subject-NP** instantiation. Runge's broader §14 enumeration also includes locative left-dislocations (`ὅπου γάρ` — Matt 6:21, Jas 3:16), temporal frames (`ὅτε` — Matt 21:1), and comparative frames (`καθώς` — John 15:4). Those are NOT M4-GNT-1 cases — they are governed by **R9-revised** (subordinate clause binds to its matrix, §3.4): the `ὅτε` / `καθώς` clause binds to its apodosis (ὅτε forward to its matrix, καθώς to the adjacent clause), and the `ὅπου` relative-adverb binds backward to its head — frame + matrix + resumptive `ἐκεῖ` / `τότε` / `οὕτως` form one ATU (subject to the usual carve-outs: cross-verse → REVIEW, >2 finite verbs → split). M4-GNT-1's closed-list `SUBJECT_SHAPES` (C1–C5) deliberately scopes to subject NPs only.
 
 ---
 
@@ -1783,8 +1804,10 @@ R20:
   refinement_candidate_runge_§12_3_4_enumerative_distinction:
     source: Runge §12.3.4 (Matt 4:23 διδάσκων/κηρύσσων/θεραπεύων + Rom 12:9-13 + Eph 5:17-22 chains)
     claim: |
-      Runge's elaborating-participle analysis confirms R22 merge for 1-2 post-
-      matrix participles (they elaborate the main verb). BUT Runge's worked
+      Runge's elaborating-participle analysis confirms the merge for 1-2 post-
+      matrix participles (they elaborate the main verb; R20 §3.10b — and R9-revised
+      for the parallel finite-subordinate case, R22 having been subsumed
+      2026-05-24). BUT Runge's worked
       examples include 3+ STACKED post-matrix participles that elaborate ONE
       main verb (Matt 4:23 three participles; Rom 12:9-13 chain of 12+; Eph
       5:19-22 chain). These ALSO subordinate to the matrix per Runge's analysis,
@@ -1792,13 +1815,14 @@ R20:
       stacks them as parallel ATUs because of the 3+ member threshold.
     operational_implication: |
       The canon's implicit distinction is sound: 1-2 elaborating participles
-      MERGE to matrix (R22); 3+ STACK as parallel enumeration (§5 register
-      modulation). Runge §12.3.4 grounds BOTH: discourse-subordination to the
+      MERGE to matrix (R20; R9-revised for finite subordinates); 3+ STACK as
+      parallel enumeration (§5 register modulation). Runge §12.3.4 grounds BOTH:
+      discourse-subordination to the
       matrix is preserved in both treatments; the colometric distinction is
       about breath-unit vs visual-parallel-display, not about discourse
       hierarchy. Could be made explicit as a Runge-grounded distinction in
       §3.10 prose if a future refinement pass touches it.
-    status: noted — canon implicitly captures via R22 + §5 enumerative-register cooperation.
+    status: noted — canon implicitly captures via R20 / R9-revised + §5 enumerative-register cooperation (R22 subsumed 2026-05-24).
 ~~~
 
 ~~~yaml
@@ -2146,9 +2170,9 @@ See Section 3.9 for the main rules. The three-way treatment:
 
 Mechanical detection: `scripts/scan_vocative_apposition.py` classifies every vocative-only line. `scripts/apply_vocative_merges.py` applies the merges.
 
-### Orphaned Adverbial Completion Rule
+### Orphaned Adverbial Completion Rule *(R22 — subsumed into R9-revised 2026-05-24)*
 
-See Section 3.11. Greek-specific detail: the merge cases concentrate on hopou/hote/hos clauses of <=6 words that specify the preceding predicate. 15 merges applied corpus-wide.
+See Section 3.11 + §3.4. The merge cases (hopou/hote/hos clauses specifying the preceding predicate) are no longer a special "completion" carve-out — under R9-revised, binding the subordinate clause to its matrix is the default. The historical 15 hand-applied v4 merges are now produced by the v1.5 binding stage.
 
 ### De-Contrast Overbreak Rule
 
@@ -2211,6 +2235,7 @@ Rule-number gaps (15, 16, 21, 25-old, 26, 29) preserved rather than renumbered t
 | **Duplicate "Section 6b"** (μή/ἀλλά antithesis + dative-subject-of-infinitive both labeled 6b) | restructured to R15 (§3.7, since retired) and R23 (§3.12). | document restructure |
 | **Idou (ἰδού) three-type distinction** (deictic / mirative / logical-connective, adapted from parallel-corpus work) | Tested 2026-05-14 on the canon-named passages (Matt 1-2, Luke 1-2, Rev 1-3 — 24 instances). All three types are present in the sample, but colometric treatment is 100% uniform: ἰδού (or `καὶ ἰδού`) leads its content, never line-final, regardless of type. Type does not predict break behavior → not a colometric rule. Also requires authorial-intent interpretation to detect (deictic-vs-mirative is genuinely ambiguous on cases like `Ἰδοὺ ἡ παρθένος`) → out of scope per §1 Imposing-vs-Revealing. ἰδού is already correctly handled by §3.3 R8 (framing-device, leads content) + the §1 bidirectional-test cataphoric-presentative pass. The three-type distinction is a real discourse-semantic fact but belongs in exegetical commentary, not the colometric grid. | 2026-05-14 |
 | **R19 "genitive absolute ALWAYS OWN LINE"** + its camera-shift/J5 own-line warrant | A gen abs is *grammatically* detached (case-absolute) but is **half an ATU**, not a complete thought — the bidirectional test fails forward ("Jesus having been born in Bethlehem — and then what?"). Reconceived: the gen abs BINDS forward to its governing matrix (frame + clause = one ATU; §3.10a). "Camera shift" is rhetorical-structure, not thought-atomicity, and too impressionistic for mechanical force → retired as a gen-abs own-line warrant. Converges with Hebrew B5 (forward-binding wayhi frame). Reverses the 2026-05-13 "KEEP ALL 10 SPLIT" Cat B decision (the 10 anaphoric-ταῦτα gen abs now bind forward). Reconciliation of R28-ext Excl. 4, M4-GNT-1 #11, J5, FEF-showcase, summary table, conflict grid done in-place same commit. | 2026-05-20 |
+| **R9 "subordinate clause introduction breaks"** (each subordinator opens a new line; split-default) **+ R22 "orphaned adverbial completion"** as its merge-override | A finite adverbial subordinate clause is **half an ATU** (a frame/completion failing the bidirectional test), so the split-default *was* the over-split: the 2026-05-24 genre-spread re-measurement found over-split = 90–95% of all GNT failures, driven by every subordinate clause taking its own line. Reconceived: the subordinate clause **binds to its matrix** (forward-frame / backward-completing / comparative / relative-conditional; §3.4), with carve-outs (ὥστε→R25, cross-verse→REVIEW, >2 finite verbs, speech-quote, coordinate). This is the last split-default holdout joining the canon's uniform bind posture (R19/R20/R25). R22 is subsumed — completing-the-predicate is now the default bind, not a merge-override. Coordinate relatives (καί-led or δέ/μέν/γάρ/καί-following) explicitly do NOT bind (§3.16, §3.4 carve-out 5). Engine: `scripts/sblgnt_generate.py::merge_subordinate_clauses`. +~6pp across all six genre clusters. Reconciliation of Rule Index R9/R22, Closed-List Registry, precedence grid, §3.11, §3.16, R20 Excl. 4 done in-place same commit. | 2026-05-24 |
 
 ### Unsettled (active open question, not retired)
 
@@ -2227,6 +2252,26 @@ Phase 1 (early v4): over-enthusiastic splitting — particles and bare PPs got o
 *Purpose: **dual-natured** — chronological reasoning trail. Recent entries documenting active-rule provenance are operationally referenced (cross-project import status, audit findings, retirement dates); older entries are historical narrative. When an entry documents an active rule, it is the canonical source for that rule's WHY/HOW WE KNOW/SCOPE.*
 
 *The dated update blocks from the original document, preserved for the session-by-session reasoning trail.*
+
+---
+
+### 2026-05-24 — R9 revised: subordinate clause binds to its matrix (the last split-default holdout)
+
+**What changed.** §3.4/R9 reversed from "subordinate clause introduction breaks" (split-default; each ὅτε/ὅταν/εἰ/ἵνα/ὅπως/etc. opened its own line) to **"subordinate clause binds to its matrix"** (forward-frame / backward-completing / comparative / relative-conditional). R22 ("orphaned adverbial completion") subsumed: completing-the-predicate is now the default bind, not a merge-override to a split-default.
+
+**Why / how we know.** A genre-spread re-measurement of the deployed GNT edition against the idea-unit bar (framework §1.1 bidirectional test; 6 parallel Sonnet judges, one per genre cluster) found **over-split = 90–95% of all failures** in every cluster — the split-default *was* the dominant error. A finite adverbial subordinate clause is half an ATU (a frame/completion incomplete on its own), so it binds; frame + matrix = one ATU. Encoding the bind raised the measured bar a uniform **+~6pp across all six clusters** (Mark/Acts/Matt/John narrative through dense Pauline). The reliable signal is the within-run before→after Δ (absolute pass-rates are judge-noisy); the Δ was positive and uniform. See memory `gnt-idea-unit-bar-measurement-2026-05-24`.
+
+**Scope of bind + carve-outs.** Forward-frame {ὅτε, ὅταν, ἐπάν, ἐπειδή, ἐπεί, ἡνίκα, ὁπότε, πρίν, ἕως, ἄχρι, μέχρι, εἰ, ἐάν} bind forward; backward-completing {ἵνα, ὅπως, μήποτε, διότι, ὅπου, ὅθεν, ἔνθα, καθότι, καθὸ} bind backward; comparative {καθώς, ὥσπερ, καθάπερ} bind to the adjacent clause; relative-conditional (ὃς ἄν) binds forward. Carve-outs (no bind): **ὥστε** (R25's domain), **cross-verse** (→REVIEW, framework §3 within-verse constraint), **>2 finite verbs** (second-predication; Mark 4:25 sorites), **speech-quote** (R11), **coordinate clause** (coordinate relatives detected by leading καί or following δέ/μέν/γάρ/καί — Rom 8:34, Mark 4:25 — §3.16).
+
+**Investigation note (why lemma-keyed, not parse-driven).** A parse-driven alternative was investigated: bind off the SBLGNT-lowfat clause structure rather than subordinator lemmas. It was **falsified** — lowfat carries phrase-level roles (s/o/adv on np/pp) but **no clause-level subordinate/coordinate role**; finite adverbial subordinates are bare sibling `cl`s under a common parent, indistinguishable from coordinate clauses except by the introductory subordinator lemma. The lemma-keyed engine is therefore the correct signal for this treebank, not a stopgap. (`is_root()` in the generator already exploits the parse nesting for participles, infinitives, and relatives — where lowfat *does* encode the dependency.)
+
+**Engine.** `scripts/sblgnt_generate.py::merge_subordinate_clauses` (backward / forward / comparative passes, each gated by `_bind_ok` = within-verse + ≤2 finite verbs + content cap; coordinate-relative guard in `_rel_is_correlative`; quote protection via the speech-frame `qflag`). The legacy split-detector `validators/syntax/check_r9_subordinate_clause.py` is non-driving. Corpus propagates by v0→v1→v1.5 regeneration.
+
+**Audit-status:** §7.3 rule-revision + closed-list trigger. Engine mechanism audited by 2 parallel adversarial Opus lenses (Greek-linguistic: SOUND-WITH-GAPS, blockers fixed; canon-consistency: CONFLICTS → the ~16-site cascade, reconciled in-place this commit). Coordinate-relative guard added in response to the post-fix re-measure's only regression class. Re-audit of the final revision: see commit audit-evidence.
+
+**Cross-canon reconciliation (this commit, not deferred):** §3.4 body + worked examples; Rule Index R9 + R22 rows + retired list; Closed-List Registry (three subordinator sets + coordinate-relative guard; ὥστε→R25, ὅτι→R10, ὡς-deferred, `_ENTREATY`-reserved noted); Pairwise Precedence (R22-vs-R9 collapsed, R9-vs-R25 reconciled to no-conflict); §3.6.1 R28-ext precedence (speech carve-out); §3.10b R20 Exclusion 4 (→R9); §3.11 R22 → subsumed pointer; §3.14a R25 Exclusion 1 + Precedence (illative-ὥστε, no-conflict); §3.16 coordinate-relative row; §3.18 M4-GNT-1-vs-R9 boundary note; §8 Runge note (R22→R20/R9); §9 retired-criteria entry + §8 summary-pointer; this §10 entry; header version bump.
+
+**Post-revision §7.3 re-audit (2 parallel Opus lenses, 2026-05-24):** Greek-linguistic lens (SOUND-WITH-GAPS) caught the terminative-direction blocker — ἕως/ἄχρι/μέχρι/πρίν were forward-framed but postpose, moved to backward-completing (this entry reflects the fix); also flagged ὡς (deferred) and the reserved `_ENTREATY`. Canon-consistency lens (COHERENT-WITH-NITS) caught the §3.18 boundary-note stale-split site (fixed). Audit reasoning persisted to `C:\tmp\audit_r9_greek.md` + `C:\tmp\audit_r9_consistency.md`.
 
 ---
 

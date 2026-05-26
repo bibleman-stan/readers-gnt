@@ -26,3 +26,6 @@ desktop.ini
 
 # Regenerable v4 generation draft (not the v4-editorial source-of-truth)
 data/text-files/v4-sblgnt-draft/
+
+# R9-binding experiment scratch (regenerable; promoted to v1.5/grk only on deploy)
+data/text-files/v1.5-binding-experiment/

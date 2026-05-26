@@ -20,9 +20,11 @@ SUBORD_BREAK = {"ἵνα", "ὅπως", "ὅταν", "ὅτε", "εἰ", "ἐά�
 HOTI = {"ὅτι", "διότι"}
 POSTPOS = {"δέ", "γάρ", "οὖν", "μέν", "τε", "μέντοι", "ἄρα", "γε", "δή"}
 GLUE_CLS = {"conj", "ptcl"}
-V4GRK = Path(r"C:\Users\bibleman\repos\readers-gnt\data\text-files\v4\grk")
+V4GRK = Path(r"C:\Users\bibleman\repos\readers-gnt\data\text-files\v1.5\grk")  # deployed (compare target)
 V0PROSE = Path(r"C:\Users\bibleman\repos\readers-gnt\data\text-files\v0-prose")
-DRAFT = Path(r"C:\Users\bibleman\repos\readers-gnt\data\text-files\v4-sblgnt-draft\grk")
+# Writer target. Default = scratch experiment dir so a regen never silently
+# overwrites the deployed v1.5/grk; point DRAFT at V4GRK only to deploy.
+DRAFT = Path(r"C:\Users\bibleman\repos\readers-gnt\data\text-files\v1.5-binding-experiment\grk")
 V4DIR = {"Matt": "01-matt/matt", "Phil": "11-phil/phil", "Rev": "27-rev/rev", "John": "04-john/john"}
 V0DIR = {"Matt": "01-matt/matt", "Phil": "11-phil/phil", "Rev": "27-rev/rev", "John": "04-john/john"}
 
@@ -285,6 +287,216 @@ def merge_cognition_hoti(lines):
     return out
 
 
+# --- Subordinate-clause binding (idea-unit convergence; revises canon §3.4/R9
+# "adverbial subordinate clauses can stand on their own line"). The 2026-05-24
+# genre-spread measurement found over-split = 90-95% of all idea-unit failures,
+# dominated by FINITE subordinate clauses stranded from their matrix. A finite
+# subordinate clause is half a thought; per the bidirectional test it BINDS to
+# its matrix. Direction by clause type + surface position:
+#   FRAME (temporal/conditional/concessive) preceding its main clause -> bind FORWARD
+#   purpose / result / complement / relative clause following its head -> bind BACKWARD
+# NOT bound: coordinate main clauses (no subordinator); a direct-speech quote after
+# a finite speech-verb intro (R11 cataphoric frame is itself an ATU). ὅτι is left to
+# merge_cognition_hoti (cognition binds; recitative/speech ὅτι stays a quote). ---
+_FWD_FRAME = {"ὅτε", "ὅταν", "εἰ", "ἐάν", "ἐπάν", "ἐπειδή", "ἐπεί", "ἡνίκα",
+              "ὁπότε"}                                        # frame precedes apodosis
+_BWD_SUB = {"ἵνα", "ὅπως", "μήποτε", "διότι",                  # purpose/cause follows head
+            "ὅπου", "ὅθεν", "ἔνθα", "καθότι", "καθὸ",          # relative adverb -> binds to head
+            "ἕως", "ἄχρι", "μέχρι", "πρίν"}                    # terminative: "until/before" POSTPOSES
+# ἕως/ἄχρι/μέχρι/πρίν are terminative-limit subordinators: the clause they head
+# follows its matrix ("sit at my right hand UNTIL I make…", Heb 1:13; "you will not
+# get out UNTIL you pay", Matt 5:26), so it binds BACKWARD, not forward. (Moved out
+# of _FWD_FRAME 2026-05-24 per the §7.3 Greek-lens audit — as forward-frames they
+# stranded.) The rarer fronted πρίν (John 8:58) is left as a residual.
+# NOTE: ὥστε is deliberately NOT here. Consecutive-result ὥστε is governed by R25
+# (canon §3.14a), which has its own gated test (<=8 words, co-referential subject,
+# illative-exclusion list). Binding ὥστε under this flat pass would override R25
+# and merge illative-ὥστε cases R25 split-maintains. Leave ὥστε to R25.
+# Verbs of entreaty/command take a ἵνα COMPLEMENT (not a final clause); the
+# complement binds to that verb, so a ἵνα directly after one of these binds back
+# normally — but a ἵνα must never bind across an intervening clause (guarded by
+# the finite-verb-count gate below).
+_ENTREATY = {"παρακαλέω", "ἐρωτάω", "δέομαι", "παραγγέλλω", "αἰτέω", "προσεύχομαι"}
+# RESERVED — not yet wired into the bind logic (ἵνα already binds backward via
+# _BWD_SUB regardless of governor). Kept for a future complement-vs-purpose
+# refinement. Flagged not-consumed by the 2026-05-24 §7.3 Greek-lens audit.
+_BIDIR_SUB = {"καθώς", "ὥσπερ", "καθάπερ"}                     # comparative: direction by position
+
+
+def _seg_opener(ws):
+    """(opener_lemma, is_relative) for a segment, skipping a leading coordinating
+    καί and any postpositives (δέ/γάρ/οὖν/...). is_relative is True for a bare
+    relative pronoun opener AND for a PIED-PIPED relative (preposition + relative,
+    e.g. ἐν ᾧ / δι' οὗ / ἐξ οὗ — the Pauline norm), which binds to its head like a
+    bare relative. Returns ('', False) if the first substantive token is neither a
+    subordinator nor (the start of) a relative."""
+    sw = sorted(ws, key=lambda w: (w["verse"], w["wi"]))
+    i = 0
+    while i < len(sw) and (sw[i]["lemma"] == "καί" or sw[i]["lemma"] in POSTPOS):
+        i += 1
+    if i >= len(sw):
+        return "", False
+    first = sw[i]
+    # pied-piped relative: preposition immediately followed by a relative pronoun
+    if (first["mpos"].startswith("P") or first["cls"] == "prep") and i + 1 < len(sw) \
+            and sw[i + 1]["mpos"].startswith("RR"):
+        return first["lemma"], True
+    return first["lemma"], first["mpos"].startswith("RR")
+
+
+def _has_finite(ws):
+    return any(w["mpos"].startswith("V") and w["mood"] in FINITE for w in ws)
+
+
+def _is_speech_frame(ws):
+    """Segment that introduces a direct-speech quote (a speech verb, FINITE or a
+    PARTICIPIAL λέγων/λεγούσης/λέγοντες): the NEXT segment is the quote and must NOT
+    bind back into it (R11 — the announcement is its own cataphoric ATU). Including
+    the participial form stops a quote binding back into 'ἤκουσα φωνὴν...λεγούσης·'."""
+    return any(w["mpos"].startswith("V") and (w["mood"] in FINITE or w["mood"] == "P")
+               and w["lemma"] in SPEECH for w in ws)
+
+
+def _rel_is_correlative(ws):
+    """A relative-led segment is a NEW coordinate/correlative predication (not a
+    restrictive modifier of the prior clause), so it must NOT bind backward, when
+    EITHER:
+      - a coordinating καί immediately PRECEDES the relative pronoun
+        ('καὶ ὃς οὐκ ἔχει' — a fresh sorites/antithesis member, Mark 4:25), OR
+      - a coordinating particle (δέ / μέν / γάρ) or additive καί immediately
+        FOLLOWS it ('ὃς δʼ ἄν…', 'ὃ γὰρ…', 'ὅς καί ἐστιν … ὃς καὶ ἐντυγχάνει' —
+        coordinate relative chains, Rom 8:30/8:34).
+    Binding any of these backward fuses two distinct predications (over-merge); the
+    2026-05-24 before/after re-measure surfaced both as the engine's only regression
+    class (coordinate-relative chains collapsing onto their neighbor)."""
+    sw = sorted(ws, key=lambda w: (w["verse"], w["wi"]))
+    # leading coordinating καί directly before the relative pronoun -> coordinate
+    if len(sw) > 1 and sw[0]["lemma"] == "καί" and sw[1]["mpos"].startswith("RR"):
+        return True
+    i = 0
+    while i < len(sw) and (sw[i]["lemma"] == "καί" or sw[i]["lemma"] in POSTPOS):
+        i += 1
+    # sw[i] is the relative pronoun; check the coordinator right after it
+    return i + 1 < len(sw) and sw[i + 1]["lemma"] in {"δέ", "μέν", "γάρ", "καί"}
+
+
+# Single-cognitive-bite cap (content words). A bind binds a half-thought to its
+# matrix to form ONE ATU; it must NOT snowball a whole periodic sentence (Pauline
+# ἐν ᾧ / ἧς relative chains) into a mega-line, which fails the bar as badly as the
+# over-split. If a bind would push the combined line past this many content words,
+# the dependent stays its own line (framework: over-long residual is left, not
+# force-merged). Tuned so frame+apodosis and short relatives bind; chains break.
+_BIND_CAP = 18
+
+
+def _ccount(ws):
+    """Content-word count (excludes pure function words / connectives)."""
+    return sum(1 for w in ws if w["cls"] not in _FUNC_CLS
+               and w["lemma"] not in (HOTI | SUBORD_BREAK | POSTPOS))
+
+
+def _fvcount(ws):
+    """Finite-verb count. The PRIMARY single-cognitive-bite gate (replacing the raw
+    content-word cap as the chief test, per the 2026-05-24 audit): one bind joins a
+    matrix to ONE subordinate frame, so a legitimate result has at most 2 finite
+    verbs (matrix predication + the subordinate frame's). A bind producing >2 finite
+    verbs is fusing a distinct independent predication (Heb 4:16 'ἵνα λάβωμεν ἔλεος /
+    καὶ χάριν εὕρωμεν'; Mark 4:25 sorites) and is refused. This is the canon's
+    'second-predication' criterion (R20) operationalized for finite clauses."""
+    return sum(1 for w in ws if w["mpos"].startswith("V") and w["mood"] in FINITE)
+
+
+def _is_rel_conditional(ws):
+    """Relative pronoun + ἄν/ἐάν = a 'whoever/whatever' conditional protasis
+    (ὃς ἂν…, ὅστις ἐὰν…, ὅσοι ἄν…). It behaves like an ἐάν frame — it PRECEDES and
+    binds FORWARD to its apodosis, NOT backward to a prior clause (Mark 4:25 'ὃς γὰρ
+    ἔχει' / 'δοθήσεται αὐτῷ'; Acts 2:39 'ὅσους ἂν προσκαλέσηται')."""
+    _, is_rel = _seg_opener(ws)
+    return is_rel and any(w["lemma"] in {"ἄν", "ἐάν"} for w in ws)
+
+
+def _junction_same_verse(earlier, later):
+    """Framework §3: bindings fire WITHIN a single verse; a cross-verse bind is a
+    REVIEW case, never a silent merge. A bind is allowed only when the junction is
+    inside one verse — the earlier segment's last (max) verse equals the later
+    segment's first (min) verse. Forbidding cross-verse merges is what stopped the
+    over-merge defect (verse-N-end fused with verse-N+1-start) the 2026-05-24
+    before/after measurement surfaced in every genre cluster."""
+    return max(w["verse"] for w in earlier) == min(w["verse"] for w in later)
+
+
+def _bind_ok(host, dep):
+    """Shared gate for every bind: within one verse (framework §3), the combined
+    line is one cognitive bite (PRIMARY: <=2 finite verbs — matrix + one subordinate
+    frame), and a content-word cap as a secondary fuse against catena snowball."""
+    return (_junction_same_verse(host, dep)
+            and _fvcount(host) + _fvcount(dep) <= 2
+            and _ccount(host) + _ccount(dep) <= _BIND_CAP)
+
+
+def merge_subordinate_clauses(segments):
+    """Bind finite subordinate clauses to their matrix (see header). Backward pass
+    (purpose/cause/relative -> previous content segment), then forward pass
+    (temporal/conditional frame + relative-conditional protasis -> next segment),
+    then comparative by position. Every bind is gated by _bind_ok (within-verse +
+    <=2 finite verbs + content cap). Quotes are protected: a segment that is itself
+    a direct-speech quote (its predecessor was a speech frame) is never bound into."""
+    # Backward: ἵνα/ὅπως/μήποτε/διότι + relative-adverb + restrictive relative ->
+    # previous segment. `qflag` marks each out-segment that is a direct-speech quote
+    # (its predecessor is a speech frame), so a later purpose clause can't pierce it.
+    out, qflag = [], []
+    for ws in segments:
+        opener, is_rel = _seg_opener(ws)
+        bind_back = (opener in _BWD_SUB) or is_rel
+        if is_rel and (_rel_is_correlative(ws) or _is_rel_conditional(ws)):
+            bind_back = False   # ὃς δέ/ὅστις δέ (new correlative) or ὃς ἄν (forward conditional)
+        prev_is_quote = bool(qflag) and qflag[-1]
+        if (bind_back and out and _has_finite(ws)
+                and not _is_speech_frame(out[-1]) and not prev_is_quote
+                and _bind_ok(out[-1], ws)):
+            out[-1].extend(ws)
+            out[-1].sort(key=lambda w: (w["verse"], w["wi"]))
+        else:
+            out.append(list(ws))
+            qflag.append(len(out) >= 2 and _is_speech_frame(out[-2]))
+    # Forward: a finite temporal/conditional frame OR a relative-conditional protasis
+    # (ὃς ἄν…) preceding its matrix binds FORWARD into the next segment. `pend` holds
+    # the frame (or a same-verse stack) until its matrix arrives.
+    fwd, pend = [], None
+    for ws in out:
+        opener, _ = _seg_opener(ws)
+        is_frame = (opener in _FWD_FRAME and _has_finite(ws)) or _is_rel_conditional(ws)
+        if pend is not None:
+            if _bind_ok(pend, ws):
+                if is_frame:
+                    pend = pend + list(ws)        # stack same-verse frames; keep waiting
+                    continue
+                fwd.append(pend + list(ws))        # frame(s) + matrix = one ATU
+                pend = None
+                continue
+            fwd.append(pend)                       # cross-verse / over-cap / 2-verb: frame stands alone
+            pend = None
+        if is_frame:
+            pend = list(ws)
+        else:
+            fwd.append(list(ws))
+    if pend is not None:
+        fwd.append(pend)
+    for ws in fwd:
+        ws.sort(key=lambda w: (w["verse"], w["wi"]))
+    # Comparative (καθώς/ὥσπερ/καθάπερ): bind to the adjacent finite clause.
+    res = []
+    for ws in fwd:
+        opener, _ = _seg_opener(ws)
+        if (opener in _BIDIR_SUB and res and _has_finite(res[-1])
+                and not _is_speech_frame(res[-1]) and _bind_ok(res[-1], ws)):
+            res[-1].extend(ws)
+            res[-1].sort(key=lambda w: (w["verse"], w["wi"]))
+        else:
+            res.append(list(ws))
+    return res
+
+
 def merge_line_end_leaders(lines, v0):
     """R3/R4/R8: no ATU line may END on a forward-governing leader — an article
     (R3, MorphGNT POS 'RA'), a non-terminal negation whose scope is off-line
@@ -366,6 +578,7 @@ def emit_v4(lowfat, morph, v0dir, slug, chap):
         segments.append(cur)
     segments = merge_split_vocatives(segments)
     segments = merge_cognition_hoti(segments)
+    segments = merge_subordinate_clauses(segments)
     segments = merge_line_end_leaders(segments, v0)
 
     out, headered = [], set()
