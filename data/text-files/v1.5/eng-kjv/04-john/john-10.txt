@@ -31,8 +31,7 @@ what things they were which he spake unto them.
 
 10:7
 Then said Jesus unto them again,
-Verily, verily, I say unto you,
-I am the door of the sheep.
+Verily, verily, I say unto you, I am the door of the sheep.
 
 10:8
 All that ever came before me are thieves
@@ -131,7 +130,8 @@ the works that I do in my Father's name,
 they bear witness of me.
 
 10:26
-But ye believe not, because ye are not of my sheep, as I said unto you.
+But ye believe not,
+because ye are not of my sheep, as I said unto you.
 
 10:27
 My sheep hear my voice,
@@ -189,7 +189,8 @@ If I do not the works of my Father, believe me not.
 But if I do, though
 ye believe not me,
 believe the works: that
-ye may know, and believe, that the Father is in me,
+ye may know, and believe,
+that the Father is in me,
 and I in him.
 
 10:39

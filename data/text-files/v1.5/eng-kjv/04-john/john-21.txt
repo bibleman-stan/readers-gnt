@@ -33,8 +33,7 @@ They cast therefore, and now they were not able to draw it for the multitude of 
 21:7
 Therefore that disciple whom Jesus loved saith unto Peter, It
 is the Lord.
-Now when Simon Peter heard
-that it was the Lord,
+Now when Simon Peter heard that it was the Lord,
 he girt his fisher's coat unto
 him, for he was naked,
 and did cast himself into the sea.
@@ -66,7 +65,6 @@ Come
 and dine.
 And none of the disciples durst ask him,
 Who art thou?
-
 knowing that it was the Lord.
 
 21:13
@@ -85,6 +83,7 @@ Simon, son of Jonas,
 lovest thou me more than these?
 He saith unto him,
 Yea, Lord;
+
 thou knowest that I love thee.
 He saith unto him,
 Feed my lambs.
@@ -95,7 +94,8 @@ Simon, son of Jonas,
 lovest thou me?
 He saith unto him,
 Yea, Lord;
-thou knowest that I love thee.
+thou
+knowest that I love thee.
 He saith unto him,
 Feed my sheep.
 
@@ -109,7 +109,8 @@ time, Lovest thou me?
 And he said unto him, Lord,
 all things;
 thou knowest
-thou knowest that I love thee. saith unto
+knowest that
+thou I love thee. saith unto
 Jesus him, Feed
 my sheep.
 
@@ -145,12 +146,11 @@ what is that to thee?
 follow thou me.
 
 21:23
-Then went this saying abroad among the brethren,
-that that disciple should not die:
+Then went this saying abroad among the brethren, that that disciple should not die:
 not unto
-yet Jesus said
-him, He shall not
-die; but, If I will that he tarry till I come,
+yet Jesus said him, He shall not
+die; but, If I will that he tarry
+till I come,
 what is that to thee?
 
 21:24

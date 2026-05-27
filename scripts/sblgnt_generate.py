@@ -10,6 +10,7 @@ import sys
 import unicodedata
 from pathlib import Path
 import sblgnt_v1_fabric as V1
+import macula_hoti
 
 FINITE = set("IDSO")
 SPEECH = {"λέγω", "εἶπον", "γράφω", "μαρτυρέω", "ὁμολογέω", "διδάσκω", "κηρύσσω",
@@ -278,21 +279,21 @@ def merge_split_vocatives(lines):
     return out
 
 
-def merge_cognition_hoti(lines):
-    """R10(A) (canon §3.5): a ὅτι-clause governed by a COGNITION/perception verb
-    is that verb's syntactic OBJECT — complement integrity requires it on the
-    SAME line. Our nesting-bind misses it when lowfat structures the ὅτι-clause
-    as a sibling (not nested) of the cognition predication, so it surfaces as its
-    own ATU. Fix at the surface: a line that opens with ὅτι whose PREVIOUS line
-    carries a finite cognition verb merges back into it. Declaration/speech ὅτι
-    (recitative) has a non-cognition governor -> left split (R10(B))."""
-    def has_fin_cognition(ws):
-        return any(w["mpos"].startswith("V") and w["mood"] in FINITE
-                   and w["lemma"] in COGNITION for w in ws)
-
+def merge_cognition_hoti(lines, hoti_dec):
+    """R10 (canon §2.1): bind a ὅτι-COMPLEMENT to its matrix verb; leave a causal/
+    adverbial ὅτι and a re-performed direct-discourse ὅτι standing. The bind/stand
+    call is sourced MECHANICALLY from the Macula treebank (`rule=that-VP` complement
+    vs `sub-CL`/`role=adv` causal; deixis test for direct-vs-indirect), keyed
+    (verse, wi) via `hoti_dec` — NOT lemma classes. Quote-status has no force; only
+    the bidirectional test (operationalized as these Macula features) decides. A line
+    opening with ὅτι merges back iff Macula says BIND and the junction is WITHIN one
+    verse (framework §3 — no silent cross-verse merge)."""
     out = []
     for ws in lines:
-        if out and ws[0]["lemma"] == "ὅτι" and has_fin_cognition(out[-1]):
+        h = ws[0]
+        if (out and h["lemma"] == "ὅτι"
+                and hoti_dec.get((h["verse"], h["wi"])) == "BIND"
+                and _junction_same_verse(out[-1], ws)):
             out[-1].extend(ws)
             out[-1].sort(key=lambda w: (w["verse"], w["wi"]))
         else:
@@ -662,8 +663,11 @@ def emit_v4(lowfat, morph, v0dir, slug, chap):
         cur.append(w); cur_lid = lid
     if cur:
         segments.append(cur)
+    # Macula-sourced ὅτι bind/stand decisions for this book, filtered to this chapter.
+    nn = Path(lowfat).stem.split("-")[0]
+    hoti_dec = {(v, wi): d for (c, v, wi), d in macula_hoti.decisions(nn).items() if c == chap}
     segments = merge_split_vocatives(segments)
-    segments = merge_cognition_hoti(segments)
+    segments = merge_cognition_hoti(segments, hoti_dec)
     segments = merge_subordinate_clauses(segments)
     segments = merge_line_end_leaders(segments, v0)
     segments = lead_forward_trailing_governors(segments)

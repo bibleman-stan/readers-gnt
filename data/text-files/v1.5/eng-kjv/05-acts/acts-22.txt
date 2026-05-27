@@ -3,8 +3,7 @@ Men, brethren, and fathers,
 hear ye my defence which I make now unto you.
 
 22:2
-And when they heard
-that he spake in the Hebrew tongue to them,
+And when they heard that he spake in the Hebrew tongue to them,
 they kept the more silence:
 and he saith,
 
@@ -82,7 +81,8 @@ and get thee quickly out of Jerusalem: for they will not receive thy testimony c
 22:19
 And I said,
 Lord,
-they know that I imprisoned and beat in every synagogue them that believed on thee:
+they know
+that I imprisoned and beat in every synagogue them that believed on thee:
 
 22:20
 And when the blood of thy martyr Stephen was shed, I also was standing by, and consenting unto his death, and kept the raiment of them that slew him.
@@ -128,8 +128,7 @@ But I was free born.
 
 22:29
 Then straightway they departed from him which should have examined him:
-and the chief captain also was afraid, after he knew
-that he was a Roman,
+and the chief captain also was afraid, after he knew that he was a Roman,
 and because he had bound him.
 
 22:30

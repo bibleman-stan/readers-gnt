@@ -13,8 +13,7 @@ and there he sat with his disciples.
 And the passover, a feast of the Jews, was nigh.
 
 6:5
-When Jesus then lifted up his eyes, and saw
-a great company come unto him,
+When Jesus then lifted up his eyes, and saw a great company come unto him,
 he saith unto Philip,
 Whence shall we buy bread,
 that these may eat?
@@ -59,12 +58,11 @@ that nothing be lost.
 Therefore they gathered them together, and filled twelve baskets with the fragments of the five barley loaves, which remained over and above unto them that had eaten.
 
 6:14
-Then those men, when they had seen the miracle that Jesus did, said,
-This is of a truth that prophet that should come into the world.
+Then those men, when they had seen the miracle that Jesus did, said, This is of a truth that prophet that should come into the world.
 
 6:15
-When Jesus therefore perceived
-that they would come and take him by force, to make him a king,
+When Jesus therefore perceived that they would come and take him by
+force, to make him a king,
 he departed again into a mountain himself alone.
 
 6:16
@@ -200,8 +198,7 @@ I am the bread which came down from heaven.
 6:42
 And they said,
 Is not this Jesus, the son of Joseph, whose father and mother we know?
-how is it then
-that he saith, I came down from heaven?
+how is it then that he saith, I came down from heaven?
 
 6:43
 Jesus therefore answered
@@ -218,8 +215,7 @@ And they shall be all taught of God.
 Every man therefore that hath heard, and hath learned of the Father, cometh unto me.
 
 6:46
-Not
-that any man hath seen the Father, save
+Not that any man hath seen the Father, save
 he which is of God,
 he hath seen the Father.
 
@@ -288,8 +284,7 @@ This is an hard saying;
 who can hear it?
 
 6:61
-When Jesus knew in himself
-that his disciples murmured at it,
+When Jesus knew in himself that his disciples murmured at it,
 he said unto them,
 Doth this offend you?
 
@@ -330,7 +325,8 @@ thou hast the words of eternal life.
 
 6:69
 And we believe
-and are sure that thou art that Christ, the Son of the living God.
+and are sure
+that thou art that Christ, the Son of the living God.
 
 6:70
 Jesus answered them,

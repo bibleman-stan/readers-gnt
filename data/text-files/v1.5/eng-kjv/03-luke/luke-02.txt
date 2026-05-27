@@ -80,8 +80,7 @@ was so named of the angel before he was conceived in the womb.
 And when the days of her purification according to the law of Moses were accomplished, they brought him to Jerusalem, to present him to the Lord;
 
 2:23
-As it is written in the law of
-the Lord, Every male that openeth the womb shall be called holy to the Lord;
+As it is written in the law of the Lord, Every male that openeth the womb shall be called holy to the Lord;
 
 2:24
 And to offer a sacrifice according to that which is said in the law of the Lord,
@@ -186,7 +185,8 @@ behold, thy father and I have sought thee sorrowing.
 And he said unto them,
 How
 is it that ye sought me?
-wist ye not that I must be about my Father's business?
+wist ye not
+that I must be about my Father's business?
 
 2:50
 And they understood not the saying which he spake unto them.

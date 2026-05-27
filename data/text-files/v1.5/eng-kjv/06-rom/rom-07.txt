@@ -1,8 +1,7 @@
 7:1
 Know ye not, brethren,
 for
-I speak to them that know the law, how
-that the law hath dominion over a man as long as he liveth?
+I speak to them that know the law, how that the law hath dominion over a man as long as he liveth?
 
 7:2
 For the woman which hath an husband is bound by the law to her husband so long as he liveth;
@@ -57,7 +56,8 @@ God forbid.
 But sin, that it might appear sin, working death in me by that which is good; that sin by the commandment might become exceeding sinful.
 
 7:14
-For we know that the law is spiritual:
+For
+we know that the law is spiritual:
 but I am carnal, sold under sin.
 
 7:15
@@ -69,8 +69,7 @@ that do I.
 
 7:16
 If then I do that which I would not,
-I consent unto the law
-that it is good.
+I consent unto the law that it is good.
 
 7:17
 Now then it
