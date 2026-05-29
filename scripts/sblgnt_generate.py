@@ -608,9 +608,16 @@ def merge_line_end_leaders(lines, v0):
 # line may END on one — "ending a thought on 'until' is incoherent"; it must LEAD
 # the next line. (Canon §3.4 + the §3.5 ὅτι-leads-its-complement convention.)
 _FWD_GOV_LEM = _FWD_FRAME | _BWD_SUB | _BIDIR_SUB | _R9_OPENERS
+# χάριν ("for the sake of") is POSTPOSITIVE -- it follows its genitive object and
+# never preposes one onto the next line, so it must NOT be treated as a forward
+# governor (otherwise it gets peeled off the end of verse N onto verse N+1's line:
+# Titus 1:11, 1Tim 5:14, Jude 1:16). Verified postpositive in all 9 GNT occurrences.
+_POSTPOS_PREP = {"χάριν"}
 
 
 def _is_fwd_governor(w):
+    if w["lemma"] in _POSTPOS_PREP:
+        return False
     return w["cls"] == "prep" or w["mpos"] == "P-" or w["lemma"] in _FWD_GOV_LEM
 
 
