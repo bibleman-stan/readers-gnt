@@ -111,13 +111,30 @@ def _deixis_anchors(hoti_cl):
     return anchors
 
 
+def _is_causal_ground(cl):
+    """A causal/adverbial ὅτι clause that is a SHORT, ANAPHORIC ground binds
+    BACKWARD into its blessing/main clause (the Beatitudes: 'μακάριοι … ὅτι αὐτῶν
+    …' -> one sense-line). Guards mirror the gated Vulgate causal-ground rule:
+      - short: <= 8 words in the clause wrapper (the long causal ὅτι of Matt 5:20/
+        5:21/5:22, 14-35 words, fall outside the cap and STAND);
+      - no NEW proper-noun referent (no class='name' descendant -- anaphoric only).
+    The over-merge gate validates the fired set before deploy; widen the guards
+    there if needed (as the Vulgate port did)."""
+    words = list(cl.iter("w"))
+    if len(words) > 8:
+        return False
+    if any(x.attrib.get("class") == "name" for x in words):
+        return False
+    return True
+
+
 def _classify(w, parent):
     cl = _innermost_cl(w, parent)
     if cl is None:
         return "STAND"
     rule, role = cl.attrib.get("rule", ""), cl.attrib.get("role", "")
     if rule == "sub-CL" or role == "adv":       # causal / adverbial
-        return "STAND"
+        return "BIND_GROUND" if _is_causal_ground(cl) else "STAND"
     if rule != "that-VP":                        # not a marked complement
         return "STAND"
     enclosing = _enclosing_cl(cl, parent)

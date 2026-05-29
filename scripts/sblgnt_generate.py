@@ -292,7 +292,7 @@ def merge_cognition_hoti(lines, hoti_dec):
     for ws in lines:
         h = ws[0]
         if (out and h["lemma"] == "ὅτι"
-                and hoti_dec.get((h["verse"], h["wi"])) == "BIND"
+                and hoti_dec.get((h["verse"], h["wi"])) in ("BIND", "BIND_GROUND")
                 and _junction_same_verse(out[-1], ws)):
             out[-1].extend(ws)
             out[-1].sort(key=lambda w: (w["verse"], w["wi"]))
