@@ -1226,7 +1226,7 @@
 <div class="search-overlay" id="search-overlay">
   <div class="search-header">
     <button class="search-back" onclick="closeSearch()">&#8592;</button>
-    <input type="text" id="search-input" placeholder="Search Greek text..." autocomplete="off" spellcheck="false">
+    <input type="text" id="search-input" placeholder="Search Greek or English..." autocomplete="off" spellcheck="false">
     <button class="search-close" onclick="closeSearch()">&#10005;</button>
   </div>
   <div class="search-ops">
@@ -2166,10 +2166,9 @@ function openSearch() {
   document.getElementById('search-overlay').classList.add('open');
   const input = document.getElementById('search-input');
   input.value = '';
-  // Set placeholder based on display mode (English-only = English search,
-  // any other state = Greek search — matches prior dropdown semantic).
-  const englishOnly = document.body.classList.contains('show-en') && !document.body.classList.contains('show-gk');
-  input.placeholder = englishOnly ? 'Search English text...' : 'Search Greek text...';
+  // Bilingual search: a query matches across BOTH the Greek text and the
+  // English layer, independent of the current display mode.
+  input.placeholder = 'Search Greek or English...';
   input.focus();
   document.getElementById('search-status').textContent = '';
   document.getElementById('search-results').innerHTML = '';
@@ -2621,35 +2620,33 @@ function performSearch(query) {
   }
 
   const hits = [];
-  const searchEnglish = document.body.classList.contains('show-en') && !document.body.classList.contains('show-gk');
   const corpusAllowed = getCorpusAllowedBooks();
+  // Precompute the English query words once (case-insensitive substring AND).
+  const enQueryWords = query.trim().toLowerCase().split(/\s+/).filter(w => w.length > 0);
 
   for (const entry of searchIndex) {
     // Corpus filter: skip books not in any active filter group
     if (corpusAllowed && !corpusAllowed.has(entry.book)) continue;
 
-    let matched = false;
+    // Bilingual search: a verse is a hit if EITHER its Greek layer OR its
+    // English layer matches the query (additive — broadens coverage; the
+    // matched layer is recorded so the result renders the side that hit).
+    let matchedGk = false;
 
     if (wildcardData) {
       // Wildcard phrase-template: regex test against the diacritic-stripped
       // verse text. Reset lastIndex since /g regex state is per-call.
       wildcardData.regex.lastIndex = 0;
-      matched = wildcardData.regex.test(entry.textStripped);
-    } else if (searchEnglish) {
-      // English mode: simple case-insensitive search on English text
-      if (!entry.enText) continue;
-      const queryLower = query.trim().toLowerCase();
-      const words = queryLower.split(/\s+/).filter(w => w.length > 0);
-      matched = words.every(w => entry.enTextLower.indexOf(w) !== -1);
+      matchedGk = wildcardData.regex.test(entry.textStripped);
     } else if (boolMatcher) {
-      matched = boolMatcher(entry.textStripped);
+      matchedGk = boolMatcher(entry.textStripped);
     } else if (isExact) {
       const phrase = stripDiacritics(query.trim().replace(/^"|"$/g, ''));
-      matched = entry.textStripped.indexOf(phrase) !== -1;
+      matchedGk = entry.textStripped.indexOf(phrase) !== -1;
     } else {
       // All terms must appear (implicit AND for multi-word)
       // Each original term must have at least one form match
-      matched = true;
+      matchedGk = true;
       const verseWords = getWords(entry.textStripped);
       const rawWords = query.trim().split(/\s+/).filter(w => w.length > 0);
       for (const w of rawWords) {
@@ -2663,11 +2660,22 @@ function performSearch(query) {
           }
           if (found) break;
         }
-        if (!found) { matched = false; break; }
+        if (!found) { matchedGk = false; break; }
       }
     }
 
-    if (matched) {
+    // English layer: case-insensitive substring match, every word required.
+    // Skipped in wildcard mode (the wildcard template is Greek-phrase-shaped).
+    let matchedEn = false;
+    if (!wildcardData && entry.enText && enQueryWords.length > 0) {
+      matchedEn = enQueryWords.every(w => entry.enTextLower.indexOf(w) !== -1);
+    }
+
+    if (matchedGk || matchedEn) {
+      // Record which layer(s) matched so renderFilteredResults can show the
+      // hitting side. Greek is the primary layer when both match.
+      entry._matchGk = matchedGk;
+      entry._matchEn = matchedEn;
       hits.push(entry);
     }
   }
@@ -2849,8 +2857,6 @@ function renderFilteredResults() {
     statusEl.textContent = totalCount + ' verse' + (totalCount !== 1 ? 's' : '') + ' found' + filterLabel;
   }
 
-  const searchEnglish = document.body.classList.contains('show-en') && !document.body.classList.contains('show-gk');
-
   const shown = Math.min(totalCount, displayLimit);
   for (let i = 0; i < shown; i++) {
     const entry = filteredHits[i];
@@ -2865,11 +2871,14 @@ function renderFilteredResults() {
 
     const textDiv = document.createElement('div');
     textDiv.className = 'search-result-text';
-    if (searchEnglish) {
+    // Render the layer that actually matched. Greek is shown when it hit;
+    // otherwise the English layer is shown (English-only match). When both
+    // hit, Greek is the primary display layer.
+    if (entry._matchGk) {
+      textDiv.innerHTML = highlightSearchResult(entry.text, lastSearchTerms);
+    } else {
       const qw = lastSearchQuery.trim().toLowerCase().split(/\s+/).filter(w => w.length > 0);
       textDiv.innerHTML = highlightSearchResult(entry.enText, qw);
-    } else {
-      textDiv.innerHTML = highlightSearchResult(entry.text, lastSearchTerms);
     }
 
     card.appendChild(refDiv);
