@@ -548,6 +548,82 @@ def merge_subordinate_clauses(segments):
     return res
 
 
+_SENT_END_CHARS = set(".·;")
+
+
+def _seg_ends_sentence(ws, v0):
+    """True if the LAST rendered token of a segment ends in a sentence
+    terminator (period / middle-dot / Greek question mark/semicolon).
+    Uses v0-prose punctuation (what the deployed grk shows)."""
+    sw = sorted(ws, key=lambda w: (w["verse"], w["wi"]))
+    tok = _rtok(sw[-1], v0)
+    return bool(tok) and tok[-1] in _SENT_END_CHARS
+
+
+def merge_parallel_elided_verb(segments, v0):
+    """Parallel-elided-verb merge (added 2026-05-31).
+
+    Lowfat clause-atoms occasionally split a contrastive parallel clause with
+    an elided verb across multiple segments — Rom 8:5 is the canonical case:
+
+        Source: "οἱ γὰρ κατὰ σάρκα ὄντες τὰ τῆς σαρκὸς φρονοῦσιν,
+                 οἱ δὲ κατὰ πνεῦμα τὰ τοῦ πνεύματος."
+        Lowfat: atom4 = "οἱ τὰ τοῦ πνεύματος" (verbless subj+complement)
+                atom6 = "κατὰ πνεῦμα"        (verbless PP)
+        Surface order interleaves them, so after surface re-segmentation:
+                seg "οἱ δὲ" / seg "κατὰ πνεῦμα" / seg "τὰ τοῦ πνεύματος."
+        Result: 4 ATU lines where 2 belongs (the parallel-elided-verb tail
+                "οἱ δὲ κατὰ πνεῦμα τὰ τοῦ πνεύματος." is ONE ATU).
+
+    Rule: merge a run of 2+ consecutive verbless segments when each is
+    short (<= 4 content words), same-verse, and no sentence terminator
+    (. · ;) appears between them. Comma-internal breaks (the SBL editorial
+    layout) do NOT block. Stops at the first sentence terminator or finite
+    or long verbless segment.
+
+    Safe by construction:
+    - Mat 5:3-12 Beatitudes: each "Μακάριοι οἱ X" verbless predication is
+      followed by a finite ὅτι clause — finite breaks the run.
+    - Stand-alone verbless aphorisms ending in period (Greek period or ano
+      teleia) self-block — they stop the accumulation.
+    - Cross-verse runs blocked by the same-verse gate.
+    """
+    out, i = [], 0
+    n = len(segments)
+    while i < n:
+        ws = segments[i]
+        if _has_finite(ws) or _ccount(ws) > 4 or _seg_ends_sentence(ws, v0):
+            out.append(list(ws))
+            i += 1
+            continue
+        # Start of a possible run. Accumulate forward.
+        verse_start = min(w["verse"] for w in ws)
+        run = [list(ws)]
+        k = i + 1
+        while k < n:
+            nxt = segments[k]
+            if _has_finite(nxt):
+                break
+            if min(w["verse"] for w in nxt) != verse_start:
+                break
+            if _ccount(nxt) > 4:
+                break
+            run.append(list(nxt))
+            if _seg_ends_sentence(nxt, v0):
+                k += 1
+                break
+            k += 1
+        if len(run) >= 2:
+            merged = [w for r in run for w in r]
+            merged.sort(key=lambda w: (w["verse"], w["wi"]))
+            out.append(merged)
+            i = k
+        else:
+            out.append(run[0])
+            i += 1
+    return out
+
+
 def merge_line_end_leaders(lines, v0):
     """R3/R4/R8: no ATU line may END on a forward-governing leader — an article
     (R3, MorphGNT POS 'RA'), a non-terminal negation whose scope is off-line
@@ -676,6 +752,7 @@ def emit_v4(lowfat, morph, v0dir, slug, chap):
     segments = merge_split_vocatives(segments)
     segments = merge_cognition_hoti(segments, hoti_dec)
     segments = merge_subordinate_clauses(segments)
+    segments = merge_parallel_elided_verb(segments, v0)
     segments = merge_line_end_leaders(segments, v0)
     segments = lead_forward_trailing_governors(segments)
 
