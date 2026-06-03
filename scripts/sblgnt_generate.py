@@ -11,6 +11,12 @@ import unicodedata
 from pathlib import Path
 import sblgnt_v1_fabric as V1
 import macula_hoti
+import gnt_overrides
+
+# Reverse map: 2-digit book index ("01" -> "Matt", "23" -> "1John"). Used to
+# derive the override-key book label inside emit_v4(), where only `nn` is in
+# scope. Matches sblgnt_v1_fabric.NUM by construction.
+LABEL_FROM_NN = {f"{v:02d}": k for k, v in V1.NUM.items()}
 
 FINITE = set("IDSO")
 SPEECH = {"λέγω", "εἶπον", "γράφω", "μαρτυρέω", "ὁμολογέω", "διδάσκω", "κηρύσσω",
@@ -781,6 +787,15 @@ def emit_v4(lowfat, morph, v0dir, slug, chap):
 
     for seg in segments:
         flush(seg)
+    # Render-stage adjudication overrides: per verse, swap mechanical ATU
+    # lines for adjudicated ones iff the override's joined greek_alnum
+    # (NFD + Greek block + polytonic + Latin + digit) equals the mechanical
+    # block's same normalization. Otherwise mechanical stands. Empty
+    # overrides.json -> structural copy (no behavior change). See
+    # scripts/gnt_overrides.py + data/text-files/v1.5-adjudicated/grk/README.md.
+    book_label = LABEL_FROM_NN.get(nn)
+    if book_label is not None:
+        out = gnt_overrides.apply_chapter_overrides(book_label, chap, out)
     return out
 
 
