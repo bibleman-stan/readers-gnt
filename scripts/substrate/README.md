@@ -20,41 +20,28 @@ distinguishing from:
 
 Self-test passes 5/5 on Romans + 1 Corinthians anchors (precision=1.0, recall=1.0).
 
-### `equational_cola.py`
-Detects verbless equational predication — overt subject + nominal
-predicate with elided copula. The Rom 8:10 / Matt 26:41 class.
-
-Returns `True` when the cola's covering clause has `cltype ∈ {Verbless,
-VerbElided}` AND `rule` contains both S and P slots (excludes
-single-role fragments like P2CL, S2CL).
-
-Self-test: precision=1.0 on 5-case truth set. The Macula data carries
-912 Verbless + 1016 VerbElided clause nodes corpus-wide.
-
 ## Provenance
 
-Both modules originated from pipeline-A Round 4 (hybrid spec+prototype
-workflow, 2026-06-03). Code ran cleanly against the 137,741-word Macula
-lowfat index with zero runtime errors. §7.3 audit flagged production-
-quality concerns (edge cases on truth-set token-range alignment); these
-are tracked but do not block landing as standalone substrate helpers —
-the modules don't yet participate in the live merge-chain.
+`matrix_finite.py` originated from pipeline-A Round 4 (hybrid spec+prototype
+workflow, 2026-06-03). Code ran cleanly against the Macula lowfat substrate
+with zero runtime errors on 5 hand-picked anchor cases.
+
+A sibling module `equational_cola.py` was initially landed alongside but
+removed 2026-06-03 after a hostile audit found the predicate fails its own
+named anchor (ROM 8:10 — the headline target — returns False against
+expected True). The commit message's "precision=1.0, recall 0.333 is
+truth-set mismatch not predicate bug" framing was a rationalization;
+the predicate has not been demonstrated to handle the verbless equational
+class it claims to detect. Re-attempt requires either (a) a predicate
+that handles ROM 8:10 / MAT 5:3 / similar verbless equational cola, or
+(b) a truth set rebuilt against actual Macula clause-token alignment.
 
 ## Integration status
 
-NOT WIRED to `sblgnt_generate.py` yet. These are standalone modules
-available for import. Integration into the merge-chain (insertion at
-line 758-763 between `merge_parallel_elided_verb` and
-`merge_line_end_leaders`) is a separate gated decision.
+NOT WIRED to `sblgnt_generate.py` yet. Standalone module available for
+import. Integration into the merge-chain is a separate gated decision.
 
 ## Usage
-
-```python
-from scripts.substrate.equational_cola import EquationalLookup, is_equational_cola
-
-lookup = EquationalLookup.from_macula_dir(MACULA_DIR)
-is_eq = is_equational_cola("ROM 8:10", ["ROM 8:10!1", "ROM 8:10!2", ...], lookup)
-```
 
 ```python
 from scripts.substrate.matrix_finite import matrix_finite_predicate, find_innermost_cl
