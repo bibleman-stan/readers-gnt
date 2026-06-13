@@ -2055,6 +2055,33 @@ async function buildSearchIndex() {
   searchIndexLoading = true;
 
   const statusEl = document.getElementById('search-status');
+  statusEl.innerHTML = '<div class="search-loading">Loading search index...</div>';
+
+  // Fast path: prebuilt index (data/search_index.json, from
+  // scripts/build_search_index.py). Avoids fetching + DOMParser-parsing all
+  // 27 interlinear book files on the main thread, which froze the UI for
+  // seconds. Raw text only here; the diacritic-stripped / lowercased forms
+  // are derived now so stripDiacritics() stays the single source of truth.
+  try {
+    const resp = await fetch('data/search_index.json');
+    if (resp.ok) {
+      const data = await resp.json();
+      searchIndex = data.entries.map(function(e) {
+        return {
+          book: e.book, bookName: e.bookName,
+          chapter: e.chapter, verse: e.verse,
+          text: e.text, textStripped: stripDiacritics(e.text),
+          enText: e.enText, enTextLower: (e.enText || '').toLowerCase(),
+        };
+      });
+      searchIndexLoading = false;
+      statusEl.textContent = '';
+      return;
+    }
+  } catch (e) {
+    console.warn('Prebuilt search index unavailable; building from book HTML', e);
+  }
+  // Fallback: build from book HTML at runtime (the old, slow path).
   statusEl.innerHTML = '<div class="search-loading">Building search index...</div>';
 
   const index = [];
