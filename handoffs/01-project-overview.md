@@ -371,13 +371,13 @@ A cross-corpus migration shipped this date across all four repos in the project 
 
 **Architectural shift — universal-layer infrastructure:**
 
-The repo now consumes a four-plane architecture (`atu-method/docs/architecture.md`) where universal infrastructure lives in `atu-method/`:
+The repo now consumes a four-plane architecture (`atu-method/docs/03-implementation/architecture.md`) where universal infrastructure lives in `atu-method/`:
 - `atu_method/kjv_alignment/` — Strong's-based distribution algorithm
 - `atu_method/swaps/apply_swaps.py` + `load_lists.py` — universal swap engine
 - `data/kjv-strongs/MetaV_*.csv` — KJV source of truth
 - `data/lexicons/TBESG.txt` / `TBESH.txt` — Strong's brief glosses
 - `data/swaps/universal-kjv.json` + `nt-archaisms.json` — swap-lists
-- `docs/apparatus.md` / `architecture.md` / `framework.md` / `glossary.md` — picture-first + universal methodology
+- `docs/03-implementation/apparatus.md` / `architecture.md` / `framework.md` / `glossary.md` — picture-first + universal methodology
 
 `readers-gnt` now occupies the **Delivery plane** of this architecture; rule detail (`private/01-method/colometry-canon.md`) and language-specific Layer 1 syntax-floor remain per-repo.
 
