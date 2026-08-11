@@ -2,7 +2,9 @@
 research/
 
 # Private strategy docs (not on public repo)
-private/
+# Pattern mirrors readers-lxx: ignore all of private/ except the README stub
+/private/*
+!/private/README.md
 
 # Machine-specific Claude Code permissions (cross-project paths that shouldn't be public)
 # Both files are machine-specific; the harness auto-writes permissions to settings.json.
