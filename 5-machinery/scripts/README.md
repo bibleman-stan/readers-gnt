@@ -1,6 +1,6 @@
 # 5-machinery/scripts/
 
-Active 5-machinery/scripts for the GNT-Reader editorial loop. Everything here operates against `data/text-files/v4/grk/` (Greek source of truth) or its derivatives (`v4/eng-kjv/`, `books/*.html`). Historical / one-off / superseded 5-machinery/scripts live in [`archive/`](archive/README.md).
+Active scripts for the GNT-Reader editorial loop. Everything here operates against `data/text-files/v4/grk/` (Greek source of truth) or its derivatives (`v4/eng-kjv/`, `books/*.html`). Historical / one-off / superseded scripts live in [`archive/`](archive/README.md).
 
 ## Core cascade (6)
 

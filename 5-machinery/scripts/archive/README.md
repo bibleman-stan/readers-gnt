@@ -1,6 +1,6 @@
 # 5-machinery/scripts/archive/
 
-This directory holds 5-machinery/scripts that produced the v0–v3 colometric corpus tiers (and adjacent one-time tools) during the project's bootstrap phase. They are no longer part of the active editorial loop.
+This directory holds scripts that produced the v0–v3 colometric corpus tiers (and adjacent one-time tools) during the project's bootstrap phase. They are no longer part of the active editorial loop.
 
 ## Architecture transition
 
@@ -12,7 +12,7 @@ sblgnt-source/  →  v0-prose/  →  v1-colometric/  →  v2-colometric/  →  v
 
 Each tier was produced by a Python script reading the previous tier and applying one layer of refinement (chapter-splitting → sentence breaks → clause breaks via Macula syntax trees → rhetorical-pattern refinement). The output of the last machine tier (`v3-colometric/`) was then **hand-edited across all 260 chapters** into `v4-editorial/`.
 
-After `v4-editorial/` reached 260/260 coverage and was confirmed as the single source of truth for Greek text (per `CLAUDE.md`), the producer 5-machinery/scripts stopped being part of the active loop. They are preserved here for provenance — the v0–v3 corpus directories remain in `data/text-files/` as frozen scaffolding documenting the bootstrap path, and any future re-derivation would need these 5-machinery/scripts.
+After `v4-editorial/` reached 260/260 coverage and was confirmed as the single source of truth for Greek text (per `CLAUDE.md`), the producer scripts stopped being part of the active loop. They are preserved here for provenance — the v0–v3 corpus directories remain in `data/text-files/` as frozen scaffolding documenting the bootstrap path, and any future re-derivation would need these scripts.
 
 The active editorial loop is now:
 
@@ -22,7 +22,7 @@ v4-editorial/  →  regenerate_english.py  →  eng-gloss/  →  build_books.py 
 
 See `private/01-method/colometry-canon.md` §10 (2026-04-26 later⁷ entry) for the audit trail behind this transition.
 
-## Archived 5-machinery/scripts
+## Archived scripts
 
 ### Tier producers
 
@@ -43,7 +43,7 @@ See `private/01-method/colometry-canon.md` §10 (2026-04-26 later⁷ entry) for 
 
 ### 2026-05-16 archival wave (5-machinery/validators/colometry/ takeover + completed sweeps)
 
-When the verdict-layer migration and R8/R9/R10/R17 implementations shipped (commits `c1886b60` → `0a7cfb36`), the canonical detector home became `5-machinery/validators/syntax/` and `5-machinery/validators/colometry/`. The following 12 `5-machinery/scripts/` entries — appliers that finished sweeping, 5-machinery/validators superseded by canon-named successors, and a self-retired investigation — moved here.
+When the verdict-layer migration and R8/R9/R10/R17 implementations shipped (commits `c1886b60` → `0a7cfb36`), the canonical detector home became `5-machinery/validators/syntax/` and `5-machinery/validators/colometry/`. The following 12 `5-machinery/scripts/` entries — appliers that finished sweeping, validators superseded by canon-named successors, and a self-retired investigation — moved here.
 
 #### Validators superseded by `5-machinery/validators/colometry/*`
 - **`validate_r11_speech_intro.py`** — superseded by `5-machinery/validators/colometry/check_r11_speech_intro.py`.
@@ -69,20 +69,20 @@ When the verdict-layer migration and R8/R9/R10/R17 implementations shipped (comm
 
 ## What stays in `5-machinery/scripts/`
 
-The active editorial loop and any 5-machinery/scripts referenced by it remain in `5-machinery/scripts/`:
+The active editorial loop and any scripts referenced by it remain in `5-machinery/scripts/`:
 
 - `regenerate_english.py` (active English-regen tool — replaces `generate_english_glosses.py`)
 - `build_books.py` (HTML generator; reads `v4-editorial/` only as of this commit)
 - `5-machinery/validators/_shared/morphgnt_lookup.py` (used by `5-machinery/validators/common.py`; relocated 2026-04-28 from `5-machinery/scripts/`)
 - `5-machinery/validators/_shared/macula_clauses.py` (used by `5-machinery/validators/common.py`; relocated 2026-04-28 from `5-machinery/scripts/`)
 - `v4_auto_fix.py` (mechanical fixes against `v4-editorial/`)
-- All `scan_*.py` / `apply_*.py` / `validate_*.py` / `sweep_*.py` 5-machinery/scripts (validator-driven sweeps against `v4-editorial/`)
-- All `macula_*.py` 5-machinery/scripts (Macula syntax-tree access)
+- All `scan_*.py` / `apply_*.py` / `validate_*.py` / `sweep_*.py` scripts (validator-driven sweeps against `v4-editorial/`)
+- All `macula_*.py` scripts (Macula syntax-tree access)
 - `bezae_compare.py`, `verify_word_order.py`, `colometric_stylometry.py`, `english_quality_check.py`, etc.
 
 ## Re-running an archived script
 
-The 5-machinery/scripts are preserved as-is. To re-run one (rare; almost always the wrong move), set `PYTHONIOENCODING=utf-8` and run from the repo root:
+The scripts are preserved as-is. To re-run one (rare; almost always the wrong move), set `PYTHONIOENCODING=utf-8` and run from the repo root:
 
 ```
 PYTHONIOENCODING=utf-8 py -3 5-machinery/scripts/archive/v3_colometry.py

@@ -340,7 +340,7 @@ Beyond the strategic reframing, session 9 landed substantial operational work:
 - 860 no-anchor merges (every line now carries a thought-marking anchor across the whole corpus)
 - 70 English drift fixes (two waves of mechanical-split cleanup)
 - 15 cross-verse continuity merges (atomic thoughts crossing Stephanus 1551 verse boundaries, Matt 3:1-2 as MVP)
-- 6 new scanner/applier 5-machinery/scripts: `scan_vocative_apposition.py`, `apply_vocative_merges.py`, `scan_no_anchor_lines.py`, `apply_no_anchor_merges.py`, `scan_english_drift.py`, `scan_crossverse_continuity.py`
+- 6 new scanner/applier scripts: `scan_vocative_apposition.py`, `apply_vocative_merges.py`, `scan_no_anchor_lines.py`, `apply_no_anchor_merges.py`, `scan_english_drift.py`, `scan_crossverse_continuity.py`
 - Cross-verse infrastructure: inline superscript verse markers, integrity-checker support, HTML rendering, CSS
 - Aland 367 pericopes imported and committed as JSON
 - Handoff updates across 02-method, 03-architecture, 04-workflow

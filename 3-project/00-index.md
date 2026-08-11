@@ -6,7 +6,7 @@ These documents capture project state so that any session (human or AI) can spin
 |------|--------|
 | `00-index.md` | This index and update protocol |
 | `01-project-overview.md` | Project vision, origin story, scholarly landscape, research advantages |
-| `03-architecture.md` | Repo structure, build pipeline, 5-machinery/scripts, web app, deployment |
+| `03-architecture.md` | Repo structure, build pipeline, scripts, web app, deployment |
 | `04-editorial-workflow.md` | How text gets from raw SBLGNT to finished reading edition |
 | `../private/01-method/colometry-canon.md` | Greek colometric methodology, R-rules, structural justifications (authoritative) |
 | `../atu-method/docs/` | Universal-layer framework (`apparatus.md`, `architecture.md`, `framework.md`, `glossary.md`, `change-protocol.md`); consumed by this repo |
@@ -34,7 +34,7 @@ Never overwrite history — always append.
 Files updated this session:
 - `01-project-overview.md` — YLT replaced by WEB; domain purchased and configured; colometric methodology reset documented
 - `02-colometry-method.md` — Five new editorial principles from Mark 4 v4 gold standard (updated separately during session)
-- `03-architecture.md` — New 5-machinery/scripts (web_align.py, diagnostic_scanner.py, experimental alignment 5-machinery/scripts), new directories (v4/grk, v4/eng-kjv), updated build pipeline, domain/CNAME deployment
+- `03-architecture.md` — New scripts (web_align.py, diagnostic_scanner.py, experimental alignment scripts), new directories (v4/grk, v4/eng-kjv), updated build pipeline, domain/CNAME deployment
 - `04-editorial-workflow.md` — v4 editorial tier established with Mark 4 as first gold standard chapter; pipeline diagram updated; colometric methodology reset and its implications for v3 output
 
 ---

@@ -76,7 +76,7 @@ Each chapter file in `v1-colometric/`:
 
 ## Protection of Hand-Edited Chapters
 
-**Resolved 2026-04-26.** This section originally warned that `auto_colometry.py` would overwrite hand-edited chapters in `v1-colometric/`. The concern was specific to an early phase when hand edits were landing directly in `v1-colometric/`. The project later moved to `v4/grk/` as the dedicated hand-editing surface (with `v0`–`v3` tiers frozen as scaffolding), and on 2026-04-26 the tier-producer 5-machinery/scripts were moved to `5-machinery/scripts/archive/`. There is no longer a way for a routine command to clobber hand-edited chapters: the active loop reads/writes `v4/grk/` only.
+**Resolved 2026-04-26.** This section originally warned that `auto_colometry.py` would overwrite hand-edited chapters in `v1-colometric/`. The concern was specific to an early phase when hand edits were landing directly in `v1-colometric/`. The project later moved to `v4/grk/` as the dedicated hand-editing surface (with `v0`–`v3` tiers frozen as scaffolding), and on 2026-04-26 the tier-producer scripts were moved to `5-machinery/scripts/archive/`. There is no longer a way for a routine command to clobber hand-edited chapters: the active loop reads/writes `v4/grk/` only.
 
 ## Review Process
 
@@ -111,7 +111,7 @@ The hand-crafted version stacks the triadic yield — making Mark's climactic pa
 No priorities have been set yet. Some natural starting points:
 
 - **Mark** — shortest Gospel, narrative-heavy, paratactic style makes colometry especially revelatory
-- **Acts 17** — Areopagus speech 5-machinery/tests rhetorical colometry
+- **Acts 17** — Areopagus speech tests rhetorical colometry
 - **Romans 8** — dense Pauline argumentation, good test for epistolary style
 - **John 1:1-18** — prologue has known poetic structure, good validation case
 - **Hebrews 1** — elevated prose style, interesting comparison to Paul
@@ -159,8 +159,8 @@ This distinction matters for the publishable research: the automated tiers produ
 
 After any significant change to merge/split rules, dispatch parallel adversarial agents before committing:
 
-1. **Feature-specific adversary** — 5-machinery/tests the new rule for over-merges, under-merges, and edge cases
-2. **Rule-interaction adversary** — 5-machinery/tests all rules together for cascading errors and fights between passes
+1. **Feature-specific adversary** — tests the new rule for over-merges, under-merges, and edge cases
+2. **Rule-interaction adversary** — tests all rules together for cascading errors and fights between passes
 3. **Benchmark regression adversary** — re-runs Marschall comparison and Bezae multi-tier to check for regressions
 
 This pattern catches HIGH severity issues (rule interactions, sentence boundary violations, over-splitting of particles) that code review alone misses. Established in session 3 after discovering the adversarial approach caught issues across Rev 1:5, Heb 1:3, Mark 4:22, and 94 ἰδού over-splits.
@@ -184,7 +184,7 @@ This pattern catches HIGH severity issues (rule interactions, sentence boundary 
 **When proposing rule changes:**
 1. Generate multiple candidate approaches (3-5 angles)
 2. Dispatch parallel adversarial agents to evaluate EACH approach against real corpus data
-3. Each evaluation agent 5-machinery/tests: accuracy rate, false positive rate, implementation complexity
+3. Each evaluation agent tests: accuracy rate, false positive rate, implementation complexity
 4. Compile ranked recommendation with data before implementing anything
 5. Only implement the top-ranked approach (or top 2 if they're complementary)
 6. This prevents building the wrong solution and having to undo it
@@ -337,7 +337,7 @@ The alignment now automatically re-pegs when Greek colometric breaks change — 
 - **YLT is literal enough that alignment should normally be easy.** When it's not, the algorithm is wrong — not the data.
 - **Sequential matching, not bag-of-words.** Word-position information must be preserved.
 - **Adversarial audit after every significant change.** The Mark 4 thermometer pattern: fix, rebuild, audit all verses, fix what the audit finds, repeat until clean.
-- **Three parallel adversarial agents per problem class.** Each agent diagnoses one pattern, proposes a fix, and 5-machinery/tests it. Fixes are then synthesized and applied together.
+- **Three parallel adversarial agents per problem class.** Each agent diagnoses one pattern, proposes a fix, and tests it. Fixes are then synthesized and applied together.
 
 ---
 
@@ -354,7 +354,7 @@ This, combined with YLT's archaic language barriers, led to the decision to aban
 - **WEB** (World English Bible, public domain, modern English) replaces YLT as the English rendering layer
 - Alignment approach changed to "double-wire": Greek to Macula English (perfect by construction) to WEB (LCS alignment), with spaCy dependency parsing as a cut-point validator
 - Known limitation: WEB sometimes restructures sentences differently from Greek, causing unavoidable alignment mismatches on approximately 10% of verses
-- YLT alignment 5-machinery/scripts retained for historical reference but are no longer in the active pipeline
+- YLT alignment scripts retained for historical reference but are no longer in the active pipeline
 
 #### Colometric Methodology Reset
 
@@ -575,7 +575,7 @@ The `data/text-files/` directory now presents the project's text pipeline as a f
 For the editorial workflow specifically this means:
 
 - **The editorial source of truth is still `v4/grk/`.** Nothing about the workflow has changed. All edits go to `v4/grk/{NN-book}/{abbrev}-{NN}.txt`, cascade to `v4/eng-kjv/`, then to `books/*.html`. The editorial workflow itself remains as documented elsewhere in this file — the update here is terminological precision, not a behavioral change.
-- **The mechanical tiers (v0-v3) are frozen artifacts.** They are the record of how the machine-produced baseline was built. They should not be edited by hand. If a mechanical script is re-run (e.g., `auto_colometry.py` against new `sblgnt-source/` content), it will write to the correct subfolder paths automatically — the 5-machinery/scripts were updated in this restructure to use the new layout.
+- **The mechanical tiers (v0-v3) are frozen artifacts.** They are the record of how the machine-produced baseline was built. They should not be edited by hand. If a mechanical script is re-run (e.g., `auto_colometry.py` against new `sblgnt-source/` content), it will write to the correct subfolder paths automatically — the scripts were updated in this restructure to use the new layout.
 - **For reproducibility work (Phase 2 defensibility and future methodology papers), the v0-v3 tiers are citable.** A skeptical reader can run the mechanical pipeline against the same source data and verify our mechanical output bit-exactly. The v3 → v4 diff is the editorial value-add and is governed by the colometric methodology canon.
 
 Full restructure details are in `4-process/03-architecture.md` under the 2026-04-14 update block. The top-level `data/text-files/README.md` is the entry point for anyone (including future Claude sessions) trying to understand the pipeline at a glance.

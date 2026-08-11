@@ -1,6 +1,6 @@
 # GNT Reader Validator Suite
 
-Layer 2 5-machinery/validators for the colometry canon. Two categories matching the
+Layer 2 validators for the colometry canon. Two categories matching the
 project's three-layer architecture (canon §0):
 
 ```
@@ -27,7 +27,7 @@ Each validator module exposes:
 - `ERROR_CLASS` — `"MALFORMED"` or `"DEVIATION"`
 - `check_book_chapter(book: str, chapter: int) -> list[Candidate]`
 
-## Running 5-machinery/validators
+## Running validators
 
 ```bash
 # Per-rule dashboard (no report file)
@@ -49,13 +49,13 @@ PYTHONIOENCODING=utf-8 py -3 5-machinery/validators/run_all.py --summary --valid
 
 ## Git hooks
 
-Two hooks live at `5-machinery/validators/hooks/`. Source-of-truth 5-machinery/scripts are tracked in
+Two hooks live at `5-machinery/validators/hooks/`. Source-of-truth scripts are tracked in
 git; installed copies live at `.git/hooks/` (not tracked).
 
 ### `pre-commit` — regression-baseline gate
 
 Triggers when staged files include the canon, syntax-reference, v4/grk
-corpus, or 5-machinery/validators themselves. Runs `5-machinery/validators/run_all.py
+corpus, or validators themselves. Runs `5-machinery/validators/run_all.py
 --baseline-check` and blocks if any rule's candidate count INCREASED vs
 `5-machinery/validators/.baseline.json`.
 
@@ -108,7 +108,7 @@ git commit --no-verify -m '...'
 
 Per canon §3 "Pairwise Precedence Catalogue" + architecture.md §interface-contracts: *"Detectors must filter candidates that match higher-tier rules out of lower-tier buckets."*
 
-The GNT validator suite enforces precedence at the **per-detector** level — each lower-priority detector contains yield-checks that skip emissions when a higher-priority rule's signature matches the same locus. There is no runner-level precedence pass (currently `run_all.py` iterates 5-machinery/validators in alphabetical order).
+The GNT validator suite enforces precedence at the **per-detector** level — each lower-priority detector contains yield-checks that skip emissions when a higher-priority rule's signature matches the same locus. There is no runner-level precedence pass (currently `run_all.py` iterates validators in alphabetical order).
 
 ### Gold-standard implementation pattern
 

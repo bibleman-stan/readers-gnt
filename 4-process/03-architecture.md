@@ -1,6 +1,6 @@
 # 03 — Architecture & Build Pipeline
 
-> **Four-plane pointer (2026-05-12).** As of the cross-corpus migration, this repo occupies the **Delivery plane** of a four-plane architecture (Data / Specification / Tooling / Delivery) documented universally in [`../../atu-method/3-implementation/architecture.md`](../../atu-method/3-implementation/architecture.md). Shared-vs-per-repo plane ownership, interface contracts between planes, and drift-prevention discipline all live there. This handoff covers per-repo Delivery-plane details only — build pipeline, 5-machinery/scripts, web app, deployment. Cross-references to `atu-method` are now load-bearing; do not duplicate or shadow the shared layer here.
+> **Four-plane pointer (2026-05-12).** As of the cross-corpus migration, this repo occupies the **Delivery plane** of a four-plane architecture (Data / Specification / Tooling / Delivery) documented universally in [`../../atu-method/3-implementation/architecture.md`](../../atu-method/3-implementation/architecture.md). Shared-vs-per-repo plane ownership, interface contracts between planes, and drift-prevention discipline all live there. This handoff covers per-repo Delivery-plane details only — build pipeline, scripts, web app, deployment. Cross-references to `atu-method` are now load-bearing; do not duplicate or shadow the shared layer here.
 
 > **Update 2026-04-26 — Tier-producer archive sweep.** The v0–v3 tier producers (`build_v0_prose.py`, `auto_colometry.py`, `v2_colometry.py`, `v3_colometry.py`), the line-auditing tool (`diagnostic_scanner.py`), the original v4/eng-kjv seeders (`generate_english_glosses.py`, `generate_pauline_english.py`), and the one-time Pauline review pass (`v4_pauline_review.py`) were moved to `5-machinery/scripts/archive/`. The `build_books.py` v3 fallback referenced in earlier blocks was confirmed dead in practice (v4/grk: 260/260) and removed in the same commit. **The dated snapshots and update blocks below describe the architecture as of the date in their header.** For current `5-machinery/scripts/` layout, see `CLAUDE.md` Key Files table and `5-machinery/scripts/archive/README.md`. See canon §10 (2026-04-26 later⁷) for the audit trail.
 
@@ -303,7 +303,7 @@ One script run replaces hundreds of agent dispatches. Tokens are precious. Use t
 </div>
 ```
 
-**IMPORTANT:** `PYTHONIOENCODING=utf-8` is required on Windows for both 5-machinery/scripts due to Greek Unicode characters in console output.
+**IMPORTANT:** `PYTHONIOENCODING=utf-8` is required on Windows for both scripts due to Greek Unicode characters in console output.
 
 ## Full Rebuild Workflow
 
@@ -415,7 +415,7 @@ Single-page app, all CSS and JS inline. No external dependencies except Google F
 
 ### Established — 2026-04-09
 - Full repo structure created
-- Both 5-machinery/scripts built and tested
+- Both scripts built and tested
 - Web app built with BOM Reader design language
 - All 27 books formatted, built, and committed
 - GitHub Pages deployment instructions documented
@@ -463,7 +463,7 @@ build_books.py now reads from `data/text-files/v3-colometric/` (was v2-colometri
 
 - New directories added: `data/text-files/ylt-colometric/`, `research/ylt/`
 - New data file: `data/ylt-verses.json` (parsed YLT keyed by book/chapter/verse)
-- New 5-machinery/scripts: `ylt_parse.py` (downloads/parses YLT source), `ylt_align.py` (aligns YLT to colometric breaks)
+- New scripts: `ylt_parse.py` (downloads/parses YLT source), `ylt_align.py` (aligns YLT to colometric breaks)
 - `build_books.py` updated: now reads both v3-colometric and ylt-colometric, emits dual-text HTML with language-class spans
 - `index.html` updated: display mode toggle (Greek / English / Both) in settings panel, CSS-driven visibility
 - Repo structure diagram updated to reflect all new files and directories
@@ -540,9 +540,9 @@ New directories:
 - `data/text-files/v4/grk/` — Tier 4 editorial hand output (Stan's hand-edited chapters)
 - `data/text-files/v4/eng-kjv/` — WEB (World English Bible) aligned to colometric breaks (replaces ylt-colometric as active English layer)
 
-New and updated 5-machinery/scripts:
+New and updated scripts:
 - **web_align.py** (new): Double-wire WEB alignment with spaCy dependency parsing validation. Approach: Greek to Macula English (perfect by construction) to WEB (LCS alignment). spaCy validates cut points to prevent splitting inside English phrases.
-- **diagnostic_scanner.py** (new at the time of this dated block; **moved to `5-machinery/scripts/archive/diagnostic_scanner.py` on 2026-04-26**): Line auditing tool. Applied the framework's forces to flag lines that fail atomic-thought or single-image 5-machinery/tests. The script's prior breath-unit test was purged earlier on 2026-04-26 alongside the canon retirement (see canon §10 2026-04-26 final-residue-purge entry). It was archived later that day after the audit confirmed v4/grk as single source of truth and Layer 2 5-machinery/validators superseded its function. See canon §10 (2026-04-26 later⁷) for the archive sweep.
+- **diagnostic_scanner.py** (new at the time of this dated block; **moved to `5-machinery/scripts/archive/diagnostic_scanner.py` on 2026-04-26**): Line auditing tool. Applied the framework's forces to flag lines that fail atomic-thought or single-image tests. The script's prior breath-unit test was purged earlier on 2026-04-26 alongside the canon retirement (see canon §10 2026-04-26 final-residue-purge entry). It was archived later that day after the audit confirmed v4/grk as single source of truth and Layer 2 validators superseded its function. See canon §10 (2026-04-26 later⁷) for the archive sweep.
 - **ylt_align_lcs.py** (new): Experimental LCS-based YLT alignment (R&D, superseded by web_align.py).
 - **ylt_align_double.py** (new): Experimental double-wire YLT alignment (R&D, superseded by web_align.py).
 - **build_books.py** (updated): Now checks v4/grk before v3-colometric for Greek source (editorial hand takes priority). Checks v4/eng-kjv before ylt-colometric for English source.
@@ -603,7 +603,7 @@ The English layer is no longer an aligned translation. Each structural gloss was
 
 #### New scanners + appliers (scan-and-apply pattern)
 
-Session 9 introduced two new pairs of scanner+apply 5-machinery/scripts that implement the "scan-then-mechanically-apply" pattern corpus-wide. Both operate on v4/grk Greek and v4/eng-kjv English in lockstep, avoiding the English-alignment drift that proportional regen introduces. This is a departure from the earlier "dispatch agents for mass editorial work" pattern, and should be preferred whenever a class of errors can be described structurally.
+Session 9 introduced two new pairs of scanner+apply scripts that implement the "scan-then-mechanically-apply" pattern corpus-wide. Both operate on v4/grk Greek and v4/eng-kjv English in lockstep, avoiding the English-alignment drift that proportional regen introduces. This is a departure from the earlier "dispatch agents for mass editorial work" pattern, and should be preferred whenever a class of errors can be described structurally.
 
 **`5-machinery/scripts/scan_vocative_apposition.py`** — classifies every vocative-only line in the corpus and emits merge candidates with grammatical justification:
 
@@ -707,7 +707,7 @@ The `data/text-files/` directory was restructured to present the project's text 
 
 **A precision note on v4.** v4 is NOT "hand editing" in the sense of a human manually typing out every break decision for every chapter. v4 is where the project's *documented colometric methodology* — atomic thought, cognitive hierarchy, register sensitivity, semantic grouping, the no-anchor rule, the universal vocative rule, the Goldilocks refinement, and the other rules recorded in the methodology canon — is *applied* to the text. Application happens through a mix of systematic scan-and-apply tools (the vocative pass, the no-anchor pass, adversarial-audit-driven merges, Class F audits, and similar mechanical passes that can be described structurally) and case-by-case editorial decisions where the rule set conflicts or underdetermines. The editor is the methodology's operator, not a manual typist. The project's contribution lives in the documented rule set; v4 is its application, not its stenography.
 
-**Two reproducibility regimes.** v0-v3 are bit-exactly reproducible: given the same inputs, running the 5-machinery/scripts produces byte-for-byte copies of those tiers. v4 is NOT bit-exactly reproducible (because judgment calls enter where rules underdetermine) but IS methodologically checkable: any chapter can be audited against the documented rule set to confirm whether breaks conform to the rules. Disagreement at an individual line is resolvable by consulting the methodology, not by dispute over "what the editor happened to type."
+**Two reproducibility regimes.** v0-v3 are bit-exactly reproducible: given the same inputs, running the scripts produces byte-for-byte copies of those tiers. v4 is NOT bit-exactly reproducible (because judgment calls enter where rules underdetermine) but IS methodologically checkable: any chapter can be audited against the documented rule set to confirm whether breaks conform to the rules. Disagreement at an individual line is resolvable by consulting the methodology, not by dispute over "what the editor happened to type."
 
 ### New directory layout
 
@@ -761,7 +761,7 @@ The chapter files in `v1-colometric/`, `v2-colometric/`, and `v3-colometric/` we
 
 ### Script updates
 
-Four 5-machinery/scripts had output path constants updated to reflect the new subfolder layout:
+Four scripts had output path constants updated to reflect the new subfolder layout:
 
 - `5-machinery/scripts/auto_colometry.py` — writes to `v1-colometric/{NN-book}/{abbrev}-{NN}.txt`
 - `5-machinery/scripts/v2_colometry.py` — writes to `v2-colometric/{NN-book}/{abbrev}-{NN}.txt`
